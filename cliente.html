@@ -73,7 +73,7 @@
     <!-- Cargando -->
     <section id="loadingCard" class="fluent-card rounded-2xl p-10 text-center space-y-3">
       <i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[#0067C0]"></i>
-      <p class="text-sm font-medium text-slate-600">Consultando diagnóstico y avances en tiempo real...</p>
+      <p class="text-sm font-medium text-slate-600">Consultando diagnóstico y registro cronológico en tiempo real...</p>
     </section>
 
     <!-- Error / No encontrado -->
@@ -154,18 +154,16 @@
         </a>
       </section>
 
-      <!-- Línea de Tiempo Cronológica Exclusiva del Cliente -->
+      <!-- Registro Cronológico Exclusivo del Cliente -->
       <section class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
             <i class="ph-bold ph-clock-counter-clockwise text-lg text-[#0067C0]"></i>
-            <h3 class="text-base font-bold text-slate-900">Avances y Diagnóstico de tu Vehículo</h3>
+            <h3 class="text-base font-bold text-slate-900">Registro Cronológico de Servicio</h3>
           </div>
           <span class="text-[11px] font-semibold text-slate-400">Actualización automática c/ 5s</span>
         </div>
-        <div id="vTimeline" class="space-y-4 border-l-2 border-blue-200 ml-2.5 pl-5 py-1">
-          <!-- Avances exclusivos para cliente -->
-        </div>
+        <div id="vTimeline" class="space-y-4 border-l-2 border-blue-200 ml-2.5 pl-5 py-1"></div>
       </section>
 
       <!-- Evidencia Multimedia Aprobada -->
@@ -328,7 +326,7 @@
       const timeline = document.getElementById("vTimeline");
       const notes = Array.isArray(v.notes) ? v.notes : [];
       if (notes.length === 0) {
-        timeline.innerHTML = `<p class="text-sm text-slate-500">Tu vehículo se encuentra en evaluación técnica. Te notificaremos por correo ante cada nuevo avance.</p>`;
+        timeline.innerHTML = `<p class="text-sm text-slate-500">Tu vehículo se encuentra en evaluación técnica. Te notificaremos por correo ante cada nuevo registro.</p>`;
       } else {
         timeline.innerHTML = notes.slice().reverse().map(n => `
           <div class="relative">

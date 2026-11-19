@@ -74,7 +74,6 @@
   <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <!-- Marca + Indicador de Dispositivo -->
         <div class="flex items-center gap-3">
           <div id="brandIcon" class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center shadow-sm transition-colors">
             <i class="ph-bold ph-wrench text-xl"></i>
@@ -103,7 +102,6 @@
 
       <!-- Barra de Herramientas y Sesiones -->
       <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
-        <!-- Pestañas -->
         <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
           <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
             <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
@@ -116,10 +114,8 @@
           </button>
         </nav>
 
-        <!-- Controles de Equipo, Nube, Talleres y Nueva Acción -->
         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-          <select id="activeUserSelect" onchange="handleUserChange(this.value)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-none">
-          </select>
+          <select id="activeUserSelect" onchange="handleUserChange(this.value)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-none"></select>
 
           <button onclick="openUsersModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Gestión de Usuarios y PIN">
             <i class="ph-bold ph-users text-accent"></i> <span class="hidden md:inline">Usuarios</span>
@@ -194,7 +190,6 @@
 
     <!-- VISTA 3: TABLERO KANBAN -->
     <section id="view-board" class="hidden space-y-4">
-      <!-- Filtros -->
       <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
         <div class="relative flex-1 min-w-[200px]">
           <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -204,7 +199,6 @@
         <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[220px]"></select>
       </div>
 
-      <!-- Columnas Kanban -->
       <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
     </section>
 
@@ -241,7 +235,6 @@
             <select id="tAssignee" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
           </div>
 
-          <!-- Taller de Origen (Solo Modo Soporte) -->
           <div id="workshopFieldBox" class="sm:col-span-2">
             <label class="block text-xs font-bold text-slate-700 mb-1">Taller de Origen (Propio o Autorizado Automotor) *</label>
             <select id="tWorkshop" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
@@ -263,7 +256,6 @@
           </div>
         </div>
 
-        <!-- Campos Automotrices (Solo Modo Soporte) -->
         <div id="vehicleFieldsBox" class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div>
             <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
@@ -283,7 +275,6 @@
           </div>
         </div>
 
-        <!-- Campos Entrenamiento (Solo Modo Entrenamiento) -->
         <div id="trainingFieldsBox" class="hidden bg-amber-50/60 p-3.5 rounded-xl border border-amber-200/70 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label class="block text-[11px] font-bold text-slate-600 mb-1">Duración (Horas)</label>
@@ -312,20 +303,20 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO, DRIVE MULTIMEDIA, BITÁCORA Y PORTAL CLIENTE -->
+  <!-- MODAL 2: DETALLE DE CASO, DRIVE MULTIMEDIA, BITÁCORA INTERNA Y BITÁCORA CLIENTE INDEPENDIENTES -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <div class="flex items-center gap-2">
           <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#0067C0]">CASO-2026-101</span>
-          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[220px] sm:max-w-md">Detalle</h3>
+          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[200px] sm:max-w-md">Detalle</h3>
         </div>
         <div class="flex items-center gap-1.5">
           <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-user-focus"></i> Portal Cliente
           </button>
-          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
-          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar"><i class="ph-bold ph-trash"></i></button>
+          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar Datos del Caso"><i class="ph-bold ph-pencil-simple"></i></button>
+          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar Caso"><i class="ph-bold ph-trash"></i></button>
           <button onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
@@ -344,14 +335,14 @@
           </div>
         </div>
 
-        <!-- PANEL DESPLEGABLE: PORTAL WEB DEL CLIENTE (TRACKING EN VIVO) -->
-        <div id="clientPortalPanel" class="hidden bg-emerald-50/70 border-2 border-emerald-500/40 rounded-2xl p-4 space-y-4">
+        <!-- PANEL DESPLEGABLE: PORTAL WEB DEL CLIENTE (CONFIGURACIÓN + AVANCES EXCLUSIVOS CLIENTE) -->
+        <div id="clientPortalPanel" class="hidden bg-emerald-50/75 border-2 border-emerald-500/40 rounded-2xl p-4 sm:p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
-                <i class="ph-bold ph-broadcast text-emerald-600"></i> Portal Público de Seguimiento para el Cliente
+                <i class="ph-bold ph-broadcast text-emerald-600"></i> Configuración Portal Público del Cliente
               </h4>
-              <p class="text-xs text-emerald-800">El cliente recibirá un correo automático (no-reply) con enlace en vivo cada vez que publiques una actualización.</p>
+              <p class="text-xs text-emerald-800">Los avances publicados aquí son 100% independientes de las notas internas del taller.</p>
             </div>
             <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200">
               <input type="checkbox" id="cpEnabled" class="w-4 h-4 accent-emerald-600" />
@@ -380,12 +371,39 @@
 
           <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-200/80">
             <div class="text-xs text-slate-700">
-              PIN de Acceso Cliente: <strong id="cpTokenDisplay" class="font-mono bg-white px-2 py-0.5 rounded border border-slate-300">----</strong>
+              PIN Cliente: <strong id="cpTokenDisplay" class="font-mono bg-white px-2 py-0.5 rounded border border-slate-300">----</strong>
               <button type="button" onclick="copyClientPortalLink()" class="ml-2 text-emerald-700 font-bold hover:underline">Copiar Link Cliente</button>
             </div>
-            <button type="button" onclick="saveClientPortalConfig(true)" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
-              <i class="ph-bold ph-paper-plane-tilt"></i> Guardar y Enviar Correo al Cliente
-            </button>
+            <div class="flex gap-2">
+              <button type="button" onclick="saveClientPortalConfig(false)" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-emerald-300 text-emerald-900 text-xs font-bold">
+                Solo Guardar Datos
+              </button>
+              <button type="button" onclick="saveClientPortalConfig(true)" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                <i class="ph-bold ph-paper-plane-tilt"></i> Guardar y Enviar Correo
+              </button>
+            </div>
+          </div>
+
+          <!-- BITÁCORA EXCLUSIVA DEL CLIENTE (SEPARADA DE LA INTERNA) -->
+          <div class="bg-white rounded-xl p-4 border border-emerald-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs font-extrabold uppercase text-emerald-900 flex items-center gap-1.5">
+                <i class="ph-bold ph-chat-teardrop-text text-emerald-600 text-base"></i> Mensajes / Avances Visibles para el Cliente (Exclusivo Cliente)
+              </h5>
+            </div>
+            <form onsubmit="addClientNote(event)" class="space-y-2">
+              <textarea id="newClientNoteText" rows="2" required placeholder="Redacta aquí el avance oficial que verá el cliente en su web..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-emerald-600"></textarea>
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="inline-flex items-center gap-2 text-xs text-slate-700 font-semibold cursor-pointer">
+                  <input type="checkbox" id="notifyClientOnAdd" checked class="w-4 h-4 accent-emerald-600" />
+                  Enviar notificación por correo al cliente al publicar
+                </label>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
+                  Publicar para Cliente
+                </button>
+              </div>
+            </form>
+            <div id="dClientNotesList" class="space-y-2 max-h-56 overflow-y-auto pt-1"></div>
           </div>
         </div>
 
@@ -410,7 +428,7 @@
               <h4 class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
                 <i class="ph-bold ph-google-drive-logo text-blue-600 text-base"></i> Carpeta Google Drive del Caso
               </h4>
-              <p class="text-[11px] text-slate-500">Marca la casilla "Visible Cliente" en las fotos/videos que desees mostrar en su portal.</p>
+              <p class="text-[11px] text-slate-500">Marca la casilla "Visible Cliente" solo en las fotos/videos que desees mostrarle.</p>
             </div>
             <div class="flex items-center gap-2">
               <a id="dDriveFolderBtn" href="https://drive.google.com" target="_blank" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -425,20 +443,19 @@
           <div id="dMediaGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
         </div>
 
-        <!-- Bitácora Cronológica -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-bold uppercase text-slate-700">Bitácora de Avances Técnicos</h4>
-          <form onsubmit="addTaskNote(event)" class="space-y-2">
-            <div class="flex gap-2">
-              <input type="text" id="newNoteText" required placeholder="Registrar hallazgo técnico, prueba realizada o avance..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
-              <button type="submit" class="px-4 py-2.5 rounded-xl btn-accent text-xs font-bold">Registrar</button>
-            </div>
-            <label id="noteClientVisLabel" class="inline-flex items-center gap-2 text-xs text-emerald-800 font-semibold cursor-pointer">
-              <input type="checkbox" id="newNoteClientVisible" class="w-4 h-4 accent-emerald-600" />
-              Publicar este avance en el Portal del Cliente y notificarle por correo
-            </label>
+        <!-- BITÁCORA INTERNA DEL TALLER (100% PRIVADA - EL CLIENTE NUNCA LA VE) -->
+        <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-extrabold uppercase text-slate-800 flex items-center gap-1.5">
+              <i class="ph-bold ph-lock-key text-slate-600 text-base"></i> Bitácora Interna del Taller (Solo Uso Interno · Privado)
+            </h4>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">No visible al cliente</span>
+          </div>
+          <form onsubmit="addInternalNote(event)" class="flex gap-2">
+            <input type="text" id="newInternalNoteText" required placeholder="Registrar hallazgo técnico interno, códigos DTC, observaciones de taller..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm" />
+            <button type="submit" class="px-4 py-2.5 rounded-xl btn-accent text-xs font-bold">Registrar Interno</button>
           </form>
-          <div id="dNotesList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+          <div id="dInternalNotesList" class="space-y-2 max-h-56 overflow-y-auto"></div>
         </div>
       </div>
     </div>
@@ -506,7 +523,7 @@
         <p class="text-xs text-slate-600">Pega aquí la URL pública donde subiste <strong>cliente.html</strong> en GitHub Pages. Este enlace se enviará automáticamente por correo a tus clientes.</p>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">URL Pública de cliente.html</label>
-          <input type="url" id="clientPortalBaseUrlInput" placeholder="https://tu-usuario.github.io/autotech-soporte/cliente.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs" />
+          <input type="url" id="clientPortalBaseUrlInput" placeholder="https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs" />
         </div>
         <div class="flex justify-end gap-2">
           <button onclick="closeModal('portalConfigModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Cancelar</button>
@@ -586,10 +603,10 @@
       users: DEFAULT_USERS,
       workshops: DEFAULT_WORKSHOPS,
       adminPin: "1234",
-      clientPortalBaseUrl: ""
+      clientPortalBaseUrl: "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html"
     };
 
-    let appMode = "soporte"; // 'soporte' | 'entrenamiento'
+    let appMode = "soporte";
     let activeTab = "dashboard";
     let activeUserId = "u1";
     let currentDetailId = null;
@@ -615,7 +632,6 @@
       setTimeout(() => el.remove(), 3800);
     }
 
-    // Detección de Dispositivo
     function updateDeviceLayout() {
       const badge = document.getElementById("deviceBadge");
       const fab = document.getElementById("mobileFab");
@@ -643,9 +659,8 @@
       }
     });
 
-    // Inicialización
     window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("autotech_state_v4");
+      const saved = localStorage.getItem("autotech_state_v5");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -653,32 +668,8 @@
           if (!state.workshops || state.workshops.length === 0) state.workshops = DEFAULT_WORKSHOPS;
         } catch (e) {}
       }
-      if (state.tasks.length === 0) {
-        const todayStr = new Date().toISOString().split("T")[0];
-        state.tasks = [
-          {
-            id: "t1",
-            caseId: "CASO-2026-101",
-            mode: "soporte",
-            title: "Diagnóstico vibración caja automática DCT",
-            subcategory: "Diagnóstico Especial",
-            assigneeId: "u2",
-            workshop: "Automotor Central (Propio)",
-            date: todayStr,
-            status: "En Proceso",
-            progress: 50,
-            orNumber: "OR-88412",
-            vehicleVin: "KMH8821",
-            vehicleModel: "Hyundai Tucson 2.0",
-            vehicleKm: "38.200 km",
-            description: "Cliente reporta tironeo en salida en frío.",
-            driveFolderId: "",
-            driveFolderUrl: "https://drive.google.com",
-            notes: [{ date: new Date().toLocaleString(), text: "Escaneo de códigos TCM y prueba de ruta inicial.", clientVisible: true }],
-            media: [],
-            clientPortal: { enabled: true, token: "4829", clientName: "Carlos Benítez", clientEmail: "", advisorName: "Marcos Villalba", advisorWhatsapp: "595981000000" }
-          }
-        ];
+      if (!state.clientPortalBaseUrl) {
+        state.clientPortalBaseUrl = "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
       }
       syncSelectors();
       updateDeviceLayout();
@@ -687,7 +678,7 @@
     });
 
     function saveLocalAndCloud() {
-      localStorage.setItem("autotech_state_v4", JSON.stringify(state));
+      localStorage.setItem("autotech_state_v5", JSON.stringify(state));
       fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({ action: "saveState", state: state })
@@ -705,7 +696,10 @@
         const data = await res.json();
         if (data.status === "ok" && data.state) {
           state = { ...state, ...data.state };
-          localStorage.setItem("autotech_state_v4", JSON.stringify(state));
+          if (!state.clientPortalBaseUrl) {
+            state.clientPortalBaseUrl = "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
+          }
+          localStorage.setItem("autotech_state_v5", JSON.stringify(state));
           syncSelectors();
           renderAll();
           if (manual) showToast("Datos sincronizados con Google Drive", "success");
@@ -719,7 +713,6 @@
       }
     }
 
-    // Cambio de Modo (Soporte vs Entrenamiento)
     function switchAppMode(mode) {
       appMode = mode;
       const body = document.body;
@@ -820,13 +813,11 @@
       renderBoard();
     }
 
-    // DASHBOARD
     function renderDashboard() {
       const list = getFilteredModeTasks();
       const total = list.length;
       const done = list.filter(t => t.status === "Completado").length;
       const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Revisión").length;
-      const avg = total ? Math.round(list.reduce((a, b) => a + (Number(b.progress) || 0), 0) / total) : 0;
 
       const fourthCard = appMode === "entrenamiento"
         ? { label: "Horas Programadas", val: list.reduce((a, b) => a + (Number(b.hours) || 0), 0) + " hs", icon: "ph-clock" }
@@ -883,7 +874,6 @@
       }).join("");
     }
 
-    // CALENDARIO
     function changeMonth(delta) {
       calDate.setMonth(calDate.getMonth() + delta);
       renderCalendar();
@@ -931,7 +921,6 @@
       document.getElementById("calendarGrid").innerHTML = html;
     }
 
-    // TABLERO KANBAN
     function renderBoard() {
       const q = (document.getElementById("searchInput").value || "").toLowerCase();
       const uFilter = document.getElementById("filterUser").value;
@@ -1025,7 +1014,6 @@
       renderAll();
     }
 
-    // CREAR / EDITAR TAREA
     function openTaskModal(presetDate = "", editId = null) {
       document.getElementById("editTaskId").value = editId || "";
       const subSel = document.getElementById("tSubcategory");
@@ -1123,7 +1111,8 @@
         description: document.getElementById("tDesc").value.trim(),
         driveFolderId: "",
         driveFolderUrl: "https://drive.google.com",
-        notes: [{ date: new Date().toLocaleString(), text: "Registro inicial creado en el sistema.", clientVisible: false }],
+        notes: [{ date: new Date().toLocaleString(), text: "Registro interno creado en el sistema." }],
+        clientNotes: [],
         media: [],
         clientPortal: {
           enabled: false,
@@ -1141,7 +1130,6 @@
       renderAll();
       showToast(`Creando carpeta ${caseId} en Google Drive...`, "info");
 
-      // Crear carpeta automática en Google Drive
       try {
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
@@ -1156,7 +1144,6 @@
         }
       } catch (err) {}
 
-      // Notificar por correo al responsable asignado
       const assignee = state.users.find(u => u.id === newTask.assigneeId);
       const admin = state.users.find(u => u.role === "Administrador");
       if (assignee && assignee.email) {
@@ -1173,18 +1160,20 @@
       }
     }
 
-    // DETALLE DE CASO Y PORTAL CLIENTE
+    // DETALLE DE CASO (BITÁCORAS SEPARADAS + EDITAR/ELIMINAR AVANCES)
     function openDetailModal(id) {
       currentDetailId = id;
       const t = state.tasks.find(x => x.id === id);
       if (!t) return;
+
+      if (!Array.isArray(t.notes)) t.notes = [];
+      if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
 
       const isSoporte = (t.mode || "soporte") === "soporte";
       document.getElementById("dCaseBadge").textContent = t.caseId;
       document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
       document.getElementById("clientPortalPanel").classList.add("hidden");
-      document.getElementById("noteClientVisLabel").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
 
       const assignee = state.users.find(u => u.id === t.assigneeId);
@@ -1198,8 +1187,9 @@
       document.getElementById("dProgressVal").textContent = (t.progress || 0) + "%";
       document.getElementById("dDriveFolderBtn").href = t.driveFolderUrl || "https://drive.google.com";
 
-      // Cargar datos Portal Cliente
-      if (!t.clientPortal) t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: "", advisorWhatsapp: "" };
+      if (!t.clientPortal) {
+        t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: "", advisorWhatsapp: "" };
+      }
       document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
       document.getElementById("cpClientName").value = t.clientPortal.clientName || "";
       document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
@@ -1208,7 +1198,8 @@
       document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
 
       renderDetailMedia(t);
-      renderDetailNotes(t);
+      renderInternalNotes(t);
+      renderClientNotes(t);
       document.getElementById("detailModal").classList.remove("hidden");
     }
 
@@ -1217,7 +1208,7 @@
     }
 
     function getClientTrackingUrl(t) {
-      const base = (state.clientPortalBaseUrl || "").trim() || window.location.href.replace("index.html", "cliente.html");
+      const base = (state.clientPortalBaseUrl || "").trim() || "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
       const sep = base.includes("?") ? "&" : "?";
       return `${base}${sep}caso=${encodeURIComponent(t.caseId)}&token=${encodeURIComponent(t.clientPortal.token)}`;
     }
@@ -1246,7 +1237,7 @@
 
       if (sendEmailNow) {
         if (!t.clientPortal.enabled) {
-          showToast("Activa la casilla 'Habilitar Portal' primero", "warning");
+          showToast("Marca la casilla 'Habilitar Portal' primero", "warning");
           return;
         }
         if (!t.clientPortal.clientEmail) {
@@ -1255,6 +1246,8 @@
         }
         await sendClientTrackingEmail(t, "Activación de Seguimiento en Tiempo Real");
         showToast(`Correo enviado a ${t.clientPortal.clientEmail}`, "success");
+      } else {
+        showToast("Configuración del cliente guardada", "success");
       }
     }
 
@@ -1293,6 +1286,155 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       }).catch(() => {});
     }
 
+    // --- BITÁCORA EXCLUSIVA DEL CLIENTE (AGREGAR, EDITAR, ELIMINAR) ---
+    function renderClientNotes(t) {
+      const list = document.getElementById("dClientNotesList");
+      const cNotes = Array.isArray(t.clientNotes) ? t.clientNotes : [];
+      if (cNotes.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400">Aún no has publicado mensajes en el portal del cliente.</p>`;
+        return;
+      }
+      list.innerHTML = cNotes.slice().reverse().map((n, revIdx) => {
+        const realIdx = cNotes.length - 1 - revIdx;
+        return `
+          <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 text-xs space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-semibold text-emerald-800">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="editClientNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-pencil-simple"></i> Editar
+                </button>
+                <button type="button" onclick="deleteClientNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+            <p class="text-slate-900 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function addClientNote(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const txt = document.getElementById("newClientNoteText").value.trim();
+      const sendMail = document.getElementById("notifyClientOnAdd").checked;
+      if (!t || !txt) return;
+
+      if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
+      t.clientNotes.push({
+        date: new Date().toLocaleString(),
+        text: txt
+      });
+      document.getElementById("newClientNoteText").value = "";
+
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Avance publicado en Portal Cliente", "success");
+
+      if (sendMail && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
+        await sendClientTrackingEmail(t, txt);
+        showToast("Correo automático enviado al cliente", "success");
+      }
+    }
+
+    function editClientNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.clientNotes[idx]) return;
+      const updated = prompt("Editar mensaje visible para el cliente:", t.clientNotes[idx].text);
+      if (updated === null) return;
+      const clean = updated.trim();
+      if (!clean) return;
+      t.clientNotes[idx].text = clean;
+      t.clientNotes[idx].edited = true;
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Mensaje del cliente actualizado (se verá al instante en su portal)", "success");
+    }
+
+    function deleteClientNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.clientNotes[idx]) return;
+      if (!confirm("¿Eliminar este mensaje del Portal del Cliente?")) return;
+      t.clientNotes.splice(idx, 1);
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Mensaje eliminado del Portal Cliente", "info");
+    }
+
+    // --- BITÁCORA INTERNA PRIVADA (AGREGAR, EDITAR, ELIMINAR) ---
+    function renderInternalNotes(t) {
+      const list = document.getElementById("dInternalNotesList");
+      const iNotes = Array.isArray(t.notes) ? t.notes : [];
+      if (iNotes.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400">Sin registros internos aún.</p>`;
+        return;
+      }
+      list.innerHTML = iNotes.slice().reverse().map((n, revIdx) => {
+        const realIdx = iNotes.length - 1 - revIdx;
+        return `
+          <div class="bg-white p-3 rounded-xl border border-slate-200/90 text-xs space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] text-slate-400 font-semibold">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-pencil-simple"></i> Editar
+                </button>
+                <button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+            <p class="text-slate-800 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function addInternalNote(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const txt = document.getElementById("newInternalNoteText").value.trim();
+      if (!t || !txt) return;
+
+      if (!Array.isArray(t.notes)) t.notes = [];
+      t.notes.push({
+        date: new Date().toLocaleString(),
+        text: txt
+      });
+      document.getElementById("newInternalNoteText").value = "";
+
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Avance interno guardado (privado)", "success");
+    }
+
+    function editInternalNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      const updated = prompt("Editar nota interna del taller:", t.notes[idx].text);
+      if (updated === null) return;
+      const clean = updated.trim();
+      if (!clean) return;
+      t.notes[idx].text = clean;
+      t.notes[idx].edited = true;
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Nota interna actualizada", "success");
+    }
+
+    function deleteInternalNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      if (!confirm("¿Eliminar esta nota interna?")) return;
+      t.notes.splice(idx, 1);
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Nota interna eliminada", "info");
+    }
+
+    // --- MULTIMEDIA DRIVE ---
     function renderDetailMedia(t) {
       const box = document.getElementById("dMediaGallery");
       const media = t.media || [];
@@ -1367,58 +1509,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         }
       };
       reader.readAsDataURL(file);
-    }
-
-    function renderDetailNotes(t) {
-      const list = document.getElementById("dNotesList");
-      list.innerHTML = (t.notes || []).slice().reverse().map((n, revIdx) => {
-        const realIdx = t.notes.length - 1 - revIdx;
-        return `
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-xs space-y-1">
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
-              <span>${escapeHtml(n.date)}</span>
-              <label class="inline-flex items-center gap-1 text-emerald-700 font-bold cursor-pointer">
-                <input type="checkbox" ${n.clientVisible ? "checked" : ""} onchange="toggleNoteClientVisibility(${realIdx}, this.checked)" class="accent-emerald-600" />
-                Visible Cliente
-              </label>
-            </div>
-            <p class="text-slate-800 font-medium">${escapeHtml(n.text)}</p>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function toggleNoteClientVisibility(idx, isVisible) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.notes[idx]) return;
-      t.notes[idx].clientVisible = isVisible;
-      saveLocalAndCloud();
-      showToast(isVisible ? "Nota visible para el cliente" : "Nota marcada como interna", "info");
-    }
-
-    async function addTaskNote(e) {
-      e.preventDefault();
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      const txt = document.getElementById("newNoteText").value.trim();
-      const visCliente = document.getElementById("newNoteClientVisible").checked;
-      if (!t || !txt) return;
-
-      t.notes.push({
-        date: new Date().toLocaleString(),
-        text: txt,
-        clientVisible: visCliente
-      });
-      document.getElementById("newNoteText").value = "";
-      document.getElementById("newNoteClientVisible").checked = false;
-
-      saveLocalAndCloud();
-      renderDetailNotes(t);
-      showToast("Avance registrado en bitácora", "success");
-
-      if (visCliente && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
-        await sendClientTrackingEmail(t, txt);
-        showToast("Cliente notificado por correo electrónico", "success");
-      }
     }
 
     function updateTaskStatusQuick(val) {

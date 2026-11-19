@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seguimiento Técnico de Vehículo | Automotor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 15% 15%, #dbeafe 0%, transparent 45%),
+                  radial-gradient(circle at 85% 85%, #e0e7ff 0%, transparent 45%),
+                  #f1f5f9;
+      min-height: 100vh;
+    }
+    .fluent-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+  <!-- Barra Superior -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30">
+    <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#0067C0] text-white flex items-center justify-center shadow-sm">
+          <i class="ph-bold ph-car-profile text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 leading-tight">Seguimiento Técnico de Unidad</h1>
+          <p class="text-xs text-slate-500">Soporte Técnico Especializado · Automotor</p>
+        </div>
+      </div>
+      <span id="liveBadge" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> En vivo
+      </span>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 pt-6 space-y-5">
+
+    <!-- Buscador Manual (si el cliente abre sin enlace directo) -->
+    <section id="loginCard" class="fluent-card rounded-2xl p-6 sm:p-8 hidden">
+      <div class="text-center max-w-md mx-auto space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#0067C0] flex items-center justify-center mx-auto">
+          <i class="ph-bold ph-magnifying-glass text-2xl"></i>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">Consulta el estado de tu vehículo</h2>
+        <p class="text-sm text-slate-500">Ingresa el <strong>Código de Caso</strong> y el <strong>PIN de Seguridad</strong> enviados a tu correo electrónico.</p>
+      </div>
+      <form onsubmit="manualSearch(event)" class="max-w-md mx-auto mt-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Código de Caso</label>
+          <input type="text" id="inputCaseId" required placeholder="Ej: CASO-2026-101" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 bg-white text-sm font-semibold uppercase focus:outline-none focus:border-[#0067C0]" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">PIN de Acceso (4 dígitos)</label>
+          <input type="text" id="inputToken" required maxlength="6" placeholder="Ej: 4829" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 bg-white text-sm font-semibold tracking-widest focus:outline-none focus:border-[#0067C0]" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white font-semibold text-sm shadow-sm transition">
+          Ver Estado de mi Vehículo
+        </button>
+      </form>
+    </section>
+
+    <!-- Cargando -->
+    <section id="loadingCard" class="fluent-card rounded-2xl p-10 text-center space-y-3">
+      <i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[#0067C0]"></i>
+      <p class="text-sm font-medium text-slate-600">Consultando diagnóstico y avances en tiempo real...</p>
+    </section>
+
+    <!-- Error / No encontrado -->
+    <section id="errorCard" class="fluent-card rounded-2xl p-8 text-center space-y-4 hidden">
+      <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+        <i class="ph-bold ph-warning-circle text-2xl"></i>
+      </div>
+      <h2 class="text-lg font-bold text-slate-900">No pudimos validar el enlace de seguimiento</h2>
+      <p class="text-sm text-slate-600 max-w-md mx-auto">Verifica que el enlace de tu correo esté completo o ingresa manualmente tu Código de Caso y PIN.</p>
+      <button onclick="showManualForm()" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold">Ingresar Código Manualmente</button>
+    </section>
+
+    <!-- Vista Principal del Vehículo del Cliente -->
+    <div id="vehicleView" class="space-y-5 hidden">
+
+      <!-- Tarjeta Resumen del Vehículo -->
+      <section class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span id="vCaseId" class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-blue-100 text-[#0067C0]">CASO-2026-101</span>
+              <span id="vStatusBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800">En Proceso</span>
+            </div>
+            <h2 id="vTitle" class="text-lg sm:text-xl font-bold text-slate-900">Diagnóstico Técnico</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Estimado/a <strong id="vClientName" class="text-slate-700">Cliente</strong>, aquí tienes el avance de tu unidad.</p>
+          </div>
+          <button onclick="refreshData()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-1.5 shadow-sm">
+            <i class="ph-bold ph-arrows-clockwise"></i> Actualizar
+          </button>
+        </div>
+
+        <!-- Barra de Progreso -->
+        <div class="bg-slate-100/80 rounded-xl p-4 border border-slate-200/60">
+          <div class="flex justify-between items-center text-xs font-bold mb-2">
+            <span class="text-slate-600 uppercase tracking-wider">Avance Técnico General</span>
+            <span id="vProgressText" class="text-[#0067C0] text-sm">0%</span>
+          </div>
+          <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+            <div id="vProgressBar" class="h-full bg-[#0067C0] rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Datos Técnicos del Vehículo -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
+            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Modelo</span>
+            <span id="vModel" class="text-sm font-bold text-slate-800">-</span>
+          </div>
+          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
+            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Orden Taller (OR)</span>
+            <span id="vOr" class="text-sm font-bold text-slate-800">-</span>
+          </div>
+          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
+            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Chasis / VIN</span>
+            <span id="vVin" class="text-sm font-bold text-slate-800">-</span>
+          </div>
+          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
+            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Taller Asignado</span>
+            <span id="vWorkshop" class="text-sm font-bold text-slate-800 truncate block">-</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contacto Directo con Asesor de Servicios (WhatsApp) -->
+      <section id="advisorCard" class="fluent-card rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-emerald-500">
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+            <i class="ph-bold ph-user-circle text-2xl"></i>
+          </div>
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Asesor de Servicios Asignado</span>
+            <h3 id="vAdvisorName" class="text-base font-bold text-slate-900">Asesor Postventa</h3>
+            <p class="text-xs text-slate-500">¿Tienes alguna consulta sobre tu vehículo? Escríbele directamente.</p>
+          </div>
+        </div>
+        <a id="vWhatsappBtn" href="#" target="_blank" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition">
+          <i class="ph-bold ph-whatsapp-logo text-lg"></i> Mensaje por WhatsApp
+        </a>
+      </section>
+
+      <!-- Línea de Tiempo Cronológica -->
+      <section class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-clock-counter-clockwise text-lg text-[#0067C0]"></i>
+          <h3 class="text-base font-bold text-slate-900">Bitácora Cronológica de Trabajos Realizados</h3>
+        </div>
+        <div id="vTimeline" class="space-y-4 border-l-2 border-blue-200 ml-2.5 pl-5 py-1">
+          <!-- Avances dinámicos -->
+        </div>
+      </section>
+
+      <!-- Evidencia Multimedia Aprobada (Fotos y Videos) -->
+      <section id="mediaSection" class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4 hidden">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-images text-lg text-[#0067C0]"></i>
+          <h3 class="text-base font-bold text-slate-900">Evidencia Multimedia del Diagnóstico</h3>
+        </div>
+        <div id="vMediaGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Fotos y videos aprobados -->
+        </div>
+      </section>
+
+      <footer class="text-center text-xs text-slate-400 pt-2">
+        Sistema Oficial de Seguimiento Técnico · Los correos enviados por esta plataforma son automáticos y no admiten respuestas.
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb-l9yH87tg3_YzIn_ddTCyCZZ6rwilS9jKfc-daStrn8JIaQ62M2QcXuQFK0Gw8Tshg/exec";
+    let currentCaseId = "";
+    let currentToken = "";
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const caso = params.get("caso");
+      const token = params.get("token");
+
+      if (caso && token) {
+        currentCaseId = caso.trim().toUpperCase();
+        currentToken = token.trim();
+        fetchCaseData(currentCaseId, currentToken);
+      } else {
+        showManualForm();
+      }
+    });
+
+    function showManualForm() {
+      document.getElementById("loadingCard").classList.add("hidden");
+      document.getElementById("errorCard").classList.add("hidden");
+      document.getElementById("vehicleView").classList.add("hidden");
+      document.getElementById("loginCard").classList.remove("hidden");
+    }
+
+    function manualSearch(e) {
+      e.preventDefault();
+      currentCaseId = document.getElementById("inputCaseId").value.trim().toUpperCase();
+      currentToken = document.getElementById("inputToken").value.trim();
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("loadingCard").classList.remove("hidden");
+      fetchCaseData(currentCaseId, currentToken);
+    }
+
+    function refreshData() {
+      if (!currentCaseId || !currentToken) return;
+      document.getElementById("vehicleView").classList.add("hidden");
+      document.getElementById("loadingCard").classList.remove("hidden");
+      fetchCaseData(currentCaseId, currentToken);
+    }
+
+    async function fetchCaseData(caseId, token) {
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "getPublicCase", caseId: caseId, token: token })
+        });
+        const data = await res.json();
+        document.getElementById("loadingCard").classList.add("hidden");
+
+        if (data.status === "ok" && data.vehicle) {
+          renderVehicle(data.vehicle);
+        } else {
+          document.getElementById("errorCard").classList.remove("hidden");
+        }
+      } catch (err) {
+        document.getElementById("loadingCard").classList.add("hidden");
+        document.getElementById("errorCard").classList.remove("hidden");
+      }
+    }
+
+    function renderVehicle(v) {
+      document.getElementById("errorCard").classList.add("hidden");
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("vehicleView").classList.remove("hidden");
+
+      document.getElementById("vCaseId").textContent = v.caseId;
+      document.getElementById("vStatusBadge").textContent = v.status || "En Proceso";
+      document.getElementById("vTitle").textContent = v.title || "Soporte Técnico Vehicular";
+      document.getElementById("vClientName").textContent = v.clientName || "Cliente";
+
+      const prog = Number(v.progress) || 0;
+      document.getElementById("vProgressText").textContent = prog + "%";
+      document.getElementById("vProgressBar").style.width = prog + "%";
+
+      document.getElementById("vModel").textContent = v.model || "No especificado";
+      document.getElementById("vOr").textContent = v.orNumber || "En proceso";
+      document.getElementById("vVin").textContent = v.vin || "-";
+      document.getElementById("vWorkshop").textContent = v.workshop || "Automotor";
+
+      // Configurar WhatsApp del Asesor de Servicios
+      const advisorCard = document.getElementById("advisorCard");
+      if (v.advisorName || v.advisorWhatsapp) {
+        advisorCard.classList.remove("hidden");
+        document.getElementById("vAdvisorName").textContent = v.advisorName || "Asesor de Servicios";
+        let phone = (v.advisorWhatsapp || "").replace(/\D/g, "");
+        if (phone.startsWith("0")) phone = "595" + phone.substring(1);
+        const msg = encodeURIComponent(`Hola ${v.advisorName || ''}, te escribo por el seguimiento de mi vehículo (${v.model || ''}) - Caso ${v.caseId}.`);
+        document.getElementById("vWhatsappBtn").href = phone ? `https://wa.me/${phone}?text=${msg}` : "#";
+      } else {
+        advisorCard.classList.add("hidden");
+      }
+
+      // Renderizar Línea de Tiempo Cronológica
+      const timeline = document.getElementById("vTimeline");
+      const notes = Array.isArray(v.notes) ? v.notes : [];
+      if (notes.length === 0) {
+        timeline.innerHTML = `<p class="text-sm text-slate-500">Tu vehículo se encuentra en evaluación técnica. Te notificaremos por correo ante cada nuevo avance.</p>`;
+      } else {
+        timeline.innerHTML = notes.slice().reverse().map(n => `
+          <div class="relative">
+            <span class="absolute -left-[27px] top-1 w-3.5 h-3.5 rounded-full bg-[#0067C0] ring-4 ring-blue-50"></span>
+            <div class="bg-white/80 rounded-xl p-3.5 border border-slate-200/80 shadow-sm">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="text-xs font-bold text-[#0067C0]">Actualización Técnica</span>
+                <span class="text-[11px] font-medium text-slate-400">${escapeHtml(n.date || "")}</span>
+              </div>
+              <p class="text-sm text-slate-700 leading-relaxed">${escapeHtml(n.text)}</p>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Renderizar Fotos y Videos Aprobados
+      const mediaSection = document.getElementById("mediaSection");
+      const mediaGrid = document.getElementById("vMediaGrid");
+      const media = Array.isArray(v.media) ? v.media : [];
+      if (media.length === 0) {
+        mediaSection.classList.add("hidden");
+      } else {
+        mediaSection.classList.remove("hidden");
+        mediaGrid.innerHTML = media.map(m => {
+          const isImg = (m.type === "image" || (m.url && m.url.includes("export=view")));
+          return `
+            <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
+              ${isImg
+                ? `<a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block aspect-video bg-slate-100 overflow-hidden">
+                     <img src="${escapeHtml(m.url)}" alt="${escapeHtml(m.name)}" class="w-full h-full object-cover hover:scale-105 transition" />
+                   </a>`
+                : `<div class="aspect-video bg-slate-900 text-white flex flex-col items-center justify-center p-4 text-center">
+                     <i class="ph-bold ph-video-camera text-3xl text-blue-400 mb-2"></i>
+                     <span class="text-xs font-semibold line-clamp-1">${escapeHtml(m.name)}</span>
+                   </div>`
+              }
+              <div class="p-3 flex items-center justify-between gap-2 bg-white">
+                <span class="text-xs font-semibold text-slate-700 truncate">${escapeHtml(m.name)}</span>
+                <a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="text-xs font-bold text-[#0067C0] hover:underline shrink-0">Ver archivo</a>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+  </script>
+</body>
+</html>

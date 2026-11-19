@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoTech Ops | Soporte Técnico y Entrenamiento Automotor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    :root {
+      --accent: #0067C0;
+      --accent-hover: #005a9e;
+      --accent-soft: #eff6ff;
+    }
+    body.mode-training {
+      --accent: #B45309;
+      --accent-hover: #92400E;
+      --accent-soft: #fffbeb;
+    }
+    body {
+      font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 10% 10%, #dbeafe 0%, transparent 40%),
+                  radial-gradient(circle at 90% 85%, #e0e7ff 0%, transparent 45%),
+                  #f3f4f6;
+      min-height: 100vh;
+    }
+    body.mode-training {
+      background: radial-gradient(circle at 10% 10%, #fef3c7 0%, transparent 40%),
+                  radial-gradient(circle at 90% 85%, #ffedd5 0%, transparent 45%),
+                  #f3f4f6;
+    }
+    .win-mica {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+    }
+    .btn-accent {
+      background-color: var(--accent);
+      color: #ffffff;
+    }
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+    .text-accent {
+      color: var(--accent);
+    }
+    .win-tab {
+      position: relative;
+    }
+    .win-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 3px;
+      border-radius: 999px;
+      background-color: var(--accent);
+    }
+    .touch-target {
+      min-height: 42px;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased pb-16">
+
+  <!-- Toast Flotante -->
+  <div id="toastBox" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- Header Principal -->
+  <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <!-- Marca + Indicador de Dispositivo -->
+        <div class="flex items-center gap-3">
+          <div id="brandIcon" class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center shadow-sm transition-colors">
+            <i class="ph-bold ph-wrench text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900">AutoTech Ops</h1>
+              <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Clic para alternar vista Celular/PC">
+                <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
+              </button>
+            </div>
+            <p id="modeSubtitle" class="text-xs text-slate-500">Soporte Técnico · Red Oficial y Autorizada Automotor</p>
+          </div>
+        </div>
+
+        <!-- Selector de 2 Modos Completamente Separados -->
+        <div class="flex items-center bg-slate-200/75 p-1 rounded-xl w-full sm:w-auto">
+          <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#0067C0] shadow-sm transition">
+            <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
+          </button>
+          <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
+            <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Herramientas y Sesiones -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+        <!-- Pestañas -->
+        <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
+          <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
+            <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
+          </button>
+          <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+            <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
+          </button>
+          <button onclick="switchTab('board')" id="tab-board" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+            <i class="ph-bold ph-kanban text-accent"></i> Tablero
+          </button>
+        </nav>
+
+        <!-- Controles de Equipo, Nube, Talleres y Nueva Acción -->
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <select id="activeUserSelect" onchange="handleUserChange(this.value)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-none">
+          </select>
+
+          <button onclick="openUsersModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Gestión de Usuarios y PIN">
+            <i class="ph-bold ph-users text-accent"></i> <span class="hidden md:inline">Usuarios</span>
+          </button>
+
+          <button id="btnWorkshops" onclick="openWorkshopsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Red de Talleres Propios y Autorizados">
+            <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden md:inline">Talleres (33)</span>
+          </button>
+
+          <button onclick="openPortalConfigModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Configurar URL pública de GitHub para Clientes">
+            <i class="ph-bold ph-globe text-emerald-600"></i> <span class="hidden md:inline">URL Cliente</span>
+          </button>
+
+          <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar con Google Drive">
+            <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i> <span class="hidden lg:inline">Nube</span>
+          </button>
+
+          <button onclick="exportCSV()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Descargar reporte Excel/CSV">
+            <i class="ph-bold ph-file-csv text-accent"></i>
+          </button>
+
+          <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
+            <i class="ph-bold ph-plus"></i> <span id="btnNewActionText">Nuevo Soporte</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 pt-6 space-y-6">
+
+    <!-- VISTA 1: RESUMEN & KPIs -->
+    <section id="view-dashboard" class="space-y-6">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" id="kpiGrid"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="win-mica rounded-2xl p-5 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i class="ph-bold ph-list-checks text-accent"></i> <span id="subcatChartTitle">Distribución por Categoría</span>
+          </h3>
+          <div id="subcatBreakdown" class="space-y-2.5"></div>
+        </div>
+
+        <div class="win-mica rounded-2xl p-5 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i class="ph-bold ph-users-three text-accent"></i> Carga y Avance por Integrante
+          </h3>
+          <div id="teamBreakdown" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: CALENDARIO -->
+    <section id="view-calendar" class="hidden space-y-4">
+      <div class="win-mica rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-left"></i></button>
+          <h2 id="calMonthTitle" class="text-base sm:text-lg font-bold text-slate-900 min-w-[170px] text-center capitalize"></h2>
+          <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-right"></i></button>
+        </div>
+        <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">Hoy</button>
+      </div>
+
+      <div class="win-mica rounded-2xl p-3 sm:p-5">
+        <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 pb-2">
+          <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+        </div>
+        <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
+      </div>
+    </section>
+
+    <!-- VISTA 3: TABLERO KANBAN -->
+    <section id="view-board" class="hidden space-y-4">
+      <!-- Filtros -->
+      <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
+        <div class="relative flex-1 min-w-[200px]">
+          <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, OR, VIN, modelo, taller..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
+        </div>
+        <select id="filterUser" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
+        <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[220px]"></select>
+      </div>
+
+      <!-- Columnas Kanban -->
+      <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+    </section>
+
+  </main>
+
+  <!-- Botón Flotante en Celular -->
+  <button id="mobileFab" onclick="openTaskModal()" class="hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full btn-accent shadow-xl flex items-center justify-center text-2xl">
+    <i class="ph-bold ph-plus"></i>
+  </button>
+
+  <!-- MODAL 1: CREAR / EDITAR ACCIÓN -->
+  <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 id="taskModalTitle" class="text-base font-bold text-slate-900">Nueva Acción</h3>
+        <button onclick="closeModal('taskModal')" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <form onsubmit="saveTask(event)" class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
+        <input type="hidden" id="editTaskId" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Título del Caso / Acción *</label>
+            <input type="text" id="tTitle" required placeholder="Ej: Diagnóstico falla inyección / Capacitación híbridos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Categoría Especializada *</label>
+            <select id="tSubcategory" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Responsable Asignado *</label>
+            <select id="tAssignee" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
+          </div>
+
+          <!-- Taller de Origen (Solo Modo Soporte) -->
+          <div id="workshopFieldBox" class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Taller de Origen (Propio o Autorizado Automotor) *</label>
+            <select id="tWorkshop" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha Programada *</label>
+            <input type="date" id="tDate" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Estado</label>
+            <select id="tStatus" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Proceso">En Proceso</option>
+              <option value="En Revisión">En Revisión</option>
+              <option value="Completado">Completado</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Campos Automotrices (Solo Modo Soporte) -->
+        <div id="vehicleFieldsBox" class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
+            <input type="text" id="tOrNumber" placeholder="OR-45120" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Chasis / VIN (7)</label>
+            <input type="text" id="tVin" maxlength="17" placeholder="KNA8921" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo Vehículo</label>
+            <input type="text" id="tModel" placeholder="Hyundai Tucson" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Kilometraje</label>
+            <input type="text" id="tKm" placeholder="42.500 km" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          </div>
+        </div>
+
+        <!-- Campos Entrenamiento (Solo Modo Entrenamiento) -->
+        <div id="trainingFieldsBox" class="hidden bg-amber-50/60 p-3.5 rounded-xl border border-amber-200/70 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Duración (Horas)</label>
+            <input type="number" id="tHours" min="1" max="100" value="4" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Grupo Técnico</label>
+            <input type="text" id="tGroup" placeholder="Técnicos Nivel 2" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Sede / Aula</label>
+            <input type="text" id="tLocation" placeholder="Centro Entrenamiento Artigas" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Descripción / Alcance Técnico</label>
+          <textarea id="tDesc" rows="2" placeholder="Detalles iniciales del requerimiento..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+          <button type="button" onclick="closeModal('taskModal')" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">Cancelar</button>
+          <button type="submit" id="btnSaveTask" class="px-5 py-2.5 rounded-xl btn-accent text-xs font-bold shadow-sm">Guardar y Crear Carpeta Drive</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: DETALLE DE CASO, DRIVE MULTIMEDIA, BITÁCORA Y PORTAL CLIENTE -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-2">
+          <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#0067C0]">CASO-2026-101</span>
+          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[220px] sm:max-w-md">Detalle</h3>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i class="ph-bold ph-user-focus"></i> Portal Cliente
+          </button>
+          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
+          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar"><i class="ph-bold ph-trash"></i></button>
+          <button onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
+        </div>
+      </div>
+
+      <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto">
+        <!-- Info Superior + WhatsApp Interno -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 text-xs">
+          <div class="space-y-1">
+            <div id="dMetaLine1" class="font-bold text-slate-800"></div>
+            <div id="dMetaLine2" class="text-slate-500"></div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5">
+              <i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir Taller
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL DESPLEGABLE: PORTAL WEB DEL CLIENTE (TRACKING EN VIVO) -->
+        <div id="clientPortalPanel" class="hidden bg-emerald-50/70 border-2 border-emerald-500/40 rounded-2xl p-4 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 class="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
+                <i class="ph-bold ph-broadcast text-emerald-600"></i> Portal Público de Seguimiento para el Cliente
+              </h4>
+              <p class="text-xs text-emerald-800">El cliente recibirá un correo automático (no-reply) con enlace en vivo cada vez que publiques una actualización.</p>
+            </div>
+            <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200">
+              <input type="checkbox" id="cpEnabled" class="w-4 h-4 accent-emerald-600" />
+              <span class="text-xs font-bold text-slate-800">Habilitar Portal</span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre del Cliente *</label>
+              <input type="text" id="cpClientName" placeholder="Ej: Sr. Carlos Benítez" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Correo Electrónico del Cliente *</label>
+              <input type="email" id="cpClientEmail" placeholder="cliente@correo.com" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Asesor de Servicios Asignado *</label>
+              <input type="text" id="cpAdvisorName" placeholder="Ej: Lic. Marcos Villalba" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Asesor (con código país) *</label>
+              <input type="text" id="cpAdvisorWhatsapp" placeholder="595981123456" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-200/80">
+            <div class="text-xs text-slate-700">
+              PIN de Acceso Cliente: <strong id="cpTokenDisplay" class="font-mono bg-white px-2 py-0.5 rounded border border-slate-300">----</strong>
+              <button type="button" onclick="copyClientPortalLink()" class="ml-2 text-emerald-700 font-bold hover:underline">Copiar Link Cliente</button>
+            </div>
+            <button type="button" onclick="saveClientPortalConfig(true)" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+              <i class="ph-bold ph-paper-plane-tilt"></i> Guardar y Enviar Correo al Cliente
+            </button>
+          </div>
+        </div>
+
+        <!-- Control de Avance -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs font-bold">
+            <span>Progreso Técnico: <span id="dProgressVal" class="text-accent">0%</span></span>
+            <select id="dStatusSelect" onchange="updateTaskStatusQuick(this.value)" class="px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-bold bg-white">
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Proceso">En Proceso</option>
+              <option value="En Revisión">En Revisión</option>
+              <option value="Completado">Completado</option>
+            </select>
+          </div>
+          <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#0067C0]" />
+        </div>
+
+        <!-- Carpeta Google Drive y Evidencia Multimedia -->
+        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
+                <i class="ph-bold ph-google-drive-logo text-blue-600 text-base"></i> Carpeta Google Drive del Caso
+              </h4>
+              <p class="text-[11px] text-slate-500">Marca la casilla "Visible Cliente" en las fotos/videos que desees mostrar en su portal.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <a id="dDriveFolderBtn" href="https://drive.google.com" target="_blank" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <i class="ph-bold ph-folder-open text-amber-500"></i> Abrir Drive
+              </a>
+              <label class="px-3 py-1.5 rounded-xl btn-accent text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                <i class="ph-bold ph-upload-simple"></i> Subir Foto/PDF
+                <input type="file" id="dFileInput" onchange="uploadMediaToDrive(event)" class="hidden" accept="image/*,application/pdf,video/*" />
+              </label>
+            </div>
+          </div>
+          <div id="dMediaGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
+        </div>
+
+        <!-- Bitácora Cronológica -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase text-slate-700">Bitácora de Avances Técnicos</h4>
+          <form onsubmit="addTaskNote(event)" class="space-y-2">
+            <div class="flex gap-2">
+              <input type="text" id="newNoteText" required placeholder="Registrar hallazgo técnico, prueba realizada o avance..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+              <button type="submit" class="px-4 py-2.5 rounded-xl btn-accent text-xs font-bold">Registrar</button>
+            </div>
+            <label id="noteClientVisLabel" class="inline-flex items-center gap-2 text-xs text-emerald-800 font-semibold cursor-pointer">
+              <input type="checkbox" id="newNoteClientVisible" class="w-4 h-4 accent-emerald-600" />
+              Publicar este avance en el Portal del Cliente y notificarle por correo
+            </label>
+          </form>
+          <div id="dNotesList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: GESTIÓN DE USUARIOS Y PIN -->
+  <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="text-base font-bold text-slate-900">Registro de Usuarios y Seguridad</h3>
+        <button onclick="closeModal('usersModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-5 space-y-4">
+        <form onsubmit="addNewUser(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <input type="text" id="uName" required placeholder="Nombre y Apellido" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <input type="email" id="uEmail" required placeholder="Correo electrónico" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <select id="uRole" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+            <option value="Usuario">Usuario</option>
+            <option value="Administrador">Administrador</option>
+          </select>
+          <button type="submit" class="px-3 py-2 rounded-lg btn-accent text-xs font-bold">Agregar Usuario</button>
+        </form>
+        <div id="usersList" class="space-y-2 max-h-48 overflow-y-auto"></div>
+        <div class="pt-3 border-t border-slate-200 flex items-center justify-between gap-2">
+          <span class="text-xs font-bold text-slate-700">PIN Administrador (4 dígitos):</span>
+          <div class="flex gap-2">
+            <input type="text" id="adminPinInput" maxlength="4" class="w-20 px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono text-center" />
+            <button onclick="saveAdminPin()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-bold">Actualizar PIN</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: RED DE TALLERES PROPIOS Y AUTORIZADOS -->
+  <div id="workshopsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="text-base font-bold text-slate-900">Talleres Propios y Autorizados Automotor</h3>
+        <button onclick="closeModal('workshopsModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-5 space-y-4">
+        <form onsubmit="addWorkshop(event)" class="flex flex-wrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <input type="text" id="wName" required placeholder="Nombre del Taller" class="flex-1 min-w-[150px] px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <input type="text" id="wCity" required placeholder="Ciudad" class="w-32 px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <select id="wType" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
+            <option value="Propio">Propio</option>
+            <option value="Autorizado">Autorizado</option>
+          </select>
+          <button type="submit" class="px-3 py-2 rounded-lg btn-accent text-xs font-bold">Añadir</button>
+        </form>
+        <div id="workshopsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: CONFIGURAR URL DE GITHUB PARA PORTAL CLIENTE -->
+  <div id="portalConfigModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="text-base font-bold text-slate-900">Enlace Web del Portal Cliente (GitHub)</h3>
+        <button onclick="closeModal('portalConfigModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-5 space-y-4">
+        <p class="text-xs text-slate-600">Pega aquí la URL pública donde subiste <strong>cliente.html</strong> en GitHub Pages. Este enlace se enviará automáticamente por correo a tus clientes.</p>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">URL Pública de cliente.html</label>
+          <input type="url" id="clientPortalBaseUrlInput" placeholder="https://tu-usuario.github.io/autotech-soporte/cliente.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs" />
+        </div>
+        <div class="flex justify-end gap-2">
+          <button onclick="closeModal('portalConfigModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Cancelar</button>
+          <button onclick="savePortalBaseUrl()" class="px-4 py-2 rounded-xl btn-accent text-xs font-bold">Guardar URL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb-l9yH87tg3_YzIn_ddTCyCZZ6rwilS9jKfc-daStrn8JIaQ62M2QcXuQFK0Gw8Tshg/exec";
+
+    const SUBCATEGORIES = {
+      soporte: [
+        "Diagnóstico Especial",
+        "Solicitud de Informe Técnico",
+        "Consultoría Técnica al Cliente",
+        "Mediación y Soporte Postventa (Cliente-Soporte)",
+        "Consulta Técnica Fábrica (DISS/TAC)",
+        "Garantía Compleja",
+        "Boletín Técnico / Campaña",
+        "Asistencia en Bahía Taller"
+      ],
+      entrenamiento: [
+        "Entrenamiento Presencial",
+        "Taller Práctico en Bahía",
+        "Curso E-Learning / Plataforma",
+        "Certificación Técnica de Marca",
+        "Evaluación y Nivelación Técnica"
+      ]
+    };
+
+    const DEFAULT_WORKSHOPS = [
+      { id: "w1", name: "Automotor Central", city: "Asunción", type: "Propio" },
+      { id: "w2", name: "Automotor Plaza - Taller", city: "Asunción", type: "Propio" },
+      { id: "w3", name: "Quick Service Paseo La Galería", city: "Asunción", type: "Propio" },
+      { id: "w4", name: "Automotor - Servicio Pesado", city: "Asunción", type: "Propio" },
+      { id: "w5", name: "Automotor Encarnación", city: "Encarnación", type: "Propio" },
+      { id: "w6", name: "Automotor CDE", city: "Ciudad del Este", type: "Propio" },
+      { id: "w7", name: "Automotor Hernandarias", city: "Hernandarias", type: "Propio" },
+      { id: "w8", name: "LC Car's", city: "San Estanislao", type: "Autorizado" },
+      { id: "w9", name: "Cristian Paats S.A.", city: "Coronel Oviedo", type: "Autorizado" },
+      { id: "w10", name: "Autocentro San Roque", city: "Caaguazú", type: "Autorizado" },
+      { id: "w11", name: "Industrial Chaco", city: "Filadelfia", type: "Autorizado" },
+      { id: "w12", name: "Autocenter", city: "Loma Plata", type: "Autorizado" },
+      { id: "w13", name: "Braun S.R.L.", city: "Colonia Neuland", type: "Autorizado" },
+      { id: "w14", name: "JuanK Hohenau", city: "Hohenau", type: "Autorizado" },
+      { id: "w15", name: "Autodiesel Paraná", city: "Katueté", type: "Autorizado" },
+      { id: "w16", name: "Bazzo Servicios Automotivos", city: "Santa Rita", type: "Autorizado" },
+      { id: "w17", name: "Taller San Carlos", city: "Concepción", type: "Autorizado" },
+      { id: "w18", name: "Motor Mec", city: "Pilar", type: "Autorizado" },
+      { id: "w19", name: "Motormack", city: "Loma Plata", type: "Autorizado" },
+      { id: "w20", name: "LubriMor Servicios & Repuestos", city: "San Ignacio", type: "Autorizado" },
+      { id: "w21", name: "Fogasa Auto Parts S.A.", city: "Santa Rosa del Aguaray", type: "Autorizado" },
+      { id: "w22", name: "Autocentro LB", city: "Villarrica", type: "Autorizado" },
+      { id: "w23", name: "Alineación Río Verde", city: "Colonia Río Verde", type: "Autorizado" },
+      { id: "w24", name: "Norte Autos", city: "Pedro Juan Caballero", type: "Autorizado" },
+      { id: "w25", name: "Altona Automotores", city: "Campo 8", type: "Autorizado" },
+      { id: "w26", name: "Óptima Automecánica", city: "Curuguaty", type: "Autorizado" },
+      { id: "w27", name: "Coopasam", city: "Minga Porã", type: "Autorizado" },
+      { id: "w28", name: "LC Car's Caacupé", city: "Caacupé", type: "Autorizado" },
+      { id: "w29", name: "Rectificadora Campo 9", city: "Campo 9", type: "Autorizado" },
+      { id: "w30", name: "No Limits", city: "Campo 9", type: "Autorizado" },
+      { id: "w31", name: "Centucar", city: "Saltos del Guairá", type: "Autorizado" },
+      { id: "w32", name: "San Pablo Cars Truck Center", city: "Eusebio Ayala", type: "Autorizado" },
+      { id: "w33", name: "Autocentro Zoto", city: "Villarrica", type: "Autorizado" }
+    ];
+
+    const DEFAULT_USERS = [
+      { id: "u1", name: "Coordinador Técnico (Admin)", email: "soporte.automotortaller@gmail.com", role: "Administrador" },
+      { id: "u2", name: "Especialista Soporte 1", email: "soporte.automotortaller@gmail.com", role: "Usuario" },
+      { id: "u3", name: "Especialista Soporte 2", email: "soporte.automotortaller@gmail.com", role: "Usuario" }
+    ];
+
+    let state = {
+      tasks: [],
+      users: DEFAULT_USERS,
+      workshops: DEFAULT_WORKSHOPS,
+      adminPin: "1234",
+      clientPortalBaseUrl: ""
+    };
+
+    let appMode = "soporte"; // 'soporte' | 'entrenamiento'
+    let activeTab = "dashboard";
+    let activeUserId = "u1";
+    let currentDetailId = null;
+    let calDate = new Date();
+    let isMobileMode = window.innerWidth < 768;
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function showToast(msg, type = "info") {
+      const box = document.getElementById("toastBox");
+      const el = document.createElement("div");
+      const colors = {
+        success: "bg-emerald-600 text-white",
+        warning: "bg-amber-600 text-white",
+        info: "bg-slate-900 text-white"
+      };
+      el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 ${colors[type] || colors.info}`;
+      el.innerHTML = `<i class="ph-bold ph-info"></i> <span>${escapeHtml(msg)}</span>`;
+      box.appendChild(el);
+      setTimeout(() => el.remove(), 3800);
+    }
+
+    // Detección de Dispositivo
+    function updateDeviceLayout() {
+      const badge = document.getElementById("deviceBadge");
+      const fab = document.getElementById("mobileFab");
+      if (isMobileMode) {
+        badge.innerHTML = `<i class="ph-bold ph-device-mobile"></i> <span>Celular</span>`;
+        fab.classList.remove("hidden");
+      } else {
+        badge.innerHTML = `<i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>`;
+        fab.classList.add("hidden");
+      }
+      renderCalendar();
+      renderBoard();
+    }
+
+    function toggleDevicePreview() {
+      isMobileMode = !isMobileMode;
+      updateDeviceLayout();
+    }
+
+    window.addEventListener("resize", () => {
+      const mobileNow = window.innerWidth < 768;
+      if (mobileNow !== isMobileMode) {
+        isMobileMode = mobileNow;
+        updateDeviceLayout();
+      }
+    });
+
+    // Inicialización
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("autotech_state_v4");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+          if (!state.workshops || state.workshops.length === 0) state.workshops = DEFAULT_WORKSHOPS;
+        } catch (e) {}
+      }
+      if (state.tasks.length === 0) {
+        const todayStr = new Date().toISOString().split("T")[0];
+        state.tasks = [
+          {
+            id: "t1",
+            caseId: "CASO-2026-101",
+            mode: "soporte",
+            title: "Diagnóstico vibración caja automática DCT",
+            subcategory: "Diagnóstico Especial",
+            assigneeId: "u2",
+            workshop: "Automotor Central (Propio)",
+            date: todayStr,
+            status: "En Proceso",
+            progress: 50,
+            orNumber: "OR-88412",
+            vehicleVin: "KMH8821",
+            vehicleModel: "Hyundai Tucson 2.0",
+            vehicleKm: "38.200 km",
+            description: "Cliente reporta tironeo en salida en frío.",
+            driveFolderId: "",
+            driveFolderUrl: "https://drive.google.com",
+            notes: [{ date: new Date().toLocaleString(), text: "Escaneo de códigos TCM y prueba de ruta inicial.", clientVisible: true }],
+            media: [],
+            clientPortal: { enabled: true, token: "4829", clientName: "Carlos Benítez", clientEmail: "", advisorName: "Marcos Villalba", advisorWhatsapp: "595981000000" }
+          }
+        ];
+      }
+      syncSelectors();
+      updateDeviceLayout();
+      renderAll();
+      syncFromCloud(false);
+    });
+
+    function saveLocalAndCloud() {
+      localStorage.setItem("autotech_state_v4", JSON.stringify(state));
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "saveState", state: state })
+      }).catch(() => {});
+    }
+
+    async function syncFromCloud(manual = false) {
+      const icon = document.getElementById("syncIcon");
+      if (icon) icon.className = "ph-bold ph-arrows-clockwise animate-spin text-blue-600";
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "loadState" })
+        });
+        const data = await res.json();
+        if (data.status === "ok" && data.state) {
+          state = { ...state, ...data.state };
+          localStorage.setItem("autotech_state_v4", JSON.stringify(state));
+          syncSelectors();
+          renderAll();
+          if (manual) showToast("Datos sincronizados con Google Drive", "success");
+        } else if (data.status === "empty") {
+          saveLocalAndCloud();
+        }
+        if (icon) icon.className = "ph-bold ph-cloud-check text-emerald-600";
+      } catch (e) {
+        if (icon) icon.className = "ph-bold ph-cloud-slash text-amber-500";
+        if (manual) showToast("Trabajando en modo local sin conexión", "warning");
+      }
+    }
+
+    // Cambio de Modo (Soporte vs Entrenamiento)
+    function switchAppMode(mode) {
+      appMode = mode;
+      const body = document.body;
+      const btnS = document.getElementById("btnModeSoporte");
+      const btnE = document.getElementById("btnModeEntrenamiento");
+      const brandIcon = document.getElementById("brandIcon");
+
+      if (mode === "soporte") {
+        body.classList.remove("mode-training");
+        btnS.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#0067C0] shadow-sm transition";
+        btnE.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
+        brandIcon.innerHTML = `<i class="ph-bold ph-wrench text-xl"></i>`;
+        document.getElementById("modeSubtitle").textContent = "Soporte Técnico · Red Oficial y Autorizada Automotor";
+        document.getElementById("btnNewActionText").textContent = "Nuevo Soporte";
+        document.getElementById("btnWorkshops").classList.remove("hidden");
+        document.getElementById("filterWorkshop").classList.remove("hidden");
+      } else {
+        body.classList.add("mode-training");
+        btnE.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#B45309] shadow-sm transition";
+        btnS.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
+        brandIcon.innerHTML = `<i class="ph-bold ph-graduation-cap text-xl"></i>`;
+        document.getElementById("modeSubtitle").textContent = "Entrenamiento Técnico · Plan de Capacitación y Certificación";
+        document.getElementById("btnNewActionText").textContent = "Nuevo Entrenamiento";
+        document.getElementById("btnWorkshops").classList.add("hidden");
+        document.getElementById("filterWorkshop").classList.add("hidden");
+      }
+      renderAll();
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      ["dashboard", "calendar", "board"].forEach(t => {
+        document.getElementById("view-" + t).classList.toggle("hidden", t !== tab);
+        const btn = document.getElementById("tab-" + t);
+        btn.classList.toggle("active", t === tab);
+        btn.classList.toggle("text-slate-900", t === tab);
+        btn.classList.toggle("text-slate-600", t !== tab);
+      });
+      renderAll();
+    }
+
+    function getFilteredModeTasks() {
+      return state.tasks.filter(t => (t.mode || "soporte") === appMode);
+    }
+
+    function syncSelectors() {
+      const userSel = document.getElementById("activeUserSelect");
+      const filterUser = document.getElementById("filterUser");
+      const tAssignee = document.getElementById("tAssignee");
+
+      userSel.innerHTML = state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)} (${u.role})</option>`).join("");
+      userSel.value = activeUserId;
+
+      filterUser.innerHTML = `<option value="">Todos los Responsables</option>` +
+        state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
+
+      tAssignee.innerHTML = state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
+
+      const filterW = document.getElementById("filterWorkshop");
+      const tW = document.getElementById("tWorkshop");
+      const propios = state.workshops.filter(w => w.type === "Propio");
+      const autorizados = state.workshops.filter(w => w.type === "Autorizado");
+
+      const wOptions = `
+        <optgroup label="Talleres Propios (Automotor)">
+          ${propios.map(w => `<option value="${escapeHtml(w.name)} (${w.type})">${escapeHtml(w.name)} - ${escapeHtml(w.city)}</option>`).join("")}
+        </optgroup>
+        <optgroup label="Talleres Autorizados (Red Nacional)">
+          ${autorizados.map(w => `<option value="${escapeHtml(w.name)} (${w.type})">${escapeHtml(w.name)} - ${escapeHtml(w.city)}</option>`).join("")}
+        </optgroup>
+      `;
+      tW.innerHTML = wOptions;
+      filterW.innerHTML = `<option value="">Todos los Talleres</option>` + wOptions;
+    }
+
+    function handleUserChange(newId) {
+      const targetUser = state.users.find(u => u.id === newId);
+      if (targetUser && targetUser.role === "Administrador") {
+        const pin = prompt("Ingresa el PIN de Administrador (por defecto 1234):");
+        if (pin !== state.adminPin) {
+          showToast("PIN incorrecto", "warning");
+          document.getElementById("activeUserSelect").value = activeUserId;
+          return;
+        }
+      }
+      activeUserId = newId;
+      showToast(`Sesión activa: ${targetUser.name}`, "info");
+    }
+
+    function isCurrentAdmin() {
+      const u = state.users.find(x => x.id === activeUserId);
+      return u && u.role === "Administrador";
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderCalendar();
+      renderBoard();
+    }
+
+    // DASHBOARD
+    function renderDashboard() {
+      const list = getFilteredModeTasks();
+      const total = list.length;
+      const done = list.filter(t => t.status === "Completado").length;
+      const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Revisión").length;
+      const avg = total ? Math.round(list.reduce((a, b) => a + (Number(b.progress) || 0), 0) / total) : 0;
+
+      const fourthCard = appMode === "entrenamiento"
+        ? { label: "Horas Programadas", val: list.reduce((a, b) => a + (Number(b.hours) || 0), 0) + " hs", icon: "ph-clock" }
+        : { label: "Con Portal Cliente", val: list.filter(t => t.clientPortal && t.clientPortal.enabled).length, icon: "ph-broadcast" };
+
+      const kpis = [
+        { label: appMode === "soporte" ? "Casos de Soporte" : "Capacitaciones", val: total, icon: "ph-folder-open" },
+        { label: "En Ejecución", val: inProg, icon: "ph-gear-six" },
+        { label: "Completados", val: done, icon: "ph-check-circle" },
+        { label: fourthCard.label, val: fourthCard.val, icon: fourthCard.icon }
+      ];
+
+      document.getElementById("kpiGrid").innerHTML = kpis.map(k => `
+        <div class="win-mica rounded-2xl p-4 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-semibold text-slate-500">${k.label}</span>
+            <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${k.val}</div>
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-accent shadow-sm">
+            <i class="ph-bold ${k.icon} text-xl"></i>
+          </div>
+        </div>
+      `).join("");
+
+      const cats = SUBCATEGORIES[appMode];
+      document.getElementById("subcatBreakdown").innerHTML = cats.map(c => {
+        const count = list.filter(t => t.subcategory === c).length;
+        const pct = total ? Math.round((count / total) * 100) : 0;
+        return `
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span class="text-slate-700 truncate pr-2">${escapeHtml(c)}</span>
+              <span class="text-slate-500">${count} (${pct}%)</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div class="h-full btn-accent rounded-full" style="width:${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("teamBreakdown").innerHTML = state.users.map(u => {
+        const uTasks = list.filter(t => t.assigneeId === u.id);
+        const uAvg = uTasks.length ? Math.round(uTasks.reduce((a, b) => a + (Number(b.progress) || 0), 0) / uTasks.length) : 0;
+        return `
+          <div class="bg-white/70 p-3 rounded-xl border border-slate-200/70 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-slate-800">${escapeHtml(u.name)}</div>
+              <div class="text-[11px] text-slate-500">${uTasks.length} asignados · Avance promedio ${uAvg}%</div>
+            </div>
+            <span class="text-xs font-extrabold text-accent">${uAvg}%</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // CALENDARIO
+    function changeMonth(delta) {
+      calDate.setMonth(calDate.getMonth() + delta);
+      renderCalendar();
+    }
+    function goToday() {
+      calDate = new Date();
+      renderCalendar();
+    }
+    function renderCalendar() {
+      const year = calDate.getFullYear();
+      const month = calDate.getMonth();
+      document.getElementById("calMonthTitle").textContent = calDate.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const offset = firstDay === 0 ? 6 : firstDay - 1;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const list = getFilteredModeTasks();
+      const todayStr = new Date().toISOString().split("T")[0];
+
+      let html = "";
+      for (let i = 0; i < offset; i++) {
+        html += `<div class="min-h-[64px] sm:min-h-[96px] rounded-xl bg-slate-100/40"></div>`;
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        const dayTasks = list.filter(t => t.date === dateStr);
+        const isToday = dateStr === todayStr;
+
+        html += `
+          <div onclick="openTaskModal('${dateStr}')" class="min-h-[64px] sm:min-h-[96px] p-1.5 sm:p-2 rounded-xl bg-white/80 hover:bg-white border ${isToday ? 'border-2 border-blue-600' : 'border-slate-200/70'} cursor-pointer transition flex flex-col justify-between">
+            <span class="text-xs font-bold ${isToday ? 'text-blue-600' : 'text-slate-700'}">${d}</span>
+            <div class="space-y-1 mt-1">
+              ${isMobileMode
+                ? `<div class="flex flex-wrap gap-1">${dayTasks.map(() => `<span class="w-2 h-2 rounded-full btn-accent"></span>`).join("")}</div>`
+                : dayTasks.slice(0, 2).map(t => `
+                    <div onclick="event.stopPropagation(); openDetailModal('${t.id}')" class="text-[10px] font-bold px-1.5 py-0.5 rounded btn-accent truncate">
+                      ${escapeHtml(t.caseId)}: ${escapeHtml(t.title)}
+                    </div>
+                  `).join("") + (dayTasks.length > 2 ? `<div class="text-[10px] font-bold text-slate-500">+${dayTasks.length - 2} más</div>` : "")
+              }
+            </div>
+          </div>
+        `;
+      }
+      document.getElementById("calendarGrid").innerHTML = html;
+    }
+
+    // TABLERO KANBAN
+    function renderBoard() {
+      const q = (document.getElementById("searchInput").value || "").toLowerCase();
+      const uFilter = document.getElementById("filterUser").value;
+      const wFilter = document.getElementById("filterWorkshop").value;
+
+      const list = getFilteredModeTasks().filter(t => {
+        if (uFilter && t.assigneeId !== uFilter) return false;
+        if (appMode === "soporte" && wFilter && t.workshop !== wFilter) return false;
+        if (q) {
+          const hay = `${t.caseId} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const cols = ["Pendiente", "En Proceso", "En Revisión", "Completado"];
+      document.getElementById("kanbanContainer").innerHTML = cols.map(col => {
+        const colTasks = list.filter(t => t.status === col);
+        return `
+          <div ondragover="event.preventDefault()" ondrop="handleDrop(event, '${col}')" class="win-mica rounded-2xl p-3.5 space-y-3 min-h-[260px]">
+            <div class="flex items-center justify-between px-1">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">${col}</h3>
+              <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-white text-slate-700 border border-slate-200">${colTasks.length}</span>
+            </div>
+            <div class="space-y-2.5">
+              ${colTasks.map(t => {
+                const assignee = state.users.find(u => u.id === t.assigneeId);
+                const isPropio = (t.workshop || "").includes("(Propio)");
+                return `
+                  <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-sm hover:shadow-md cursor-pointer transition space-y-2.5">
+                    <div class="flex items-center justify-between gap-1.5">
+                      <span class="text-[11px] font-extrabold text-accent">${escapeHtml(t.caseId)}</span>
+                      ${t.clientPortal && t.clientPortal.enabled
+                        ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1"><i class="ph-bold ph-broadcast"></i> Cliente Activo</span>`
+                        : `<span class="text-[10px] font-semibold text-slate-400">${escapeHtml(t.date)}</span>`
+                      }
+                    </div>
+                    <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
+                    <div class="text-[11px] font-semibold text-slate-500">${escapeHtml(t.subcategory)}</div>
+
+                    ${appMode === "soporte" && t.workshop ? `
+                      <div class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md ${isPropio ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                        <i class="ph-bold ph-buildings"></i> ${escapeHtml(t.workshop)}
+                      </div>
+                    ` : ""}
+
+                    ${appMode === "soporte" && (t.vehicleModel || t.orNumber) ? `
+                      <div class="text-[11px] text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60">
+                        ${escapeHtml(t.vehicleModel || "")} ${t.orNumber ? `· <strong>${escapeHtml(t.orNumber)}</strong>` : ""}
+                      </div>
+                    ` : ""}
+
+                    <div class="space-y-1">
+                      <div class="flex justify-between text-[10px] font-bold text-slate-500">
+                        <span>${escapeHtml(assignee ? assignee.name : "")}</span>
+                        <span>${t.progress || 0}%</span>
+                      </div>
+                      <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full btn-accent rounded-full" style="width:${t.progress || 0}%"></div>
+                      </div>
+                    </div>
+
+                    ${isMobileMode ? `
+                      <div onclick="event.stopPropagation()" class="pt-1 border-t border-slate-100">
+                        <select onchange="moveCardMobile('${t.id}', this.value)" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-slate-50">
+                          ${cols.map(c => `<option value="${c}" ${c === t.status ? "selected" : ""}>Mover a: ${c}</option>`).join("")}
+                        </select>
+                      </div>
+                    ` : ""}
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function handleDrop(e, newStatus) {
+      e.preventDefault();
+      const id = e.dataTransfer.getData("text/plain");
+      moveCardMobile(id, newStatus);
+    }
+
+    function moveCardMobile(id, newStatus) {
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
+      t.status = newStatus;
+      if (newStatus === "Completado") t.progress = 100;
+      saveLocalAndCloud();
+      renderAll();
+    }
+
+    // CREAR / EDITAR TAREA
+    function openTaskModal(presetDate = "", editId = null) {
+      document.getElementById("editTaskId").value = editId || "";
+      const subSel = document.getElementById("tSubcategory");
+      subSel.innerHTML = SUBCATEGORIES[appMode].map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+
+      const isSoporte = appMode === "soporte";
+      document.getElementById("workshopFieldBox").classList.toggle("hidden", !isSoporte);
+      document.getElementById("vehicleFieldsBox").classList.toggle("hidden", !isSoporte);
+      document.getElementById("trainingFieldsBox").classList.toggle("hidden", isSoporte);
+
+      if (editId) {
+        const t = state.tasks.find(x => x.id === editId);
+        document.getElementById("taskModalTitle").textContent = `Editar ${t.caseId}`;
+        document.getElementById("tTitle").value = t.title;
+        subSel.value = t.subcategory;
+        document.getElementById("tAssignee").value = t.assigneeId;
+        if (t.workshop) document.getElementById("tWorkshop").value = t.workshop;
+        document.getElementById("tDate").value = t.date;
+        document.getElementById("tStatus").value = t.status;
+        document.getElementById("tOrNumber").value = t.orNumber || "";
+        document.getElementById("tVin").value = t.vehicleVin || "";
+        document.getElementById("tModel").value = t.vehicleModel || "";
+        document.getElementById("tKm").value = t.vehicleKm || "";
+        document.getElementById("tHours").value = t.hours || 4;
+        document.getElementById("tGroup").value = t.group || "";
+        document.getElementById("tLocation").value = t.location || "";
+        document.getElementById("tDesc").value = t.description || "";
+        document.getElementById("btnSaveTask").textContent = "Guardar Cambios";
+      } else {
+        document.getElementById("taskModalTitle").textContent = isSoporte ? "Nuevo Caso de Soporte Técnico" : "Nueva Acción de Entrenamiento";
+        document.getElementById("tTitle").value = "";
+        document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
+        document.getElementById("tStatus").value = "Pendiente";
+        document.getElementById("tOrNumber").value = "";
+        document.getElementById("tVin").value = "";
+        document.getElementById("tModel").value = "";
+        document.getElementById("tKm").value = "";
+        document.getElementById("tDesc").value = "";
+        document.getElementById("btnSaveTask").textContent = "Guardar y Crear Carpeta Drive";
+      }
+      document.getElementById("taskModal").classList.remove("hidden");
+    }
+
+    async function saveTask(e) {
+      e.preventDefault();
+      const editId = document.getElementById("editTaskId").value;
+      const isSoporte = appMode === "soporte";
+
+      if (editId) {
+        const t = state.tasks.find(x => x.id === editId);
+        t.title = document.getElementById("tTitle").value.trim();
+        t.subcategory = document.getElementById("tSubcategory").value;
+        t.assigneeId = document.getElementById("tAssignee").value;
+        t.workshop = isSoporte ? document.getElementById("tWorkshop").value : "";
+        t.date = document.getElementById("tDate").value;
+        t.status = document.getElementById("tStatus").value;
+        t.orNumber = document.getElementById("tOrNumber").value.trim();
+        t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase();
+        t.vehicleModel = document.getElementById("tModel").value.trim();
+        t.vehicleKm = document.getElementById("tKm").value.trim();
+        t.hours = Number(document.getElementById("tHours").value) || 0;
+        t.group = document.getElementById("tGroup").value.trim();
+        t.location = document.getElementById("tLocation").value.trim();
+        t.description = document.getElementById("tDesc").value.trim();
+        saveLocalAndCloud();
+        closeModal("taskModal");
+        renderAll();
+        if (currentDetailId === editId) openDetailModal(editId);
+        showToast("Caso actualizado correctamente", "success");
+        return;
+      }
+
+      const nextNum = 101 + state.tasks.length;
+      const caseId = `${isSoporte ? "CASO" : "ENT"}-2026-${nextNum}`;
+      const randomPin = String(Math.floor(1000 + Math.random() * 9000));
+
+      const newTask = {
+        id: "t_" + Date.now(),
+        caseId: caseId,
+        mode: appMode,
+        title: document.getElementById("tTitle").value.trim(),
+        subcategory: document.getElementById("tSubcategory").value,
+        assigneeId: document.getElementById("tAssignee").value,
+        workshop: isSoporte ? document.getElementById("tWorkshop").value : "",
+        date: document.getElementById("tDate").value,
+        status: document.getElementById("tStatus").value,
+        progress: document.getElementById("tStatus").value === "Completado" ? 100 : 10,
+        orNumber: document.getElementById("tOrNumber").value.trim(),
+        vehicleVin: document.getElementById("tVin").value.trim().toUpperCase(),
+        vehicleModel: document.getElementById("tModel").value.trim(),
+        vehicleKm: document.getElementById("tKm").value.trim(),
+        hours: Number(document.getElementById("tHours").value) || 0,
+        group: document.getElementById("tGroup").value.trim(),
+        location: document.getElementById("tLocation").value.trim(),
+        description: document.getElementById("tDesc").value.trim(),
+        driveFolderId: "",
+        driveFolderUrl: "https://drive.google.com",
+        notes: [{ date: new Date().toLocaleString(), text: "Registro inicial creado en el sistema.", clientVisible: false }],
+        media: [],
+        clientPortal: {
+          enabled: false,
+          token: randomPin,
+          clientName: "",
+          clientEmail: "",
+          advisorName: "",
+          advisorWhatsapp: ""
+        }
+      };
+
+      state.tasks.unshift(newTask);
+      saveLocalAndCloud();
+      closeModal("taskModal");
+      renderAll();
+      showToast(`Creando carpeta ${caseId} en Google Drive...`, "info");
+
+      // Crear carpeta automática en Google Drive
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${newTask.title}` })
+        });
+        const d = await res.json();
+        if (d.status === "ok") {
+          newTask.driveFolderId = d.folderId;
+          newTask.driveFolderUrl = d.folderUrl;
+          saveLocalAndCloud();
+          showToast(`Carpeta Drive creada para ${caseId}`, "success");
+        }
+      } catch (err) {}
+
+      // Notificar por correo al responsable asignado
+      const assignee = state.users.find(u => u.id === newTask.assigneeId);
+      const admin = state.users.find(u => u.role === "Administrador");
+      if (assignee && assignee.email) {
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendEmail",
+            to: assignee.email,
+            cc: admin ? admin.email : "",
+            subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${newTask.title}`,
+            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
+          })
+        }).catch(() => {});
+      }
+    }
+
+    // DETALLE DE CASO Y PORTAL CLIENTE
+    function openDetailModal(id) {
+      currentDetailId = id;
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
+
+      const isSoporte = (t.mode || "soporte") === "soporte";
+      document.getElementById("dCaseBadge").textContent = t.caseId;
+      document.getElementById("dTitle").textContent = t.title;
+      document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
+      document.getElementById("clientPortalPanel").classList.add("hidden");
+      document.getElementById("noteClientVisLabel").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
+
+      const assignee = state.users.find(u => u.id === t.assigneeId);
+      document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Responsable: ${assignee ? assignee.name : "-"}`;
+      document.getElementById("dMetaLine2").textContent = isSoporte
+        ? `Taller: ${t.workshop || "-"} · Vehículo: ${t.vehicleModel || "-"} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`
+        : `Grupo: ${t.group || "-"} · Duración: ${t.hours || 0} hs · Sede: ${t.location || "-"}`;
+
+      document.getElementById("dStatusSelect").value = t.status;
+      document.getElementById("dProgressRange").value = t.progress || 0;
+      document.getElementById("dProgressVal").textContent = (t.progress || 0) + "%";
+      document.getElementById("dDriveFolderBtn").href = t.driveFolderUrl || "https://drive.google.com";
+
+      // Cargar datos Portal Cliente
+      if (!t.clientPortal) t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: "", advisorWhatsapp: "" };
+      document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
+      document.getElementById("cpClientName").value = t.clientPortal.clientName || "";
+      document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
+      document.getElementById("cpAdvisorName").value = t.clientPortal.advisorName || "";
+      document.getElementById("cpAdvisorWhatsapp").value = t.clientPortal.advisorWhatsapp || "";
+      document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
+
+      renderDetailMedia(t);
+      renderDetailNotes(t);
+      document.getElementById("detailModal").classList.remove("hidden");
+    }
+
+    function togglePortalSection() {
+      document.getElementById("clientPortalPanel").classList.toggle("hidden");
+    }
+
+    function getClientTrackingUrl(t) {
+      const base = (state.clientPortalBaseUrl || "").trim() || window.location.href.replace("index.html", "cliente.html");
+      const sep = base.includes("?") ? "&" : "?";
+      return `${base}${sep}caso=${encodeURIComponent(t.caseId)}&token=${encodeURIComponent(t.clientPortal.token)}`;
+    }
+
+    function copyClientPortalLink() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const url = getClientTrackingUrl(t);
+      navigator.clipboard.writeText(url);
+      showToast("Enlace de seguimiento del cliente copiado", "success");
+    }
+
+    async function saveClientPortalConfig(sendEmailNow = false) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
+      t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
+      t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
+      t.clientPortal.advisorName = document.getElementById("cpAdvisorName").value.trim();
+      t.clientPortal.advisorWhatsapp = document.getElementById("cpAdvisorWhatsapp").value.trim();
+
+      saveLocalAndCloud();
+      renderBoard();
+      renderDashboard();
+
+      if (sendEmailNow) {
+        if (!t.clientPortal.enabled) {
+          showToast("Activa la casilla 'Habilitar Portal' primero", "warning");
+          return;
+        }
+        if (!t.clientPortal.clientEmail) {
+          showToast("Ingresa el correo electrónico del cliente", "warning");
+          return;
+        }
+        await sendClientTrackingEmail(t, "Activación de Seguimiento en Tiempo Real");
+        showToast(`Correo enviado a ${t.clientPortal.clientEmail}`, "success");
+      }
+    }
+
+    async function sendClientTrackingEmail(t, updateSummary) {
+      if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
+      const link = getClientTrackingUrl(t);
+      const subject = `Actualización de tu vehículo (${t.vehicleModel || t.caseId}) - Caso ${t.caseId}`;
+      const body =
+`Estimado/a ${t.clientPortal.clientName || "Cliente"},
+
+Te informamos que se ha registrado una actualización en el seguimiento técnico de tu vehículo:
+
+• Caso: ${t.caseId}
+• Vehículo: ${t.vehicleModel || "Unidad en taller"} ${t.orNumber ? `(OR: ${t.orNumber})` : ""}
+• Taller: ${t.workshop || "Automotor"}
+• Estado actual: ${t.status} (${t.progress || 0}% de avance)
+• Novedad: ${updateSummary}
+
+Puedes ver el avance cronológico en tiempo real, fotos/videos aprobados y contactar directamente por WhatsApp a tu Asesor de Servicios (${t.clientPortal.advisorName || "Asesor Asignado"}) ingresando al siguiente enlace:
+
+${link}
+
+(Si el sistema te solicita credenciales manuales, utiliza Código: ${t.caseId} y PIN: ${t.clientPortal.token})
+
+---
+AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de seguimiento técnico de Automotor. Por favor no respondas a este correo electrónico, ya que esta casilla no está habilitada para recibir mensajes.`;
+
+      return fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendEmail",
+          to: t.clientPortal.clientEmail,
+          subject: subject,
+          body: body
+        })
+      }).catch(() => {});
+    }
+
+    function renderDetailMedia(t) {
+      const box = document.getElementById("dMediaGallery");
+      const media = t.media || [];
+      if (media.length === 0) {
+        box.innerHTML = `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos aún. Usa "Subir Foto/PDF" para guardar directo en Drive.</p>`;
+        return;
+      }
+      box.innerHTML = media.map((m, idx) => `
+        <div class="bg-white rounded-xl p-2 border border-slate-200 space-y-1.5">
+          <a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block text-xs font-bold text-blue-600 truncate hover:underline">
+            <i class="ph-bold ph-file-image"></i> ${escapeHtml(m.name)}
+          </a>
+          <label class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 cursor-pointer">
+            <input type="checkbox" ${m.clientVisible ? "checked" : ""} onchange="toggleMediaClientVisibility(${idx}, this.checked)" class="accent-emerald-600" />
+            Visible Cliente
+          </label>
+        </div>
+      `).join("");
+    }
+
+    function toggleMediaClientVisibility(idx, isVisible) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.media[idx]) return;
+      t.media[idx].clientVisible = isVisible;
+      saveLocalAndCloud();
+      showToast(isVisible ? "Archivo publicado en Portal Cliente" : "Archivo ocultado al cliente", "info");
+    }
+
+    async function uploadMediaToDrive(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      if (file.size > 15 * 1024 * 1024) {
+        showToast("Video pesado (>15MB): ábrelo directo en la carpeta Drive para subir sin límite", "warning");
+        window.open(t.driveFolderUrl || "https://drive.google.com", "_blank");
+        return;
+      }
+
+      showToast("Subiendo archivo a Google Drive...", "info");
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result.split(",")[1];
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "uploadFile",
+              folderId: t.driveFolderId,
+              fileName: file.name,
+              mimeType: file.type,
+              base64: base64
+            })
+          });
+          const d = await res.json();
+          if (d.status === "ok") {
+            if (!t.media) t.media = [];
+            t.media.push({
+              name: file.name,
+              type: file.type.startsWith("image/") ? "image" : "file",
+              url: d.fileUrl,
+              viewUrl: d.viewUrl,
+              clientVisible: false
+            });
+            saveLocalAndCloud();
+            renderDetailMedia(t);
+            showToast("Archivo guardado en la carpeta del caso", "success");
+          }
+        } catch (err) {
+          showToast("Error al subir archivo", "warning");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function renderDetailNotes(t) {
+      const list = document.getElementById("dNotesList");
+      list.innerHTML = (t.notes || []).slice().reverse().map((n, revIdx) => {
+        const realIdx = t.notes.length - 1 - revIdx;
+        return `
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-xs space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span>${escapeHtml(n.date)}</span>
+              <label class="inline-flex items-center gap-1 text-emerald-700 font-bold cursor-pointer">
+                <input type="checkbox" ${n.clientVisible ? "checked" : ""} onchange="toggleNoteClientVisibility(${realIdx}, this.checked)" class="accent-emerald-600" />
+                Visible Cliente
+              </label>
+            </div>
+            <p class="text-slate-800 font-medium">${escapeHtml(n.text)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleNoteClientVisibility(idx, isVisible) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      t.notes[idx].clientVisible = isVisible;
+      saveLocalAndCloud();
+      showToast(isVisible ? "Nota visible para el cliente" : "Nota marcada como interna", "info");
+    }
+
+    async function addTaskNote(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const txt = document.getElementById("newNoteText").value.trim();
+      const visCliente = document.getElementById("newNoteClientVisible").checked;
+      if (!t || !txt) return;
+
+      t.notes.push({
+        date: new Date().toLocaleString(),
+        text: txt,
+        clientVisible: visCliente
+      });
+      document.getElementById("newNoteText").value = "";
+      document.getElementById("newNoteClientVisible").checked = false;
+
+      saveLocalAndCloud();
+      renderDetailNotes(t);
+      showToast("Avance registrado en bitácora", "success");
+
+      if (visCliente && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
+        await sendClientTrackingEmail(t, txt);
+        showToast("Cliente notificado por correo electrónico", "success");
+      }
+    }
+
+    function updateTaskStatusQuick(val) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      t.status = val;
+      if (val === "Completado") {
+        t.progress = 100;
+        document.getElementById("dProgressRange").value = 100;
+        document.getElementById("dProgressVal").textContent = "100%";
+      }
+      saveLocalAndCloud();
+      renderAll();
+    }
+
+    function updateTaskProgressQuick(val) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      t.progress = Number(val);
+      document.getElementById("dProgressVal").textContent = val + "%";
+      saveLocalAndCloud();
+      renderAll();
+    }
+
+    function editCurrentTask() {
+      closeModal("detailModal");
+      openTaskModal("", currentDetailId);
+    }
+
+    function deleteCurrentTask() {
+      if (!isCurrentAdmin()) return;
+      if (!confirm("¿Eliminar este registro permanentemente?")) return;
+      state.tasks = state.tasks.filter(x => x.id !== currentDetailId);
+      saveLocalAndCloud();
+      closeModal("detailModal");
+      renderAll();
+      showToast("Registro eliminado", "info");
+    }
+
+    function shareInternalWhatsapp() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\nTaller: ${t.workshop || "N/A"}\nVehículo: ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)\nCarpeta Drive: ${t.driveFolderUrl}`);
+      window.open(`https://wa.me/?text=${msg}`, "_blank");
+    }
+
+    // USUARIOS, TALLERES Y CONFIG URL CLIENTE
+    function openUsersModal() {
+      document.getElementById("adminPinInput").value = state.adminPin;
+      renderUsersList();
+      document.getElementById("usersModal").classList.remove("hidden");
+    }
+    function renderUsersList() {
+      document.getElementById("usersList").innerHTML = state.users.map(u => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+          <div>
+            <div class="font-bold text-slate-900">${escapeHtml(u.name)} <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">${u.role}</span></div>
+            <div class="text-slate-500">${escapeHtml(u.email)}</div>
+          </div>
+          ${u.id !== "u1" ? `<button onclick="removeUser('${u.id}')" class="text-red-600 font-bold hover:underline">Quitar</button>` : ""}
+        </div>
+      `).join("");
+    }
+    function addNewUser(e) {
+      e.preventDefault();
+      state.users.push({
+        id: "u_" + Date.now(),
+        name: document.getElementById("uName").value.trim(),
+        email: document.getElementById("uEmail").value.trim(),
+        role: document.getElementById("uRole").value
+      });
+      document.getElementById("uName").value = "";
+      document.getElementById("uEmail").value = "";
+      saveLocalAndCloud();
+      syncSelectors();
+      renderUsersList();
+      showToast("Usuario registrado", "success");
+    }
+    function removeUser(id) {
+      state.users = state.users.filter(u => u.id !== id);
+      saveLocalAndCloud();
+      syncSelectors();
+      renderUsersList();
+    }
+    function saveAdminPin() {
+      const p = document.getElementById("adminPinInput").value.trim();
+      if (p.length !== 4) {
+        showToast("El PIN debe tener 4 dígitos", "warning");
+        return;
+      }
+      state.adminPin = p;
+      saveLocalAndCloud();
+      showToast("PIN de Administrador actualizado", "success");
+    }
+
+    function openWorkshopsModal() {
+      renderWorkshopsList();
+      document.getElementById("workshopsModal").classList.remove("hidden");
+    }
+    function renderWorkshopsList() {
+      document.getElementById("workshopsList").innerHTML = state.workshops.map(w => `
+        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-900">${escapeHtml(w.name)}</div>
+            <div class="text-slate-500">${escapeHtml(w.city)}</div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded ${w.type === 'Propio' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">${w.type}</span>
+        </div>
+      `).join("");
+    }
+    function addWorkshop(e) {
+      e.preventDefault();
+      state.workshops.push({
+        id: "w_" + Date.now(),
+        name: document.getElementById("wName").value.trim(),
+        city: document.getElementById("wCity").value.trim(),
+        type: document.getElementById("wType").value
+      });
+      document.getElementById("wName").value = "";
+      document.getElementById("wCity").value = "";
+      saveLocalAndCloud();
+      syncSelectors();
+      renderWorkshopsList();
+      showToast("Taller agregado a la red", "success");
+    }
+
+    function openPortalConfigModal() {
+      document.getElementById("clientPortalBaseUrlInput").value = state.clientPortalBaseUrl || "";
+      document.getElementById("portalConfigModal").classList.remove("hidden");
+    }
+    function savePortalBaseUrl() {
+      state.clientPortalBaseUrl = document.getElementById("clientPortalBaseUrlInput").value.trim();
+      saveLocalAndCloud();
+      closeModal("portalConfigModal");
+      showToast("URL pública del Portal Cliente guardada", "success");
+    }
+
+    function exportCSV() {
+      const list = getFilteredModeTasks();
+      const rows = [["Codigo", "Modo", "Titulo", "Categoria", "Taller", "Fecha", "Estado", "Avance", "OR", "VIN", "Modelo"]];
+      list.forEach(t => rows.push([t.caseId, t.mode, t.title, t.subcategory, t.workshop || "", t.date, t.status, t.progress + "%", t.orNumber || "", t.vehicleVin || "", t.vehicleModel || ""]));
+      const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `AutoTech_${appMode}_${new Date().toISOString().split("T")[0]}.csv`;
+      a.click();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+  </script>
+</body>
+</html>

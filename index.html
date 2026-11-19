@@ -303,7 +303,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO, DRIVE MULTIMEDIA, BITÁCORA INTERNA Y BITÁCORA CLIENTE INDEPENDIENTES -->
+  <!-- MODAL 2: DETALLE DE CASO, DRIVE MULTIMEDIA Y REGISTROS CRONOLÓGICOS SEPARADOS -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -335,14 +335,14 @@
           </div>
         </div>
 
-        <!-- PANEL DESPLEGABLE: PORTAL WEB DEL CLIENTE (CONFIGURACIÓN + AVANCES EXCLUSIVOS CLIENTE) -->
+        <!-- PANEL DESPLEGABLE: PORTAL WEB DEL CLIENTE -->
         <div id="clientPortalPanel" class="hidden bg-emerald-50/75 border-2 border-emerald-500/40 rounded-2xl p-4 sm:p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
                 <i class="ph-bold ph-broadcast text-emerald-600"></i> Configuración Portal Público del Cliente
               </h4>
-              <p class="text-xs text-emerald-800">Los avances publicados aquí son 100% independientes de las notas internas del taller.</p>
+              <p class="text-xs text-emerald-800">Los reportes publicados aquí son 100% independientes del registro cronológico interno del taller.</p>
             </div>
             <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200">
               <input type="checkbox" id="cpEnabled" class="w-4 h-4 accent-emerald-600" />
@@ -384,11 +384,11 @@
             </div>
           </div>
 
-          <!-- BITÁCORA EXCLUSIVA DEL CLIENTE (SEPARADA DE LA INTERNA) -->
+          <!-- REGISTRO CRONOLÓGICO EXCLUSIVO DEL CLIENTE -->
           <div class="bg-white rounded-xl p-4 border border-emerald-200 space-y-3">
             <div class="flex items-center justify-between">
               <h5 class="text-xs font-extrabold uppercase text-emerald-900 flex items-center gap-1.5">
-                <i class="ph-bold ph-chat-teardrop-text text-emerald-600 text-base"></i> Mensajes / Avances Visibles para el Cliente (Exclusivo Cliente)
+                <i class="ph-bold ph-chat-teardrop-text text-emerald-600 text-base"></i> Registro Cronológico Visible para el Cliente (Exclusivo Cliente)
               </h5>
             </div>
             <form onsubmit="addClientNote(event)" class="space-y-2">
@@ -443,11 +443,11 @@
           <div id="dMediaGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
         </div>
 
-        <!-- BITÁCORA INTERNA DEL TALLER (100% PRIVADA - EL CLIENTE NUNCA LA VE) -->
+        <!-- REGISTRO CRONOLÓGICO INTERNO DEL TALLER (100% PRIVADO) -->
         <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200 space-y-3">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-extrabold uppercase text-slate-800 flex items-center gap-1.5">
-              <i class="ph-bold ph-lock-key text-slate-600 text-base"></i> Bitácora Interna del Taller (Solo Uso Interno · Privado)
+              <i class="ph-bold ph-lock-key text-slate-600 text-base"></i> Registro Cronológico Interno del Taller (Solo Uso Interno · Privado)
             </h4>
             <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">No visible al cliente</span>
           </div>
@@ -1111,7 +1111,7 @@
         description: document.getElementById("tDesc").value.trim(),
         driveFolderId: "",
         driveFolderUrl: "https://drive.google.com",
-        notes: [{ date: new Date().toLocaleString(), text: "Registro interno creado en el sistema." }],
+        notes: [{ date: new Date().toLocaleString(), text: "Apertura inicial en el registro cronológico interno." }],
         clientNotes: [],
         media: [],
         clientPortal: {
@@ -1160,7 +1160,7 @@
       }
     }
 
-    // DETALLE DE CASO (BITÁCORAS SEPARADAS + EDITAR/ELIMINAR AVANCES)
+    // DETALLE DE CASO (REGISTROS CRONOLÓGICOS SEPARADOS + EDITAR/ELIMINAR)
     function openDetailModal(id) {
       currentDetailId = id;
       const t = state.tasks.find(x => x.id === id);
@@ -1266,7 +1266,7 @@ Te informamos que se ha registrado una actualización en el seguimiento técnico
 • Estado actual: ${t.status} (${t.progress || 0}% de avance)
 • Novedad: ${updateSummary}
 
-Puedes ver el avance cronológico en tiempo real, fotos/videos aprobados y contactar directamente por WhatsApp a tu Asesor de Servicios (${t.clientPortal.advisorName || "Asesor Asignado"}) ingresando al siguiente enlace:
+Puedes consultar el registro cronológico en tiempo real, fotos/videos aprobados y contactar directamente por WhatsApp a tu Asesor de Servicios (${t.clientPortal.advisorName || "Asesor Asignado"}) ingresando al siguiente enlace:
 
 ${link}
 
@@ -1286,7 +1286,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       }).catch(() => {});
     }
 
-    // --- BITÁCORA EXCLUSIVA DEL CLIENTE (AGREGAR, EDITAR, ELIMINAR) ---
+    // --- REGISTRO CRONOLÓGICO EXCLUSIVO DEL CLIENTE ---
     function renderClientNotes(t) {
       const list = document.getElementById("dClientNotesList");
       const cNotes = Array.isArray(t.clientNotes) ? t.clientNotes : [];
@@ -1331,7 +1331,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
 
       saveLocalAndCloud();
       renderClientNotes(t);
-      showToast("Avance publicado en Portal Cliente", "success");
+      showToast("Publicado en Registro Cronológico del Cliente", "success");
 
       if (sendMail && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
         await sendClientTrackingEmail(t, txt);
@@ -1356,14 +1356,14 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
     function deleteClientNote(idx) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t || !t.clientNotes[idx]) return;
-      if (!confirm("¿Eliminar este mensaje del Portal del Cliente?")) return;
+      if (!confirm("¿Eliminar este registro del Portal del Cliente?")) return;
       t.clientNotes.splice(idx, 1);
       saveLocalAndCloud();
       renderClientNotes(t);
-      showToast("Mensaje eliminado del Portal Cliente", "info");
+      showToast("Registro eliminado del Portal Cliente", "info");
     }
 
-    // --- BITÁCORA INTERNA PRIVADA (AGREGAR, EDITAR, ELIMINAR) ---
+    // --- REGISTRO CRONOLÓGICO INTERNO PRIVADO ---
     function renderInternalNotes(t) {
       const list = document.getElementById("dInternalNotesList");
       const iNotes = Array.isArray(t.notes) ? t.notes : [];
@@ -1407,13 +1407,13 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
 
       saveLocalAndCloud();
       renderInternalNotes(t);
-      showToast("Avance interno guardado (privado)", "success");
+      showToast("Guardado en Registro Cronológico Interno", "success");
     }
 
     function editInternalNote(idx) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t || !t.notes[idx]) return;
-      const updated = prompt("Editar nota interna del taller:", t.notes[idx].text);
+      const updated = prompt("Editar registro interno del taller:", t.notes[idx].text);
       if (updated === null) return;
       const clean = updated.trim();
       if (!clean) return;
@@ -1421,17 +1421,17 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       t.notes[idx].edited = true;
       saveLocalAndCloud();
       renderInternalNotes(t);
-      showToast("Nota interna actualizada", "success");
+      showToast("Registro interno actualizado", "success");
     }
 
     function deleteInternalNote(idx) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t || !t.notes[idx]) return;
-      if (!confirm("¿Eliminar esta nota interna?")) return;
+      if (!confirm("¿Eliminar este registro interno?")) return;
       t.notes.splice(idx, 1);
       saveLocalAndCloud();
       renderInternalNotes(t);
-      showToast("Nota interna eliminada", "info");
+      showToast("Registro interno eliminado", "info");
     }
 
     // --- MULTIMEDIA DRIVE ---

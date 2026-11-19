@@ -193,7 +193,7 @@
       <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
         <div class="relative flex-1 min-w-[200px]">
           <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, OR, VIN, modelo, taller..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
+          <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, OR, VIN, modelo, asesor, taller..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
         </div>
         <select id="filterUser" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
         <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[220px]"></select>
@@ -231,7 +231,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Responsable Asignado *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Responsable Técnico Asignado *</label>
             <select id="tAssignee" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
           </div>
 
@@ -256,22 +256,36 @@
           </div>
         </div>
 
-        <div id="vehicleFieldsBox" class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
-            <input type="text" id="tOrNumber" placeholder="OR-45120" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+        <!-- Datos del Vehículo + Asesor de Servicios (Solo Modo Soporte) -->
+        <div id="vehicleFieldsBox" class="space-y-3">
+          <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
+              <input type="text" id="tOrNumber" placeholder="OR-45120" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Chasis / VIN (7)</label>
+              <input type="text" id="tVin" maxlength="17" placeholder="KNA8921" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo Vehículo</label>
+              <input type="text" id="tModel" placeholder="Hyundai Tucson" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Kilometraje</label>
+              <input type="text" id="tKm" placeholder="42.500 km" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Chasis / VIN (7)</label>
-            <input type="text" id="tVin" maxlength="17" placeholder="KNA8921" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo Vehículo</label>
-            <input type="text" id="tModel" placeholder="Hyundai Tucson" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">Kilometraje</label>
-            <input type="text" id="tKm" placeholder="42.500 km" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+
+          <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-emerald-900 mb-1">Asesor de Servicios Encargado *</label>
+              <input type="text" id="tAdvisorName" placeholder="Ej: Reinerio Pérez" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp / Teléfono del Asesor *</label>
+              <input type="text" id="tAdvisorWhatsapp" placeholder="Ej: 0993541374 o 595993541374" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
           </div>
         </div>
 
@@ -303,7 +317,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO, DRIVE MULTIMEDIA Y REGISTROS CRONOLÓGICOS SEPARADOS -->
+  <!-- MODAL 2: DETALLE DE CASO, AVISO AL ASESOR, DRIVE MULTIMEDIA Y REGISTROS CRONOLÓGICOS -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -322,15 +336,19 @@
       </div>
 
       <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto">
-        <!-- Info Superior + WhatsApp Interno -->
+        <!-- Info Superior + Botón Directo Avisar al Asesor + Compartir Taller -->
         <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 text-xs">
           <div class="space-y-1">
             <div id="dMetaLine1" class="font-bold text-slate-800"></div>
             <div id="dMetaLine2" class="text-slate-500"></div>
+            <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5">
-              <i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir Taller
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5 shadow-sm transition">
+              <i class="ph-bold ph-whatsapp-logo text-base"></i> Avisar al Asesor
+            </button>
+            <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold flex items-center gap-1.5">
+              <i class="ph-bold ph-share-network text-base"></i> Compartir Taller
             </button>
           </div>
         </div>
@@ -361,11 +379,11 @@
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Asesor de Servicios Asignado *</label>
-              <input type="text" id="cpAdvisorName" placeholder="Ej: Lic. Marcos Villalba" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <input type="text" id="cpAdvisorName" placeholder="Ej: Reinerio Pérez" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Asesor (con código país) *</label>
-              <input type="text" id="cpAdvisorWhatsapp" placeholder="595981123456" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Asesor *</label>
+              <input type="text" id="cpAdvisorWhatsapp" placeholder="0993541374" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
           </div>
 
@@ -392,7 +410,7 @@
               </h5>
             </div>
             <form onsubmit="addClientNote(event)" class="space-y-2">
-              <textarea id="newClientNoteText" rows="2" required placeholder="Redacta aquí el avance oficial que verá el cliente en su web..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-emerald-600"></textarea>
+              <textarea id="newClientNoteText" rows="2" required placeholder="Redacta aquí el reporte oficial que verá el cliente en su web..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-emerald-600"></textarea>
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <label class="inline-flex items-center gap-2 text-xs text-slate-700 font-semibold cursor-pointer">
                   <input type="checkbox" id="notifyClientOnAdd" checked class="w-4 h-4 accent-emerald-600" />
@@ -443,19 +461,25 @@
           <div id="dMediaGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
         </div>
 
-        <!-- REGISTRO CRONOLÓGICO INTERNO DEL TALLER (100% PRIVADO) -->
+        <!-- REGISTRO CRONOLÓGICO INTERNO DEL TALLER + OPCIÓN DE AVISO AL ASESOR POR WHATSAPP -->
         <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200 space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <h4 class="text-xs font-extrabold uppercase text-slate-800 flex items-center gap-1.5">
-              <i class="ph-bold ph-lock-key text-slate-600 text-base"></i> Registro Cronológico Interno del Taller (Solo Uso Interno · Privado)
+              <i class="ph-bold ph-lock-key text-slate-600 text-base"></i> Registro Cronológico Interno del Taller (Solo Uso Interno)
             </h4>
             <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">No visible al cliente</span>
           </div>
-          <form onsubmit="addInternalNote(event)" class="flex gap-2">
-            <input type="text" id="newInternalNoteText" required placeholder="Registrar hallazgo técnico interno, códigos DTC, observaciones de taller..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm" />
-            <button type="submit" class="px-4 py-2.5 rounded-xl btn-accent text-xs font-bold">Registrar Interno</button>
+          <form onsubmit="addInternalNote(event)" class="space-y-2">
+            <div class="flex gap-2">
+              <input type="text" id="newInternalNoteText" required placeholder="Registrar hallazgo técnico interno, códigos DTC, observaciones de taller..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm" />
+              <button type="submit" class="px-4 py-2.5 rounded-xl btn-accent text-xs font-bold">Registrar</button>
+            </div>
+            <label id="notifyAdvisorCheckboxRow" class="inline-flex items-center gap-2 text-xs text-emerald-800 font-bold cursor-pointer">
+              <input type="checkbox" id="notifyAdvisorOnNote" class="w-4 h-4 accent-emerald-600" />
+              <i class="ph-bold ph-whatsapp-logo text-emerald-600 text-sm"></i> Avisar también al Asesor de Servicios por WhatsApp al registrar
+            </label>
           </form>
-          <div id="dInternalNotesList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+          <div id="dInternalNotesList" class="space-y-2 max-h-60 overflow-y-auto"></div>
         </div>
       </div>
     </div>
@@ -616,6 +640,12 @@
     function escapeHtml(str) {
       if (!str) return "";
       return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function formatWhatsappPhone(raw) {
+      let phone = (raw || "").replace(/\D/g, "");
+      if (phone.startsWith("0")) phone = "595" + phone.substring(1);
+      return phone;
     }
 
     function showToast(msg, type = "info") {
@@ -930,7 +960,8 @@
         if (uFilter && t.assigneeId !== uFilter) return false;
         if (appMode === "soporte" && wFilter && t.workshop !== wFilter) return false;
         if (q) {
-          const hay = `${t.caseId} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""}`.toLowerCase();
+          const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "");
+          const hay = `${t.caseId} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""} ${advName}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
@@ -949,6 +980,7 @@
               ${colTasks.map(t => {
                 const assignee = state.users.find(u => u.id === t.assigneeId);
                 const isPropio = (t.workshop || "").includes("(Propio)");
+                const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
                 return `
                   <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-sm hover:shadow-md cursor-pointer transition space-y-2.5">
                     <div class="flex items-center justify-between gap-1.5">
@@ -967,9 +999,10 @@
                       </div>
                     ` : ""}
 
-                    ${appMode === "soporte" && (t.vehicleModel || t.orNumber) ? `
-                      <div class="text-[11px] text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60">
-                        ${escapeHtml(t.vehicleModel || "")} ${t.orNumber ? `· <strong>${escapeHtml(t.orNumber)}</strong>` : ""}
+                    ${appMode === "soporte" && (t.vehicleModel || t.orNumber || advName) ? `
+                      <div class="text-[11px] text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60 space-y-0.5">
+                        <div>${escapeHtml(t.vehicleModel || "")} ${t.orNumber ? `· <strong>${escapeHtml(t.orNumber)}</strong>` : ""}</div>
+                        ${advName ? `<div class="text-[10px] text-emerald-800 font-semibold"><i class="ph-bold ph-user-tie"></i> Asesor: ${escapeHtml(advName)}</div>` : ""}
                       </div>
                     ` : ""}
 
@@ -1024,6 +1057,9 @@
       document.getElementById("vehicleFieldsBox").classList.toggle("hidden", !isSoporte);
       document.getElementById("trainingFieldsBox").classList.toggle("hidden", isSoporte);
 
+      document.getElementById("tAdvisorName").required = isSoporte;
+      document.getElementById("tAdvisorWhatsapp").required = isSoporte;
+
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
         document.getElementById("taskModalTitle").textContent = `Editar ${t.caseId}`;
@@ -1037,6 +1073,8 @@
         document.getElementById("tVin").value = t.vehicleVin || "";
         document.getElementById("tModel").value = t.vehicleModel || "";
         document.getElementById("tKm").value = t.vehicleKm || "";
+        document.getElementById("tAdvisorName").value = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
+        document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
         document.getElementById("tHours").value = t.hours || 4;
         document.getElementById("tGroup").value = t.group || "";
         document.getElementById("tLocation").value = t.location || "";
@@ -1051,6 +1089,8 @@
         document.getElementById("tVin").value = "";
         document.getElementById("tModel").value = "";
         document.getElementById("tKm").value = "";
+        document.getElementById("tAdvisorName").value = "";
+        document.getElementById("tAdvisorWhatsapp").value = "";
         document.getElementById("tDesc").value = "";
         document.getElementById("btnSaveTask").textContent = "Guardar y Crear Carpeta Drive";
       }
@@ -1061,6 +1101,8 @@
       e.preventDefault();
       const editId = document.getElementById("editTaskId").value;
       const isSoporte = appMode === "soporte";
+      const advName = document.getElementById("tAdvisorName").value.trim();
+      const advPhone = document.getElementById("tAdvisorWhatsapp").value.trim();
 
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
@@ -1074,6 +1116,12 @@
         t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase();
         t.vehicleModel = document.getElementById("tModel").value.trim();
         t.vehicleKm = document.getElementById("tKm").value.trim();
+        t.advisorName = isSoporte ? advName : "";
+        t.advisorWhatsapp = isSoporte ? advPhone : "";
+        if (t.clientPortal && isSoporte) {
+          t.clientPortal.advisorName = advName;
+          t.clientPortal.advisorWhatsapp = advPhone;
+        }
         t.hours = Number(document.getElementById("tHours").value) || 0;
         t.group = document.getElementById("tGroup").value.trim();
         t.location = document.getElementById("tLocation").value.trim();
@@ -1105,6 +1153,8 @@
         vehicleVin: document.getElementById("tVin").value.trim().toUpperCase(),
         vehicleModel: document.getElementById("tModel").value.trim(),
         vehicleKm: document.getElementById("tKm").value.trim(),
+        advisorName: isSoporte ? advName : "",
+        advisorWhatsapp: isSoporte ? advPhone : "",
         hours: Number(document.getElementById("tHours").value) || 0,
         group: document.getElementById("tGroup").value.trim(),
         location: document.getElementById("tLocation").value.trim(),
@@ -1119,8 +1169,8 @@
           token: randomPin,
           clientName: "",
           clientEmail: "",
-          advisorName: "",
-          advisorWhatsapp: ""
+          advisorName: isSoporte ? advName : "",
+          advisorWhatsapp: isSoporte ? advPhone : ""
         }
       };
 
@@ -1154,13 +1204,13 @@
             to: assignee.email,
             cc: admin ? admin.email : "",
             subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${newTask.title}`,
-            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
+            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
           })
         }).catch(() => {});
       }
     }
 
-    // DETALLE DE CASO (REGISTROS CRONOLÓGICOS SEPARADOS + EDITAR/ELIMINAR)
+    // DETALLE DE CASO + AVISO AL ASESOR POR WHATSAPP
     function openDetailModal(id) {
       currentDetailId = id;
       const t = state.tasks.find(x => x.id === id);
@@ -1173,14 +1223,29 @@
       document.getElementById("dCaseBadge").textContent = t.caseId;
       document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnNotifyAdvisorHeader").classList.toggle("hidden", !isSoporte);
+      document.getElementById("notifyAdvisorCheckboxRow").classList.toggle("hidden", !isSoporte);
       document.getElementById("clientPortalPanel").classList.add("hidden");
       document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
 
       const assignee = state.users.find(u => u.id === t.assigneeId);
+      const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
+      const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
+
       document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Responsable: ${assignee ? assignee.name : "-"}`;
       document.getElementById("dMetaLine2").textContent = isSoporte
         ? `Taller: ${t.workshop || "-"} · Vehículo: ${t.vehicleModel || "-"} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`
         : `Grupo: ${t.group || "-"} · Duración: ${t.hours || 0} hs · Sede: ${t.location || "-"}`;
+
+      const advisorLine = document.getElementById("dAdvisorLine");
+      if (isSoporte) {
+        advisorLine.classList.remove("hidden");
+        advisorLine.textContent = advName
+          ? `Asesor de Servicios: ${advName} ${advPhone ? `(${advPhone})` : ""}`
+          : "Asesor de Servicios: Sin asignar (edita el caso para registrar su teléfono)";
+      } else {
+        advisorLine.classList.add("hidden");
+      }
 
       document.getElementById("dStatusSelect").value = t.status;
       document.getElementById("dProgressRange").value = t.progress || 0;
@@ -1188,19 +1253,50 @@
       document.getElementById("dDriveFolderBtn").href = t.driveFolderUrl || "https://drive.google.com";
 
       if (!t.clientPortal) {
-        t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: "", advisorWhatsapp: "" };
+        t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: advName, advisorWhatsapp: advPhone };
       }
       document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
       document.getElementById("cpClientName").value = t.clientPortal.clientName || "";
       document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
-      document.getElementById("cpAdvisorName").value = t.clientPortal.advisorName || "";
-      document.getElementById("cpAdvisorWhatsapp").value = t.clientPortal.advisorWhatsapp || "";
+      document.getElementById("cpAdvisorName").value = advName || t.clientPortal.advisorName || "";
+      document.getElementById("cpAdvisorWhatsapp").value = advPhone || t.clientPortal.advisorWhatsapp || "";
       document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
 
       renderDetailMedia(t);
       renderInternalNotes(t);
       renderClientNotes(t);
       document.getElementById("detailModal").classList.remove("hidden");
+    }
+
+    // AVISO DIRECTO POR WHATSAPP AL ASESOR DE SERVICIOS
+    function notifyAdvisorWhatsapp(customUpdateText = "") {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "Asesor").trim();
+      const rawPhone = (t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim();
+      const cleanPhone = formatWhatsappPhone(rawPhone);
+
+      if (!cleanPhone) {
+        showToast("Registra primero el teléfono del Asesor editando el caso", "warning");
+        return;
+      }
+
+      const lastInternal = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : "Sin observaciones aún";
+      const updateDetail = customUpdateText || lastInternal;
+
+      const msg = encodeURIComponent(
+`Hola *${advName}*, te enviamos una actualización de Soporte Técnico:
+
+• *Caso:* ${t.caseId} - ${t.title}
+• *Vehículo:* ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
+• *Taller:* ${t.workshop || "Automotor"}
+• *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
+• *Último reporte técnico:* ${updateDetail}
+• *Carpeta evidencias:* ${t.driveFolderUrl || ""}`
+      );
+
+      window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
     }
 
     function togglePortalSection() {
@@ -1225,15 +1321,23 @@
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
 
+      const advName = document.getElementById("cpAdvisorName").value.trim();
+      const advPhone = document.getElementById("cpAdvisorWhatsapp").value.trim();
+
       t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
       t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
       t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
-      t.clientPortal.advisorName = document.getElementById("cpAdvisorName").value.trim();
-      t.clientPortal.advisorWhatsapp = document.getElementById("cpAdvisorWhatsapp").value.trim();
+      t.clientPortal.advisorName = advName;
+      t.clientPortal.advisorWhatsapp = advPhone;
+      t.advisorName = advName;
+      t.advisorWhatsapp = advPhone;
 
       saveLocalAndCloud();
       renderBoard();
       renderDashboard();
+      document.getElementById("dAdvisorLine").textContent = advName
+        ? `Asesor de Servicios: ${advName} ${advPhone ? `(${advPhone})` : ""}`
+        : "Asesor de Servicios: Sin asignar";
 
       if (sendEmailNow) {
         if (!t.clientPortal.enabled) {
@@ -1363,10 +1467,11 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       showToast("Registro eliminado del Portal Cliente", "info");
     }
 
-    // --- REGISTRO CRONOLÓGICO INTERNO PRIVADO ---
+    // --- REGISTRO CRONOLÓGICO INTERNO PRIVADO + OPCIÓN WHATSAPP ASESOR ---
     function renderInternalNotes(t) {
       const list = document.getElementById("dInternalNotesList");
       const iNotes = Array.isArray(t.notes) ? t.notes : [];
+      const isSoporte = (t.mode || "soporte") === "soporte";
       if (iNotes.length === 0) {
         list.innerHTML = `<p class="text-xs text-slate-400">Sin registros internos aún.</p>`;
         return;
@@ -1375,9 +1480,14 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         const realIdx = iNotes.length - 1 - revIdx;
         return `
           <div class="bg-white p-3 rounded-xl border border-slate-200/90 text-xs space-y-1.5">
-            <div class="flex items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-[11px] text-slate-400 font-semibold">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2.5">
+                ${isSoporte ? `
+                  <button type="button" onclick="sendSingleInternalNoteToAdvisor(${realIdx})" class="text-emerald-700 font-bold hover:underline flex items-center gap-0.5" title="Enviar este avance por WhatsApp al Asesor">
+                    <i class="ph-bold ph-whatsapp-logo"></i> Avisar Asesor
+                  </button>
+                ` : ""}
                 <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
                   <i class="ph-bold ph-pencil-simple"></i> Editar
                 </button>
@@ -1392,10 +1502,17 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       }).join("");
     }
 
+    function sendSingleInternalNoteToAdvisor(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      notifyAdvisorWhatsapp(t.notes[idx].text);
+    }
+
     function addInternalNote(e) {
       e.preventDefault();
       const t = state.tasks.find(x => x.id === currentDetailId);
       const txt = document.getElementById("newInternalNoteText").value.trim();
+      const notifyAdv = document.getElementById("notifyAdvisorOnNote").checked;
       if (!t || !txt) return;
 
       if (!Array.isArray(t.notes)) t.notes = [];
@@ -1404,10 +1521,15 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         text: txt
       });
       document.getElementById("newInternalNoteText").value = "";
+      document.getElementById("notifyAdvisorOnNote").checked = false;
 
       saveLocalAndCloud();
       renderInternalNotes(t);
       showToast("Guardado en Registro Cronológico Interno", "success");
+
+      if (notifyAdv) {
+        notifyAdvisorWhatsapp(txt);
+      }
     }
 
     function editInternalNote(idx) {
@@ -1648,8 +1770,8 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
 
     function exportCSV() {
       const list = getFilteredModeTasks();
-      const rows = [["Codigo", "Modo", "Titulo", "Categoria", "Taller", "Fecha", "Estado", "Avance", "OR", "VIN", "Modelo"]];
-      list.forEach(t => rows.push([t.caseId, t.mode, t.title, t.subcategory, t.workshop || "", t.date, t.status, t.progress + "%", t.orNumber || "", t.vehicleVin || "", t.vehicleModel || ""]));
+      const rows = [["Codigo", "Modo", "Titulo", "Categoria", "Taller", "Asesor", "Tel_Asesor", "Fecha", "Estado", "Avance", "OR", "VIN", "Modelo"]];
+      list.forEach(t => rows.push([t.caseId, t.mode, t.title, t.subcategory, t.workshop || "", t.advisorName || "", t.advisorWhatsapp || "", t.date, t.status, t.progress + "%", t.orNumber || "", t.vehicleVin || "", t.vehicleModel || ""]));
       const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
       const a = document.createElement("a");

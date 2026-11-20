@@ -30,7 +30,7 @@
                   #f3f4f6;
     }
     .win-mica {
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       border: 1px solid rgba(255, 255, 255, 0.75);
@@ -61,7 +61,7 @@
       background-color: var(--accent);
     }
     .touch-target {
-      min-height: 42px;
+      min-height: 40px;
     }
   </style>
 </head>
@@ -72,7 +72,7 @@
 
   <!-- Header Principal -->
   <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 space-y-3">
+    <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-3 space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <div id="brandIcon" class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center shadow-sm transition-colors">
@@ -133,8 +133,18 @@
             <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i> <span class="hidden lg:inline">Nube</span>
           </button>
 
-          <button onclick="exportCSV()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Descargar reporte Excel/CSV">
-            <i class="ph-bold ph-file-csv text-accent"></i>
+          <!-- Botón Archivo Maestro Único en Drive (Actualización Automática) -->
+          <button onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm" title="Abrir archivo maestro único en Google Drive que se actualiza solo">
+            <i class="ph-bold ph-table text-base"></i> <span>Historial Maestro</span>
+          </button>
+
+          <!-- Botones Descarga Local Excel y Word -->
+          <button onclick="exportExcelHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1.5" title="Descargar historial completo en Excel">
+            <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i> <span>Excel</span>
+          </button>
+
+          <button onclick="exportWordHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1.5" title="Descargar historial completo en Word">
+            <i class="ph-bold ph-microsoft-word-logo text-base text-blue-700"></i> <span>Word</span>
           </button>
 
           <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
@@ -146,11 +156,11 @@
   </header>
 
   <!-- Contenido Principal -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 pt-6 space-y-6">
+  <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
 
     <!-- VISTA 1: RESUMEN & KPIs -->
     <section id="view-dashboard" class="space-y-6">
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" id="kpiGrid"></div>
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div class="win-mica rounded-2xl p-5 space-y-3">
@@ -188,7 +198,7 @@
       </div>
     </section>
 
-    <!-- VISTA 3: TABLERO KANBAN -->
+    <!-- VISTA 3: TABLERO KANBAN (5 COLUMNAS CON COLORES DIFERENCIADOS) -->
     <section id="view-board" class="hidden space-y-4">
       <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
         <div class="relative flex-1 min-w-[200px]">
@@ -199,7 +209,7 @@
         <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[220px]"></select>
       </div>
 
-      <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+      <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
     </section>
 
   </main>
@@ -246,12 +256,13 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Estado</label>
-            <select id="tStatus" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
-              <option value="Pendiente">Pendiente</option>
-              <option value="En Proceso">En Proceso</option>
-              <option value="En Revisión">En Revisión</option>
-              <option value="Completado">Completado</option>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Estado / Prioridad en Tablero</label>
+            <select id="tStatus" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-bold bg-white">
+              <option value="Urgente">🔴 Urgente</option>
+              <option value="Pendiente" selected>⚪ Pendiente</option>
+              <option value="En Proceso">🔵 En Proceso</option>
+              <option value="En Prueba">🟣 En Prueba</option>
+              <option value="Completado">🟢 Completado</option>
             </select>
           </div>
         </div>
@@ -316,7 +327,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO, FORMALIZACIÓN POR CORREO, AVISO ASESOR Y REGISTROS -->
+  <!-- MODAL 2: DETALLE DE CASO, WORD INDIVIDUAL, CORREO FORMAL, AVISO ASESOR Y REGISTROS -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
@@ -325,6 +336,9 @@
           <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-sm">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
+          <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1" title="Descargar ficha completa de este caso en Word">
+            <i class="ph-bold ph-file-doc text-sm"></i> Ficha Word
+          </button>
           <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-envelope-simple"></i> Formalizar por Correo
           </button>
@@ -355,7 +369,7 @@
           </div>
         </div>
 
-        <!-- PANEL DESPLEGABLE 1: FORMALIZAR SEGUIMIENTO POR CORREO ELECTRÓNICO A COMPAÑEROS / INTERESADOS -->
+        <!-- PANEL DESPLEGABLE 1: FORMALIZAR SEGUIMIENTO POR CORREO ELECTRÓNICO -->
         <div id="formalEmailPanel" class="hidden bg-blue-50/80 border-2 border-blue-500/40 rounded-2xl p-4 sm:p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -369,7 +383,6 @@
             </button>
           </div>
 
-          <!-- Selección rápida de compañeros registrados -->
           <div class="space-y-1.5">
             <label class="block text-[11px] font-bold text-slate-700 uppercase">Seleccionar Compañeros / Usuarios Registrados:</label>
             <div id="feUsersChecklist" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto bg-white p-3 rounded-xl border border-blue-200"></div>
@@ -396,7 +409,7 @@
               <i class="ph-bold ph-copy"></i> Copiar Texto
             </button>
             <div class="flex flex-wrap gap-2">
-              <button type="button" onclick="openInPersonalEmailClient()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm" title="Abre tu correo personal/corporativo con todo rellenado">
+              <button type="button" onclick="openInPersonalEmailClient()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
                 <i class="ph-bold ph-envelope-open"></i> Abrir en Mi Correo Personal
               </button>
               <button type="button" onclick="sendFormalTeamEmail()" class="px-4 py-2 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
@@ -455,7 +468,6 @@
             </div>
           </div>
 
-          <!-- REGISTRO CRONOLÓGICO EXCLUSIVO DEL CLIENTE -->
           <div class="bg-white rounded-xl p-4 border border-emerald-200 space-y-3">
             <div class="flex items-center justify-between">
               <h5 class="text-xs font-extrabold uppercase text-emerald-900 flex items-center gap-1.5">
@@ -478,15 +490,16 @@
           </div>
         </div>
 
-        <!-- Control de Avance -->
+        <!-- Control de Avance y Estado -->
         <div class="space-y-2">
-          <div class="flex justify-between text-xs font-bold">
+          <div class="flex justify-between items-center text-xs font-bold">
             <span>Progreso Técnico: <span id="dProgressVal" class="text-accent">0%</span></span>
-            <select id="dStatusSelect" onchange="updateTaskStatusQuick(this.value)" class="px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-bold bg-white">
-              <option value="Pendiente">Pendiente</option>
-              <option value="En Proceso">En Proceso</option>
-              <option value="En Revisión">En Revisión</option>
-              <option value="Completado">Completado</option>
+            <select id="dStatusSelect" onchange="updateTaskStatusQuick(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
+              <option value="Urgente">🔴 Urgente</option>
+              <option value="Pendiente">⚪ Pendiente</option>
+              <option value="En Proceso">🔵 En Proceso</option>
+              <option value="En Prueba">🟣 En Prueba</option>
+              <option value="Completado">🟢 Completado</option>
             </select>
           </div>
           <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#0067C0]" />
@@ -613,6 +626,60 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb-l9yH87tg3_YzIn_ddTCyCZZ6rwilS9jKfc-daStrn8JIaQ62M2QcXuQFK0Gw8Tshg/exec";
 
+    // Configuración visual diferenciada de los 5 tableros
+    const BOARD_COLUMNS = [
+      {
+        id: "Urgente",
+        label: "URGENTE",
+        icon: "ph-warning-octagon",
+        colBg: "bg-red-50/95 border-2 border-red-300",
+        headerText: "text-red-800",
+        badgeBg: "bg-red-600 text-white",
+        cardBorder: "border-red-300 hover:border-red-500",
+        barColor: "bg-red-600"
+      },
+      {
+        id: "Pendiente",
+        label: "PENDIENTE",
+        icon: "ph-hourglass",
+        colBg: "bg-amber-50/85 border border-amber-200/90",
+        headerText: "text-amber-900",
+        badgeBg: "bg-amber-200 text-amber-900",
+        cardBorder: "border-amber-200 hover:border-amber-400",
+        barColor: "bg-amber-500"
+      },
+      {
+        id: "En Proceso",
+        label: "EN PROCESO",
+        icon: "ph-gear-six",
+        colBg: "bg-blue-50/85 border border-blue-200/90",
+        headerText: "text-blue-900",
+        badgeBg: "bg-blue-600 text-white",
+        cardBorder: "border-blue-200 hover:border-blue-400",
+        barColor: "bg-[#0067C0]"
+      },
+      {
+        id: "En Prueba",
+        label: "EN PRUEBA",
+        icon: "ph-flask",
+        colBg: "bg-purple-50/85 border border-purple-200/90",
+        headerText: "text-purple-900",
+        badgeBg: "bg-purple-600 text-white",
+        cardBorder: "border-purple-200 hover:border-purple-400",
+        barColor: "bg-purple-600"
+      },
+      {
+        id: "Completado",
+        label: "COMPLETADO",
+        icon: "ph-check-circle",
+        colBg: "bg-emerald-50/90 border-2 border-emerald-300",
+        headerText: "text-emerald-900",
+        badgeBg: "bg-emerald-600 text-white",
+        cardBorder: "border-emerald-300 hover:border-emerald-500",
+        barColor: "bg-emerald-600"
+      }
+    ];
+
     const SUBCATEGORIES = {
       soporte: [
         "Diagnóstico Especial",
@@ -680,7 +747,8 @@
       users: DEFAULT_USERS,
       workshops: DEFAULT_WORKSHOPS,
       adminPin: "1234",
-      clientPortalBaseUrl: "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html"
+      clientPortalBaseUrl: "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html",
+      masterSheetUrl: ""
     };
 
     let appMode = "soporte";
@@ -699,6 +767,14 @@
       let phone = (raw || "").replace(/\D/g, "");
       if (phone.startsWith("0")) phone = "595" + phone.substring(1);
       return phone;
+    }
+
+    function normalizeTaskStatuses() {
+      (state.tasks || []).forEach(t => {
+        if (t.status === "En Revisión" || t.status === "En Revision") {
+          t.status = "En Prueba";
+        }
+      });
     }
 
     function showToast(msg, type = "info") {
@@ -751,6 +827,7 @@
           if (!state.workshops || state.workshops.length === 0) state.workshops = DEFAULT_WORKSHOPS;
         } catch (e) {}
       }
+      normalizeTaskStatuses();
       if (!state.clientPortalBaseUrl) {
         state.clientPortalBaseUrl = "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
       }
@@ -765,7 +842,15 @@
       fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({ action: "saveState", state: state })
-      }).catch(() => {});
+      })
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.masterSheetUrl) {
+          state.masterSheetUrl = d.masterSheetUrl;
+          localStorage.setItem("autotech_state_v5", JSON.stringify(state));
+        }
+      })
+      .catch(() => {});
     }
 
     async function syncFromCloud(manual = false) {
@@ -779,6 +864,8 @@
         const data = await res.json();
         if (data.status === "ok" && data.state) {
           state = { ...state, ...data.state };
+          if (data.masterSheetUrl) state.masterSheetUrl = data.masterSheetUrl;
+          normalizeTaskStatuses();
           if (!state.clientPortalBaseUrl) {
             state.clientPortalBaseUrl = "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
           }
@@ -793,6 +880,29 @@
       } catch (e) {
         if (icon) icon.className = "ph-bold ph-cloud-slash text-amber-500";
         if (manual) showToast("Trabajando en modo local sin conexión", "warning");
+      }
+    }
+
+    function openMasterSheet() {
+      if (state.masterSheetUrl) {
+        window.open(state.masterSheetUrl, "_blank");
+      } else {
+        showToast("Creando y sincronizando el archivo maestro en Google Drive...", "info");
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "saveState", state: state })
+        })
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.masterSheetUrl) {
+            state.masterSheetUrl = d.masterSheetUrl;
+            localStorage.setItem("autotech_state_v5", JSON.stringify(state));
+            window.open(state.masterSheetUrl, "_blank");
+          } else {
+            showToast("Verifica que publicaste la nueva versión en Apps Script", "warning");
+          }
+        })
+        .catch(() => showToast("Error de conexión con Google Drive", "warning"));
       }
     }
 
@@ -899,18 +1009,20 @@
     function renderDashboard() {
       const list = getFilteredModeTasks();
       const total = list.length;
+      const urgent = list.filter(t => t.status === "Urgente").length;
       const done = list.filter(t => t.status === "Completado").length;
-      const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Revisión").length;
+      const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Prueba").length;
 
-      const fourthCard = appMode === "entrenamiento"
-        ? { label: "Horas Programadas", val: list.reduce((a, b) => a + (Number(b.hours) || 0), 0) + " hs", icon: "ph-clock" }
-        : { label: "Con Portal Cliente", val: list.filter(t => t.clientPortal && t.clientPortal.enabled).length, icon: "ph-broadcast" };
+      const fifthCard = appMode === "entrenamiento"
+        ? { label: "Horas Programadas", val: list.reduce((a, b) => a + (Number(b.hours) || 0), 0) + " hs", icon: "ph-clock", color: "text-amber-600" }
+        : { label: "Con Portal Cliente", val: list.filter(t => t.clientPortal && t.clientPortal.enabled).length, icon: "ph-broadcast", color: "text-blue-600" };
 
       const kpis = [
-        { label: appMode === "soporte" ? "Casos de Soporte" : "Capacitaciones", val: total, icon: "ph-folder-open" },
-        { label: "En Ejecución", val: inProg, icon: "ph-gear-six" },
-        { label: "Completados", val: done, icon: "ph-check-circle" },
-        { label: fourthCard.label, val: fourthCard.val, icon: fourthCard.icon }
+        { label: appMode === "soporte" ? "Total Casos" : "Total Cursos", val: total, icon: "ph-folder-open", color: "text-accent" },
+        { label: "Urgentes", val: urgent, icon: "ph-warning-octagon", color: "text-red-600" },
+        { label: "En Proceso / Prueba", val: inProg, icon: "ph-gear-six", color: "text-purple-600" },
+        { label: "Completados", val: done, icon: "ph-check-circle", color: "text-emerald-600" },
+        { label: fifthCard.label, val: fifthCard.val, icon: fifthCard.icon, color: fifthCard.color }
       ];
 
       document.getElementById("kpiGrid").innerHTML = kpis.map(k => `
@@ -919,7 +1031,7 @@
             <span class="text-xs font-semibold text-slate-500">${k.label}</span>
             <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${k.val}</div>
           </div>
-          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-accent shadow-sm">
+          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center ${k.color} shadow-sm">
             <i class="ph-bold ${k.icon} text-xl"></i>
           </div>
         </div>
@@ -990,9 +1102,9 @@
             <span class="text-xs font-bold ${isToday ? 'text-blue-600' : 'text-slate-700'}">${d}</span>
             <div class="space-y-1 mt-1">
               ${isMobileMode
-                ? `<div class="flex flex-wrap gap-1">${dayTasks.map(() => `<span class="w-2 h-2 rounded-full btn-accent"></span>`).join("")}</div>`
+                ? `<div class="flex flex-wrap gap-1">${dayTasks.map(t => `<span class="w-2 h-2 rounded-full ${t.status === 'Urgente' ? 'bg-red-600' : t.status === 'Completado' ? 'bg-emerald-600' : 'btn-accent'}"></span>`).join("")}</div>`
                 : dayTasks.slice(0, 2).map(t => `
-                    <div onclick="event.stopPropagation(); openDetailModal('${t.id}')" class="text-[10px] font-bold px-1.5 py-0.5 rounded btn-accent truncate">
+                    <div onclick="event.stopPropagation(); openDetailModal('${t.id}')" class="text-[10px] font-bold px-1.5 py-0.5 rounded truncate text-white ${t.status === 'Urgente' ? 'bg-red-600' : t.status === 'Completado' ? 'bg-emerald-600' : 'btn-accent'}">
                       ${escapeHtml(t.caseId)}: ${escapeHtml(t.title)}
                     </div>
                   `).join("") + (dayTasks.length > 2 ? `<div class="text-[10px] font-bold text-slate-500">+${dayTasks.length - 2} más</div>` : "")
@@ -1020,14 +1132,15 @@
         return true;
       });
 
-      const cols = ["Pendiente", "En Proceso", "En Revisión", "Completado"];
-      document.getElementById("kanbanContainer").innerHTML = cols.map(col => {
-        const colTasks = list.filter(t => t.status === col);
+      document.getElementById("kanbanContainer").innerHTML = BOARD_COLUMNS.map(col => {
+        const colTasks = list.filter(t => t.status === col.id);
         return `
-          <div ondragover="event.preventDefault()" ondrop="handleDrop(event, '${col}')" class="win-mica rounded-2xl p-3.5 space-y-3 min-h-[260px]">
-            <div class="flex items-center justify-between px-1">
-              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">${col}</h3>
-              <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-white text-slate-700 border border-slate-200">${colTasks.length}</span>
+          <div ondragover="event.preventDefault()" ondrop="handleDrop(event, '${col.id}')" class="rounded-2xl p-3 space-y-3 min-h-[280px] shadow-sm backdrop-blur-md ${col.colBg}">
+            <div class="flex items-center justify-between px-1 pb-1 border-b border-black/5">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 ${col.headerText}">
+                <i class="ph-bold ${col.icon} text-base"></i> ${col.label}
+              </h3>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${col.badgeBg}">${colTasks.length}</span>
             </div>
             <div class="space-y-2.5">
               ${colTasks.map(t => {
@@ -1035,11 +1148,11 @@
                 const isPropio = (t.workshop || "").includes("(Propio)");
                 const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
                 return `
-                  <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-sm hover:shadow-md cursor-pointer transition space-y-2.5">
-                    <div class="flex items-center justify-between gap-1.5">
-                      <span class="text-[11px] font-extrabold text-accent">${escapeHtml(t.caseId)}</span>
+                  <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3 border ${col.cardBorder} shadow-sm hover:shadow-md cursor-pointer transition space-y-2">
+                    <div class="flex items-center justify-between gap-1">
+                      <span class="text-[11px] font-extrabold ${col.id === 'Urgente' ? 'text-red-600' : col.id === 'Completado' ? 'text-emerald-700' : 'text-accent'}">${escapeHtml(t.caseId)}</span>
                       ${t.clientPortal && t.clientPortal.enabled
-                        ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1"><i class="ph-bold ph-broadcast"></i> Cliente Activo</span>`
+                        ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1"><i class="ph-bold ph-broadcast"></i> Cliente</span>`
                         : `<span class="text-[10px] font-semibold text-slate-400">${escapeHtml(t.date)}</span>`
                       }
                     </div>
@@ -1065,14 +1178,14 @@
                         <span>${t.progress || 0}%</span>
                       </div>
                       <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div class="h-full btn-accent rounded-full" style="width:${t.progress || 0}%"></div>
+                        <div class="h-full ${col.barColor} rounded-full" style="width:${t.progress || 0}%"></div>
                       </div>
                     </div>
 
                     ${isMobileMode ? `
                       <div onclick="event.stopPropagation()" class="pt-1 border-t border-slate-100">
                         <select onchange="moveCardMobile('${t.id}', this.value)" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-slate-50">
-                          ${cols.map(c => `<option value="${c}" ${c === t.status ? "selected" : ""}>Mover a: ${c}</option>`).join("")}
+                          ${BOARD_COLUMNS.map(c => `<option value="${c.id}" ${c.id === t.status ? "selected" : ""}>Mover a: ${c.label}</option>`).join("")}
                         </select>
                       </div>
                     ` : ""}
@@ -1165,6 +1278,7 @@
         t.workshop = isSoporte ? document.getElementById("tWorkshop").value : "";
         t.date = document.getElementById("tDate").value;
         t.status = document.getElementById("tStatus").value;
+        if (t.status === "Completado") t.progress = 100;
         t.orNumber = document.getElementById("tOrNumber").value.trim();
         t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase();
         t.vehicleModel = document.getElementById("tModel").value.trim();
@@ -1257,13 +1371,13 @@
             to: assignee.email,
             cc: admin ? admin.email : "",
             subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${newTask.title}`,
-            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
+            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nPrioridad/Estado: ${newTask.status}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
           })
         }).catch(() => {});
       }
     }
 
-    // DETALLE DE CASO + FORMALIZACIÓN POR CORREO + AVISO AL ASESOR
+    // DETALLE DE CASO
     function openDetailModal(id) {
       currentDetailId = id;
       const t = state.tasks.find(x => x.id === id);
@@ -1881,6 +1995,208 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       window.open(`https://wa.me/?text=${msg}`, "_blank");
     }
 
+    // =========================================================================
+    // EXPORTACIÓN DE HISTORIAL COMPLETO EN EXCEL (.XLS) Y WORD (.DOC)
+    // =========================================================================
+    function exportExcelHistory() {
+      const list = getFilteredModeTasks();
+      if (list.length === 0) {
+        showToast("No hay casos registrados en esta área para exportar", "warning");
+        return;
+      }
+
+      const titleArea = appMode === "soporte" ? "Historial de Casos de Soporte Técnico" : "Historial de Entrenamiento Técnico";
+      let rowsHtml = list.map(t => {
+        const assignee = state.users.find(u => u.id === t.assigneeId);
+        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
+        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
+        const historyFormatted = (t.notes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
+        const clientHistoryFormatted = (t.clientNotes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
+
+        return `
+          <tr>
+            <td style="font-weight:bold;">${escapeHtml(t.caseId)}</td>
+            <td>${escapeHtml(t.status)}</td>
+            <td>${t.progress || 0}%</td>
+            <td>${escapeHtml(t.date)}</td>
+            <td>${escapeHtml(t.title)}</td>
+            <td>${escapeHtml(t.subcategory)}</td>
+            <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
+            <td>${escapeHtml(t.workshop || "-")}</td>
+            <td>${escapeHtml(t.vehicleModel || "-")}</td>
+            <td>${escapeHtml(t.orNumber || "-")}</td>
+            <td>${escapeHtml(t.vehicleVin || "-")}</td>
+            <td>${escapeHtml(t.vehicleKm || "-")}</td>
+            <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
+            <td>${escapeHtml(t.description || "-")}</td>
+            <td>${historyFormatted || "Sin registros"}</td>
+            <td>${clientHistoryFormatted || "-"}</td>
+            <td>${escapeHtml(t.driveFolderUrl || "-")}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const excelDoc = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+          <h2>${titleArea} - Automotor S.A.</h2>
+          <p>Fecha de emisión: ${new Date().toLocaleString()} | Total de registros: ${list.length}</p>
+          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; font-size:11pt;">
+            <thead>
+              <tr style="background-color:#0067C0; color:#ffffff; font-weight:bold;">
+                <th>Código</th>
+                <th>Estado / Prioridad</th>
+                <th>Progreso</th>
+                <th>Fecha</th>
+                <th>Título del Caso</th>
+                <th>Categoría</th>
+                <th>Responsable Técnico</th>
+                <th>Taller</th>
+                <th>Modelo Vehículo</th>
+                <th>N° Orden (OR)</th>
+                <th>Chasis / VIN</th>
+                <th>Kilometraje</th>
+                <th>Asesor de Servicios</th>
+                <th>Descripción Inicial</th>
+                <th>Registro Cronológico Técnico (Qué se hizo)</th>
+                <th>Mensajes Publicados al Cliente</th>
+                <th>Carpeta Google Drive</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Historial_AutoTech_${appMode}_${new Date().toISOString().split("T")[0]}.xls`;
+      a.click();
+      showToast("Historial descargado en Excel (.xls)", "success");
+    }
+
+    function buildWordDocumentHtml(tasksArray, docTitle) {
+      const blocks = tasksArray.map(t => {
+        const assignee = state.users.find(u => u.id === t.assigneeId);
+        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
+        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
+        const isSoporte = (t.mode || "soporte") === "soporte";
+
+        const statusColor = t.status === "Urgente" ? "#DC2626"
+          : t.status === "Completado" ? "#059669"
+          : t.status === "En Prueba" ? "#7C3AED"
+          : "#0067C0";
+
+        const notesHtml = (t.notes && t.notes.length > 0)
+          ? t.notes.map(n => `<li style="margin-bottom:4px;"><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")
+          : "<li>Sin intervenciones registradas aún.</li>";
+
+        const clientNotesHtml = (t.clientNotes && t.clientNotes.length > 0)
+          ? `<p style="margin-top:10px; font-weight:bold; color:#065F46;">Reportes publicados al Cliente:</p>
+             <ul>${t.clientNotes.map(n => `<li><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")}</ul>`
+          : "";
+
+        return `
+          <div style="border:1px solid #CBD5E1; padding:14px; margin-bottom:20px; page-break-inside:avoid;">
+            <table width="100%" cellspacing="0" cellpadding="4" style="border-bottom:2px solid ${statusColor}; margin-bottom:10px;">
+              <tr>
+                <td><span style="font-size:14pt; font-weight:bold; color:#0F172A;">${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</span></td>
+                <td align="right"><span style="font-weight:bold; color:${statusColor}; font-size:11pt;">ESTADO: ${escapeHtml(t.status.toUpperCase())} (${t.progress || 0}%)</span></td>
+              </tr>
+            </table>
+
+            <table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-bottom:10px;">
+              <tr>
+                <td width="25%" style="background:#F8FAFC;"><strong>Categoría:</strong></td>
+                <td width="25%">${escapeHtml(t.subcategory)}</td>
+                <td width="25%" style="background:#F8FAFC;"><strong>Fecha:</strong></td>
+                <td width="25%">${escapeHtml(t.date)}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Responsable Técnico:</strong></td>
+                <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
+                <td style="background:#F8FAFC;"><strong>${isSoporte ? "Taller:" : "Sede / Aula:"}</strong></td>
+                <td>${escapeHtml(isSoporte ? (t.workshop || "-") : (t.location || "-"))}</td>
+              </tr>
+              ${isSoporte ? `
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Modelo Vehículo:</strong></td>
+                <td>${escapeHtml(t.vehicleModel || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>N° Orden (OR):</strong></td>
+                <td>${escapeHtml(t.orNumber || "-")}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Chasis / VIN:</strong></td>
+                <td>${escapeHtml(t.vehicleVin || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Asesor Servicios:</strong></td>
+                <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
+              </tr>
+              ` : `
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Grupo Técnico:</strong></td>
+                <td>${escapeHtml(t.group || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Duración:</strong></td>
+                <td>${t.hours || 0} horas</td>
+              </tr>
+              `}
+            </table>
+
+            ${t.description ? `<p style="font-size:10pt;"><strong>Descripción / Alcance Inicial:</strong> ${escapeHtml(t.description)}</p>` : ""}
+
+            <p style="font-size:10pt; font-weight:bold; color:#1E293B; margin-bottom:4px;">Registro Cronológico Técnico (Procedimientos y Hallazgos):</p>
+            <ul style="font-size:10pt; margin-top:2px;">${notesHtml}</ul>
+            ${clientNotesHtml}
+            <p style="font-size:9pt; color:#475569; margin-top:8px;"><strong>Carpeta Evidencias Google Drive:</strong> ${escapeHtml(t.driveFolderUrl || "-")}</p>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"><title>${escapeHtml(docTitle)}</title></head>
+        <body style="font-family:Calibri, Arial, sans-serif; color:#1E293B;">
+          <h1 style="color:#0067C0; border-bottom:2px solid #0067C0; padding-bottom:6px;">${escapeHtml(docTitle)}</h1>
+          <p style="font-size:10pt; color:#64748B;">Automotor S.A. · Departamento de Soporte Técnico y Entrenamiento · Generado el ${new Date().toLocaleString()}</p>
+          ${blocks}
+        </body>
+        </html>
+      `;
+    }
+
+    function exportWordHistory() {
+      const list = getFilteredModeTasks();
+      if (list.length === 0) {
+        showToast("No hay casos registrados en esta área para exportar", "warning");
+        return;
+      }
+      const titleArea = appMode === "soporte"
+        ? "Historial Técnico de Casos de Soporte"
+        : "Memoria Histórica de Entrenamiento Técnico";
+
+      const docHtml = buildWordDocumentHtml(list, titleArea);
+      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Informe_Historial_AutoTech_${appMode}_${new Date().toISOString().split("T")[0]}.doc`;
+      a.click();
+      showToast("Historial completo descargado en Word (.doc)", "success");
+    }
+
+    function exportSingleCaseWord() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const docHtml = buildWordDocumentHtml([t], `Ficha Técnica de Caso — ${t.caseId}`);
+      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${t.caseId}_${(t.vehicleModel || t.title).replace(/[^a-zA-Z0-9_-]/g, "_")}.doc`;
+      a.click();
+      showToast(`Ficha de ${t.caseId} descargada en Word`, "success");
+    }
+
     // USUARIOS, TALLERES Y CONFIG URL CLIENTE
     function openUsersModal() {
       document.getElementById("adminPinInput").value = state.adminPin;
@@ -1970,18 +2286,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       saveLocalAndCloud();
       closeModal("portalConfigModal");
       showToast("URL pública del Portal Cliente guardada", "success");
-    }
-
-    function exportCSV() {
-      const list = getFilteredModeTasks();
-      const rows = [["Codigo", "Modo", "Titulo", "Categoria", "Taller", "Asesor", "Tel_Asesor", "Fecha", "Estado", "Avance", "OR", "VIN", "Modelo"]];
-      list.forEach(t => rows.push([t.caseId, t.mode, t.title, t.subcategory, t.workshop || "", t.advisorName || "", t.advisorWhatsapp || "", t.date, t.status, t.progress + "%", t.orNumber || "", t.vehicleVin || "", t.vehicleModel || ""]));
-      const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `AutoTech_${appMode}_${new Date().toISOString().split("T")[0]}.csv`;
-      a.click();
     }
 
     function closeModal(id) {

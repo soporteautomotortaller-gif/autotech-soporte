@@ -23,14 +23,51 @@
                   radial-gradient(circle at 90% 85%, #e0e7ff 0%, transparent 45%),
                   #f3f4f6;
       min-height: 100vh;
+      transition: background 0.25s ease, color 0.25s ease;
     }
     body.mode-training {
       background: radial-gradient(circle at 10% 10%, #fef3c7 0%, transparent 40%),
                   radial-gradient(circle at 90% 85%, #ffedd5 0%, transparent 45%),
                   #f3f4f6;
     }
+    /* MODO OSCURO WINDOWS 11 (DARK MODE TALLER) */
+    body.dark-theme {
+      background: radial-gradient(circle at 10% 10%, #0f172a 0%, transparent 45%),
+                  radial-gradient(circle at 90% 85%, #1e1b4b 0%, transparent 45%),
+                  #090d16;
+      color: #f1f5f9;
+    }
+    body.dark-theme .win-mica {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: rgba(51, 65, 85, 0.7);
+      color: #f1f5f9;
+    }
+    body.dark-theme .text-slate-900,
+    body.dark-theme .text-slate-800 {
+      color: #f8fafc !important;
+    }
+    body.dark-theme .text-slate-700,
+    body.dark-theme .text-slate-600 {
+      color: #cbd5e1 !important;
+    }
+    body.dark-theme .bg-white,
+    body.dark-theme .bg-white\/90,
+    body.dark-theme .bg-white\/80,
+    body.dark-theme .bg-white\/70,
+    body.dark-theme .bg-slate-50 {
+      background-color: #1e293b !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
+    body.dark-theme input,
+    body.dark-theme select,
+    body.dark-theme textarea {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+      border-color: #475569 !important;
+    }
     .win-mica {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.86);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       border: 1px solid rgba(255, 255, 255, 0.75);
@@ -81,8 +118,11 @@
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900">AutoTech Ops</h1>
-              <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Clic para alternar vista Celular/PC">
+              <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar vista Celular/PC">
                 <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
+              </button>
+              <button onclick="toggleDarkMode()" id="darkModeBtn" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar Modo Oscuro / Claro">
+                <i class="ph-bold ph-moon"></i>
               </button>
             </div>
             <p id="modeSubtitle" class="text-xs text-slate-500">Soporte Técnico · Red Oficial y Autorizada Automotor</p>
@@ -133,12 +173,10 @@
             <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i> <span class="hidden lg:inline">Nube</span>
           </button>
 
-          <!-- Botón Archivo Maestro Único en Drive (Actualización Automática) -->
           <button onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm" title="Abrir archivo maestro único en Google Drive que se actualiza solo">
             <i class="ph-bold ph-table text-base"></i> <span>Historial Maestro</span>
           </button>
 
-          <!-- Botones Descarga Local Excel y Word -->
           <button onclick="exportExcelHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1.5" title="Descargar historial completo en Excel">
             <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i> <span>Excel</span>
           </button>
@@ -158,7 +196,7 @@
   <!-- Contenido Principal -->
   <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
 
-    <!-- VISTA 1: RESUMEN & KPIs -->
+    <!-- VISTA 1: RESUMEN EJECUTIVO & ANALÍTICA VISUAL -->
     <section id="view-dashboard" class="space-y-6">
       <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
 
@@ -172,9 +210,26 @@
 
         <div class="win-mica rounded-2xl p-5 space-y-3">
           <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-users-three text-accent"></i> Carga y Avance por Integrante
+            <i class="ph-bold ph-users-three text-accent"></i> Carga, SLA y Avance por Especialista
           </h3>
           <div id="teamBreakdown" class="space-y-2.5"></div>
+        </div>
+      </div>
+
+      <!-- Analítica por Marca y Ranking de Talleres (Modo Soporte) -->
+      <div id="supportAnalyticsRow" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="win-mica rounded-2xl p-5 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i class="ph-bold ph-car-profile text-accent"></i> Casos por Marca Representada
+          </h3>
+          <div id="brandBreakdown" class="space-y-2.5"></div>
+        </div>
+
+        <div class="win-mica rounded-2xl p-5 space-y-3">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <i class="ph-bold ph-buildings text-accent"></i> Top Talleres con Mayor Escalamiento
+          </h3>
+          <div id="workshopBreakdown" class="space-y-2.5"></div>
         </div>
       </div>
     </section>
@@ -198,15 +253,16 @@
       </div>
     </section>
 
-    <!-- VISTA 3: TABLERO KANBAN (5 COLUMNAS CON COLORES DIFERENCIADOS) -->
+    <!-- VISTA 3: TABLERO KANBAN (5 COLUMNAS CON COLORES Y CONTADOR DE DÍAS SLA) -->
     <section id="view-board" class="hidden space-y-4">
       <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
         <div class="relative flex-1 min-w-[200px]">
           <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, OR, VIN, modelo, asesor, taller..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
+          <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, código DTC (ej: P0087), marca, OR, VIN, modelo, asesor..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
         </div>
+        <select id="filterBrand" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
         <select id="filterUser" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
-        <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[220px]"></select>
+        <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[210px]"></select>
       </div>
 
       <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
@@ -219,7 +275,7 @@
     <i class="ph-bold ph-plus"></i>
   </button>
 
-  <!-- MODAL 1: CREAR / EDITAR ACCIÓN -->
+  <!-- MODAL 1: CREAR / EDITAR ACCIÓN + BUSCADOR DE CASOS SIMILARES POR DTC -->
   <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -241,7 +297,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Responsable Técnico Asignado *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Encargado / Responsable Técnico *</label>
             <select id="tAssignee" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
           </div>
 
@@ -251,7 +307,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha Programada *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha de Apertura / Programada *</label>
             <input type="date" id="tDate" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
           </div>
 
@@ -267,23 +323,44 @@
           </div>
         </div>
 
+        <!-- Datos de Marca Automotor + Códigos DTC + Vehículo + Asesor -->
         <div id="vehicleFieldsBox" class="space-y-3">
-          <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
-              <input type="text" id="tOrNumber" placeholder="OR-45120" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-blue-900 mb-1">Marca Representada (Automotor) *</label>
+                <select id="tBrand" onchange="toggleCustomBrandField(); checkSimilarDtcCases()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold bg-white"></select>
+              </div>
+              <div id="customBrandBox" class="hidden">
+                <label class="block text-[11px] font-bold text-amber-900 mb-1">Especificar Otra Marca *</label>
+                <input type="text" id="tCustomBrand" placeholder="Escribe aquí el nombre de la marca..." class="w-full px-3 py-2 rounded-lg border border-amber-400 text-xs bg-white font-semibold" />
+              </div>
+              <div id="modelFieldWrapper">
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo de Unidad</label>
+                <input type="text" id="tModel" placeholder="Ej: Tucson, D-Max, Coolray, V6E..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              </div>
             </div>
+
+            <!-- Campo Códigos de Falla DTC + Alerta de Base de Conocimiento -->
             <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Chasis / VIN (7)</label>
-              <input type="text" id="tVin" maxlength="17" placeholder="KNA8921" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase" />
+              <label class="block text-[11px] font-bold text-indigo-900 mb-1">Códigos de Falla (DTC) / Síntomas Clave</label>
+              <input type="text" id="tDtcCodes" oninput="checkSimilarDtcCases()" placeholder="Ej: P0087, U0100, P20EE, pérdida de potencia..." class="w-full px-3 py-2 rounded-lg border border-indigo-300 text-xs font-mono uppercase bg-white" />
+              <div id="similarDtcAlert" class="hidden mt-2 p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-950 space-y-1"></div>
             </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo Vehículo</label>
-              <input type="text" id="tModel" placeholder="Hyundai Tucson" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Kilometraje</label>
-              <input type="text" id="tKm" placeholder="42.500 km" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
+                <input type="text" id="tOrNumber" placeholder="OR-45120" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Chasis / VIN</label>
+                <input type="text" id="tVin" maxlength="17" placeholder="KNA8921" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Kilometraje</label>
+                <input type="text" id="tKm" placeholder="42.500 km" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              </div>
             </div>
           </div>
 
@@ -327,20 +404,24 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO, WORD INDIVIDUAL, CORREO FORMAL, AVISO ASESOR Y REGISTROS -->
+  <!-- MODAL 2: DETALLE DE CASO, CIERRE TÉCNICO, CHAT INTERNO, CORREO FORMAL Y REGISTROS -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
         <div class="flex items-center gap-2">
           <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#0067C0]">CASO-2026-101</span>
-          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-sm">Detalle</h3>
+          <span id="dBrandBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-white hidden">HYUNDAI</span>
+          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-xs">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
+          <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm" title="Escribir mensaje al encargado en el chat interno del caso">
+            <i class="ph-bold ph-chats-circle text-sm"></i> Mensaje al Encargado
+          </button>
           <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1" title="Descargar ficha completa de este caso en Word">
-            <i class="ph-bold ph-file-doc text-sm"></i> Ficha Word
+            <i class="ph-bold ph-file-doc text-sm"></i> Word
           </button>
           <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
-            <i class="ph-bold ph-envelope-simple"></i> Formalizar por Correo
+            <i class="ph-bold ph-envelope-simple"></i> Formalizar Correo
           </button>
           <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-user-focus"></i> Portal Cliente
@@ -357,6 +438,7 @@
           <div class="space-y-1">
             <div id="dMetaLine1" class="font-bold text-slate-800"></div>
             <div id="dMetaLine2" class="text-slate-500"></div>
+            <div id="dDtcLine" class="text-indigo-800 font-mono font-bold hidden"></div>
             <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
           </div>
           <div class="flex flex-wrap items-center gap-2">
@@ -366,6 +448,30 @@
             <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold flex items-center gap-1.5">
               <i class="ph-bold ph-share-network text-base"></i> Compartir Taller
             </button>
+          </div>
+        </div>
+
+        <!-- TARJETA DE DIAGNÓSTICO DE CIERRE (CAUSA RAÍZ, REPUESTOS Y SOLUCIÓN DEFINITIVA) -->
+        <div id="dClosureSummaryBox" class="hidden bg-emerald-50/90 border-2 border-emerald-400 rounded-2xl p-4 space-y-2 text-xs">
+          <div class="flex items-center justify-between">
+            <h4 class="font-extrabold uppercase text-emerald-950 flex items-center gap-1.5">
+              <i class="ph-bold ph-seal-check text-emerald-600 text-base"></i> Cierre Técnico Documentado (Base de Conocimiento)
+            </h4>
+            <button type="button" onclick="openClosureModal(currentDetailId)" class="text-emerald-800 font-bold hover:underline">Editar Cierre</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+            <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+              <span class="block text-[10px] font-bold uppercase text-slate-400">Causa Raíz</span>
+              <span id="dRootCauseText" class="font-semibold text-slate-800">-</span>
+            </div>
+            <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+              <span class="block text-[10px] font-bold uppercase text-slate-400">Repuestos Reemplazados</span>
+              <span id="dPartsText" class="font-semibold text-slate-800">-</span>
+            </div>
+            <div class="bg-white p-2.5 rounded-xl border border-emerald-200">
+              <span class="block text-[10px] font-bold uppercase text-slate-400">Solución Definitiva</span>
+              <span id="dSolutionText" class="font-semibold text-slate-800">-</span>
+            </div>
           </div>
         </div>
 
@@ -426,7 +532,7 @@
               <h4 class="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
                 <i class="ph-bold ph-broadcast text-emerald-600"></i> Configuración Portal Público del Cliente
               </h4>
-              <p class="text-xs text-emerald-800">Los reportes publicados aquí son 100% independientes del registro cronológico interno del taller.</p>
+              <p class="text-xs text-emerald-800">Los reportes publicados aquí son 100% independientes del registro cronológico y chat interno del taller.</p>
             </div>
             <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200">
               <input type="checkbox" id="cpEnabled" class="w-4 h-4 accent-emerald-600" />
@@ -505,6 +611,34 @@
           <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#0067C0]" />
         </div>
 
+        <!-- CHAT INTERNO DE COORDINACIÓN DEL CASO -->
+        <div id="caseChatSection" class="bg-indigo-50/75 rounded-2xl p-4 border-2 border-indigo-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 class="text-xs font-extrabold uppercase text-indigo-950 flex items-center gap-1.5">
+                <i class="ph-bold ph-chats-circle text-indigo-600 text-base"></i> Chat Interno del Caso · Coordinación con el Encargado
+              </h4>
+              <p id="chatAssigneeHint" class="text-[11px] text-indigo-800 font-medium">Mensajería interna privada entre especialistas sobre este expediente.</p>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">Solo Equipo Interno</span>
+          </div>
+
+          <div id="dChatMessagesList" class="space-y-2.5 max-h-60 overflow-y-auto bg-white/80 p-3 rounded-xl border border-indigo-100"></div>
+
+          <form onsubmit="sendCaseChatMessage(event)" class="space-y-2">
+            <div class="flex gap-2">
+              <input type="text" id="newChatMsgInput" required placeholder="Escribe un mensaje directo al encargado o consulta sobre este caso..." class="flex-1 px-3.5 py-2.5 rounded-xl border border-indigo-300 bg-white text-xs sm:text-sm focus:outline-none focus:border-indigo-600" />
+              <button type="submit" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                <i class="ph-bold ph-paper-plane-right"></i> Enviar
+              </button>
+            </div>
+            <label class="inline-flex items-center gap-2 text-xs text-indigo-900 font-semibold cursor-pointer">
+              <input type="checkbox" id="notifyAssigneeOnChat" checked class="w-4 h-4 accent-indigo-600" />
+              Notificar por correo electrónico al Encargado del caso al enviar este mensaje
+            </label>
+          </form>
+        </div>
+
         <!-- Carpeta Google Drive y Evidencia Multimedia -->
         <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
@@ -548,6 +682,43 @@
           <div id="dInternalNotesList" class="space-y-2 max-h-60 overflow-y-auto"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CIERRE TÉCNICO OBLIGATORIO AL COMPLETAR UN CASO (BASE DE CONOCIMIENTO) -->
+  <div id="closureModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-emerald-300 overflow-hidden">
+      <div class="px-5 py-4 border-b border-emerald-200 flex items-center justify-between bg-emerald-50">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-seal-check text-xl text-emerald-700"></i>
+          <h3 class="text-base font-bold text-emerald-950">Cierre Técnico y Solución Aplicada</h3>
+        </div>
+        <button onclick="closeModal('closureModal')" class="p-1.5 rounded-lg hover:bg-emerald-200/60"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <form onsubmit="saveTechnicalClosure(event)" class="p-5 space-y-4">
+        <input type="hidden" id="closureTaskId" />
+        <p class="text-xs text-slate-600">Documenta el diagnóstico final para que quede guardado en el <strong>Historial Maestro</strong> y sirva como referencia ante futuras fallas similares.</p>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Causa Raíz Detectada *</label>
+          <input type="text" id="cRootCause" required placeholder="Ej: Sensor de presión riel común defectuoso / Falso contacto masa" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Repuestos Reemplazados / Insumos</label>
+          <input type="text" id="cParts" placeholder="Ej: Sensor FRP OEM 31400-2F000, kit sellos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Solución Definitiva / Procedimiento Ejecutado *</label>
+          <textarea id="cSolution" rows="3" required placeholder="Describe la reparación, calibración o actualización de software realizada..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+          <button type="button" onclick="closeModal('closureModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">Omitir por ahora</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">Guardar Cierre Técnico</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -626,7 +797,26 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb-l9yH87tg3_YzIn_ddTCyCZZ6rwilS9jKfc-daStrn8JIaQ62M2QcXuQFK0Gw8Tshg/exec";
 
-    // Configuración visual diferenciada de los 5 tableros
+    const AUTOMOTOR_BRANDS = [
+      "Hyundai",
+      "Hyundai Camiones y Buses",
+      "Hyundai Maquinarias",
+      "Isuzu",
+      "Geely",
+      "SsangYong / KGM",
+      "Maserati",
+      "Lynk & Co",
+      "Mahindra",
+      "Riddara",
+      "Farizon",
+      "Lotus",
+      "Shacman",
+      "Lonking",
+      "Cummins",
+      "Repsol",
+      "Otras Marcas"
+    ];
+
     const BOARD_COLUMNS = [
       {
         id: "Urgente",
@@ -769,12 +959,34 @@
       return phone;
     }
 
+    // Cálculo de días abiertos para control SLA
+    function getElapsedDays(t) {
+      if (!t || !t.date) return 0;
+      const start = new Date(t.date + "T00:00:00");
+      const end = (t.status === "Completado" && t.closedDate)
+        ? new Date(t.closedDate + "T00:00:00")
+        : new Date();
+      const diff = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+      return diff < 0 ? 0 : diff;
+    }
+
     function normalizeTaskStatuses() {
       (state.tasks || []).forEach(t => {
         if (t.status === "En Revisión" || t.status === "En Revision") {
           t.status = "En Prueba";
         }
+        if (!Array.isArray(t.chatMessages)) {
+          t.chatMessages = [];
+        }
       });
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark-theme");
+      localStorage.setItem("autotech_dark_mode", isDark ? "1" : "0");
+      document.getElementById("darkModeBtn").innerHTML = isDark
+        ? `<i class="ph-bold ph-sun text-amber-400"></i>`
+        : `<i class="ph-bold ph-moon"></i>`;
     }
 
     function showToast(msg, type = "info") {
@@ -819,6 +1031,11 @@
     });
 
     window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("autotech_dark_mode") === "1") {
+        document.body.classList.add("dark-theme");
+        document.getElementById("darkModeBtn").innerHTML = `<i class="ph-bold ph-sun text-amber-400"></i>`;
+      }
+
       const saved = localStorage.getItem("autotech_state_v5");
       if (saved) {
         try {
@@ -872,6 +1089,10 @@
           localStorage.setItem("autotech_state_v5", JSON.stringify(state));
           syncSelectors();
           renderAll();
+          if (currentDetailId && !document.getElementById("detailModal").classList.contains("hidden")) {
+            const openT = state.tasks.find(x => x.id === currentDetailId);
+            if (openT) renderCaseChatMessages(openT);
+          }
           if (manual) showToast("Datos sincronizados con Google Drive", "success");
         } else if (data.status === "empty") {
           saveLocalAndCloud();
@@ -922,6 +1143,8 @@
         document.getElementById("btnNewActionText").textContent = "Nuevo Soporte";
         document.getElementById("btnWorkshops").classList.remove("hidden");
         document.getElementById("filterWorkshop").classList.remove("hidden");
+        document.getElementById("filterBrand").classList.remove("hidden");
+        document.getElementById("supportAnalyticsRow").classList.remove("hidden");
       } else {
         body.classList.add("mode-training");
         btnE.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#B45309] shadow-sm transition";
@@ -931,6 +1154,8 @@
         document.getElementById("btnNewActionText").textContent = "Nuevo Entrenamiento";
         document.getElementById("btnWorkshops").classList.add("hidden");
         document.getElementById("filterWorkshop").classList.add("hidden");
+        document.getElementById("filterBrand").classList.add("hidden");
+        document.getElementById("supportAnalyticsRow").classList.add("hidden");
       }
       renderAll();
     }
@@ -964,6 +1189,14 @@
 
       tAssignee.innerHTML = state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
 
+      const tBrand = document.getElementById("tBrand");
+      const filterBrand = document.getElementById("filterBrand");
+      tBrand.innerHTML = AUTOMOTOR_BRANDS.map(b =>
+        `<option value="${escapeHtml(b)}">${b === "Otras Marcas" ? "Otras Marcas (Escribir manualmente...)" : escapeHtml(b)}</option>`
+      ).join("");
+      filterBrand.innerHTML = `<option value="">Todas las Marcas</option>` +
+        AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("");
+
       const filterW = document.getElementById("filterWorkshop");
       const tW = document.getElementById("tWorkshop");
       const propios = state.workshops.filter(w => w.type === "Propio");
@@ -979,6 +1212,54 @@
       `;
       tW.innerHTML = wOptions;
       filterW.innerHTML = `<option value="">Todos los Talleres</option>` + wOptions;
+    }
+
+    function toggleCustomBrandField() {
+      const val = document.getElementById("tBrand").value;
+      const isOther = val === "Otras Marcas";
+      document.getElementById("customBrandBox").classList.toggle("hidden", !isOther);
+      document.getElementById("tCustomBrand").required = (appMode === "soporte" && isOther);
+      document.getElementById("modelFieldWrapper").classList.toggle("sm:col-span-2", isOther);
+    }
+
+    // BUSCADOR AUTOMÁTICO DE BASE DE CONOCIMIENTO POR CÓDIGO DTC O MARCA
+    function checkSimilarDtcCases() {
+      const alertBox = document.getElementById("similarDtcAlert");
+      if (appMode !== "soporte") {
+        alertBox.classList.add("hidden");
+        return;
+      }
+      const rawDtc = (document.getElementById("tDtcCodes").value || "").trim().toUpperCase();
+      const editId = document.getElementById("editTaskId").value;
+      if (rawDtc.length < 3) {
+        alertBox.classList.add("hidden");
+        return;
+      }
+
+      const tokens = rawDtc.split(/[\s,;]+/).filter(x => x.length >= 3);
+      const matches = state.tasks.filter(t => {
+        if ((t.mode || "soporte") !== "soporte" || t.id === editId) return false;
+        const hay = `${t.dtcCodes || ""} ${t.title || ""} ${t.rootCause || ""} ${t.finalSolution || ""}`.toUpperCase();
+        return tokens.some(tok => hay.includes(tok));
+      });
+
+      if (matches.length === 0) {
+        alertBox.classList.add("hidden");
+        return;
+      }
+
+      alertBox.classList.remove("hidden");
+      alertBox.innerHTML = `
+        <div class="font-bold flex items-center gap-1.5 text-amber-900">
+          <i class="ph-bold ph-lightbulb text-amber-600 text-base"></i> Base de Conocimiento: se encontraron ${matches.length} caso(s) previo(s) similar(es):
+        </div>
+        ${matches.slice(0, 3).map(m => `
+          <div class="pl-5 border-l-2 border-amber-400">
+            <strong>${escapeHtml(m.caseId)}</strong> (${escapeHtml(m.brand || "")} ${escapeHtml(m.vehicleModel || "")} · DTC: ${escapeHtml(m.dtcCodes || "-")}) —
+            ${m.finalSolution ? `<span class="text-emerald-800 font-semibold">Solución: ${escapeHtml(m.finalSolution)}</span>` : `<span>Estado: ${escapeHtml(m.status)}</span>`}
+          </div>
+        `).join("")}
+      `;
     }
 
     function handleUserChange(newId) {
@@ -1006,6 +1287,7 @@
       renderBoard();
     }
 
+    // DASHBOARD EJECUTIVO CON ANALÍTICA POR MARCA, TALLERES Y SLA
     function renderDashboard() {
       const list = getFilteredModeTasks();
       const total = list.length;
@@ -1013,9 +1295,13 @@
       const done = list.filter(t => t.status === "Completado").length;
       const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Prueba").length;
 
+      const avgDays = total
+        ? (list.reduce((acc, t) => acc + getElapsedDays(t), 0) / total).toFixed(1)
+        : "0";
+
       const fifthCard = appMode === "entrenamiento"
         ? { label: "Horas Programadas", val: list.reduce((a, b) => a + (Number(b.hours) || 0), 0) + " hs", icon: "ph-clock", color: "text-amber-600" }
-        : { label: "Con Portal Cliente", val: list.filter(t => t.clientPortal && t.clientPortal.enabled).length, icon: "ph-broadcast", color: "text-blue-600" };
+        : { label: "Tiempo Promedio", val: avgDays + " días", icon: "ph-timer", color: "text-blue-600" };
 
       const kpis = [
         { label: appMode === "soporte" ? "Total Casos" : "Total Cursos", val: total, icon: "ph-folder-open", color: "text-accent" },
@@ -1056,17 +1342,69 @@
 
       document.getElementById("teamBreakdown").innerHTML = state.users.map(u => {
         const uTasks = list.filter(t => t.assigneeId === u.id);
+        const uOpen = uTasks.filter(t => t.status !== "Completado").length;
         const uAvg = uTasks.length ? Math.round(uTasks.reduce((a, b) => a + (Number(b.progress) || 0), 0) / uTasks.length) : 0;
         return `
           <div class="bg-white/70 p-3 rounded-xl border border-slate-200/70 flex items-center justify-between">
             <div>
               <div class="text-xs font-bold text-slate-800">${escapeHtml(u.name)}</div>
-              <div class="text-[11px] text-slate-500">${uTasks.length} asignados · Avance promedio ${uAvg}%</div>
+              <div class="text-[11px] text-slate-500">${uTasks.length} totales (${uOpen} activos) · Avance ${uAvg}%</div>
             </div>
             <span class="text-xs font-extrabold text-accent">${uAvg}%</span>
           </div>
         `;
       }).join("");
+
+      if (appMode === "soporte") {
+        // Ranking por Marca
+        const brandCounts = {};
+        list.forEach(t => {
+          const b = t.brand || "Sin especificar";
+          brandCounts[b] = (brandCounts[b] || 0) + 1;
+        });
+        const sortedBrands = Object.entries(brandCounts).sort((a, b) => b[1] - a[1]);
+        document.getElementById("brandBreakdown").innerHTML = sortedBrands.length === 0
+          ? `<p class="text-xs text-slate-400">Sin casos registrados aún.</p>`
+          : sortedBrands.slice(0, 7).map(([brand, count]) => {
+              const pct = total ? Math.round((count / total) * 100) : 0;
+              return `
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1">
+                    <span class="text-slate-800 font-bold">${escapeHtml(brand)}</span>
+                    <span class="text-slate-500">${count} caso(s) (${pct}%)</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-slate-800 rounded-full" style="width:${pct}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join("");
+
+        // Top Talleres con mayor escalamiento
+        const wsCounts = {};
+        list.forEach(t => {
+          const w = t.workshop || "Sin taller";
+          wsCounts[w] = (wsCounts[w] || 0) + 1;
+        });
+        const sortedWs = Object.entries(wsCounts).sort((a, b) => b[1] - a[1]);
+        document.getElementById("workshopBreakdown").innerHTML = sortedWs.length === 0
+          ? `<p class="text-xs text-slate-400">Sin talleres registrados aún.</p>`
+          : sortedWs.slice(0, 7).map(([ws, count]) => {
+              const pct = total ? Math.round((count / total) * 100) : 0;
+              const isPropio = ws.includes("(Propio)");
+              return `
+                <div>
+                  <div class="flex justify-between text-xs font-semibold mb-1">
+                    <span class="text-slate-800 truncate pr-2">${escapeHtml(ws)}</span>
+                    <span class="text-slate-500">${count} (${pct}%)</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full ${isPropio ? 'bg-[#0067C0]' : 'bg-emerald-600'} rounded-full" style="width:${pct}%"></div>
+                  </div>
+                </div>
+              `;
+            }).join("");
+      }
     }
 
     function changeMonth(delta) {
@@ -1118,15 +1456,23 @@
 
     function renderBoard() {
       const q = (document.getElementById("searchInput").value || "").toLowerCase();
+      const bFilter = document.getElementById("filterBrand").value;
       const uFilter = document.getElementById("filterUser").value;
       const wFilter = document.getElementById("filterWorkshop").value;
 
       const list = getFilteredModeTasks().filter(t => {
         if (uFilter && t.assigneeId !== uFilter) return false;
         if (appMode === "soporte" && wFilter && t.workshop !== wFilter) return false;
+        if (appMode === "soporte" && bFilter) {
+          if (bFilter === "Otras Marcas") {
+            if (AUTOMOTOR_BRANDS.includes(t.brand) && t.brand !== "Otras Marcas") return false;
+          } else if (t.brand !== bFilter) {
+            return false;
+          }
+        }
         if (q) {
           const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "");
-          const hay = `${t.caseId} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""} ${advName}`.toLowerCase();
+          const hay = `${t.caseId} ${t.brand || ""} ${t.dtcCodes || ""} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""} ${advName}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
@@ -1147,15 +1493,42 @@
                 const assignee = state.users.find(u => u.id === t.assigneeId);
                 const isPropio = (t.workshop || "").includes("(Propio)");
                 const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
+                const chatCount = (t.chatMessages || []).length;
+                const daysOpen = getElapsedDays(t);
+
+                // Insignia SLA de días abiertos
+                let slaBadge = "";
+                if (t.status === "Completado") {
+                  slaBadge = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Cerrado (${daysOpen}d)</span>`;
+                } else if (daysOpen >= 5) {
+                  slaBadge = `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-red-100 text-red-700">⚠️ ${daysOpen} días</span>`;
+                } else if (daysOpen >= 2) {
+                  slaBadge = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">${daysOpen} días</span>`;
+                } else {
+                  slaBadge = `<span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">${daysOpen === 0 ? "Hoy" : "1 día"}</span>`;
+                }
+
                 return `
                   <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3 border ${col.cardBorder} shadow-sm hover:shadow-md cursor-pointer transition space-y-2">
                     <div class="flex items-center justify-between gap-1">
                       <span class="text-[11px] font-extrabold ${col.id === 'Urgente' ? 'text-red-600' : col.id === 'Completado' ? 'text-emerald-700' : 'text-accent'}">${escapeHtml(t.caseId)}</span>
-                      ${t.clientPortal && t.clientPortal.enabled
-                        ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1"><i class="ph-bold ph-broadcast"></i> Cliente</span>`
-                        : `<span class="text-[10px] font-semibold text-slate-400">${escapeHtml(t.date)}</span>`
-                      }
+                      <div class="flex items-center gap-1">
+                        ${slaBadge}
+                        ${chatCount > 0 ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 flex items-center gap-0.5" title="Chat interno"><i class="ph-bold ph-chats-circle"></i> ${chatCount}</span>` : ""}
+                        ${t.clientPortal && t.clientPortal.enabled
+                          ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800" title="Portal Cliente Activo"><i class="ph-bold ph-broadcast"></i></span>`
+                          : ""
+                        }
+                      </div>
                     </div>
+
+                    ${appMode === "soporte" && (t.brand || t.dtcCodes) ? `
+                      <div class="flex flex-wrap items-center gap-1">
+                        ${t.brand ? `<span class="text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded bg-slate-800 text-white">${escapeHtml(t.brand)}</span>` : ""}
+                        ${t.dtcCodes ? `<span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200">${escapeHtml(t.dtcCodes)}</span>` : ""}
+                      </div>
+                    ` : ""}
+
                     <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
                     <div class="text-[11px] font-semibold text-slate-500">${escapeHtml(t.subcategory)}</div>
 
@@ -1207,14 +1580,61 @@
     function moveCardMobile(id, newStatus) {
       const t = state.tasks.find(x => x.id === id);
       if (!t) return;
+      const prevStatus = t.status;
       t.status = newStatus;
-      if (newStatus === "Completado") t.progress = 100;
+      if (newStatus === "Completado") {
+        t.progress = 100;
+        if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
+      }
       saveLocalAndCloud();
       renderAll();
+
+      // Abrir ventana de Cierre Técnico si pasa a Completado y aún no tiene solución documentada
+      if (newStatus === "Completado" && prevStatus !== "Completado" && !t.finalSolution) {
+        openClosureModal(t.id);
+      }
+    }
+
+    // MODAL DE CIERRE TÉCNICO (CAUSA RAÍZ, REPUESTOS Y SOLUCIÓN DEFINITIVA)
+    function openClosureModal(taskId) {
+      const t = state.tasks.find(x => x.id === taskId);
+      if (!t) return;
+      document.getElementById("closureTaskId").value = t.id;
+      document.getElementById("cRootCause").value = t.rootCause || "";
+      document.getElementById("cParts").value = t.partsReplaced || "";
+      document.getElementById("cSolution").value = t.finalSolution || "";
+      document.getElementById("closureModal").classList.remove("hidden");
+    }
+
+    function saveTechnicalClosure(e) {
+      e.preventDefault();
+      const id = document.getElementById("closureTaskId").value;
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
+
+      t.rootCause = document.getElementById("cRootCause").value.trim();
+      t.partsReplaced = document.getElementById("cParts").value.trim();
+      t.finalSolution = document.getElementById("cSolution").value.trim();
+      if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
+
+      if (!Array.isArray(t.notes)) t.notes = [];
+      t.notes.push({
+        date: new Date().toLocaleString(),
+        text: `CIERRE TÉCNICO — Causa raíz: ${t.rootCause} | Repuestos: ${t.partsReplaced || "Ninguno"} | Solución: ${t.finalSolution}`
+      });
+
+      saveLocalAndCloud();
+      closeModal("closureModal");
+      renderAll();
+      if (currentDetailId === id && !document.getElementById("detailModal").classList.contains("hidden")) {
+        openDetailModal(id);
+      }
+      showToast("Cierre técnico guardado en Historial Maestro", "success");
     }
 
     function openTaskModal(presetDate = "", editId = null) {
       document.getElementById("editTaskId").value = editId || "";
+      document.getElementById("similarDtcAlert").classList.add("hidden");
       const subSel = document.getElementById("tSubcategory");
       subSel.innerHTML = SUBCATEGORIES[appMode].map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
 
@@ -1235,6 +1655,18 @@
         if (t.workshop) document.getElementById("tWorkshop").value = t.workshop;
         document.getElementById("tDate").value = t.date;
         document.getElementById("tStatus").value = t.status;
+
+        const savedBrand = t.brand || "Hyundai";
+        if (AUTOMOTOR_BRANDS.includes(savedBrand) && savedBrand !== "Otras Marcas") {
+          document.getElementById("tBrand").value = savedBrand;
+          document.getElementById("tCustomBrand").value = "";
+        } else {
+          document.getElementById("tBrand").value = "Otras Marcas";
+          document.getElementById("tCustomBrand").value = savedBrand === "Otras Marcas" ? "" : savedBrand;
+        }
+        toggleCustomBrandField();
+
+        document.getElementById("tDtcCodes").value = t.dtcCodes || "";
         document.getElementById("tOrNumber").value = t.orNumber || "";
         document.getElementById("tVin").value = t.vehicleVin || "";
         document.getElementById("tModel").value = t.vehicleModel || "";
@@ -1251,6 +1683,10 @@
         document.getElementById("tTitle").value = "";
         document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
         document.getElementById("tStatus").value = "Pendiente";
+        document.getElementById("tBrand").value = "Hyundai";
+        document.getElementById("tCustomBrand").value = "";
+        toggleCustomBrandField();
+        document.getElementById("tDtcCodes").value = "";
         document.getElementById("tOrNumber").value = "";
         document.getElementById("tVin").value = "";
         document.getElementById("tModel").value = "";
@@ -1270,15 +1706,28 @@
       const advName = document.getElementById("tAdvisorName").value.trim();
       const advPhone = document.getElementById("tAdvisorWhatsapp").value.trim();
 
+      const selectedBrand = document.getElementById("tBrand").value;
+      const customBrand = document.getElementById("tCustomBrand").value.trim();
+      const finalBrand = isSoporte
+        ? (selectedBrand === "Otras Marcas" ? (customBrand || "Otras Marcas") : selectedBrand)
+        : "";
+      const dtcCodes = isSoporte ? document.getElementById("tDtcCodes").value.trim().toUpperCase() : "";
+
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
+        const prevStatus = t.status;
         t.title = document.getElementById("tTitle").value.trim();
         t.subcategory = document.getElementById("tSubcategory").value;
         t.assigneeId = document.getElementById("tAssignee").value;
         t.workshop = isSoporte ? document.getElementById("tWorkshop").value : "";
         t.date = document.getElementById("tDate").value;
         t.status = document.getElementById("tStatus").value;
-        if (t.status === "Completado") t.progress = 100;
+        if (t.status === "Completado") {
+          t.progress = 100;
+          if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
+        }
+        t.brand = finalBrand;
+        t.dtcCodes = dtcCodes;
         t.orNumber = document.getElementById("tOrNumber").value.trim();
         t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase();
         t.vehicleModel = document.getElementById("tModel").value.trim();
@@ -1298,12 +1747,16 @@
         renderAll();
         if (currentDetailId === editId) openDetailModal(editId);
         showToast("Caso actualizado correctamente", "success");
+        if (t.status === "Completado" && prevStatus !== "Completado" && !t.finalSolution) {
+          openClosureModal(t.id);
+        }
         return;
       }
 
       const nextNum = 101 + state.tasks.length;
       const caseId = `${isSoporte ? "CASO" : "ENT"}-2026-${nextNum}`;
       const randomPin = String(Math.floor(1000 + Math.random() * 9000));
+      const initialStatus = document.getElementById("tStatus").value;
 
       const newTask = {
         id: "t_" + Date.now(),
@@ -1314,8 +1767,11 @@
         assigneeId: document.getElementById("tAssignee").value,
         workshop: isSoporte ? document.getElementById("tWorkshop").value : "",
         date: document.getElementById("tDate").value,
-        status: document.getElementById("tStatus").value,
-        progress: document.getElementById("tStatus").value === "Completado" ? 100 : 10,
+        closedDate: initialStatus === "Completado" ? new Date().toISOString().split("T")[0] : "",
+        status: initialStatus,
+        progress: initialStatus === "Completado" ? 100 : 10,
+        brand: finalBrand,
+        dtcCodes: dtcCodes,
         orNumber: document.getElementById("tOrNumber").value.trim(),
         vehicleVin: document.getElementById("tVin").value.trim().toUpperCase(),
         vehicleModel: document.getElementById("tModel").value.trim(),
@@ -1326,10 +1782,14 @@
         group: document.getElementById("tGroup").value.trim(),
         location: document.getElementById("tLocation").value.trim(),
         description: document.getElementById("tDesc").value.trim(),
+        rootCause: "",
+        partsReplaced: "",
+        finalSolution: "",
         driveFolderId: "",
         driveFolderUrl: "https://drive.google.com",
         notes: [{ date: new Date().toLocaleString(), text: "Apertura inicial en el registro cronológico interno." }],
         clientNotes: [],
+        chatMessages: [],
         media: [],
         clientPortal: {
           enabled: false,
@@ -1350,7 +1810,7 @@
       try {
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
-          body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${newTask.title}` })
+          body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
         });
         const d = await res.json();
         if (d.status === "ok") {
@@ -1370,8 +1830,8 @@
             action: "sendEmail",
             to: assignee.email,
             cc: admin ? admin.email : "",
-            subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${newTask.title}`,
-            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nPrioridad/Estado: ${newTask.status}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
+            subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${finalBrand ? finalBrand + " " : ""}${newTask.title}`,
+            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nPrioridad/Estado: ${newTask.status}\nMarca: ${finalBrand || "N/A"}\nModelo: ${newTask.vehicleModel || "N/A"}\nCódigos DTC: ${dtcCodes || "N/A"}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
           })
         }).catch(() => {});
       }
@@ -1385,9 +1845,19 @@
 
       if (!Array.isArray(t.notes)) t.notes = [];
       if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
+      if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
 
       const isSoporte = (t.mode || "soporte") === "soporte";
       document.getElementById("dCaseBadge").textContent = t.caseId;
+
+      const brandBadge = document.getElementById("dBrandBadge");
+      if (isSoporte && t.brand) {
+        brandBadge.textContent = t.brand;
+        brandBadge.classList.remove("hidden");
+      } else {
+        brandBadge.classList.add("hidden");
+      }
+
       document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyAdvisorHeader").classList.toggle("hidden", !isSoporte);
@@ -1399,11 +1869,24 @@
       const assignee = state.users.find(u => u.id === t.assigneeId);
       const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
       const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
+      const daysOpen = getElapsedDays(t);
 
-      document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Responsable: ${assignee ? assignee.name : "-"}`;
+      document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"} · Tiempo: ${daysOpen} día(s)`;
       document.getElementById("dMetaLine2").textContent = isSoporte
-        ? `Taller: ${t.workshop || "-"} · Vehículo: ${t.vehicleModel || "-"} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`
+        ? `Taller: ${t.workshop || "-"} · Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`
         : `Grupo: ${t.group || "-"} · Duración: ${t.hours || 0} hs · Sede: ${t.location || "-"}`;
+
+      const dtcLine = document.getElementById("dDtcLine");
+      if (isSoporte && t.dtcCodes) {
+        dtcLine.textContent = `Códigos DTC / Síntomas: ${t.dtcCodes}`;
+        dtcLine.classList.remove("hidden");
+      } else {
+        dtcLine.classList.add("hidden");
+      }
+
+      document.getElementById("chatAssigneeHint").textContent = assignee
+        ? `Encargado asignado: ${assignee.name} (${assignee.email})`
+        : "Conversación interna del equipo sobre este expediente.";
 
       const advisorLine = document.getElementById("dAdvisorLine");
       if (isSoporte) {
@@ -1413,6 +1896,17 @@
           : "Asesor de Servicios: Sin asignar (edita el caso para registrar su teléfono)";
       } else {
         advisorLine.classList.add("hidden");
+      }
+
+      // Mostrar resumen de cierre técnico si existe
+      const closureBox = document.getElementById("dClosureSummaryBox");
+      if (t.rootCause || t.finalSolution) {
+        closureBox.classList.remove("hidden");
+        document.getElementById("dRootCauseText").textContent = t.rootCause || "-";
+        document.getElementById("dPartsText").textContent = t.partsReplaced || "-";
+        document.getElementById("dSolutionText").textContent = t.finalSolution || "-";
+      } else {
+        closureBox.classList.add("hidden");
       }
 
       document.getElementById("dStatusSelect").value = t.status;
@@ -1430,13 +1924,98 @@
       document.getElementById("cpAdvisorWhatsapp").value = advPhone || t.clientPortal.advisorWhatsapp || "";
       document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
 
+      renderCaseChatMessages(t);
       renderDetailMedia(t);
       renderInternalNotes(t);
       renderClientNotes(t);
       document.getElementById("detailModal").classList.remove("hidden");
     }
 
-    // --- FORMALIZAR SEGUIMIENTO POR CORREO ELECTRÓNICO ---
+    // CHAT INTERNO POR CASO
+    function focusCaseChat() {
+      const sec = document.getElementById("caseChatSection");
+      sec.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => document.getElementById("newChatMsgInput").focus(), 250);
+    }
+
+    function renderCaseChatMessages(t) {
+      const box = document.getElementById("dChatMessagesList");
+      const msgs = Array.isArray(t.chatMessages) ? t.chatMessages : [];
+      if (msgs.length === 0) {
+        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Sin mensajes en este caso aún. Escribe abajo para coordinar con el encargado.</p>`;
+        return;
+      }
+
+      box.innerHTML = msgs.map((m, idx) => {
+        const isMe = m.senderId === activeUserId;
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+            <div class="max-w-[88%] rounded-2xl px-3.5 py-2.5 text-xs shadow-sm ${isMe ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-sm'}">
+              <div class="flex items-center justify-between gap-3 mb-1 ${isMe ? 'text-indigo-200' : 'text-slate-500'} text-[10px] font-bold">
+                <span>${escapeHtml(m.senderName)}</span>
+                <span>${escapeHtml(m.date)}</span>
+              </div>
+              <p class="whitespace-pre-line leading-relaxed text-xs">${escapeHtml(m.text)}</p>
+            </div>
+            ${(isMe || isCurrentAdmin()) ? `
+              <button type="button" onclick="deleteCaseChatMessage(${idx})" class="text-[10px] text-slate-400 hover:text-red-600 mt-0.5 px-1">Eliminar</button>
+            ` : ""}
+          </div>
+        `;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendCaseChatMessage(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const input = document.getElementById("newChatMsgInput");
+      const text = input.value.trim();
+      const notifyAssignee = document.getElementById("notifyAssigneeOnChat").checked;
+      if (!t || !text) return;
+
+      const sender = state.users.find(u => u.id === activeUserId) || { id: activeUserId, name: "Especialista" };
+      const assignee = state.users.find(u => u.id === t.assigneeId);
+
+      if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
+      t.chatMessages.push({
+        senderId: sender.id,
+        senderName: sender.name,
+        date: new Date().toLocaleString(),
+        text: text
+      });
+
+      input.value = "";
+      saveLocalAndCloud();
+      renderCaseChatMessages(t);
+      renderBoard();
+      showToast("Mensaje enviado en el chat interno del caso", "success");
+
+      if (notifyAssignee && assignee && assignee.email) {
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendEmail",
+            to: assignee.email,
+            subject: `[AutoTech Chat] Nuevo mensaje en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
+            body: `Hola ${assignee.name},\n\n${sender.name} te ha enviado un mensaje interno sobre el caso ${t.caseId}:\n\n"${text}"\n\nDatos del caso:\n• Título: ${t.title}\n• Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""}\n• Taller: ${t.workshop || "-"}\n• Estado actual: ${t.status} (${t.progress || 0}%)\n\nIngresa a AutoTech Ops para responder directamente en el chat del caso.`
+          })
+        }).catch(() => {});
+        showToast(`Aviso enviado al correo de ${assignee.name}`, "info");
+      }
+    }
+
+    function deleteCaseChatMessage(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.chatMessages[idx]) return;
+      if (!confirm("¿Eliminar este mensaje del chat interno?")) return;
+      t.chatMessages.splice(idx, 1);
+      saveLocalAndCloud();
+      renderCaseChatMessages(t);
+      renderBoard();
+    }
+
+    // FORMALIZAR SEGUIMIENTO POR CORREO ELECTRÓNICO
     function toggleFormalEmailSection() {
       const panel = document.getElementById("formalEmailPanel");
       const willOpen = panel.classList.contains("hidden");
@@ -1472,7 +2051,7 @@
       const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
 
       const subject = isSoporte
-        ? `[Soporte Técnico Automotor] ${t.caseId} | ${t.vehicleModel || t.title} ${t.orNumber ? `(${t.orNumber})` : ""} - ${t.status}`
+        ? `[Soporte Técnico Automotor] ${t.caseId} | ${t.brand || ""} ${t.vehicleModel || t.title} ${t.orNumber ? `(${t.orNumber})` : ""} - ${t.status}`
         : `[Entrenamiento Técnico] ${t.caseId} | ${t.title} - ${t.status}`;
 
       document.getElementById("feSubject").value = subject;
@@ -1489,15 +2068,17 @@
       body += `• Asunto / Título: ${t.title}\n`;
       body += `• Categoría: ${t.subcategory}\n`;
       body += `• Estado Actual: ${t.status} (${t.progress || 0}% de progreso)\n`;
-      body += `• Fecha Programada: ${t.date}\n`;
-      body += `• Especialista Responsable: ${assignee ? assignee.name : "-"}\n`;
+      body += `• Fecha Apertura: ${t.date} (${getElapsedDays(t)} días)\n`;
+      body += `• Especialista Encargado: ${assignee ? assignee.name : "-"}\n`;
 
       if (isSoporte) {
         body += `\n==================================================\n`;
         body += `DATOS DE LA UNIDAD Y TALLER\n`;
         body += `==================================================\n`;
         body += `• Taller de Origen: ${t.workshop || "-"}\n`;
+        body += `• Marca: ${t.brand || "-"}\n`;
         body += `• Modelo de Vehículo: ${t.vehicleModel || "-"}\n`;
+        body += `• Códigos DTC: ${t.dtcCodes || "-"}\n`;
         body += `• N° Orden de Reparación (OR): ${t.orNumber || "-"}\n`;
         body += `• Chasis / VIN: ${t.vehicleVin || "-"}\n`;
         body += `• Kilometraje: ${t.vehicleKm || "-"}\n`;
@@ -1519,6 +2100,15 @@
       body += `REGISTRO CRONOLÓGICO DE INTERVENCIÓN E INDICACIONES\n`;
       body += `==================================================\n`;
       body += `${historyLines}\n`;
+
+      if (t.rootCause || t.finalSolution) {
+        body += `\n==================================================\n`;
+        body += `CONCLUSIÓN Y SOLUCIÓN APLICADA\n`;
+        body += `==================================================\n`;
+        body += `• Causa Raíz: ${t.rootCause || "-"}\n`;
+        body += `• Repuestos: ${t.partsReplaced || "-"}\n`;
+        body += `• Solución Definitiva: ${t.finalSolution || "-"}\n`;
+      }
 
       body += `\n==================================================\n`;
       body += `CARPETA DE EVIDENCIAS Y DOCUMENTACIÓN (GOOGLE DRIVE)\n`;
@@ -1606,7 +2196,7 @@
 `Hola *${advName}*, te enviamos una actualización de Soporte Técnico:
 
 • *Caso:* ${t.caseId} - ${t.title}
-• *Vehículo:* ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
+• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
 • *Taller:* ${t.workshop || "Automotor"}
 • *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
 • *Último reporte técnico:* ${updateDetail}
@@ -1676,14 +2266,15 @@
     async function sendClientTrackingEmail(t, updateSummary) {
       if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
       const link = getClientTrackingUrl(t);
-      const subject = `Actualización de tu vehículo (${t.vehicleModel || t.caseId}) - Caso ${t.caseId}`;
+      const vehicleFull = `${t.brand || ""} ${t.vehicleModel || ""}`.trim() || t.caseId;
+      const subject = `Actualización de tu vehículo (${vehicleFull}) - Caso ${t.caseId}`;
       const body =
 `Estimado/a ${t.clientPortal.clientName || "Cliente"},
 
 Te informamos que se ha registrado una actualización en el seguimiento técnico de tu vehículo:
 
 • Caso: ${t.caseId}
-• Vehículo: ${t.vehicleModel || "Unidad en taller"} ${t.orNumber ? `(OR: ${t.orNumber})` : ""}
+• Vehículo: ${vehicleFull} ${t.orNumber ? `(OR: ${t.orNumber})` : ""}
 • Taller: ${t.workshop || "Automotor"}
 • Estado actual: ${t.status} (${t.progress || 0}% de avance)
 • Novedad: ${updateSummary}
@@ -1954,14 +2545,19 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
     function updateTaskStatusQuick(val) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
+      const prevStatus = t.status;
       t.status = val;
       if (val === "Completado") {
         t.progress = 100;
+        if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
         document.getElementById("dProgressRange").value = 100;
         document.getElementById("dProgressVal").textContent = "100%";
       }
       saveLocalAndCloud();
       renderAll();
+      if (val === "Completado" && prevStatus !== "Completado" && !t.finalSolution) {
+        openClosureModal(t.id);
+      }
     }
 
     function updateTaskProgressQuick(val) {
@@ -1991,7 +2587,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
     function shareInternalWhatsapp() {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
-      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\nTaller: ${t.workshop || "N/A"}\nVehículo: ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)\nCarpeta Drive: ${t.driveFolderUrl}`);
+      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\nTaller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)\nCarpeta Drive: ${t.driveFolderUrl}`);
       window.open(`https://wa.me/?text=${msg}`, "_blank");
     }
 
@@ -2019,17 +2615,23 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
             <td>${escapeHtml(t.status)}</td>
             <td>${t.progress || 0}%</td>
             <td>${escapeHtml(t.date)}</td>
+            <td>${escapeHtml(t.closedDate || "-")}</td>
+            <td>${escapeHtml(t.brand || "-")}</td>
+            <td>${escapeHtml(t.vehicleModel || "-")}</td>
             <td>${escapeHtml(t.title)}</td>
             <td>${escapeHtml(t.subcategory)}</td>
+            <td>${escapeHtml(t.dtcCodes || "-")}</td>
             <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
             <td>${escapeHtml(t.workshop || "-")}</td>
-            <td>${escapeHtml(t.vehicleModel || "-")}</td>
             <td>${escapeHtml(t.orNumber || "-")}</td>
             <td>${escapeHtml(t.vehicleVin || "-")}</td>
             <td>${escapeHtml(t.vehicleKm || "-")}</td>
             <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
             <td>${escapeHtml(t.description || "-")}</td>
             <td>${historyFormatted || "Sin registros"}</td>
+            <td>${escapeHtml(t.rootCause || "-")}</td>
+            <td>${escapeHtml(t.partsReplaced || "-")}</td>
+            <td>${escapeHtml(t.finalSolution || "-")}</td>
             <td>${clientHistoryFormatted || "-"}</td>
             <td>${escapeHtml(t.driveFolderUrl || "-")}</td>
           </tr>
@@ -2048,18 +2650,24 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
                 <th>Código</th>
                 <th>Estado / Prioridad</th>
                 <th>Progreso</th>
-                <th>Fecha</th>
+                <th>Fecha Apertura</th>
+                <th>Fecha Cierre</th>
+                <th>Marca</th>
+                <th>Modelo Vehículo</th>
                 <th>Título del Caso</th>
                 <th>Categoría</th>
-                <th>Responsable Técnico</th>
+                <th>Códigos DTC</th>
+                <th>Encargado Técnico</th>
                 <th>Taller</th>
-                <th>Modelo Vehículo</th>
                 <th>N° Orden (OR)</th>
                 <th>Chasis / VIN</th>
                 <th>Kilometraje</th>
                 <th>Asesor de Servicios</th>
                 <th>Descripción Inicial</th>
                 <th>Registro Cronológico Técnico (Qué se hizo)</th>
+                <th>Causa Raíz</th>
+                <th>Repuestos Reemplazados</th>
+                <th>Solución Definitiva</th>
                 <th>Mensajes Publicados al Cliente</th>
                 <th>Carpeta Google Drive</th>
               </tr>
@@ -2094,6 +2702,15 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
           ? t.notes.map(n => `<li style="margin-bottom:4px;"><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")
           : "<li>Sin intervenciones registradas aún.</li>";
 
+        const closureHtml = (t.rootCause || t.finalSolution)
+          ? `<table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-top:8px; background:#ECFDF5;">
+               <tr><td colspan="2" style="background:#059669; color:#ffffff; font-weight:bold;">CIERRE TÉCNICO Y SOLUCIÓN DEFINITIVA</td></tr>
+               <tr><td width="30%"><strong>Causa Raíz:</strong></td><td>${escapeHtml(t.rootCause || "-")}</td></tr>
+               <tr><td><strong>Repuestos Reemplazados:</strong></td><td>${escapeHtml(t.partsReplaced || "-")}</td></tr>
+               <tr><td><strong>Solución Aplicada:</strong></td><td>${escapeHtml(t.finalSolution || "-")}</td></tr>
+             </table>`
+          : "";
+
         const clientNotesHtml = (t.clientNotes && t.clientNotes.length > 0)
           ? `<p style="margin-top:10px; font-weight:bold; color:#065F46;">Reportes publicados al Cliente:</p>
              <ul>${t.clientNotes.map(n => `<li><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")}</ul>`
@@ -2112,25 +2729,31 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
               <tr>
                 <td width="25%" style="background:#F8FAFC;"><strong>Categoría:</strong></td>
                 <td width="25%">${escapeHtml(t.subcategory)}</td>
-                <td width="25%" style="background:#F8FAFC;"><strong>Fecha:</strong></td>
-                <td width="25%">${escapeHtml(t.date)}</td>
+                <td width="25%" style="background:#F8FAFC;"><strong>Fecha Apertura:</strong></td>
+                <td width="25%">${escapeHtml(t.date)} ${t.closedDate ? `(Cierre: ${escapeHtml(t.closedDate)})` : ""}</td>
               </tr>
               <tr>
-                <td style="background:#F8FAFC;"><strong>Responsable Técnico:</strong></td>
+                <td style="background:#F8FAFC;"><strong>Encargado Técnico:</strong></td>
                 <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
                 <td style="background:#F8FAFC;"><strong>${isSoporte ? "Taller:" : "Sede / Aula:"}</strong></td>
                 <td>${escapeHtml(isSoporte ? (t.workshop || "-") : (t.location || "-"))}</td>
               </tr>
               ${isSoporte ? `
               <tr>
-                <td style="background:#F8FAFC;"><strong>Modelo Vehículo:</strong></td>
-                <td>${escapeHtml(t.vehicleModel || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>N° Orden (OR):</strong></td>
-                <td>${escapeHtml(t.orNumber || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Marca / Modelo:</strong></td>
+                <td>${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")}</td>
+                <td style="background:#F8FAFC;"><strong>Códigos DTC:</strong></td>
+                <td>${escapeHtml(t.dtcCodes || "-")}</td>
               </tr>
               <tr>
+                <td style="background:#F8FAFC;"><strong>N° Orden (OR):</strong></td>
+                <td>${escapeHtml(t.orNumber || "-")}</td>
                 <td style="background:#F8FAFC;"><strong>Chasis / VIN:</strong></td>
                 <td>${escapeHtml(t.vehicleVin || "-")}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Kilometraje:</strong></td>
+                <td>${escapeHtml(t.vehicleKm || "-")}</td>
                 <td style="background:#F8FAFC;"><strong>Asesor Servicios:</strong></td>
                 <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
               </tr>
@@ -2148,6 +2771,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
 
             <p style="font-size:10pt; font-weight:bold; color:#1E293B; margin-bottom:4px;">Registro Cronológico Técnico (Procedimientos y Hallazgos):</p>
             <ul style="font-size:10pt; margin-top:2px;">${notesHtml}</ul>
+            ${closureHtml}
             ${clientNotesHtml}
             <p style="font-size:9pt; color:#475569; margin-top:8px;"><strong>Carpeta Evidencias Google Drive:</strong> ${escapeHtml(t.driveFolderUrl || "-")}</p>
           </div>
@@ -2192,7 +2816,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `${t.caseId}_${(t.vehicleModel || t.title).replace(/[^a-zA-Z0-9_-]/g, "_")}.doc`;
+      a.download = `${t.caseId}_${(t.brand || t.vehicleModel || t.title).replace(/[^a-zA-Z0-9_-]/g, "_")}.doc`;
       a.click();
       showToast(`Ficha de ${t.caseId} descargada en Word`, "success");
     }

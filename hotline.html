@@ -30,7 +30,6 @@
 </head>
 <body class="text-slate-800 antialiased pb-12">
 
-  <!-- Barra Superior Corporativa -->
   <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
     <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -56,14 +55,13 @@
 
   <main class="max-w-3xl mx-auto px-4 pt-6 space-y-5">
 
-    <!-- Mensaje de Éxito tras Enviar -->
     <section id="successBox" class="win-card rounded-3xl p-8 text-center space-y-4 hidden border-2 border-emerald-400">
       <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
         <i class="ph-bold ph-check-circle text-4xl"></i>
       </div>
       <h2 class="text-xl font-extrabold text-slate-900">¡Solicitud de Hotline Enviada con Éxito!</h2>
       <p class="text-sm text-slate-600 max-w-md mx-auto">
-        Tu solicitud ya fue recibida por el equipo de <strong>Soporte Técnico Automotor</strong> junto con las fotografías del tablero y evidencias.
+        Tu solicitud ya ingresó en tiempo real al panel de <strong>Soporte Técnico Automotor</strong> junto con las fotografías del tablero y evidencias.
       </p>
       <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 max-w-sm mx-auto">
         <span class="block text-[11px] font-bold uppercase text-slate-400">Código de Solicitud Generado</span>
@@ -76,7 +74,6 @@
       </div>
     </section>
 
-    <!-- Formulario Principal de Solicitud -->
     <form id="hotlineForm" onsubmit="submitRequest(event)" class="win-card rounded-3xl p-5 sm:p-8 space-y-6">
       <div class="border-b border-slate-200 pb-4">
         <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
@@ -85,7 +82,6 @@
         <p class="text-xs text-slate-500 mt-1">Completa los datos técnicos de la unidad, adjunta la foto del tablero y las evidencias requeridas por fábrica.</p>
       </div>
 
-      <!-- Bloque 1: Taller y Responsables -->
       <div class="space-y-3">
         <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">1. Taller y Personal a Cargo</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -149,7 +145,6 @@
         </div>
       </div>
 
-      <!-- Bloque 2: Datos de la Unidad -->
       <div class="space-y-3 pt-2 border-t border-slate-200">
         <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">2. Identificación del Vehículo</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -213,7 +208,6 @@
         </div>
       </div>
 
-      <!-- Bloque 3: Fotografía del Tablero y Evidencias para Fábrica -->
       <div class="space-y-3 pt-2 border-t border-slate-200">
         <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">3. Evidencia Fotográfica Obligatoria</h3>
 
@@ -229,7 +223,7 @@
             <i class="ph-bold ph-camera text-base text-[#004B93]"></i> Fotos / Capturas de Evidencia para Fábrica (Escáner, VIN, Componente) *
           </label>
           <p class="text-[11px] text-slate-500">Puedes seleccionar varias fotos a la vez (máximo 5 archivos).</p>
-          <input type="file" id="hEvidenceFiles" required multiple accept="image/*,application/pdf" class="w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-slate-900 cursor-pointer" />
+          <input type="file" id="hEvidenceFiles" required multiple accept="image/*" class="w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-slate-900 cursor-pointer" />
         </div>
       </div>
 
@@ -240,7 +234,7 @@
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLRN54nymuTe32fX-RMGRAlqj1QnQulYroAdG8KT-pPNlY6Hi9lPrNVYL1CBblF1ugPA/exec";
+    const FIREBASE_DB_URL = "https://autotech-hotline-default-rtdb.firebaseio.com";
 
     function toggleOtherBrand() {
       const val = document.getElementById("hBrand").value;
@@ -249,15 +243,27 @@
       document.getElementById("hOtherBrandText").required = isOther;
     }
 
-    function fileToBase64Obj(file) {
+    function compressImageToDataUrl(file, maxWidth = 1100, quality = 0.78) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => {
-          resolve({
-            fileName: file.name,
-            mimeType: file.type || "image/jpeg",
-            base64: reader.result.split(",")[1]
-          });
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
         };
         reader.onerror = reject;
         reader.readAsDataURL(file);
@@ -270,24 +276,27 @@
       const dashInput = document.getElementById("hDashFile");
       const evInput = document.getElementById("hEvidenceFiles");
 
-      if (!dashInput.files[0]) {
-        alert("Debes adjuntar la fotografía del tablero.");
-        return;
-      }
-      if (!evInput.files || evInput.files.length === 0) {
-        alert("Debes adjuntar al menos una foto de evidencia para fábrica.");
-        return;
-      }
-
       btn.disabled = true;
-      btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg"></i> Subiendo fotos y enviando solicitud...`;
+      btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg"></i> Procesando fotos y enviando...`;
 
       try {
-        const dashObj = await fileToBase64Obj(dashInput.files[0]);
+        const dashDataUrl = await compressImageToDataUrl(dashInput.files[0]);
+        const evidence = [{
+          label: "Foto del Tablero",
+          name: "TABLERO_" + dashInput.files[0].name,
+          url: dashDataUrl,
+          viewUrl: dashDataUrl
+        }];
+
         const evFiles = Array.from(evInput.files).slice(0, 5);
-        const evObjs = [];
-        for (const f of evFiles) {
-          evObjs.push(await fileToBase64Obj(f));
+        for (let i = 0; i < evFiles.length; i++) {
+          const evUrl = await compressImageToDataUrl(evFiles[i]);
+          evidence.push({
+            label: "Evidencia Fábrica " + (i + 1),
+            name: "EVIDENCIA_" + (i + 1) + "_" + evFiles[i].name,
+            url: evUrl,
+            viewUrl: evUrl
+          });
         }
 
         const brandSel = document.getElementById("hBrand").value;
@@ -295,12 +304,15 @@
           ? (document.getElementById("hOtherBrandText").value.trim() || "Otras Marcas")
           : brandSel;
 
-        const payload = {
-          action: "submitHotlineRequest",
+        const reqCode = "SOL-" + new Date().getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000);
+        const reqId = "hr_" + Date.now();
+
+        const newReq = {
+          id: reqId,
+          requestCode: reqCode,
+          createdAt: new Date().toLocaleString(),
+          status: "Pendiente",
           workshop: document.getElementById("hWorkshop").value,
-          chiefName: document.getElementById("hChiefName").value.trim(),
-          chiefPhone: document.getElementById("hChiefPhone").value.trim(),
-          mechanicName: document.getElementById("hMechanicName").value.trim(),
           brand: finalBrand,
           model: document.getElementById("hModel").value.trim(),
           vin: document.getElementById("hVin").value.trim().toUpperCase(),
@@ -308,26 +320,28 @@
           orNumber: document.getElementById("hOrNumber").value.trim(),
           dtcCodes: document.getElementById("hDtc").value.trim().toUpperCase(),
           faultDescription: document.getElementById("hFault").value.trim(),
-          dashboardPhoto: dashObj,
-          evidencePhotos: evObjs
+          mechanicName: document.getElementById("hMechanicName").value.trim(),
+          chiefName: document.getElementById("hChiefName").value.trim(),
+          chiefPhone: document.getElementById("hChiefPhone").value.trim(),
+          folderUrl: "",
+          evidence: evidence,
+          linkedCaseId: ""
         };
 
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
+        const res = await fetch(`${FIREBASE_DB_URL}/hotlineRequests/${reqId}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newReq)
         });
-        const data = await res.json();
 
-        if (data.status === "ok") {
-          document.getElementById("hotlineForm").classList.add("hidden");
-          document.getElementById("generatedCodeText").textContent = data.requestCode || "SOL-2026";
-          document.getElementById("successBox").classList.remove("hidden");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        } else {
-          alert("Error al enviar solicitud: " + (data.message || "Intente nuevamente"));
-        }
+        if (!res.ok) throw new Error("Error HTTP " + res.status);
+
+        document.getElementById("hotlineForm").classList.add("hidden");
+        document.getElementById("generatedCodeText").textContent = reqCode;
+        document.getElementById("successBox").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (err) {
-        alert("Error de conexión al subir las imágenes. Verifica tu internet e intenta nuevamente.");
+        alert("No se pudo enviar la solicitud: " + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="ph-bold ph-paper-plane-tilt text-lg"></i> Enviar Solicitud de Hotline a Soporte Técnico`;

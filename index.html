@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AutoTech Ops | Soporte Técnico y Entrenamiento Automotor</title>
+  <title>AutoTech Ops | Acceso Corporativo · Soporte Técnico Automotor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
@@ -30,7 +30,6 @@
                   radial-gradient(circle at 90% 85%, #ffedd5 0%, transparent 45%),
                   #f3f4f6;
     }
-    /* MODO OSCURO WINDOWS 11 (DARK MODE TALLER) */
     body.dark-theme {
       background: radial-gradient(circle at 10% 10%, #0f172a 0%, transparent 45%),
                   radial-gradient(circle at 90% 85%, #1e1b4b 0%, transparent 45%),
@@ -67,11 +66,11 @@
       border-color: #475569 !important;
     }
     .win-mica {
-      background: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       border: 1px solid rgba(255, 255, 255, 0.75);
-      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
     }
     .btn-accent {
       background-color: var(--accent);
@@ -102,180 +101,303 @@
     }
   </style>
 </head>
-<body class="text-slate-800 antialiased pb-16">
+<body class="text-slate-800 antialiased">
 
   <!-- Toast Flotante -->
-  <div id="toastBox" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none"></div>
+  <div id="toastBox" class="fixed top-4 right-4 z-[60] space-y-2 pointer-events-none"></div>
 
-  <!-- Header Principal -->
-  <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
-    <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-3 space-y-3">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div id="brandIcon" class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center shadow-sm transition-colors">
-            <i class="ph-bold ph-wrench text-xl"></i>
+  <!-- ======================================================================= -->
+  <!-- PANTALLA 0: ACCESO CORPORATIVO OBLIGATORIO (LOGIN / REGISTRO VERIFICADO) -->
+  <!-- ======================================================================= -->
+  <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="win-mica rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-slate-200/90 shadow-2xl">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-[#0067C0] text-white flex items-center justify-center mx-auto shadow-md">
+          <i class="ph-bold ph-shield-check text-3xl"></i>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">AutoTech Ops · Automotor</h1>
+        <p class="text-xs text-slate-500">Plataforma de Soporte Técnico y Entrenamiento · Acceso Restringido</p>
+      </div>
+
+      <!-- Selector de Pestañas de Acceso -->
+      <div class="grid grid-cols-3 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
+        <button type="button" onclick="switchAuthTab('user')" id="authTabUser" class="py-2 rounded-lg bg-white text-[#0067C0] shadow-sm transition">
+          Encargado
+        </button>
+        <button type="button" onclick="switchAuthTab('admin')" id="authTabAdmin" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
+          Administrador
+        </button>
+        <button type="button" onclick="switchAuthTab('register')" id="authTabRegister" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
+          Registrarse
+        </button>
+      </div>
+
+      <!-- FORMULARIO 1: INGRESO ENCARGADO / COORDINADOR -->
+      <form id="formLoginUser" onsubmit="handleUserLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Correo Corporativo Automotor *</label>
+          <input type="email" id="loginUserEmail" required placeholder="nombre.apellido@automotor.com.py" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#0067C0]" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña *</label>
+          <input type="password" id="loginUserPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#0067C0]" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+          <i class="ph-bold ph-sign-in text-base"></i> Ingresar al Portal
+        </button>
+        <p class="text-[11px] text-center text-slate-500">¿Aún no tienes cuenta? Selecciona la pestaña <strong>Registrarse</strong>.</p>
+      </form>
+
+      <!-- FORMULARIO 2: INGRESO ADMINISTRADOR -->
+      <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="hidden space-y-4">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-center gap-2">
+          <i class="ph-bold ph-crown text-lg text-amber-600 shrink-0"></i>
+          <span>Acceso con privilegios totales de administración, aprobación de usuarios y control de casos.</span>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">ID de Administrador *</label>
+          <input type="text" id="loginAdminId" required placeholder="Ingresa tu ID de administrador" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-amber-600" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña de Administrador *</label>
+          <input type="password" id="loginAdminPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-amber-600" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+          <i class="ph-bold ph-key text-base"></i> Ingresar como Administrador
+        </button>
+      </form>
+
+      <!-- FORMULARIO 3: REGISTRO CON VERIFICACIÓN DE CORREO CORPORATIVO -->
+      <div id="formRegisterBox" class="hidden space-y-4">
+        <!-- Paso A: Solicitar código de verificación al correo corporativo -->
+        <form id="regStep1Form" onsubmit="sendRegistrationCode(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre y Apellido *</label>
+            <input type="text" id="regName" required placeholder="Ej: Carlos Mendoza" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
           </div>
           <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900">AutoTech Ops</h1>
-              <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar vista Celular/PC">
-                <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
-              </button>
-              <button onclick="toggleDarkMode()" id="darkModeBtn" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar Modo Oscuro / Claro">
-                <i class="ph-bold ph-moon"></i>
-              </button>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Correo Corporativo Automotor *</label>
+            <input type="email" id="regEmail" required placeholder="carlos.mendoza@automotor.com.py" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+            <span class="text-[11px] text-slate-500">Se enviará un código PIN de verificación a este correo.</span>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Crear Contraseña *</label>
+            <input type="password" id="regPass" required minlength="4" placeholder="Mínimo 4 caracteres" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+          <button type="submit" id="btnSendRegCode" class="w-full py-3 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white font-bold text-sm shadow-sm transition">
+            Enviar Código de Verificación al Correo
+          </button>
+        </form>
+
+        <!-- Paso B: Confirmar PIN recibido por correo -->
+        <form id="regStep2Form" onsubmit="completeRegistration(event)" class="hidden space-y-3 bg-blue-50/80 p-4 rounded-2xl border border-blue-200">
+          <p class="text-xs text-blue-950 font-semibold">
+            Enviamos un código de 6 dígitos a <strong id="regConfirmEmailLabel"></strong>. Ingrésalo debajo para confirmar tu identidad:
+          </p>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Código de Verificación (6 dígitos) *</label>
+            <input type="text" id="regPinInput" required maxlength="6" placeholder="000000" class="w-full px-3.5 py-2.5 rounded-xl border border-blue-400 text-center font-mono text-base font-bold tracking-widest bg-white" />
+          </div>
+          <div class="flex gap-2">
+            <button type="button" onclick="resetRegSteps()" class="px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700">Volver</button>
+            <button type="submit" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">
+              Confirmar y Solicitar Aprobación
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="text-center text-[11px] text-slate-400 pt-1 border-t border-slate-200/70">
+        Sincronizado con Google Drive Corporativo · Automotor S.A.
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- APLICACIÓN PRINCIPAL (OCULTA HASTA INICIAR SESIÓN)                      -->
+  <!-- ======================================================================= -->
+  <div id="mainAppContainer" class="hidden pb-16">
+
+    <!-- Header Principal -->
+    <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
+      <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-3 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div id="brandIcon" class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center shadow-sm transition-colors">
+              <i class="ph-bold ph-wrench text-xl"></i>
             </div>
-            <p id="modeSubtitle" class="text-xs text-slate-500">Soporte Técnico · Red Oficial y Autorizada Automotor</p>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900">AutoTech Ops</h1>
+                <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar vista Celular/PC">
+                  <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
+                </button>
+                <button onclick="toggleDarkMode()" id="darkModeBtn" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar Modo Oscuro / Claro">
+                  <i class="ph-bold ph-moon"></i>
+                </button>
+              </div>
+              <p id="modeSubtitle" class="text-xs text-slate-500">Soporte Técnico · Red Oficial y Autorizada Automotor</p>
+            </div>
+          </div>
+
+          <!-- Selector de 2 Modos Completamente Separados -->
+          <div class="flex items-center bg-slate-200/75 p-1 rounded-xl w-full sm:w-auto">
+            <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#0067C0] shadow-sm transition">
+              <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
+            </button>
+            <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
+              <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
+            </button>
           </div>
         </div>
 
-        <!-- Selector de 2 Modos Completamente Separados -->
-        <div class="flex items-center bg-slate-200/75 p-1 rounded-xl w-full sm:w-auto">
-          <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#0067C0] shadow-sm transition">
-            <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
-          </button>
-          <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
-            <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
-          </button>
+        <!-- Barra de Herramientas y Sesiones -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+          <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
+              <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
+            </button>
+            <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+              <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
+            </button>
+            <button onclick="switchTab('board')" id="tab-board" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+              <i class="ph-bold ph-kanban text-accent"></i> Tablero
+            </button>
+          </nav>
+
+          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+            <!-- Insignia de Usuario Autenticado -->
+            <div class="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i id="loggedUserIcon" class="ph-bold ph-user-circle text-accent text-base"></i>
+              <span id="loggedUserLabel">Usuario</span>
+              <span id="loggedRoleBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">Encargado</span>
+            </div>
+
+            <!-- Botón Panel Administrador (Aprobar usuarios, cambiar contraseñas, etc.) -->
+            <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-amber-900 flex items-center gap-1.5 relative" title="Administrar Encargados, Solicitudes y Contraseñas">
+              <i class="ph-bold ph-shield-star text-base text-amber-600"></i> <span>Administrar Equipo</span>
+              <span id="pendingUsersBadge" class="hidden px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[10px] font-extrabold">0</span>
+            </button>
+
+            <button id="btnWorkshops" onclick="openWorkshopsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Red de Talleres Propios y Autorizados">
+              <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden md:inline">Talleres (33)</span>
+            </button>
+
+            <button id="btnPortalConfig" onclick="openPortalConfigModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Configurar URL pública de GitHub para Clientes">
+              <i class="ph-bold ph-globe text-emerald-600"></i> <span class="hidden md:inline">URL Cliente</span>
+            </button>
+
+            <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar con Google Drive">
+              <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i> <span class="hidden lg:inline">Nube</span>
+            </button>
+
+            <button onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm" title="Abrir archivo maestro único en Google Drive">
+              <i class="ph-bold ph-table text-base"></i> <span class="hidden sm:inline">Historial Maestro</span>
+            </button>
+
+            <button onclick="exportExcelHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1.5" title="Descargar historial en Excel">
+              <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i> <span class="hidden xl:inline">Excel</span>
+            </button>
+
+            <button onclick="exportWordHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1.5" title="Descargar historial en Word">
+              <i class="ph-bold ph-microsoft-word-logo text-base text-blue-700"></i> <span class="hidden xl:inline">Word</span>
+            </button>
+
+            <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
+              <i class="ph-bold ph-plus"></i> <span id="btnNewActionText">Nuevo Soporte</span>
+            </button>
+
+            <button onclick="logoutSession()" class="touch-target px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-1" title="Cerrar Sesión">
+              <i class="ph-bold ph-sign-out text-base"></i>
+            </button>
+          </div>
         </div>
       </div>
+    </header>
 
-      <!-- Barra de Herramientas y Sesiones -->
-      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
-        <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
-          <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
-            <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
-          </button>
-          <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
-            <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
-          </button>
-          <button onclick="switchTab('board')" id="tab-board" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
-            <i class="ph-bold ph-kanban text-accent"></i> Tablero
-          </button>
-        </nav>
+    <!-- Contenido Principal -->
+    <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
 
-        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-          <select id="activeUserSelect" onchange="handleUserChange(this.value)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-800 focus:outline-none"></select>
+      <!-- VISTA 1: RESUMEN EJECUTIVO & ANALÍTICA VISUAL -->
+      <section id="view-dashboard" class="space-y-6">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
 
-          <button onclick="openUsersModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Gestión de Usuarios y Correos">
-            <i class="ph-bold ph-users text-accent"></i> <span class="hidden md:inline">Usuarios</span>
-          </button>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="win-mica rounded-2xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i class="ph-bold ph-list-checks text-accent"></i> <span id="subcatChartTitle">Distribución por Categoría</span>
+            </h3>
+            <div id="subcatBreakdown" class="space-y-2.5"></div>
+          </div>
 
-          <button id="btnWorkshops" onclick="openWorkshopsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Red de Talleres Propios y Autorizados">
-            <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden md:inline">Talleres (33)</span>
-          </button>
-
-          <button onclick="openPortalConfigModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Configurar URL pública de GitHub para Clientes">
-            <i class="ph-bold ph-globe text-emerald-600"></i> <span class="hidden md:inline">URL Cliente</span>
-          </button>
-
-          <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar con Google Drive">
-            <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i> <span class="hidden lg:inline">Nube</span>
-          </button>
-
-          <button onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm" title="Abrir archivo maestro único en Google Drive que se actualiza solo">
-            <i class="ph-bold ph-table text-base"></i> <span>Historial Maestro</span>
-          </button>
-
-          <button onclick="exportExcelHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1.5" title="Descargar historial completo en Excel">
-            <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i> <span>Excel</span>
-          </button>
-
-          <button onclick="exportWordHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1.5" title="Descargar historial completo en Word">
-            <i class="ph-bold ph-microsoft-word-logo text-base text-blue-700"></i> <span>Word</span>
-          </button>
-
-          <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
-            <i class="ph-bold ph-plus"></i> <span id="btnNewActionText">Nuevo Soporte</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Contenido Principal -->
-  <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
-
-    <!-- VISTA 1: RESUMEN EJECUTIVO & ANALÍTICA VISUAL -->
-    <section id="view-dashboard" class="space-y-6">
-      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="win-mica rounded-2xl p-5 space-y-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-list-checks text-accent"></i> <span id="subcatChartTitle">Distribución por Categoría</span>
-          </h3>
-          <div id="subcatBreakdown" class="space-y-2.5"></div>
+          <div class="win-mica rounded-2xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i class="ph-bold ph-users-three text-accent"></i> Carga, SLA y Avance por Especialista
+            </h3>
+            <div id="teamBreakdown" class="space-y-2.5"></div>
+          </div>
         </div>
 
-        <div class="win-mica rounded-2xl p-5 space-y-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-users-three text-accent"></i> Carga, SLA y Avance por Especialista
-          </h3>
-          <div id="teamBreakdown" class="space-y-2.5"></div>
+        <div id="supportAnalyticsRow" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="win-mica rounded-2xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i class="ph-bold ph-car-profile text-accent"></i> Casos por Marca Representada
+            </h3>
+            <div id="brandBreakdown" class="space-y-2.5"></div>
+          </div>
+
+          <div class="win-mica rounded-2xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <i class="ph-bold ph-buildings text-accent"></i> Top Talleres con Mayor Escalamiento
+            </h3>
+            <div id="workshopBreakdown" class="space-y-2.5"></div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Analítica por Marca y Ranking de Talleres (Modo Soporte) -->
-      <div id="supportAnalyticsRow" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="win-mica rounded-2xl p-5 space-y-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-car-profile text-accent"></i> Casos por Marca Representada
-          </h3>
-          <div id="brandBreakdown" class="space-y-2.5"></div>
+      <!-- VISTA 2: CALENDARIO -->
+      <section id="view-calendar" class="hidden space-y-4">
+        <div class="win-mica rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-left"></i></button>
+            <h2 id="calMonthTitle" class="text-base sm:text-lg font-bold text-slate-900 min-w-[170px] text-center capitalize"></h2>
+            <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-right"></i></button>
+          </div>
+          <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">Hoy</button>
         </div>
 
-        <div class="win-mica rounded-2xl p-5 space-y-3">
-          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-buildings text-accent"></i> Top Talleres con Mayor Escalamiento
-          </h3>
-          <div id="workshopBreakdown" class="space-y-2.5"></div>
+        <div class="win-mica rounded-2xl p-3 sm:p-5">
+          <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 pb-2">
+            <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+          </div>
+          <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- VISTA 2: CALENDARIO -->
-    <section id="view-calendar" class="hidden space-y-4">
-      <div class="win-mica rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
-          <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-left"></i></button>
-          <h2 id="calMonthTitle" class="text-base sm:text-lg font-bold text-slate-900 min-w-[170px] text-center capitalize"></h2>
-          <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-right"></i></button>
+      <!-- VISTA 3: TABLERO KANBAN -->
+      <section id="view-board" class="hidden space-y-4">
+        <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
+          <div class="relative flex-1 min-w-[200px]">
+            <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, código DTC (ej: P0087), marca, OR, VIN, modelo, asesor..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
+          </div>
+          <select id="filterBrand" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
+          <select id="filterUser" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
+          <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[210px]"></select>
         </div>
-        <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">Hoy</button>
-      </div>
 
-      <div class="win-mica rounded-2xl p-3 sm:p-5">
-        <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 pb-2">
-          <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
-        </div>
-        <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
-      </div>
-    </section>
+        <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
+      </section>
 
-    <!-- VISTA 3: TABLERO KANBAN (5 COLUMNAS CON COLORES Y CONTADOR DE DÍAS SLA) -->
-    <section id="view-board" class="hidden space-y-4">
-      <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
-        <div class="relative flex-1 min-w-[200px]">
-          <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-          <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, código DTC (ej: P0087), marca, OR, VIN, modelo, asesor..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
-        </div>
-        <select id="filterBrand" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
-        <select id="filterUser" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
-        <select id="filterWorkshop" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700 max-w-[210px]"></select>
-      </div>
+    </main>
 
-      <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
-    </section>
+    <!-- Botón Flotante en Celular -->
+    <button id="mobileFab" onclick="openTaskModal()" class="hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full btn-accent shadow-xl flex items-center justify-center text-2xl">
+      <i class="ph-bold ph-plus"></i>
+    </button>
+  </div>
 
-  </main>
-
-  <!-- Botón Flotante en Celular -->
-  <button id="mobileFab" onclick="openTaskModal()" class="hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full btn-accent shadow-xl flex items-center justify-center text-2xl">
-    <i class="ph-bold ph-plus"></i>
-  </button>
-
-  <!-- MODAL 1: CREAR / EDITAR ACCIÓN + BUSCADOR DE CASOS SIMILARES POR DTC -->
+  <!-- MODAL 1: CREAR / EDITAR ACCIÓN -->
   <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -323,7 +445,6 @@
           </div>
         </div>
 
-        <!-- Datos de Marca Automotor + Códigos DTC + Vehículo + Asesor -->
         <div id="vehicleFieldsBox" class="space-y-3">
           <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -341,7 +462,6 @@
               </div>
             </div>
 
-            <!-- Campo Códigos de Falla DTC + Alerta de Base de Conocimiento -->
             <div>
               <label class="block text-[11px] font-bold text-indigo-900 mb-1">Códigos de Falla (DTC) / Síntomas Clave</label>
               <input type="text" id="tDtcCodes" oninput="checkSimilarDtcCases()" placeholder="Ej: P0087, U0100, P20EE, pérdida de potencia..." class="w-full px-3 py-2 rounded-lg border border-indigo-300 text-xs font-mono uppercase bg-white" />
@@ -404,7 +524,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO, CIERRE TÉCNICO, CHAT INTERNO, CORREO FORMAL Y REGISTROS -->
+  <!-- MODAL 2: DETALLE DE CASO + DOBLE CHAT (GENERAL Y COORDINADORES) -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
@@ -414,10 +534,10 @@
           <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-xs">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm" title="Escribir mensaje al encargado en el chat interno del caso">
-            <i class="ph-bold ph-chats-circle text-sm"></i> Mensaje al Encargado
+          <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm" title="Escribir mensaje al encargado o coordinadores">
+            <i class="ph-bold ph-chats-circle text-sm"></i> Chat Caso
           </button>
-          <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1" title="Descargar ficha completa de este caso en Word">
+          <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1" title="Descargar ficha completa en Word">
             <i class="ph-bold ph-file-doc text-sm"></i> Word
           </button>
           <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
@@ -427,7 +547,7 @@
             <i class="ph-bold ph-user-focus"></i> Portal Cliente
           </button>
           <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar Datos del Caso"><i class="ph-bold ph-pencil-simple"></i></button>
-          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar Caso"><i class="ph-bold ph-trash"></i></button>
+          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar Caso (Solo Administrador)"><i class="ph-bold ph-trash"></i></button>
           <button onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
@@ -451,7 +571,7 @@
           </div>
         </div>
 
-        <!-- TARJETA DE DIAGNÓSTICO DE CIERRE (CAUSA RAÍZ, REPUESTOS Y SOLUCIÓN DEFINITIVA) -->
+        <!-- TARJETA DE DIAGNÓSTICO DE CIERRE -->
         <div id="dClosureSummaryBox" class="hidden bg-emerald-50/90 border-2 border-emerald-400 rounded-2xl p-4 space-y-2 text-xs">
           <div class="flex items-center justify-between">
             <h4 class="font-extrabold uppercase text-emerald-950 flex items-center gap-1.5">
@@ -490,7 +610,7 @@
           </div>
 
           <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold text-slate-700 uppercase">Seleccionar Compañeros / Usuarios Registrados:</label>
+            <label class="block text-[11px] font-bold text-slate-700 uppercase">Seleccionar Compañeros / Usuarios Aprobados:</label>
             <div id="feUsersChecklist" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto bg-white p-3 rounded-xl border border-blue-200"></div>
           </div>
 
@@ -611,19 +731,33 @@
           <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#0067C0]" />
         </div>
 
-        <!-- CHAT INTERNO DE COORDINACIÓN DEL CASO -->
+        <!-- CHAT INTERNO POR CASO: PESTAÑA GENERAL Y CANAL PRIVADO DE COORDINADORES -->
         <div id="caseChatSection" class="bg-indigo-50/75 rounded-2xl p-4 border-2 border-indigo-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-xs font-extrabold uppercase text-indigo-950 flex items-center gap-1.5">
-                <i class="ph-bold ph-chats-circle text-indigo-600 text-base"></i> Chat Interno del Caso · Coordinación con el Encargado
+                <i class="ph-bold ph-chats-circle text-indigo-600 text-base"></i> Mensajería Interna del Caso
               </h4>
-              <p id="chatAssigneeHint" class="text-[11px] text-indigo-800 font-medium">Mensajería interna privada entre especialistas sobre este expediente.</p>
+              <p id="chatAssigneeHint" class="text-[11px] text-indigo-800 font-medium">Coordinación entre especialistas sobre este expediente.</p>
             </div>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">Solo Equipo Interno</span>
+
+            <!-- Selector de Canal: General vs Grupo Privado Coordinadores -->
+            <div class="flex items-center bg-indigo-200/70 p-1 rounded-xl text-[11px] font-bold">
+              <button type="button" onclick="switchChatChannel('general')" id="btnChatGeneral" class="px-3 py-1 rounded-lg bg-white text-indigo-900 shadow-sm transition">
+                Chat Encargado / Equipo
+              </button>
+              <button type="button" onclick="switchChatChannel('coordinadores')" id="btnChatCoords" class="hidden px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition flex items-center gap-1">
+                <i class="ph-bold ph-lock-key text-amber-600"></i> Grupo Coordinadores
+              </button>
+            </div>
           </div>
 
-          <div id="dChatMessagesList" class="space-y-2.5 max-h-60 overflow-y-auto bg-white/80 p-3 rounded-xl border border-indigo-100"></div>
+          <div id="coordChannelBanner" class="hidden bg-amber-100/90 border border-amber-300 text-amber-950 px-3 py-2 rounded-xl text-[11px] font-semibold flex items-center gap-1.5">
+            <i class="ph-bold ph-shield-check text-amber-700 text-sm"></i>
+            <span>Canal Privado Exclusivo de Coordinadores y Administrador: los encargados regulares no tienen acceso a estos mensajes.</span>
+          </div>
+
+          <div id="dChatMessagesList" class="space-y-2.5 max-h-60 overflow-y-auto bg-white/85 p-3 rounded-xl border border-indigo-100"></div>
 
           <form onsubmit="sendCaseChatMessage(event)" class="space-y-2">
             <div class="flex gap-2">
@@ -634,7 +768,7 @@
             </div>
             <label class="inline-flex items-center gap-2 text-xs text-indigo-900 font-semibold cursor-pointer">
               <input type="checkbox" id="notifyAssigneeOnChat" checked class="w-4 h-4 accent-indigo-600" />
-              Notificar por correo electrónico al Encargado del caso al enviar este mensaje
+              <span id="notifyChatLabel">Notificar por correo electrónico al Encargado del caso al enviar</span>
             </label>
           </form>
         </div>
@@ -685,7 +819,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE CIERRE TÉCNICO OBLIGATORIO AL COMPLETAR UN CASO (BASE DE CONOCIMIENTO) -->
+  <!-- MODAL DE CIERRE TÉCNICO OBLIGATORIO AL COMPLETAR UN CASO -->
   <div id="closureModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-emerald-300 overflow-hidden">
       <div class="px-5 py-4 border-b border-emerald-200 flex items-center justify-between bg-emerald-50">
@@ -722,29 +856,58 @@
     </div>
   </div>
 
-  <!-- MODAL 3: GESTIÓN DE USUARIOS, CORREOS Y PIN -->
-  <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <h3 class="text-base font-bold text-slate-900">Usuarios, Correos de Equipo y Seguridad</h3>
+  <!-- MODAL 3: PANEL ADMINISTRADOR (APROBAR/RECHAZAR ENCARGADOS, ROLES Y CAMBIO DE CONTRASEÑAS) -->
+  <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-shield-star text-xl text-amber-600"></i>
+          <h3 class="text-base font-bold text-slate-900">Panel de Administración · Encargados, Coordinadores y Contraseñas</h3>
+        </div>
         <button onclick="closeModal('usersModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
       </div>
-      <div class="p-5 space-y-4">
-        <form onsubmit="addNewUser(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-          <input type="text" id="uName" required placeholder="Nombre y Apellido" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-          <input type="email" id="uEmail" required placeholder="Correo electrónico del compañero" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-          <select id="uRole" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white">
-            <option value="Usuario">Usuario</option>
-            <option value="Administrador">Administrador</option>
-          </select>
-          <button type="submit" class="px-3 py-2 rounded-lg btn-accent text-xs font-bold">Agregar Usuario</button>
-        </form>
-        <div id="usersList" class="space-y-2 max-h-48 overflow-y-auto"></div>
-        <div class="pt-3 border-t border-slate-200 flex items-center justify-between gap-2">
-          <span class="text-xs font-bold text-slate-700">PIN Administrador (4 dígitos):</span>
+      <div class="p-5 space-y-5 max-h-[82vh] overflow-y-auto">
+
+        <!-- Solicitudes Pendientes de Aprobación -->
+        <div id="pendingRequestsSection" class="space-y-2">
+          <h4 class="text-xs font-extrabold uppercase text-amber-900 flex items-center gap-1.5">
+            <i class="ph-bold ph-user-plus text-amber-600 text-base"></i> Solicitudes Pendientes de Aprobación
+          </h4>
+          <div id="pendingUsersList" class="space-y-2"></div>
+        </div>
+
+        <!-- Alta Directa por el Administrador -->
+        <div class="space-y-2 pt-2 border-t border-slate-200">
+          <h4 class="text-xs font-extrabold uppercase text-slate-700">Registrar Encargado / Coordinador Directamente</h4>
+          <form onsubmit="adminAddUserDirect(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <input type="text" id="uName" required placeholder="Nombre y Apellido" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            <input type="email" id="uEmail" required placeholder="usuario@automotor.com.py" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            <input type="text" id="uPass" required placeholder="Contraseña inicial" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            <div class="flex gap-2">
+              <select id="uRole" class="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white font-semibold">
+                <option value="Encargado">Encargado</option>
+                <option value="Coordinador">Coordinador</option>
+              </select>
+              <button type="submit" class="px-3.5 py-2 rounded-lg btn-accent text-xs font-bold">Crear</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista de Usuarios Activos + Cambio de Contraseña y Rol -->
+        <div class="space-y-2 pt-2 border-t border-slate-200">
+          <h4 class="text-xs font-extrabold uppercase text-slate-700">Equipo Activo (Gestionar Rol y Contraseña)</h4>
+          <div id="usersList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+        </div>
+
+        <!-- Cambiar Contraseña del Administrador -->
+        <div class="pt-3 border-t border-slate-200 bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="text-xs font-bold text-amber-400">Seguridad Cuenta Administrador (<span id="adminIdDisplay">esteban388</span>)</div>
+            <div class="text-[11px] text-slate-300">Actualiza tu contraseña maestra de acceso administrador.</div>
+          </div>
           <div class="flex gap-2">
-            <input type="text" id="adminPinInput" maxlength="4" class="w-20 px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono text-center" />
-            <button onclick="saveAdminPin()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-bold">Actualizar PIN</button>
+            <input type="text" id="newAdminPassInput" placeholder="Nueva contraseña" class="px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-white text-xs" />
+            <button type="button" onclick="saveNewAdminPassword()" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold">Cambiar Clave Admin</button>
           </div>
         </div>
       </div>
@@ -818,56 +981,11 @@
     ];
 
     const BOARD_COLUMNS = [
-      {
-        id: "Urgente",
-        label: "URGENTE",
-        icon: "ph-warning-octagon",
-        colBg: "bg-red-50/95 border-2 border-red-300",
-        headerText: "text-red-800",
-        badgeBg: "bg-red-600 text-white",
-        cardBorder: "border-red-300 hover:border-red-500",
-        barColor: "bg-red-600"
-      },
-      {
-        id: "Pendiente",
-        label: "PENDIENTE",
-        icon: "ph-hourglass",
-        colBg: "bg-amber-50/85 border border-amber-200/90",
-        headerText: "text-amber-900",
-        badgeBg: "bg-amber-200 text-amber-900",
-        cardBorder: "border-amber-200 hover:border-amber-400",
-        barColor: "bg-amber-500"
-      },
-      {
-        id: "En Proceso",
-        label: "EN PROCESO",
-        icon: "ph-gear-six",
-        colBg: "bg-blue-50/85 border border-blue-200/90",
-        headerText: "text-blue-900",
-        badgeBg: "bg-blue-600 text-white",
-        cardBorder: "border-blue-200 hover:border-blue-400",
-        barColor: "bg-[#0067C0]"
-      },
-      {
-        id: "En Prueba",
-        label: "EN PRUEBA",
-        icon: "ph-flask",
-        colBg: "bg-purple-50/85 border border-purple-200/90",
-        headerText: "text-purple-900",
-        badgeBg: "bg-purple-600 text-white",
-        cardBorder: "border-purple-200 hover:border-purple-400",
-        barColor: "bg-purple-600"
-      },
-      {
-        id: "Completado",
-        label: "COMPLETADO",
-        icon: "ph-check-circle",
-        colBg: "bg-emerald-50/90 border-2 border-emerald-300",
-        headerText: "text-emerald-900",
-        badgeBg: "bg-emerald-600 text-white",
-        cardBorder: "border-emerald-300 hover:border-emerald-500",
-        barColor: "bg-emerald-600"
-      }
+      { id: "Urgente", label: "URGENTE", icon: "ph-warning-octagon", colBg: "bg-red-50/95 border-2 border-red-300", headerText: "text-red-800", badgeBg: "bg-red-600 text-white", cardBorder: "border-red-300 hover:border-red-500", barColor: "bg-red-600" },
+      { id: "Pendiente", label: "PENDIENTE", icon: "ph-hourglass", colBg: "bg-amber-50/85 border border-amber-200/90", headerText: "text-amber-900", badgeBg: "bg-amber-200 text-amber-900", cardBorder: "border-amber-200 hover:border-amber-400", barColor: "bg-amber-500" },
+      { id: "En Proceso", label: "EN PROCESO", icon: "ph-gear-six", colBg: "bg-blue-50/85 border border-blue-200/90", headerText: "text-blue-900", badgeBg: "bg-blue-600 text-white", cardBorder: "border-blue-200 hover:border-blue-400", barColor: "bg-[#0067C0]" },
+      { id: "En Prueba", label: "EN PRUEBA", icon: "ph-flask", colBg: "bg-purple-50/85 border border-purple-200/90", headerText: "text-purple-900", badgeBg: "bg-purple-600 text-white", cardBorder: "border-purple-200 hover:border-purple-400", barColor: "bg-purple-600" },
+      { id: "Completado", label: "COMPLETADO", icon: "ph-check-circle", colBg: "bg-emerald-50/90 border-2 border-emerald-300", headerText: "text-emerald-900", badgeBg: "bg-emerald-600 text-white", cardBorder: "border-emerald-300 hover:border-emerald-500", barColor: "bg-emerald-600" }
     ];
 
     const SUBCATEGORIES = {
@@ -926,27 +1044,29 @@
       { id: "w33", name: "Autocentro Zoto", city: "Villarrica", type: "Autorizado" }
     ];
 
-    const DEFAULT_USERS = [
-      { id: "u1", name: "Coordinador Técnico (Admin)", email: "soporte.automotortaller@gmail.com", role: "Administrador" },
-      { id: "u2", name: "Especialista Soporte 1", email: "soporte.automotortaller@gmail.com", role: "Usuario" },
-      { id: "u3", name: "Especialista Soporte 2", email: "soporte.automotortaller@gmail.com", role: "Usuario" }
-    ];
-
     let state = {
       tasks: [],
-      users: DEFAULT_USERS,
+      users: [],
+      pendingUsers: [],
       workshops: DEFAULT_WORKSHOPS,
-      adminPin: "1234",
+      adminConfig: {
+        id: "esteban388",
+        pass: "esteban388",
+        name: "Esteban (Administrador)",
+        email: "soporte.automotortaller@gmail.com"
+      },
       clientPortalBaseUrl: "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html",
       masterSheetUrl: ""
     };
 
+    let currentSession = null; // { id, name, email, role: 'Administrador' | 'Coordinador' | 'Encargado' }
     let appMode = "soporte";
     let activeTab = "dashboard";
-    let activeUserId = "u1";
     let currentDetailId = null;
+    let currentChatChannel = "general"; // 'general' | 'coordinadores'
     let calDate = new Date();
     let isMobileMode = window.innerWidth < 768;
+    let pendingRegTemp = null;
 
     function escapeHtml(str) {
       if (!str) return "";
@@ -959,7 +1079,6 @@
       return phone;
     }
 
-    // Cálculo de días abiertos para control SLA
     function getElapsedDays(t) {
       if (!t || !t.date) return 0;
       const start = new Date(t.date + "T00:00:00");
@@ -970,14 +1089,20 @@
       return diff < 0 ? 0 : diff;
     }
 
-    function normalizeTaskStatuses() {
+    function normalizeStateData() {
+      if (!state.adminConfig) {
+        state.adminConfig = { id: "esteban388", pass: "esteban388", name: "Esteban (Administrador)", email: "soporte.automotortaller@gmail.com" };
+      }
+      if (!Array.isArray(state.users)) state.users = [];
+      if (!Array.isArray(state.pendingUsers)) state.pendingUsers = [];
+
+      // Limpiar usuarios genéricos antiguos sin contraseña si existían
+      state.users = state.users.filter(u => u && u.email && u.id !== "u1" && u.id !== "u2" && u.id !== "u3");
+
       (state.tasks || []).forEach(t => {
-        if (t.status === "En Revisión" || t.status === "En Revision") {
-          t.status = "En Prueba";
-        }
-        if (!Array.isArray(t.chatMessages)) {
-          t.chatMessages = [];
-        }
+        if (t.status === "En Revisión" || t.status === "En Revision") t.status = "En Prueba";
+        if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
+        if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
       });
     }
 
@@ -1000,37 +1125,227 @@
       el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 ${colors[type] || colors.info}`;
       el.innerHTML = `<i class="ph-bold ph-info"></i> <span>${escapeHtml(msg)}</span>`;
       box.appendChild(el);
-      setTimeout(() => el.remove(), 3800);
+      setTimeout(() => el.remove(), 4000);
     }
 
-    function updateDeviceLayout() {
-      const badge = document.getElementById("deviceBadge");
-      const fab = document.getElementById("mobileFab");
-      if (isMobileMode) {
-        badge.innerHTML = `<i class="ph-bold ph-device-mobile"></i> <span>Celular</span>`;
-        fab.classList.remove("hidden");
+    // =========================================================================
+    // SISTEMA DE LOGIN, REGISTRO CON PIN POR CORREO Y CONTROL DE SESIÓN
+    // =========================================================================
+    function switchAuthTab(tab) {
+      document.getElementById("formLoginUser").classList.toggle("hidden", tab !== "user");
+      document.getElementById("formLoginAdmin").classList.toggle("hidden", tab !== "admin");
+      document.getElementById("formRegisterBox").classList.toggle("hidden", tab !== "register");
+
+      const tabs = { user: "authTabUser", admin: "authTabAdmin", register: "authTabRegister" };
+      Object.entries(tabs).forEach(([k, btnId]) => {
+        const btn = document.getElementById(btnId);
+        if (k === tab) {
+          btn.className = "py-2 rounded-lg bg-white text-[#0067C0] shadow-sm transition";
+        } else {
+          btn.className = "py-2 rounded-lg text-slate-600 hover:text-slate-900 transition";
+        }
+      });
+    }
+
+    function handleUserLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginUserEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("loginUserPass").value;
+
+      const isPending = state.pendingUsers.find(u => u.email.toLowerCase() === email);
+      if (isPending) {
+        showToast("Tu cuenta está pendiente de aprobación por el Administrador.", "warning");
+        return;
+      }
+
+      const found = state.users.find(u => u.email.toLowerCase() === email && u.password === pass);
+      if (!found) {
+        showToast("Correo o contraseña incorrectos, o cuenta aún no aprobada.", "warning");
+        return;
+      }
+
+      startAuthenticatedSession({
+        id: found.id,
+        name: found.name,
+        email: found.email,
+        role: found.role || "Encargado"
+      });
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const idInput = document.getElementById("loginAdminId").value.trim();
+      const passInput = document.getElementById("loginAdminPass").value;
+
+      if (idInput === state.adminConfig.id && passInput === state.adminConfig.pass) {
+        startAuthenticatedSession({
+          id: "admin_master",
+          name: state.adminConfig.name || "Esteban (Administrador)",
+          email: state.adminConfig.email || "soporte.automotortaller@gmail.com",
+          role: "Administrador"
+        });
       } else {
-        badge.innerHTML = `<i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>`;
-        fab.classList.add("hidden");
+        showToast("ID o contraseña de Administrador incorrectos.", "warning");
       }
-      renderCalendar();
-      renderBoard();
     }
 
-    function toggleDevicePreview() {
-      isMobileMode = !isMobileMode;
+    async function sendRegistrationCode(e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("regPass").value;
+
+      // Validar dominio corporativo Automotor
+      const allowedDomains = ["@automotor.com.py", "@automotor.com", "soporte.automotortaller@gmail.com"];
+      const isValidCorp = allowedDomains.some(dom => email.endsWith(dom) || email === dom);
+      if (!isValidCorp) {
+        showToast("Debes usar tu correo corporativo de Automotor (@automotor.com.py).", "warning");
+        return;
+      }
+
+      if (state.users.some(u => u.email.toLowerCase() === email)) {
+        showToast("Este correo ya está registrado. Ingresa en la pestaña Encargado.", "warning");
+        return;
+      }
+
+      const pinCode = String(Math.floor(100000 + Math.random() * 900000));
+      pendingRegTemp = { name, email, pass, pinCode };
+
+      const btn = document.getElementById("btnSendRegCode");
+      btn.disabled = true;
+      btn.textContent = "Enviando código PIN a tu correo...";
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendEmail",
+            to: email,
+            subject: `[AutoTech Ops] Código de Verificación de Registro: ${pinCode}`,
+            body: `Hola ${name},\n\nHas solicitado registrarte en la plataforma AutoTech Ops de Automotor S.A.\n\nTu código de verificación de 6 dígitos es:\n\n${pinCode}\n\nIngrésalo en la pantalla de registro para enviar tu solicitud de acceso al Administrador.\n\n---\nMensaje automático de AutoTech Ops.`
+          })
+        });
+        document.getElementById("regConfirmEmailLabel").textContent = email;
+        document.getElementById("regStep1Form").classList.add("hidden");
+        document.getElementById("regStep2Form").classList.remove("hidden");
+        showToast("Código de verificación enviado a tu correo corporativo", "success");
+      } catch (err) {
+        showToast("Error de red al enviar el correo de verificación", "warning");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Enviar Código de Verificación al Correo";
+      }
+    }
+
+    function resetRegSteps() {
+      pendingRegTemp = null;
+      document.getElementById("regStep2Form").classList.add("hidden");
+      document.getElementById("regStep1Form").classList.remove("hidden");
+    }
+
+    async function completeRegistration(e) {
+      e.preventDefault();
+      if (!pendingRegTemp) return;
+      const enteredPin = document.getElementById("regPinInput").value.trim();
+
+      if (enteredPin !== pendingRegTemp.pinCode) {
+        showToast("El código PIN ingresado no coincide con el enviado a tu correo.", "warning");
+        return;
+      }
+
+      // Evitar duplicados en pendientes
+      state.pendingUsers = state.pendingUsers.filter(u => u.email.toLowerCase() !== pendingRegTemp.email);
+      state.pendingUsers.push({
+        id: "u_" + Date.now(),
+        name: pendingRegTemp.name,
+        email: pendingRegTemp.email,
+        password: pendingRegTemp.pass,
+        role: "Encargado",
+        requestedAt: new Date().toLocaleString()
+      });
+
+      saveLocalAndCloud();
+
+      // Avisar al Administrador por correo que hay un nuevo encargado esperando aprobación
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendEmail",
+          to: state.adminConfig.email || "soporte.automotortaller@gmail.com",
+          subject: `[AutoTech Ops] Nueva Solicitud de Registro: ${pendingRegTemp.name}`,
+          body: `Hola Administrador,\n\nEl encargado ${pendingRegTemp.name} (${pendingRegTemp.email}) ha verificado su correo corporativo y solicita acceso al sistema AutoTech Ops.\n\nIngresa con tu cuenta de Administrador (esteban388) y abre "Administrar Equipo" para aceptar o rechazar la solicitud.`
+        })
+      }).catch(() => {});
+
+      resetRegSteps();
+      document.getElementById("regName").value = "";
+      document.getElementById("regEmail").value = "";
+      document.getElementById("regPass").value = "";
+      document.getElementById("regPinInput").value = "";
+      switchAuthTab("user");
+      showToast("Correo verificado. Tu solicitud fue enviada al Administrador para su aprobación.", "success");
+    }
+
+    function startAuthenticatedSession(sessionObj) {
+      currentSession = sessionObj;
+      sessionStorage.setItem("autotech_session_v6", JSON.stringify(sessionObj));
+
+      document.getElementById("authScreen").classList.add("hidden");
+      document.getElementById("mainAppContainer").classList.remove("hidden");
+
+      const isAdmin = sessionObj.role === "Administrador";
+      document.getElementById("loggedUserLabel").textContent = sessionObj.name;
+      const badge = document.getElementById("loggedRoleBadge");
+      badge.textContent = sessionObj.role;
+      badge.className = isAdmin
+        ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-extrabold"
+        : sessionObj.role === "Coordinador"
+          ? "text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-900 font-extrabold"
+          : "text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold";
+
+      document.getElementById("btnAdminUsers").classList.toggle("hidden", !isAdmin);
+      document.getElementById("btnPortalConfig").classList.toggle("hidden", !isAdmin);
+
+      updatePendingBadge();
+      syncSelectors();
       updateDeviceLayout();
+      renderAll();
+      showToast(`Bienvenido/a, ${sessionObj.name}`, "success");
     }
 
-    window.addEventListener("resize", () => {
-      const mobileNow = window.innerWidth < 768;
-      if (mobileNow !== isMobileMode) {
-        isMobileMode = mobileNow;
-        updateDeviceLayout();
-      }
-    });
+    function logoutSession() {
+      currentSession = null;
+      sessionStorage.removeItem("autotech_session_v6");
+      document.getElementById("mainAppContainer").classList.add("hidden");
+      document.getElementById("authScreen").classList.remove("hidden");
+      document.getElementById("loginUserPass").value = "";
+      document.getElementById("loginAdminPass").value = "";
+      showToast("Sesión cerrada correctamente", "info");
+    }
 
-    window.addEventListener("DOMContentLoaded", () => {
+    function isCurrentAdmin() {
+      return currentSession && currentSession.role === "Administrador";
+    }
+
+    function isCoordinatorOrAdmin() {
+      return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador");
+    }
+
+    function updatePendingBadge() {
+      const badge = document.getElementById("pendingUsersBadge");
+      const count = (state.pendingUsers || []).length;
+      if (count > 0 && isCurrentAdmin()) {
+        badge.textContent = count;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+
+    // =========================================================================
+    // SINCRONIZACIÓN CON GOOGLE DRIVE
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", async () => {
       if (localStorage.getItem("autotech_dark_mode") === "1") {
         document.body.classList.add("dark-theme");
         document.getElementById("darkModeBtn").innerHTML = `<i class="ph-bold ph-sun text-amber-400"></i>`;
@@ -1044,14 +1359,22 @@
           if (!state.workshops || state.workshops.length === 0) state.workshops = DEFAULT_WORKSHOPS;
         } catch (e) {}
       }
-      normalizeTaskStatuses();
+      normalizeStateData();
       if (!state.clientPortalBaseUrl) {
         state.clientPortalBaseUrl = "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
       }
-      syncSelectors();
-      updateDeviceLayout();
-      renderAll();
-      syncFromCloud(false);
+
+      await syncFromCloud(false);
+
+      const savedSess = sessionStorage.getItem("autotech_session_v6");
+      if (savedSess) {
+        try {
+          const sess = JSON.parse(savedSess);
+          if (sess.role === "Administrador" || state.users.some(u => u.id === sess.id)) {
+            startAuthenticatedSession(sess);
+          }
+        } catch (e) {}
+      }
     });
 
     function saveLocalAndCloud() {
@@ -1082,16 +1405,19 @@
         if (data.status === "ok" && data.state) {
           state = { ...state, ...data.state };
           if (data.masterSheetUrl) state.masterSheetUrl = data.masterSheetUrl;
-          normalizeTaskStatuses();
+          normalizeStateData();
           if (!state.clientPortalBaseUrl) {
             state.clientPortalBaseUrl = "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
           }
           localStorage.setItem("autotech_state_v5", JSON.stringify(state));
-          syncSelectors();
-          renderAll();
-          if (currentDetailId && !document.getElementById("detailModal").classList.contains("hidden")) {
-            const openT = state.tasks.find(x => x.id === currentDetailId);
-            if (openT) renderCaseChatMessages(openT);
+          updatePendingBadge();
+          if (currentSession) {
+            syncSelectors();
+            renderAll();
+            if (currentDetailId && !document.getElementById("detailModal").classList.contains("hidden")) {
+              const openT = state.tasks.find(x => x.id === currentDetailId);
+              if (openT) renderCaseChatMessages(openT);
+            }
           }
           if (manual) showToast("Datos sincronizados con Google Drive", "success");
         } else if (data.status === "empty") {
@@ -1119,13 +1445,38 @@
             state.masterSheetUrl = d.masterSheetUrl;
             localStorage.setItem("autotech_state_v5", JSON.stringify(state));
             window.open(state.masterSheetUrl, "_blank");
-          } else {
-            showToast("Verifica que publicaste la nueva versión en Apps Script", "warning");
           }
         })
         .catch(() => showToast("Error de conexión con Google Drive", "warning"));
       }
     }
+
+    function updateDeviceLayout() {
+      const badge = document.getElementById("deviceBadge");
+      const fab = document.getElementById("mobileFab");
+      if (isMobileMode) {
+        badge.innerHTML = `<i class="ph-bold ph-device-mobile"></i> <span>Celular</span>`;
+        fab.classList.remove("hidden");
+      } else {
+        badge.innerHTML = `<i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>`;
+        fab.classList.add("hidden");
+      }
+      renderCalendar();
+      renderBoard();
+    }
+
+    function toggleDevicePreview() {
+      isMobileMode = !isMobileMode;
+      updateDeviceLayout();
+    }
+
+    window.addEventListener("resize", () => {
+      const mobileNow = window.innerWidth < 768;
+      if (mobileNow !== isMobileMode) {
+        isMobileMode = mobileNow;
+        updateDeviceLayout();
+      }
+    });
 
     function switchAppMode(mode) {
       appMode = mode;
@@ -1176,18 +1527,25 @@
       return state.tasks.filter(t => (t.mode || "soporte") === appMode);
     }
 
+    function getAllAssignableMembers() {
+      const adminEntry = {
+        id: "admin_master",
+        name: state.adminConfig.name || "Esteban (Administrador)",
+        email: state.adminConfig.email || "soporte.automotortaller@gmail.com",
+        role: "Administrador"
+      };
+      return [adminEntry, ...(state.users || [])];
+    }
+
     function syncSelectors() {
-      const userSel = document.getElementById("activeUserSelect");
       const filterUser = document.getElementById("filterUser");
       const tAssignee = document.getElementById("tAssignee");
+      const members = getAllAssignableMembers();
 
-      userSel.innerHTML = state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)} (${u.role})</option>`).join("");
-      userSel.value = activeUserId;
+      filterUser.innerHTML = `<option value="">Todos los Encargados</option>` +
+        members.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
 
-      filterUser.innerHTML = `<option value="">Todos los Responsables</option>` +
-        state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
-
-      tAssignee.innerHTML = state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
+      tAssignee.innerHTML = members.map(u => `<option value="${u.id}">${escapeHtml(u.name)} (${u.role})</option>`).join("");
 
       const tBrand = document.getElementById("tBrand");
       const filterBrand = document.getElementById("filterBrand");
@@ -1222,7 +1580,6 @@
       document.getElementById("modelFieldWrapper").classList.toggle("sm:col-span-2", isOther);
     }
 
-    // BUSCADOR AUTOMÁTICO DE BASE DE CONOCIMIENTO POR CÓDIGO DTC O MARCA
     function checkSimilarDtcCases() {
       const alertBox = document.getElementById("similarDtcAlert");
       if (appMode !== "soporte") {
@@ -1262,38 +1619,19 @@
       `;
     }
 
-    function handleUserChange(newId) {
-      const targetUser = state.users.find(u => u.id === newId);
-      if (targetUser && targetUser.role === "Administrador") {
-        const pin = prompt("Ingresa el PIN de Administrador (por defecto 1234):");
-        if (pin !== state.adminPin) {
-          showToast("PIN incorrecto", "warning");
-          document.getElementById("activeUserSelect").value = activeUserId;
-          return;
-        }
-      }
-      activeUserId = newId;
-      showToast(`Sesión activa: ${targetUser.name}`, "info");
-    }
-
-    function isCurrentAdmin() {
-      const u = state.users.find(x => x.id === activeUserId);
-      return u && u.role === "Administrador";
-    }
-
     function renderAll() {
       renderDashboard();
       renderCalendar();
       renderBoard();
     }
 
-    // DASHBOARD EJECUTIVO CON ANALÍTICA POR MARCA, TALLERES Y SLA
     function renderDashboard() {
       const list = getFilteredModeTasks();
       const total = list.length;
       const urgent = list.filter(t => t.status === "Urgente").length;
       const done = list.filter(t => t.status === "Completado").length;
       const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Prueba").length;
+      const members = getAllAssignableMembers();
 
       const avgDays = total
         ? (list.reduce((acc, t) => acc + getElapsedDays(t), 0) / total).toFixed(1)
@@ -1340,7 +1678,7 @@
         `;
       }).join("");
 
-      document.getElementById("teamBreakdown").innerHTML = state.users.map(u => {
+      document.getElementById("teamBreakdown").innerHTML = members.map(u => {
         const uTasks = list.filter(t => t.assigneeId === u.id);
         const uOpen = uTasks.filter(t => t.status !== "Completado").length;
         const uAvg = uTasks.length ? Math.round(uTasks.reduce((a, b) => a + (Number(b.progress) || 0), 0) / uTasks.length) : 0;
@@ -1356,7 +1694,6 @@
       }).join("");
 
       if (appMode === "soporte") {
-        // Ranking por Marca
         const brandCounts = {};
         list.forEach(t => {
           const b = t.brand || "Sin especificar";
@@ -1380,7 +1717,6 @@
               `;
             }).join("");
 
-        // Top Talleres con mayor escalamiento
         const wsCounts = {};
         list.forEach(t => {
           const w = t.workshop || "Sin taller";
@@ -1459,6 +1795,7 @@
       const bFilter = document.getElementById("filterBrand").value;
       const uFilter = document.getElementById("filterUser").value;
       const wFilter = document.getElementById("filterWorkshop").value;
+      const members = getAllAssignableMembers();
 
       const list = getFilteredModeTasks().filter(t => {
         if (uFilter && t.assigneeId !== uFilter) return false;
@@ -1490,13 +1827,12 @@
             </div>
             <div class="space-y-2.5">
               ${colTasks.map(t => {
-                const assignee = state.users.find(u => u.id === t.assigneeId);
+                const assignee = members.find(u => u.id === t.assigneeId);
                 const isPropio = (t.workshop || "").includes("(Propio)");
                 const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
-                const chatCount = (t.chatMessages || []).length;
+                const chatCount = (t.chatMessages || []).length + (isCoordinatorOrAdmin() ? (t.coordinatorMessages || []).length : 0);
                 const daysOpen = getElapsedDays(t);
 
-                // Insignia SLA de días abiertos
                 let slaBadge = "";
                 if (t.status === "Completado") {
                   slaBadge = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Cerrado (${daysOpen}d)</span>`;
@@ -1589,13 +1925,11 @@
       saveLocalAndCloud();
       renderAll();
 
-      // Abrir ventana de Cierre Técnico si pasa a Completado y aún no tiene solución documentada
       if (newStatus === "Completado" && prevStatus !== "Completado" && !t.finalSolution) {
         openClosureModal(t.id);
       }
     }
 
-    // MODAL DE CIERRE TÉCNICO (CAUSA RAÍZ, REPUESTOS Y SOLUCIÓN DEFINITIVA)
     function openClosureModal(taskId) {
       const t = state.tasks.find(x => x.id === taskId);
       if (!t) return;
@@ -1620,7 +1954,7 @@
       if (!Array.isArray(t.notes)) t.notes = [];
       t.notes.push({
         date: new Date().toLocaleString(),
-        text: `CIERRE TÉCNICO — Causa raíz: ${t.rootCause} | Repuestos: ${t.partsReplaced || "Ninguno"} | Solución: ${t.finalSolution}`
+        text: `CIERRE TÉCNICO (${currentSession ? currentSession.name : "Sistema"}) — Causa raíz: ${t.rootCause} | Repuestos: ${t.partsReplaced || "Ninguno"} | Solución: ${t.finalSolution}`
       });
 
       saveLocalAndCloud();
@@ -1681,6 +2015,7 @@
       } else {
         document.getElementById("taskModalTitle").textContent = isSoporte ? "Nuevo Caso de Soporte Técnico" : "Nueva Acción de Entrenamiento";
         document.getElementById("tTitle").value = "";
+        if (currentSession) document.getElementById("tAssignee").value = currentSession.id;
         document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
         document.getElementById("tStatus").value = "Pendiente";
         document.getElementById("tBrand").value = "Hyundai";
@@ -1705,6 +2040,7 @@
       const isSoporte = appMode === "soporte";
       const advName = document.getElementById("tAdvisorName").value.trim();
       const advPhone = document.getElementById("tAdvisorWhatsapp").value.trim();
+      const members = getAllAssignableMembers();
 
       const selectedBrand = document.getElementById("tBrand").value;
       const customBrand = document.getElementById("tCustomBrand").value.trim();
@@ -1787,9 +2123,10 @@
         finalSolution: "",
         driveFolderId: "",
         driveFolderUrl: "https://drive.google.com",
-        notes: [{ date: new Date().toLocaleString(), text: "Apertura inicial en el registro cronológico interno." }],
+        notes: [{ date: new Date().toLocaleString(), text: `Apertura inicial registrada por ${currentSession ? currentSession.name : "Usuario"}.` }],
         clientNotes: [],
         chatMessages: [],
+        coordinatorMessages: [],
         media: [],
         clientPortal: {
           enabled: false,
@@ -1821,15 +2158,14 @@
         }
       } catch (err) {}
 
-      const assignee = state.users.find(u => u.id === newTask.assigneeId);
-      const admin = state.users.find(u => u.role === "Administrador");
+      const assignee = members.find(u => u.id === newTask.assigneeId);
       if (assignee && assignee.email) {
         fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({
             action: "sendEmail",
             to: assignee.email,
-            cc: admin ? admin.email : "",
+            cc: state.adminConfig.email || "",
             subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${finalBrand ? finalBrand + " " : ""}${newTask.title}`,
             body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nPrioridad/Estado: ${newTask.status}\nMarca: ${finalBrand || "N/A"}\nModelo: ${newTask.vehicleModel || "N/A"}\nCódigos DTC: ${dtcCodes || "N/A"}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
           })
@@ -1840,14 +2176,17 @@
     // DETALLE DE CASO
     function openDetailModal(id) {
       currentDetailId = id;
+      currentChatChannel = "general";
       const t = state.tasks.find(x => x.id === id);
       if (!t) return;
 
       if (!Array.isArray(t.notes)) t.notes = [];
       if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
       if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
+      if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
 
       const isSoporte = (t.mode || "soporte") === "soporte";
+      const members = getAllAssignableMembers();
       document.getElementById("dCaseBadge").textContent = t.caseId;
 
       const brandBadge = document.getElementById("dBrandBadge");
@@ -1866,7 +2205,10 @@
       document.getElementById("formalEmailPanel").classList.add("hidden");
       document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
 
-      const assignee = state.users.find(u => u.id === t.assigneeId);
+      // Mostrar pestaña Grupo Coordinadores solo si el usuario es Coordinador o Administrador
+      document.getElementById("btnChatCoords").classList.toggle("hidden", !isCoordinatorOrAdmin());
+
+      const assignee = members.find(u => u.id === t.assigneeId);
       const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
       const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
       const daysOpen = getElapsedDays(t);
@@ -1898,7 +2240,6 @@
         advisorLine.classList.add("hidden");
       }
 
-      // Mostrar resumen de cierre técnico si existe
       const closureBox = document.getElementById("dClosureSummaryBox");
       if (t.rootCause || t.finalSolution) {
         closureBox.classList.remove("hidden");
@@ -1924,34 +2265,72 @@
       document.getElementById("cpAdvisorWhatsapp").value = advPhone || t.clientPortal.advisorWhatsapp || "";
       document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
 
-      renderCaseChatMessages(t);
+      switchChatChannel("general");
       renderDetailMedia(t);
       renderInternalNotes(t);
       renderClientNotes(t);
       document.getElementById("detailModal").classList.remove("hidden");
     }
 
-    // CHAT INTERNO POR CASO
+    // =========================================================================
+    // DOBLE CHAT INTERNO POR CASO: GENERAL VS GRUPO PRIVADO COORDINADORES
+    // =========================================================================
     function focusCaseChat() {
       const sec = document.getElementById("caseChatSection");
       sec.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(() => document.getElementById("newChatMsgInput").focus(), 250);
     }
 
+    function switchChatChannel(channel) {
+      if (channel === "coordinadores" && !isCoordinatorOrAdmin()) return;
+      currentChatChannel = channel;
+
+      const btnGen = document.getElementById("btnChatGeneral");
+      const btnCoord = document.getElementById("btnChatCoords");
+      const banner = document.getElementById("coordChannelBanner");
+      const notifyLbl = document.getElementById("notifyChatLabel");
+
+      if (channel === "general") {
+        btnGen.className = "px-3 py-1 rounded-lg bg-white text-indigo-900 shadow-sm transition";
+        btnCoord.className = "px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition flex items-center gap-1";
+        banner.classList.add("hidden");
+        notifyLbl.textContent = "Notificar por correo electrónico al Encargado del caso al enviar";
+      } else {
+        btnCoord.className = "px-3 py-1 rounded-lg bg-amber-500 text-slate-950 shadow-sm transition flex items-center gap-1 font-extrabold";
+        btnGen.className = "px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition";
+        banner.classList.remove("hidden");
+        notifyLbl.textContent = "Notificar por correo a todos los Coordinadores y Administrador";
+      }
+
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (t) renderCaseChatMessages(t);
+    }
+
     function renderCaseChatMessages(t) {
       const box = document.getElementById("dChatMessagesList");
-      const msgs = Array.isArray(t.chatMessages) ? t.chatMessages : [];
+      const msgs = currentChatChannel === "coordinadores"
+        ? (Array.isArray(t.coordinatorMessages) ? t.coordinatorMessages : [])
+        : (Array.isArray(t.chatMessages) ? t.chatMessages : []);
+
       if (msgs.length === 0) {
-        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Sin mensajes en este caso aún. Escribe abajo para coordinar con el encargado.</p>`;
+        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">${
+          currentChatChannel === "coordinadores"
+            ? "Sin mensajes privados entre coordinadores en este caso."
+            : "Sin mensajes en este caso aún. Escribe abajo para coordinar con el encargado."
+        }</p>`;
         return;
       }
 
       box.innerHTML = msgs.map((m, idx) => {
-        const isMe = m.senderId === activeUserId;
+        const isMe = currentSession && m.senderId === currentSession.id;
+        const bubbleStyle = currentChatChannel === "coordinadores"
+          ? (isMe ? "bg-amber-600 text-white rounded-br-sm" : "bg-amber-50 text-slate-900 border border-amber-200 rounded-bl-sm")
+          : (isMe ? "bg-indigo-600 text-white rounded-br-sm" : "bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-sm");
+
         return `
           <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-            <div class="max-w-[88%] rounded-2xl px-3.5 py-2.5 text-xs shadow-sm ${isMe ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-sm'}">
-              <div class="flex items-center justify-between gap-3 mb-1 ${isMe ? 'text-indigo-200' : 'text-slate-500'} text-[10px] font-bold">
+            <div class="max-w-[88%] rounded-2xl px-3.5 py-2.5 text-xs shadow-sm ${bubbleStyle}">
+              <div class="flex items-center justify-between gap-3 mb-1 opacity-80 text-[10px] font-bold">
                 <span>${escapeHtml(m.senderName)}</span>
                 <span>${escapeHtml(m.date)}</span>
               </div>
@@ -1971,51 +2350,245 @@
       const t = state.tasks.find(x => x.id === currentDetailId);
       const input = document.getElementById("newChatMsgInput");
       const text = input.value.trim();
-      const notifyAssignee = document.getElementById("notifyAssigneeOnChat").checked;
-      if (!t || !text) return;
+      const shouldNotify = document.getElementById("notifyAssigneeOnChat").checked;
+      if (!t || !text || !currentSession) return;
 
-      const sender = state.users.find(u => u.id === activeUserId) || { id: activeUserId, name: "Especialista" };
-      const assignee = state.users.find(u => u.id === t.assigneeId);
-
-      if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
-      t.chatMessages.push({
-        senderId: sender.id,
-        senderName: sender.name,
+      const msgEntry = {
+        senderId: currentSession.id,
+        senderName: `${currentSession.name} (${currentSession.role})`,
         date: new Date().toLocaleString(),
         text: text
-      });
+      };
+
+      if (currentChatChannel === "coordinadores") {
+        if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
+        t.coordinatorMessages.push(msgEntry);
+      } else {
+        if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
+        t.chatMessages.push(msgEntry);
+      }
 
       input.value = "";
       saveLocalAndCloud();
       renderCaseChatMessages(t);
       renderBoard();
-      showToast("Mensaje enviado en el chat interno del caso", "success");
+      showToast("Mensaje enviado", "success");
 
-      if (notifyAssignee && assignee && assignee.email) {
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "sendEmail",
-            to: assignee.email,
-            subject: `[AutoTech Chat] Nuevo mensaje en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
-            body: `Hola ${assignee.name},\n\n${sender.name} te ha enviado un mensaje interno sobre el caso ${t.caseId}:\n\n"${text}"\n\nDatos del caso:\n• Título: ${t.title}\n• Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""}\n• Taller: ${t.workshop || "-"}\n• Estado actual: ${t.status} (${t.progress || 0}%)\n\nIngresa a AutoTech Ops para responder directamente en el chat del caso.`
-          })
-        }).catch(() => {});
-        showToast(`Aviso enviado al correo de ${assignee.name}`, "info");
+      if (shouldNotify) {
+        if (currentChatChannel === "coordinadores") {
+          const coordEmails = getAllAssignableMembers()
+            .filter(u => (u.role === "Coordinador" || u.role === "Administrador") && u.email)
+            .map(u => u.email);
+          const uniqueCoords = Array.from(new Set(coordEmails));
+          if (uniqueCoords.length > 0) {
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "sendEmail",
+                to: uniqueCoords[0],
+                cc: uniqueCoords.slice(1).join(","),
+                subject: `[AutoTech Coordinadores] Mensaje Privado en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
+                body: `Mensaje en el Grupo Privado de Coordinadores sobre el caso ${t.caseId}:\n\nRemitente: ${currentSession.name}\nMensaje: "${text}"\n\nTaller: ${t.workshop || "-"} | Estado: ${t.status}`
+              })
+            }).catch(() => {});
+          }
+        } else {
+          const assignee = getAllAssignableMembers().find(u => u.id === t.assigneeId);
+          if (assignee && assignee.email) {
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "sendEmail",
+                to: assignee.email,
+                subject: `[AutoTech Chat] Nuevo mensaje en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
+                body: `Hola ${assignee.name},\n\n${currentSession.name} te ha enviado un mensaje interno sobre el caso ${t.caseId}:\n\n"${text}"\n\nDatos del caso:\n• Título: ${t.title}\n• Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""}\n• Taller: ${t.workshop || "-"}\n• Estado actual: ${t.status} (${t.progress || 0}%)\n\nIngresa a AutoTech Ops para responder directamente en el chat del caso.`
+              })
+            }).catch(() => {});
+          }
+        }
       }
     }
 
     function deleteCaseChatMessage(idx) {
       const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.chatMessages[idx]) return;
-      if (!confirm("¿Eliminar este mensaje del chat interno?")) return;
-      t.chatMessages.splice(idx, 1);
+      if (!t) return;
+      if (!confirm("¿Eliminar este mensaje del chat?")) return;
+      if (currentChatChannel === "coordinadores") {
+        t.coordinatorMessages.splice(idx, 1);
+      } else {
+        t.chatMessages.splice(idx, 1);
+      }
       saveLocalAndCloud();
       renderCaseChatMessages(t);
       renderBoard();
     }
 
-    // FORMALIZAR SEGUIMIENTO POR CORREO ELECTRÓNICO
+    // =========================================================================
+    // PANEL ADMINISTRADOR: APROBAR / RECHAZAR / CAMBIAR CONTRASEÑAS Y ROLES
+    // =========================================================================
+    function openUsersModal() {
+      if (!isCurrentAdmin()) return;
+      document.getElementById("adminIdDisplay").textContent = state.adminConfig.id;
+      document.getElementById("newAdminPassInput").value = "";
+      renderUsersModalLists();
+      document.getElementById("usersModal").classList.remove("hidden");
+    }
+
+    function renderUsersModalLists() {
+      const pendingBox = document.getElementById("pendingUsersList");
+      const pending = state.pendingUsers || [];
+      if (pending.length === 0) {
+        pendingBox.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl border border-slate-200">No hay solicitudes pendientes de aprobación.</p>`;
+      } else {
+        pendingBox.innerHTML = pending.map(u => `
+          <div class="p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-bold text-slate-900">${escapeHtml(u.name)} <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Correo Verificado</span></div>
+              <div class="text-slate-600">${escapeHtml(u.email)} · Solicitado: ${escapeHtml(u.requestedAt || "")}</div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="approvePendingUser('${u.id}', 'Encargado')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Aceptar Encargado</button>
+              <button type="button" onclick="approvePendingUser('${u.id}', 'Coordinador')" class="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold">Aceptar Coordinador</button>
+              <button type="button" onclick="rejectPendingUser('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Rechazar</button>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      const activeBox = document.getElementById("usersList");
+      const active = state.users || [];
+      if (active.length === 0) {
+        activeBox.innerHTML = `<p class="text-xs text-slate-400">Aún no hay encargados aprobados.</p>`;
+      } else {
+        activeBox.innerHTML = active.map(u => `
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-bold text-slate-900">${escapeHtml(u.name)}</div>
+              <div class="text-slate-500">${escapeHtml(u.email)} · Clave actual: <span class="font-mono font-bold text-slate-700">${escapeHtml(u.password)}</span></div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <select onchange="changeUserRole('${u.id}', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 bg-white font-bold text-[11px]">
+                <option value="Encargado" ${u.role === "Encargado" ? "selected" : ""}>Encargado</option>
+                <option value="Coordinador" ${u.role === "Coordinador" ? "selected" : ""}>Coordinador</option>
+              </select>
+              <button type="button" onclick="adminChangeUserPassword('${u.id}')" class="px-2.5 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold">Cambiar Clave</button>
+              <button type="button" onclick="removeUser('${u.id}')" class="px-2.5 py-1 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Eliminar</button>
+            </div>
+          </div>
+        `).join("");
+      }
+    }
+
+    function approvePendingUser(pendingId, assignedRole) {
+      const idx = state.pendingUsers.findIndex(u => u.id === pendingId);
+      if (idx === -1) return;
+      const user = state.pendingUsers.splice(idx, 1)[0];
+      user.role = assignedRole;
+      state.users.push(user);
+
+      saveLocalAndCloud();
+      updatePendingBadge();
+      syncSelectors();
+      renderUsersModalLists();
+      showToast(`${user.name} aprobado como ${assignedRole}`, "success");
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendEmail",
+          to: user.email,
+          subject: `[AutoTech Ops] Acceso Aprobado (${assignedRole})`,
+          body: `Hola ${user.name},\n\nTu solicitud de acceso a AutoTech Ops ha sido aprobada por el Administrador con el rol de ${assignedRole}.\n\nYa puedes ingresar con tu correo corporativo (${user.email}) y la contraseña que registraste.`
+        })
+      }).catch(() => {});
+    }
+
+    function rejectPendingUser(pendingId) {
+      if (!confirm("¿Rechazar y eliminar esta solicitud de registro?")) return;
+      state.pendingUsers = state.pendingUsers.filter(u => u.id !== pendingId);
+      saveLocalAndCloud();
+      updatePendingBadge();
+      renderUsersModalLists();
+      showToast("Solicitud rechazada", "info");
+    }
+
+    function adminAddUserDirect(e) {
+      e.preventDefault();
+      const name = document.getElementById("uName").value.trim();
+      const email = document.getElementById("uEmail").value.trim().toLowerCase();
+      const password = document.getElementById("uPass").value.trim();
+      const role = document.getElementById("uRole").value;
+
+      if (state.users.some(u => u.email.toLowerCase() === email)) {
+        showToast("Ese correo ya existe en el equipo", "warning");
+        return;
+      }
+
+      state.users.push({
+        id: "u_" + Date.now(),
+        name,
+        email,
+        password,
+        role
+      });
+      document.getElementById("uName").value = "";
+      document.getElementById("uEmail").value = "";
+      document.getElementById("uPass").value = "";
+      saveLocalAndCloud();
+      syncSelectors();
+      renderUsersModalLists();
+      showToast(`${name} agregado como ${role}`, "success");
+    }
+
+    function changeUserRole(userId, newRole) {
+      const u = state.users.find(x => x.id === userId);
+      if (!u) return;
+      u.role = newRole;
+      saveLocalAndCloud();
+      syncSelectors();
+      showToast(`Rol de ${u.name} actualizado a ${newRole}`, "success");
+    }
+
+    function adminChangeUserPassword(userId) {
+      const u = state.users.find(x => x.id === userId);
+      if (!u) return;
+      const newPass = prompt(`Nueva contraseña para ${u.name} (${u.email}):`, u.password);
+      if (newPass === null) return;
+      const clean = newPass.trim();
+      if (clean.length < 4) {
+        showToast("La contraseña debe tener al menos 4 caracteres", "warning");
+        return;
+      }
+      u.password = clean;
+      saveLocalAndCloud();
+      renderUsersModalLists();
+      showToast(`Contraseña de ${u.name} actualizada`, "success");
+    }
+
+    function removeUser(id) {
+      if (!confirm("¿Eliminar este encargado del sistema?")) return;
+      state.users = state.users.filter(u => u.id !== id);
+      saveLocalAndCloud();
+      syncSelectors();
+      renderUsersModalLists();
+      showToast("Usuario eliminado", "info");
+    }
+
+    function saveNewAdminPassword() {
+      const newP = document.getElementById("newAdminPassInput").value.trim();
+      if (newP.length < 4) {
+        showToast("La contraseña de Administrador debe tener al menos 4 caracteres", "warning");
+        return;
+      }
+      state.adminConfig.pass = newP;
+      saveLocalAndCloud();
+      document.getElementById("newAdminPassInput").value = "";
+      showToast("Contraseña de Administrador actualizada correctamente", "success");
+    }
+
+    // =========================================================================
+    // FORMALIZAR CORREO, WHATSAPP ASESOR, REGISTROS Y EXPORTACIONES
+    // =========================================================================
     function toggleFormalEmailSection() {
       const panel = document.getElementById("formalEmailPanel");
       const willOpen = panel.classList.contains("hidden");
@@ -2029,7 +2602,8 @@
 
     function renderFormalEmailUsers() {
       const box = document.getElementById("feUsersChecklist");
-      box.innerHTML = state.users.map(u => `
+      const members = getAllAssignableMembers();
+      box.innerHTML = members.map(u => `
         <label class="flex items-center gap-2 text-xs p-1.5 rounded-lg hover:bg-blue-50 cursor-pointer">
           <input type="checkbox" value="${escapeHtml(u.email)}" class="fe-user-chk w-4 h-4 accent-[#0067C0]" checked />
           <div class="truncate">
@@ -2045,8 +2619,8 @@
       if (!t) return;
 
       const isSoporte = (t.mode || "soporte") === "soporte";
-      const assignee = state.users.find(u => u.id === t.assigneeId);
-      const activeUser = state.users.find(u => u.id === activeUserId);
+      const members = getAllAssignableMembers();
+      const assignee = members.find(u => u.id === t.assigneeId);
       const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "No especificado";
       const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
 
@@ -2114,7 +2688,7 @@
       body += `CARPETA DE EVIDENCIAS Y DOCUMENTACIÓN (GOOGLE DRIVE)\n`;
       body += `==================================================\n`;
       body += `${t.driveFolderUrl || "https://drive.google.com"}\n\n`;
-      body += `Atentamente,\n${activeUser ? activeUser.name : "Departamento de Soporte Técnico"}\nAutomotor S.A.`;
+      body += `Atentamente,\n${currentSession ? currentSession.name : "Departamento de Soporte Técnico"}\nAutomotor S.A.`;
 
       document.getElementById("feBody").value = body;
     }
@@ -2175,7 +2749,6 @@
       }
     }
 
-    // AVISO DIRECTO POR WHATSAPP AL ASESOR DE SERVICIOS
     function notifyAdvisorWhatsapp(customUpdateText = "") {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
@@ -2299,7 +2872,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       }).catch(() => {});
     }
 
-    // --- REGISTRO CRONOLÓGICO EXCLUSIVO DEL CLIENTE ---
     function renderClientNotes(t) {
       const list = document.getElementById("dClientNotesList");
       const cNotes = Array.isArray(t.clientNotes) ? t.clientNotes : [];
@@ -2376,7 +2948,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       showToast("Registro eliminado del Portal Cliente", "info");
     }
 
-    // --- REGISTRO CRONOLÓGICO INTERNO PRIVADO ---
     function renderInternalNotes(t) {
       const list = document.getElementById("dInternalNotesList");
       const iNotes = Array.isArray(t.notes) ? t.notes : [];
@@ -2425,9 +2996,10 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       if (!t || !txt) return;
 
       if (!Array.isArray(t.notes)) t.notes = [];
+      const author = currentSession ? `${currentSession.name}: ` : "";
       t.notes.push({
         date: new Date().toLocaleString(),
-        text: txt
+        text: author + txt
       });
       document.getElementById("newInternalNoteText").value = "";
       document.getElementById("notifyAdvisorOnNote").checked = false;
@@ -2465,7 +3037,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       showToast("Registro interno eliminado", "info");
     }
 
-    // --- MULTIMEDIA DRIVE ---
     function renderDetailMedia(t) {
       const box = document.getElementById("dMediaGallery");
       const media = t.media || [];
@@ -2591,9 +3162,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       window.open(`https://wa.me/?text=${msg}`, "_blank");
     }
 
-    // =========================================================================
-    // EXPORTACIÓN DE HISTORIAL COMPLETO EN EXCEL (.XLS) Y WORD (.DOC)
-    // =========================================================================
     function exportExcelHistory() {
       const list = getFilteredModeTasks();
       if (list.length === 0) {
@@ -2601,9 +3169,10 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         return;
       }
 
+      const members = getAllAssignableMembers();
       const titleArea = appMode === "soporte" ? "Historial de Casos de Soporte Técnico" : "Historial de Entrenamiento Técnico";
       let rowsHtml = list.map(t => {
-        const assignee = state.users.find(u => u.id === t.assigneeId);
+        const assignee = members.find(u => u.id === t.assigneeId);
         const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
         const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
         const historyFormatted = (t.notes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
@@ -2687,8 +3256,9 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
     }
 
     function buildWordDocumentHtml(tasksArray, docTitle) {
+      const members = getAllAssignableMembers();
       const blocks = tasksArray.map(t => {
-        const assignee = state.users.find(u => u.id === t.assigneeId);
+        const assignee = members.find(u => u.id === t.assigneeId);
         const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
         const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
         const isSoporte = (t.mode || "soporte") === "soporte";
@@ -2821,55 +3391,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       showToast(`Ficha de ${t.caseId} descargada en Word`, "success");
     }
 
-    // USUARIOS, TALLERES Y CONFIG URL CLIENTE
-    function openUsersModal() {
-      document.getElementById("adminPinInput").value = state.adminPin;
-      renderUsersList();
-      document.getElementById("usersModal").classList.remove("hidden");
-    }
-    function renderUsersList() {
-      document.getElementById("usersList").innerHTML = state.users.map(u => `
-        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-          <div>
-            <div class="font-bold text-slate-900">${escapeHtml(u.name)} <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">${u.role}</span></div>
-            <div class="text-slate-500">${escapeHtml(u.email)}</div>
-          </div>
-          ${u.id !== "u1" ? `<button onclick="removeUser('${u.id}')" class="text-red-600 font-bold hover:underline">Quitar</button>` : ""}
-        </div>
-      `).join("");
-    }
-    function addNewUser(e) {
-      e.preventDefault();
-      state.users.push({
-        id: "u_" + Date.now(),
-        name: document.getElementById("uName").value.trim(),
-        email: document.getElementById("uEmail").value.trim(),
-        role: document.getElementById("uRole").value
-      });
-      document.getElementById("uName").value = "";
-      document.getElementById("uEmail").value = "";
-      saveLocalAndCloud();
-      syncSelectors();
-      renderUsersList();
-      showToast("Usuario registrado", "success");
-    }
-    function removeUser(id) {
-      state.users = state.users.filter(u => u.id !== id);
-      saveLocalAndCloud();
-      syncSelectors();
-      renderUsersList();
-    }
-    function saveAdminPin() {
-      const p = document.getElementById("adminPinInput").value.trim();
-      if (p.length !== 4) {
-        showToast("El PIN debe tener 4 dígitos", "warning");
-        return;
-      }
-      state.adminPin = p;
-      saveLocalAndCloud();
-      showToast("PIN de Administrador actualizado", "success");
-    }
-
     function openWorkshopsModal() {
       renderWorkshopsList();
       document.getElementById("workshopsModal").classList.remove("hidden");
@@ -2902,6 +3423,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
     }
 
     function openPortalConfigModal() {
+      if (!isCurrentAdmin()) return;
       document.getElementById("clientPortalBaseUrlInput").value = state.clientPortalBaseUrl || "";
       document.getElementById("portalConfigModal").classList.remove("hidden");
     }

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solicitud de Hotline / Consulta a Fábrica | Automotor S.A.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 12% 12%, #dbeafe 0%, transparent 45%),
+                  radial-gradient(circle at 88% 88%, #e0e7ff 0%, transparent 45%),
+                  #f1f5f9;
+      min-height: 100vh;
+    }
+    .win-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+    }
+    .automotor-wordmark {
+      font-family: 'Arial Black', 'Segoe UI', Impact, sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #004B93;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased pb-12">
+
+  <!-- Barra Superior Corporativa -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 shadow-sm">
+          <svg viewBox="0 0 120 120" class="w-full h-full" aria-label="Logo Automotor">
+            <path d="M98 44 A42 42 0 0 0 24 38 L10 74 L26 74 L31 60 L50 60 L50 74 L65 74 L65 52 C65 48 68 46 71 46 C74 46 76 48 76 52 L76 74 L90 74 L90 52 C90 48 93 46 96 46 C99 46 101 48 101 52 L101 74 L114 74 L114 50 C114 40 107 34 98 34 C92 34 87 37 84 41 C81 37 76 34 70 34 C64 34 59 37 56 41 L56 35 L43 35 L35 48 L47 48 L47 36 A29 29 0 0 1 83 44 Z" fill="#004B93"/>
+            <path d="M28 84 A42 42 0 0 0 102 79 L87 79 A29 29 0 0 1 43 84 Z" fill="#004B93"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-baseline gap-1">
+            <span class="automotor-wordmark text-lg leading-none">Automotor</span>
+            <span class="automotor-wordmark text-[10px] leading-none">S.A.</span>
+          </div>
+          <p class="text-xs font-bold text-slate-600 mt-0.5">Solicitud de Hotline / Consulta Técnica a Fábrica</p>
+        </div>
+      </div>
+      <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-[#004B93] border border-blue-200">
+        Jefes de Taller
+      </span>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 pt-6 space-y-5">
+
+    <!-- Mensaje de Éxito tras Enviar -->
+    <section id="successBox" class="win-card rounded-3xl p-8 text-center space-y-4 hidden border-2 border-emerald-400">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+        <i class="ph-bold ph-check-circle text-4xl"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-slate-900">¡Solicitud de Hotline Enviada con Éxito!</h2>
+      <p class="text-sm text-slate-600 max-w-md mx-auto">
+        Tu solicitud ya fue recibida por el equipo de <strong>Soporte Técnico Automotor</strong> junto con las fotografías del tablero y evidencias.
+      </p>
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 max-w-sm mx-auto">
+        <span class="block text-[11px] font-bold uppercase text-slate-400">Código de Solicitud Generado</span>
+        <span id="generatedCodeText" class="text-xl font-extrabold text-[#004B93] font-mono">SOL-2026-0000</span>
+      </div>
+      <div class="pt-2">
+        <button type="button" onclick="resetAnotherRequest()" class="px-6 py-3 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white text-xs sm:text-sm font-bold shadow-sm">
+          Enviar Otra Solicitud de Hotline
+        </button>
+      </div>
+    </section>
+
+    <!-- Formulario Principal de Solicitud -->
+    <form id="hotlineForm" onsubmit="submitRequest(event)" class="win-card rounded-3xl p-5 sm:p-8 space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
+          <i class="ph-bold ph-headset text-[#004B93] text-2xl"></i> Formulario de Escalamiento a Soporte / Fábrica
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">Completa los datos técnicos de la unidad, adjunta la foto del tablero y las evidencias requeridas por fábrica.</p>
+      </div>
+
+      <!-- Bloque 1: Taller y Responsables -->
+      <div class="space-y-3">
+        <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">1. Taller y Personal a Cargo</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Taller Solicitante (Propio o Autorizado) *</label>
+            <select id="hWorkshop" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-semibold">
+              <optgroup label="Talleres Propios (Automotor)">
+                <option value="Automotor Central (Propio)">Automotor Central - Asunción</option>
+                <option value="Automotor Plaza - Taller (Propio)">Automotor Plaza - Taller - Asunción</option>
+                <option value="Quick Service Paseo La Galería (Propio)">Quick Service Paseo La Galería - Asunción</option>
+                <option value="Automotor - Servicio Pesado (Propio)">Automotor - Servicio Pesado - Asunción</option>
+                <option value="Automotor Encarnación (Propio)">Automotor Encarnación - Encarnación</option>
+                <option value="Automotor CDE (Propio)">Automotor CDE - Ciudad del Este</option>
+                <option value="Automotor Hernandarias (Propio)">Automotor Hernandarias - Hernandarias</option>
+              </optgroup>
+              <optgroup label="Talleres Autorizados (Red Nacional)">
+                <option value="LC Car's (Autorizado)">LC Car's - San Estanislao</option>
+                <option value="Cristian Paats S.A. (Autorizado)">Cristian Paats S.A. - Coronel Oviedo</option>
+                <option value="Autocentro San Roque (Autorizado)">Autocentro San Roque - Caaguazú</option>
+                <option value="Industrial Chaco (Autorizado)">Industrial Chaco - Filadelfia</option>
+                <option value="Autocenter (Autorizado)">Autocenter - Loma Plata</option>
+                <option value="Braun S.R.L. (Autorizado)">Braun S.R.L. - Colonia Neuland</option>
+                <option value="JuanK Hohenau (Autorizado)">JuanK Hohenau - Hohenau</option>
+                <option value="Autodiesel Paraná (Autorizado)">Autodiesel Paraná - Katueté</option>
+                <option value="Bazzo Servicios Automotivos (Autorizado)">Bazzo Servicios Automotivos - Santa Rita</option>
+                <option value="Taller San Carlos (Autorizado)">Taller San Carlos - Concepción</option>
+                <option value="Motor Mec (Autorizado)">Motor Mec - Pilar</option>
+                <option value="Motormack (Autorizado)">Motormack - Loma Plata</option>
+                <option value="LubriMor Servicios & Repuestos (Autorizado)">LubriMor Servicios & Repuestos - San Ignacio</option>
+                <option value="Fogasa Auto Parts S.A. (Autorizado)">Fogasa Auto Parts S.A. - Santa Rosa del Aguaray</option>
+                <option value="Autocentro LB (Autorizado)">Autocentro LB - Villarrica</option>
+                <option value="Alineación Río Verde (Autorizado)">Alineación Río Verde - Colonia Río Verde</option>
+                <option value="Norte Autos (Autorizado)">Norte Autos - Pedro Juan Caballero</option>
+                <option value="Altona Automotores (Autorizado)">Altona Automotores - Campo 8</option>
+                <option value="Óptima Automecánica (Autorizado)">Óptima Automecánica - Curuguaty</option>
+                <option value="Coopasam (Autorizado)">Coopasam - Minga Porã</option>
+                <option value="LC Car's Caacupé (Autorizado)">LC Car's Caacupé - Caacupé</option>
+                <option value="Rectificadora Campo 9 (Autorizado)">Rectificadora Campo 9 - Campo 9</option>
+                <option value="No Limits (Autorizado)">No Limits - Campo 9</option>
+                <option value="Centucar (Autorizado)">Centucar - Saltos del Guairá</option>
+                <option value="San Pablo Cars Truck Center (Autorizado)">San Pablo Cars Truck Center - Eusebio Ayala</option>
+                <option value="Autocentro Zoto (Autorizado)">Autocentro Zoto - Villarrica</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre del Jefe de Taller a Cargo *</label>
+            <input type="text" id="hChiefName" required placeholder="Ej: Ing. Jorge Benítez" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Teléfono / WhatsApp del Jefe de Taller *</label>
+            <input type="text" id="hChiefPhone" required placeholder="Ej: 0981123456" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre del Mecánico / Técnico a Cargo *</label>
+            <input type="text" id="hMechanicName" required placeholder="Ej: Rubén Galeano" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque 2: Datos de la Unidad -->
+      <div class="space-y-3 pt-2 border-t border-slate-200">
+        <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">2. Identificación del Vehículo</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Marca *</label>
+            <select id="hBrand" onchange="toggleOtherBrand()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white font-bold">
+              <option value="Hyundai">Hyundai</option>
+              <option value="Hyundai Camiones y Buses">Hyundai Camiones y Buses</option>
+              <option value="Hyundai Maquinarias">Hyundai Maquinarias</option>
+              <option value="Isuzu">Isuzu</option>
+              <option value="Geely">Geely</option>
+              <option value="SsangYong / KGM">SsangYong / KGM</option>
+              <option value="Maserati">Maserati</option>
+              <option value="Lynk & Co">Lynk & Co</option>
+              <option value="Mahindra">Mahindra</option>
+              <option value="Riddara">Riddara</option>
+              <option value="Farizon">Farizon</option>
+              <option value="Lotus">Lotus</option>
+              <option value="Shacman">Shacman</option>
+              <option value="Lonking">Lonking</option>
+              <option value="Cummins">Cummins</option>
+              <option value="Repsol">Repsol</option>
+              <option value="Otras Marcas">Otras Marcas (Especificar...)</option>
+            </select>
+          </div>
+
+          <div id="hOtherBrandBox" class="hidden">
+            <label class="block text-xs font-bold text-amber-800 mb-1">Escribir Marca *</label>
+            <input type="text" id="hOtherBrandText" placeholder="Nombre de la marca" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-400 text-sm bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Modelo de Vehículo *</label>
+            <input type="text" id="hModel" required placeholder="Ej: Tucson NX4, D-Max, Rexton..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Número de Chasis / VIN (17 dígitos) *</label>
+            <input type="text" id="hVin" required maxlength="17" placeholder="KMHJB81..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono uppercase bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Kilometraje Actual *</label>
+            <input type="text" id="hKm" required placeholder="Ej: 35.400 km" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">N° Orden de Reparación (OR)</label>
+            <input type="text" id="hOrNumber" placeholder="Ej: OR-12450" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Códigos de Falla (DTC) Presentes</label>
+            <input type="text" id="hDtc" placeholder="Ej: P0087, U0100, Sin códigos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono uppercase bg-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Descripción Detallada de la Falla y Pruebas Realizadas *</label>
+          <textarea id="hFault" rows="4" required placeholder="Describe cuándo ocurre la falla, condiciones de operación, mediciones ya realizadas en taller y qué se necesita consultar a fábrica..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></textarea>
+        </div>
+      </div>
+
+      <!-- Bloque 3: Fotografía del Tablero y Evidencias para Fábrica -->
+      <div class="space-y-3 pt-2 border-t border-slate-200">
+        <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">3. Evidencia Fotográfica Obligatoria</h3>
+
+        <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-2">
+          <label class="block text-xs font-extrabold text-blue-950">
+            <i class="ph-bold ph-gauge text-base text-[#004B93]"></i> Foto del Tablero de Instrumentos (Testigos y Kilometraje) *
+          </label>
+          <input type="file" id="hDashFile" required accept="image/*" class="w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#004B93] file:text-white hover:file:bg-[#003870] cursor-pointer" />
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+          <label class="block text-xs font-extrabold text-slate-800">
+            <i class="ph-bold ph-camera text-base text-[#004B93]"></i> Fotos / Capturas de Evidencia para Fábrica (Escáner, VIN, Componente) *
+          </label>
+          <p class="text-[11px] text-slate-500">Puedes seleccionar varias fotos a la vez (máximo 5 archivos).</p>
+          <input type="file" id="hEvidenceFiles" required multiple accept="image/*,application/pdf" class="w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-slate-900 cursor-pointer" />
+        </div>
+      </div>
+
+      <button type="submit" id="btnSubmitHotline" class="w-full py-3.5 rounded-2xl bg-[#004B93] hover:bg-[#003870] text-white font-extrabold text-sm shadow-lg transition flex items-center justify-center gap-2">
+        <i class="ph-bold ph-paper-plane-tilt text-lg"></i> Enviar Solicitud de Hotline a Soporte Técnico
+      </button>
+    </form>
+  </main>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb-l9yH87tg3_YzIn_ddTCyCZZ6rwilS9jKfc-daStrn8JIaQ62M2QcXuQFK0Gw8Tshg/exec";
+
+    function toggleOtherBrand() {
+      const val = document.getElementById("hBrand").value;
+      const isOther = val === "Otras Marcas";
+      document.getElementById("hOtherBrandBox").classList.toggle("hidden", !isOther);
+      document.getElementById("hOtherBrandText").required = isOther;
+    }
+
+    function fileToBase64Obj(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          resolve({
+            fileName: file.name,
+            mimeType: file.type || "image/jpeg",
+            base64: reader.result.split(",")[1]
+          });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function submitRequest(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnSubmitHotline");
+      const dashInput = document.getElementById("hDashFile");
+      const evInput = document.getElementById("hEvidenceFiles");
+
+      if (!dashInput.files[0]) {
+        alert("Debes adjuntar la fotografía del tablero.");
+        return;
+      }
+      if (!evInput.files || evInput.files.length === 0) {
+        alert("Debes adjuntar al menos una foto de evidencia para fábrica.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin text-lg"></i> Subiendo fotos y enviando solicitud...`;
+
+      try {
+        const dashObj = await fileToBase64Obj(dashInput.files[0]);
+        const evFiles = Array.from(evInput.files).slice(0, 5);
+        const evObjs = [];
+        for (const f of evFiles) {
+          evObjs.push(await fileToBase64Obj(f));
+        }
+
+        const brandSel = document.getElementById("hBrand").value;
+        const finalBrand = brandSel === "Otras Marcas"
+          ? (document.getElementById("hOtherBrandText").value.trim() || "Otras Marcas")
+          : brandSel;
+
+        const payload = {
+          action: "submitHotlineRequest",
+          workshop: document.getElementById("hWorkshop").value,
+          chiefName: document.getElementById("hChiefName").value.trim(),
+          chiefPhone: document.getElementById("hChiefPhone").value.trim(),
+          mechanicName: document.getElementById("hMechanicName").value.trim(),
+          brand: finalBrand,
+          model: document.getElementById("hModel").value.trim(),
+          vin: document.getElementById("hVin").value.trim().toUpperCase(),
+          km: document.getElementById("hKm").value.trim(),
+          orNumber: document.getElementById("hOrNumber").value.trim(),
+          dtcCodes: document.getElementById("hDtc").value.trim().toUpperCase(),
+          faultDescription: document.getElementById("hFault").value.trim(),
+          dashboardPhoto: dashObj,
+          evidencePhotos: evObjs
+        };
+
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.status === "ok") {
+          document.getElementById("hotlineForm").classList.add("hidden");
+          document.getElementById("generatedCodeText").textContent = data.requestCode || "SOL-2026";
+          document.getElementById("successBox").classList.remove("hidden");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          alert("Error al enviar solicitud: " + (data.message || "Intente nuevamente"));
+        }
+      } catch (err) {
+        alert("Error de conexión al subir las imágenes. Verifica tu internet e intenta nuevamente.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="ph-bold ph-paper-plane-tilt text-lg"></i> Enviar Solicitud de Hotline a Soporte Técnico`;
+      }
+    }
+
+    function resetAnotherRequest() {
+      document.getElementById("hotlineForm").reset();
+      toggleOtherBrand();
+      document.getElementById("successBox").classList.add("hidden");
+      document.getElementById("hotlineForm").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

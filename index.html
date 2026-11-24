@@ -116,7 +116,7 @@
   <div id="toastBox" class="fixed top-4 right-4 z-[60] space-y-2 pointer-events-none"></div>
 
   <!-- ======================================================================= -->
-  <!-- PANTALLA 0: ACCESO CORPORATIVO OBLIGATORIO                              -->
+  <!-- PANTALLA 0: ACCESO AL PORTAL                                            -->
   <!-- ======================================================================= -->
   <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="win-mica rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-slate-200/90 shadow-2xl">
@@ -129,7 +129,7 @@
           <span class="automotor-wordmark text-xs sm:text-sm leading-none">S.A.</span>
         </div>
         <h1 class="text-base sm:text-lg font-extrabold text-slate-800 tracking-tight">Soporte Técnico Automotor</h1>
-        <p class="text-xs text-slate-500">Acceso Corporativo · Red Oficial y Autorizada</p>
+        <p class="text-xs text-slate-500">Acceso al Portal · Red Oficial y Autorizada</p>
       </div>
 
       <div class="grid grid-cols-3 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
@@ -146,8 +146,8 @@
 
       <form id="formLoginUser" onsubmit="handleUserLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Correo Corporativo Automotor *</label>
-          <input type="email" id="loginUserEmail" required placeholder="nombre.apellido@automotor.com.py" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#004B93]" />
+          <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico *</label>
+          <input type="email" id="loginUserEmail" required placeholder="ejemplo@correo.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#004B93]" />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña *</label>
@@ -183,8 +183,8 @@
             <input type="text" id="regName" required placeholder="Ej: Carlos Mendoza" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Correo Corporativo Automotor *</label>
-            <input type="email" id="regEmail" required placeholder="carlos.mendoza@automotor.com.py" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
+            <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico *</label>
+            <input type="email" id="regEmail" required placeholder="ejemplo@correo.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
             <span class="text-[11px] text-slate-500">Se enviará un código PIN de verificación a este correo.</span>
           </div>
           <div>
@@ -1011,7 +1011,7 @@
           <h4 class="text-xs font-extrabold uppercase text-slate-700">Registrar Encargado / Coordinador Directamente</h4>
           <form onsubmit="adminAddUserDirect(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
             <input type="text" id="uName" required placeholder="Nombre y Apellido" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            <input type="email" id="uEmail" required placeholder="usuario@automotor.com.py" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            <input type="email" id="uEmail" required placeholder="ejemplo@correo.com" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             <input type="text" id="uPass" required placeholder="Contraseña inicial" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             <div class="flex gap-2">
               <select id="uRole" class="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white font-semibold">
@@ -1662,10 +1662,8 @@
       const email = document.getElementById("regEmail").value.trim().toLowerCase();
       const pass = document.getElementById("regPass").value;
 
-      const allowedDomains = ["@automotor.com.py", "@automotor.com", "soporte.automotortaller@gmail.com"];
-      const isValidCorp = allowedDomains.some(dom => email.endsWith(dom) || email === dom);
-      if (!isValidCorp) {
-        showToast("Debes usar tu correo corporativo de Automotor (@automotor.com.py).", "warning");
+      if (!email || !email.includes("@") || !email.includes(".")) {
+        showToast("Ingresa un correo electrónico válido.", "warning");
         return;
       }
 
@@ -1694,7 +1692,7 @@
         document.getElementById("regConfirmEmailLabel").textContent = email;
         document.getElementById("regStep1Form").classList.add("hidden");
         document.getElementById("regStep2Form").classList.remove("hidden");
-        showToast("Código de verificación enviado a tu correo corporativo", "success");
+        showToast("Código de verificación enviado a tu correo electrónico", "success");
       } catch (err) {
         showToast("Error de red al enviar el correo de verificación", "warning");
       } finally {
@@ -1737,7 +1735,7 @@
           action: "sendEmail",
           to: state.adminConfig.email || "soporte.automotortaller@gmail.com",
           subject: `[Soporte Técnico Automotor] Nueva Solicitud de Registro: ${pendingRegTemp.name}`,
-          body: `Hola Administrador,\n\nEl encargado ${pendingRegTemp.name} (${pendingRegTemp.email}) ha verificado su correo corporativo y solicita acceso a Soporte Técnico Automotor.\n\nIngresa con tu cuenta de Administrador (${state.adminConfig.id}) y abre "Equipo" para aceptar o rechazar la solicitud.`
+          body: `Hola Administrador,\n\nEl encargado ${pendingRegTemp.name} (${pendingRegTemp.email}) ha verificado su correo electrónico y solicita acceso a Soporte Técnico Automotor.\n\nIngresa con tu cuenta de Administrador (${state.adminConfig.id}) y abre "Equipo" para aceptar o rechazar la solicitud.`
         })
       }).catch(() => {});
 
@@ -3054,6 +3052,16 @@
       syncSelectors();
       renderUsersModalLists();
       showToast(`${user.name} aprobado como ${assignedRole}`, "success");
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendEmail",
+          to: user.email,
+          subject: `[Soporte Técnico Automotor] Acceso Aprobado (${assignedRole})`,
+          body: `Hola ${user.name},\n\nTu solicitud de acceso a Soporte Técnico Automotor ha sido aprobada por el Administrador con el rol de ${assignedRole}.\n\nYa puedes ingresar con tu correo (${user.email}) y la contraseña que registraste.`
+        })
+      }).catch(() => {});
     }
 
     function rejectPendingUser(pendingId) {
@@ -3289,11 +3297,11 @@
       const msg = encodeURIComponent(
 `Hola *${advName}*, te enviamos una actualización de Soporte Técnico Automotor:
 
-• *Caso:* ${t.caseId} - ${t.title}
+- *Caso:* ${t.caseId} - ${t.title}
 ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode} (${t.hotlineStatus || ""})\n` : ""}• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
-• *Taller:* ${t.workshop || "Automotor"}
-• *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
-• *Último reporte técnico:* ${updateDetail}`
+- *Taller:* ${t.workshop || "Automotor"}
+- *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
+- *Último reporte técnico:* ${updateDetail}`
       );
       window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
     }

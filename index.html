@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AutoTech Ops | Acceso Corporativo · Soporte Técnico Automotor</title>
+  <title>Soporte Técnico Automotor | Automotor S.A.</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
     :root {
-      --accent: #0067C0;
-      --accent-hover: #005a9e;
+      --accent: #004B93;
+      --accent-hover: #003870;
       --accent-soft: #eff6ff;
     }
     body.mode-training {
@@ -37,8 +37,8 @@
       color: #f1f5f9;
     }
     body.dark-theme .win-mica {
-      background: rgba(15, 23, 42, 0.85);
-      border-color: rgba(51, 65, 85, 0.7);
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(51, 65, 85, 0.75);
       color: #f1f5f9;
     }
     body.dark-theme .text-slate-900,
@@ -66,10 +66,10 @@
       border-color: #475569 !important;
     }
     .win-mica {
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.90);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
-      border: 1px solid rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.78);
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
     }
     .btn-accent {
@@ -99,6 +99,15 @@
     .touch-target {
       min-height: 40px;
     }
+    .automotor-wordmark {
+      font-family: 'Arial Black', 'Segoe UI', Impact, sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #004B93;
+    }
+    body.dark-theme .automotor-wordmark {
+      color: #60a5fa;
+    }
   </style>
 </head>
 <body class="text-slate-800 antialiased">
@@ -107,21 +116,27 @@
   <div id="toastBox" class="fixed top-4 right-4 z-[60] space-y-2 pointer-events-none"></div>
 
   <!-- ======================================================================= -->
-  <!-- PANTALLA 0: ACCESO CORPORATIVO OBLIGATORIO (LOGIN / REGISTRO VERIFICADO) -->
+  <!-- PANTALLA 0: ACCESO CORPORATIVO OBLIGATORIO                              -->
   <!-- ======================================================================= -->
   <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="win-mica rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-slate-200/90 shadow-2xl">
       <div class="text-center space-y-2">
-        <div class="w-14 h-14 rounded-2xl bg-[#0067C0] text-white flex items-center justify-center mx-auto shadow-md">
-          <i class="ph-bold ph-shield-check text-3xl"></i>
+        <div class="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto shadow-md p-1.5">
+          <svg viewBox="0 0 120 120" class="w-full h-full" aria-label="Logo Automotor">
+            <path d="M98 44 A42 42 0 0 0 24 38 L10 74 L26 74 L31 60 L50 60 L50 74 L65 74 L65 52 C65 48 68 46 71 46 C74 46 76 48 76 52 L76 74 L90 74 L90 52 C90 48 93 46 96 46 C99 46 101 48 101 52 L101 74 L114 74 L114 50 C114 40 107 34 98 34 C92 34 87 37 84 41 C81 37 76 34 70 34 C64 34 59 37 56 41 L56 35 L43 35 L35 48 L47 48 L47 36 A29 29 0 0 1 83 44 Z" fill="#004B93"/>
+            <path d="M28 84 A42 42 0 0 0 102 79 L87 79 A29 29 0 0 1 43 84 Z" fill="#004B93"/>
+          </svg>
         </div>
-        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">AutoTech Ops · Automotor</h1>
-        <p class="text-xs text-slate-500">Plataforma de Soporte Técnico y Entrenamiento · Acceso Restringido</p>
+        <div class="flex items-baseline justify-center gap-1 pt-1">
+          <span class="automotor-wordmark text-2xl sm:text-3xl leading-none">Automotor</span>
+          <span class="automotor-wordmark text-xs sm:text-sm leading-none">S.A.</span>
+        </div>
+        <h1 class="text-base sm:text-lg font-extrabold text-slate-800 tracking-tight">Soporte Técnico Automotor</h1>
+        <p class="text-xs text-slate-500">Acceso Corporativo · Red Oficial y Autorizada</p>
       </div>
 
-      <!-- Selector de Pestañas de Acceso -->
       <div class="grid grid-cols-3 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
-        <button type="button" onclick="switchAuthTab('user')" id="authTabUser" class="py-2 rounded-lg bg-white text-[#0067C0] shadow-sm transition">
+        <button type="button" onclick="switchAuthTab('user')" id="authTabUser" class="py-2 rounded-lg bg-white text-[#004B93] shadow-sm transition">
           Encargado
         </button>
         <button type="button" onclick="switchAuthTab('admin')" id="authTabAdmin" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">
@@ -132,23 +147,20 @@
         </button>
       </div>
 
-      <!-- FORMULARIO 1: INGRESO ENCARGADO / COORDINADOR -->
       <form id="formLoginUser" onsubmit="handleUserLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Correo Corporativo Automotor *</label>
-          <input type="email" id="loginUserEmail" required placeholder="nombre.apellido@automotor.com.py" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#0067C0]" />
+          <input type="email" id="loginUserEmail" required placeholder="nombre.apellido@automotor.com.py" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#004B93]" />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña *</label>
-          <input type="password" id="loginUserPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#0067C0]" />
+          <input type="password" id="loginUserPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-[#004B93]" />
         </div>
-        <button type="submit" class="w-full py-3 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+        <button type="submit" class="w-full py-3 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
           <i class="ph-bold ph-sign-in text-base"></i> Ingresar al Portal
         </button>
-        <p class="text-[11px] text-center text-slate-500">¿Aún no tienes cuenta? Selecciona la pestaña <strong>Registrarse</strong>.</p>
       </form>
 
-      <!-- FORMULARIO 2: INGRESO ADMINISTRADOR -->
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="hidden space-y-4">
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-center gap-2">
           <i class="ph-bold ph-crown text-lg text-amber-600 shrink-0"></i>
@@ -167,9 +179,7 @@
         </button>
       </form>
 
-      <!-- FORMULARIO 3: REGISTRO CON VERIFICACIÓN DE CORREO CORPORATIVO -->
       <div id="formRegisterBox" class="hidden space-y-4">
-        <!-- Paso A: Solicitar código de verificación al correo corporativo -->
         <form id="regStep1Form" onsubmit="sendRegistrationCode(event)" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Nombre y Apellido *</label>
@@ -184,12 +194,11 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">Crear Contraseña *</label>
             <input type="password" id="regPass" required minlength="4" placeholder="Mínimo 4 caracteres" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white" />
           </div>
-          <button type="submit" id="btnSendRegCode" class="w-full py-3 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white font-bold text-sm shadow-sm transition">
+          <button type="submit" id="btnSendRegCode" class="w-full py-3 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white font-bold text-sm shadow-sm transition">
             Enviar Código de Verificación al Correo
           </button>
         </form>
 
-        <!-- Paso B: Confirmar PIN recibido por correo -->
         <form id="regStep2Form" onsubmit="completeRegistration(event)" class="hidden space-y-3 bg-blue-50/80 p-4 rounded-2xl border border-blue-200">
           <p class="text-xs text-blue-950 font-semibold">
             Enviamos un código de 6 dígitos a <strong id="regConfirmEmailLabel"></strong>. Ingrésalo debajo para confirmar tu identidad:
@@ -208,27 +217,33 @@
       </div>
 
       <div class="text-center text-[11px] text-slate-400 pt-1 border-t border-slate-200/70">
-        Sincronizado con Google Drive Corporativo · Automotor S.A.
+        Automotor S.A. · Departamento de Postventa y Soporte Técnico
       </div>
     </div>
   </div>
 
   <!-- ======================================================================= -->
-  <!-- APLICACIÓN PRINCIPAL (OCULTA HASTA INICIAR SESIÓN)                      -->
+  <!-- APLICACIÓN PRINCIPAL: SOPORTE TÉCNICO AUTOMOTOR                         -->
   <!-- ======================================================================= -->
   <div id="mainAppContainer" class="hidden pb-16">
 
-    <!-- Header Principal -->
     <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
       <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-3 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
-            <div id="brandIcon" class="w-10 h-10 rounded-xl btn-accent flex items-center justify-center shadow-sm transition-colors">
-              <i class="ph-bold ph-wrench text-xl"></i>
+            <div class="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm p-1 shrink-0">
+              <svg viewBox="0 0 120 120" class="w-full h-full" aria-label="Logo Automotor">
+                <path d="M98 44 A42 42 0 0 0 24 38 L10 74 L26 74 L31 60 L50 60 L50 74 L65 74 L65 52 C65 48 68 46 71 46 C74 46 76 48 76 52 L76 74 L90 74 L90 52 C90 48 93 46 96 46 C99 46 101 48 101 52 L101 74 L114 74 L114 50 C114 40 107 34 98 34 C92 34 87 37 84 41 C81 37 76 34 70 34 C64 34 59 37 56 41 L56 35 L43 35 L35 48 L47 48 L47 36 A29 29 0 0 1 83 44 Z" fill="#004B93"/>
+                <path d="M28 84 A42 42 0 0 0 102 79 L87 79 A29 29 0 0 1 43 84 Z" fill="#004B93"/>
+              </svg>
             </div>
             <div>
-              <div class="flex items-center gap-2">
-                <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900">AutoTech Ops</h1>
+              <div class="flex flex-wrap items-center gap-2">
+                <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">Soporte Técnico Automotor</h1>
+                <span class="inline-flex items-baseline gap-0.5 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200">
+                  <span class="automotor-wordmark text-xs">Automotor</span>
+                  <span class="automotor-wordmark text-[8px]">S.A.</span>
+                </span>
                 <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1" title="Alternar vista Celular/PC">
                   <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
                 </button>
@@ -236,13 +251,12 @@
                   <i class="ph-bold ph-moon"></i>
                 </button>
               </div>
-              <p id="modeSubtitle" class="text-xs text-slate-500">Soporte Técnico · Red Oficial y Autorizada Automotor</p>
+              <p id="modeSubtitle" class="text-xs text-slate-500">Red Oficial y Autorizada · Gestión Integral Postventa</p>
             </div>
           </div>
 
-          <!-- Selector de 2 Modos Completamente Separados -->
           <div class="flex items-center bg-slate-200/75 p-1 rounded-xl w-full sm:w-auto">
-            <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#0067C0] shadow-sm transition">
+            <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition">
               <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
             </button>
             <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
@@ -251,7 +265,7 @@
           </div>
         </div>
 
-        <!-- Barra de Herramientas y Sesiones -->
+        <!-- Barra de Herramientas, Botón Soporte Solicitado (1 en Rojo), Copiar Link y Plataformas -->
         <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
           <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
@@ -266,41 +280,75 @@
           </nav>
 
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+            <!-- BOTÓN SOPORTE SOLICITADO (JEFES DE TALLER) CON BADGE ROJO + COPIAR LINK -->
+            <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden border border-red-300 bg-white">
+              <button type="button" onclick="openHotlineRequestsModal()" class="touch-target px-3 py-1.5 bg-red-50 hover:bg-red-100 text-xs font-extrabold text-red-800 flex items-center gap-1.5 transition" title="Ver solicitudes de Hotline / Fábrica enviadas por los Jefes de Taller">
+                <i class="ph-bold ph-bell-ringing text-red-600 text-base"></i>
+                <span>Soporte Solicitado</span>
+                <span id="hotlineBadgeCount" class="hidden px-2 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-black animate-pulse">0</span>
+              </button>
+              <button type="button" onclick="copyHotlineRequestLink()" class="touch-target px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1 border-l border-red-400 transition" title="Copiar link de solicitud de Hotline para enviar al Jefe de Taller">
+                <i class="ph-bold ph-link"></i> <span class="hidden sm:inline">Copiar Link</span>
+              </button>
+            </div>
+
+            <!-- BOTÓN PLATAFORMAS (ESTILO FAVORITOS DE NAVEGADOR) -->
+            <div class="relative">
+              <button type="button" onclick="togglePlatformsDropdown(event)" class="touch-target px-3.5 py-1.5 rounded-xl bg-[#004B93] hover:bg-[#003870] text-xs font-bold text-white flex items-center gap-1.5 shadow-sm transition" title="Accesos directos a Plataformas y Favoritos">
+                <i class="ph-bold ph-bookmarks text-base text-amber-300"></i>
+                <span>Plataformas</span>
+                <i class="ph-bold ph-caret-down text-xs"></i>
+              </button>
+
+              <div id="platformsDropdown" class="hidden absolute right-0 sm:left-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
+                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <i class="ph-bold ph-star text-amber-500 text-base"></i>
+                    <span class="text-xs font-extrabold uppercase text-slate-800">Plataformas y Favoritos</span>
+                  </div>
+                  <button type="button" onclick="openManagePlatformsModal()" class="text-xs font-bold text-[#004B93] hover:underline flex items-center gap-1">
+                    <i class="ph-bold ph-plus-circle"></i> Agregar / Editar
+                  </button>
+                </div>
+                <div id="platformsQuickList" class="max-h-80 overflow-y-auto divide-y divide-slate-100"></div>
+              </div>
+            </div>
+
             <!-- Insignia de Usuario Autenticado -->
             <div class="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              <i id="loggedUserIcon" class="ph-bold ph-user-circle text-accent text-base"></i>
+              <i class="ph-bold ph-user-circle text-accent text-base"></i>
               <span id="loggedUserLabel">Usuario</span>
               <span id="loggedRoleBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">Encargado</span>
             </div>
 
-            <!-- Botón Panel Administrador (Aprobar usuarios, cambiar contraseñas, etc.) -->
+            <!-- Botón Panel Administrador -->
             <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-amber-900 flex items-center gap-1.5 relative" title="Administrar Encargados, Solicitudes y Contraseñas">
-              <i class="ph-bold ph-shield-star text-base text-amber-600"></i> <span>Administrar Equipo</span>
+              <i class="ph-bold ph-shield-star text-base text-amber-600"></i> <span>Equipo</span>
               <span id="pendingUsersBadge" class="hidden px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[10px] font-extrabold">0</span>
             </button>
 
             <button id="btnWorkshops" onclick="openWorkshopsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Red de Talleres Propios y Autorizados">
-              <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden md:inline">Talleres (33)</span>
+              <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden lg:inline">Talleres (33)</span>
             </button>
 
             <button id="btnPortalConfig" onclick="openPortalConfigModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Configurar URL pública de GitHub para Clientes">
-              <i class="ph-bold ph-globe text-emerald-600"></i> <span class="hidden md:inline">URL Cliente</span>
+              <i class="ph-bold ph-globe text-emerald-600"></i>
             </button>
 
             <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar con Google Drive">
-              <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i> <span class="hidden lg:inline">Nube</span>
+              <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i>
             </button>
 
             <button onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm" title="Abrir archivo maestro único en Google Drive">
               <i class="ph-bold ph-table text-base"></i> <span class="hidden sm:inline">Historial Maestro</span>
             </button>
 
-            <button onclick="exportExcelHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1.5" title="Descargar historial en Excel">
-              <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i> <span class="hidden xl:inline">Excel</span>
+            <button onclick="exportExcelHistory()" class="touch-target px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1" title="Descargar historial en Excel">
+              <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i>
             </button>
 
-            <button onclick="exportWordHistory()" class="touch-target px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1.5" title="Descargar historial en Word">
-              <i class="ph-bold ph-microsoft-word-logo text-base text-blue-700"></i> <span class="hidden xl:inline">Word</span>
+            <button onclick="exportWordHistory()" class="touch-target px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1" title="Descargar historial en Word">
+              <i class="ph-bold ph-microsoft-word-logo text-base text-blue-700"></i>
             </button>
 
             <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
@@ -379,7 +427,7 @@
         <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
           <div class="relative flex-1 min-w-[200px]">
             <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, código DTC (ej: P0087), marca, OR, VIN, modelo, asesor..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
+            <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, ticket fábrica, código DTC, marca, OR, VIN, modelo..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
           </div>
           <select id="filterBrand" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
           <select id="filterUser" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-semibold text-slate-700"></select>
@@ -397,7 +445,72 @@
     </button>
   </div>
 
-  <!-- MODAL 1: CREAR / EDITAR ACCIÓN -->
+  <!-- ======================================================================= -->
+  <!-- MODAL BANDEJA DE SOPORTE SOLICITADO (JEFES DE TALLER -> HOTLINE)        -->
+  <!-- ======================================================================= -->
+  <div id="hotlineRequestsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-red-200 flex flex-wrap items-center justify-between gap-2 bg-red-50">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-bell-ringing text-2xl text-red-600"></i>
+          <div>
+            <h3 class="text-base font-extrabold text-red-950">Solicitudes de Hotline / Consulta a Fábrica (Jefes de Taller)</h3>
+            <p class="text-xs text-red-800">Revisa las fotos del tablero y evidencias, copia cada dato o convierte la solicitud en una nueva acción de soporte.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="copyHotlineRequestLink()" class="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i class="ph-bold ph-copy"></i> Copiar Link de Solicitud
+          </button>
+          <button onclick="closeModal('hotlineRequestsModal')" class="p-1.5 rounded-lg hover:bg-red-200/70 text-red-900"><i class="ph-bold ph-x"></i></button>
+        </div>
+      </div>
+
+      <div id="hotlineRequestsList" class="p-5 space-y-4 max-h-[80vh] overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- MODAL GESTOR DE PLATAFORMAS Y FAVORITOS -->
+  <div id="platformsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-bookmarks text-xl text-[#004B93]"></i>
+          <h3 class="text-base font-bold text-slate-900">Gestor de Plataformas y Favoritos</h3>
+        </div>
+        <button onclick="closeModal('platformsModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
+        <form onsubmit="savePlatformBookmark(event)" class="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-3">
+          <input type="hidden" id="editPlatformId" />
+          <div class="text-xs font-extrabold uppercase text-[#004B93]" id="platformFormHeading">Agregar Nuevo Acceso Favorito</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre de la Plataforma *</label>
+              <input type="text" id="pNameInput" required placeholder="Ej: Portal Garantías Hyundai" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Dirección URL *</label>
+              <input type="url" id="pUrlInput" required placeholder="https://..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" id="btnCancelPlatformEdit" onclick="resetPlatformForm()" class="hidden px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700">Cancelar Edición</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+              <i class="ph-bold ph-bookmark-simple"></i> <span id="btnSavePlatformText">Guardar en Favoritos</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="space-y-2">
+          <h4 class="text-xs font-extrabold uppercase text-slate-700">Accesos Directos Guardados</h4>
+          <div id="platformsManageList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 1: CREAR / EDITAR ACCIÓN (CON ESTADO HOTLINE Y CÓDIGO DE TICKET FÁBRICA) -->
   <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -406,11 +519,12 @@
       </div>
       <form onsubmit="saveTask(event)" class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
         <input type="hidden" id="editTaskId" />
+        <input type="hidden" id="sourceHotlineReqId" />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div class="sm:col-span-2">
             <label class="block text-xs font-bold text-slate-700 mb-1">Título del Caso / Acción *</label>
-            <input type="text" id="tTitle" required placeholder="Ej: Diagnóstico falla inyección / Capacitación híbridos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none" />
+            <input type="text" id="tTitle" required placeholder="Ej: Consulta Fábrica / Diagnóstico falla inyección" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none" />
           </div>
 
           <div>
@@ -446,6 +560,24 @@
         </div>
 
         <div id="vehicleFieldsBox" class="space-y-3">
+          <!-- Bloque Hotline / Ticket Fábrica (DISS/TAC) -->
+          <div class="bg-purple-50/80 p-3.5 rounded-xl border border-purple-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-extrabold text-purple-950 mb-1">Estado Hotline / Consulta Fábrica</label>
+              <select id="tHotlineStatus" class="w-full px-3 py-2 rounded-lg border border-purple-300 text-xs font-bold bg-white">
+                <option value="">No aplica</option>
+                <option value="Hotline Solicitado">🟠 Hotline Solicitado</option>
+                <option value="Ticket Enviado a Fábrica">🟣 Ticket Enviado a Fábrica</option>
+                <option value="En Análisis Fábrica">🔵 En Análisis Fábrica</option>
+                <option value="Respondido por Fábrica">🟢 Respondido por Fábrica</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-extrabold text-purple-950 mb-1">Código de Ticket / Hotline Asociado</label>
+              <input type="text" id="tFactoryTicketCode" placeholder="Ej: DISS-2026-8841 / TAC-5512" class="w-full px-3 py-2 rounded-lg border border-purple-300 text-xs font-mono font-bold uppercase bg-white" />
+            </div>
+          </div>
+
           <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -484,13 +616,25 @@
             </div>
           </div>
 
+          <!-- Datos de Jefe de Taller, Mecánico y Asesor -->
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Jefe de Taller a Cargo</label>
+              <input type="text" id="tChiefName" placeholder="Nombre del Jefe de Taller" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Mecánico a Cargo</label>
+              <input type="text" id="tMechanicName" placeholder="Nombre del Mecánico" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+          </div>
+
           <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-[11px] font-bold text-emerald-900 mb-1">Asesor de Servicios Encargado *</label>
+              <label class="block text-[11px] font-bold text-emerald-900 mb-1">Asesor / Contacto Encargado *</label>
               <input type="text" id="tAdvisorName" placeholder="Ej: Reinerio Pérez" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp / Teléfono del Asesor *</label>
+              <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp / Teléfono *</label>
               <input type="text" id="tAdvisorWhatsapp" placeholder="Ej: 0993541374 o 595993541374" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
           </div>
@@ -513,7 +657,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Descripción / Alcance Técnico</label>
-          <textarea id="tDesc" rows="2" placeholder="Detalles iniciales del requerimiento..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
+          <textarea id="tDesc" rows="3" placeholder="Detalles iniciales del requerimiento..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
         </div>
 
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
@@ -524,13 +668,14 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO + DOBLE CHAT (GENERAL Y COORDINADORES) -->
+  <!-- MODAL 2: DETALLE DE CASO + ASOCIACIÓN DE TICKET HOTLINE + DOBLE CHAT -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
-        <div class="flex items-center gap-2">
-          <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#0067C0]">CASO-2026-101</span>
-          <span id="dBrandBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-800 text-white hidden">HYUNDAI</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#004B93]">CASO-2026-101</span>
+          <span id="dBrandBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-[#004B93] text-white hidden">HYUNDAI</span>
+          <span id="dHotlineBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 hidden">Hotline Solicitado</span>
           <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-xs">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
@@ -540,7 +685,7 @@
           <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1" title="Descargar ficha completa en Word">
             <i class="ph-bold ph-file-doc text-sm"></i> Word
           </button>
-          <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-envelope-simple"></i> Formalizar Correo
           </button>
           <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
@@ -553,20 +698,42 @@
       </div>
 
       <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto">
-        <!-- Info Superior + Botón Directo Avisar al Asesor + Compartir Taller -->
         <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 text-xs">
           <div class="space-y-1">
             <div id="dMetaLine1" class="font-bold text-slate-800"></div>
             <div id="dMetaLine2" class="text-slate-500"></div>
+            <div id="dStaffLine" class="text-slate-700 font-semibold hidden"></div>
             <div id="dDtcLine" class="text-indigo-800 font-mono font-bold hidden"></div>
             <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5 shadow-sm transition">
-              <i class="ph-bold ph-whatsapp-logo text-base"></i> Avisar al Asesor
+              <i class="ph-bold ph-whatsapp-logo text-base"></i> Avisar al Asesor / Jefe
             </button>
             <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold flex items-center gap-1.5">
               <i class="ph-bold ph-share-network text-base"></i> Compartir Taller
+            </button>
+          </div>
+        </div>
+
+        <!-- BARRA RÁPIDA DE TICKET / HOTLINE FÁBRICA ASOCIADO AL CASO -->
+        <div id="dHotlineControlBar" class="bg-purple-50/80 border border-purple-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-extrabold text-purple-950 flex items-center gap-1">
+              <i class="ph-bold ph-headset text-base text-purple-700"></i> Hotline / Ticket Fábrica:
+            </span>
+            <select id="dHotlineStatusSelect" onchange="quickSaveHotlineInfo()" class="px-2.5 py-1.5 rounded-lg border border-purple-300 bg-white font-bold text-xs">
+              <option value="">No aplica</option>
+              <option value="Hotline Solicitado">🟠 Hotline Solicitado</option>
+              <option value="Ticket Enviado a Fábrica">🟣 Ticket Enviado a Fábrica</option>
+              <option value="En Análisis Fábrica">🔵 En Análisis Fábrica</option>
+              <option value="Respondido por Fábrica">🟢 Respondido por Fábrica</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2 flex-1 min-w-[220px] justify-end">
+            <input type="text" id="dFactoryTicketInput" placeholder="Código Ticket Fábrica (ej: DISS-8821)" class="px-3 py-1.5 rounded-lg border border-purple-300 bg-white font-mono font-bold uppercase text-xs w-48" />
+            <button type="button" onclick="quickSaveHotlineInfo(true)" class="px-3 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs">
+              Asociar Ticket
             </button>
           </div>
         </div>
@@ -600,11 +767,11 @@
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-sm font-bold text-blue-950 flex items-center gap-1.5">
-                <i class="ph-bold ph-paper-plane-right text-[#0067C0] text-lg"></i> Formalizar Seguimiento Técnico por Correo Electrónico
+                <i class="ph-bold ph-paper-plane-right text-[#004B93] text-lg"></i> Formalizar Seguimiento Técnico por Correo Electrónico
               </h4>
               <p class="text-xs text-blue-800">Genera automáticamente el informe completo del caso con su historial técnico y carpeta Drive para enviarlo a tus compañeros o jefatura.</p>
             </div>
-            <button type="button" onclick="regenerateFormalEmailBody()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-blue-200 text-xs font-bold text-[#0067C0] flex items-center gap-1">
+            <button type="button" onclick="regenerateFormalEmailBody()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-blue-200 text-xs font-bold text-[#004B93] flex items-center gap-1">
               <i class="ph-bold ph-arrows-clockwise"></i> Regenerar Texto
             </button>
           </div>
@@ -627,7 +794,7 @@
 
           <div>
             <label class="block text-[11px] font-bold text-slate-700 mb-1">Cuerpo del Informe Técnico (puedes editar o agregar indicaciones antes de enviar)</label>
-            <textarea id="feBody" rows="9" class="w-full p-3 rounded-xl border border-slate-300 text-xs font-mono bg-white leading-relaxed focus:outline-none focus:border-[#0067C0]"></textarea>
+            <textarea id="feBody" rows="9" class="w-full p-3 rounded-xl border border-slate-300 text-xs font-mono bg-white leading-relaxed focus:outline-none focus:border-[#004B93]"></textarea>
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-blue-200/80">
@@ -638,7 +805,7 @@
               <button type="button" onclick="openInPersonalEmailClient()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
                 <i class="ph-bold ph-envelope-open"></i> Abrir en Mi Correo Personal
               </button>
-              <button type="button" onclick="sendFormalTeamEmail()" class="px-4 py-2 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+              <button type="button" onclick="sendFormalTeamEmail()" class="px-4 py-2 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
                 <i class="ph-bold ph-paper-plane-tilt"></i> Enviar Directo desde Sistema
               </button>
             </div>
@@ -728,10 +895,10 @@
               <option value="Completado">🟢 Completado</option>
             </select>
           </div>
-          <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#0067C0]" />
+          <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#004B93]" />
         </div>
 
-        <!-- CHAT INTERNO POR CASO: PESTAÑA GENERAL Y CANAL PRIVADO DE COORDINADORES -->
+        <!-- CHAT INTERNO POR CASO -->
         <div id="caseChatSection" class="bg-indigo-50/75 rounded-2xl p-4 border-2 border-indigo-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
@@ -741,7 +908,6 @@
               <p id="chatAssigneeHint" class="text-[11px] text-indigo-800 font-medium">Coordinación entre especialistas sobre este expediente.</p>
             </div>
 
-            <!-- Selector de Canal: General vs Grupo Privado Coordinadores -->
             <div class="flex items-center bg-indigo-200/70 p-1 rounded-xl text-[11px] font-bold">
               <button type="button" onclick="switchChatChannel('general')" id="btnChatGeneral" class="px-3 py-1 rounded-lg bg-white text-indigo-900 shadow-sm transition">
                 Chat Encargado / Equipo
@@ -810,7 +976,7 @@
             </div>
             <label id="notifyAdvisorCheckboxRow" class="inline-flex items-center gap-2 text-xs text-emerald-800 font-bold cursor-pointer">
               <input type="checkbox" id="notifyAdvisorOnNote" class="w-4 h-4 accent-emerald-600" />
-              <i class="ph-bold ph-whatsapp-logo text-emerald-600 text-sm"></i> Avisar también al Asesor de Servicios por WhatsApp al registrar
+              <i class="ph-bold ph-whatsapp-logo text-emerald-600 text-sm"></i> Avisar también al Asesor / Jefe por WhatsApp al registrar
             </label>
           </form>
           <div id="dInternalNotesList" class="space-y-2 max-h-60 overflow-y-auto"></div>
@@ -856,7 +1022,7 @@
     </div>
   </div>
 
-  <!-- MODAL 3: PANEL ADMINISTRADOR (APROBAR/RECHAZAR ENCARGADOS, ROLES Y CAMBIO DE CONTRASEÑAS) -->
+  <!-- MODAL 3: PANEL ADMINISTRADOR -->
   <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
@@ -867,8 +1033,6 @@
         <button onclick="closeModal('usersModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
       </div>
       <div class="p-5 space-y-5 max-h-[82vh] overflow-y-auto">
-
-        <!-- Solicitudes Pendientes de Aprobación -->
         <div id="pendingRequestsSection" class="space-y-2">
           <h4 class="text-xs font-extrabold uppercase text-amber-900 flex items-center gap-1.5">
             <i class="ph-bold ph-user-plus text-amber-600 text-base"></i> Solicitudes Pendientes de Aprobación
@@ -876,7 +1040,6 @@
           <div id="pendingUsersList" class="space-y-2"></div>
         </div>
 
-        <!-- Alta Directa por el Administrador -->
         <div class="space-y-2 pt-2 border-t border-slate-200">
           <h4 class="text-xs font-extrabold uppercase text-slate-700">Registrar Encargado / Coordinador Directamente</h4>
           <form onsubmit="adminAddUserDirect(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
@@ -893,13 +1056,11 @@
           </form>
         </div>
 
-        <!-- Lista de Usuarios Activos + Cambio de Contraseña y Rol -->
         <div class="space-y-2 pt-2 border-t border-slate-200">
           <h4 class="text-xs font-extrabold uppercase text-slate-700">Equipo Activo (Gestionar Rol y Contraseña)</h4>
           <div id="usersList" class="space-y-2 max-h-56 overflow-y-auto"></div>
         </div>
 
-        <!-- Cambiar Contraseña del Administrador -->
         <div class="pt-3 border-t border-slate-200 bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
           <div>
             <div class="text-xs font-bold text-amber-400">Seguridad Cuenta Administrador (<span id="adminIdDisplay">esteban388</span>)</div>
@@ -944,7 +1105,7 @@
         <button onclick="closeModal('portalConfigModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
       </div>
       <div class="p-5 space-y-4">
-        <p class="text-xs text-slate-600">Pega aquí la URL pública donde subiste <strong>cliente.html</strong> en GitHub Pages. Este enlace se enviará automáticamente por correo a tus clientes.</p>
+        <p class="text-xs text-slate-600">Pega aquí la URL pública donde subiste <strong>cliente.html</strong> en GitHub Pages.</p>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">URL Pública de cliente.html</label>
           <input type="url" id="clientPortalBaseUrlInput" placeholder="https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs" />
@@ -959,6 +1120,18 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyb-l9yH87tg3_YzIn_ddTCyCZZ6rwilS9jKfc-daStrn8JIaQ62M2QcXuQFK0Gw8Tshg/exec";
+    const HOTLINE_REQUEST_PAGE_URL = "https://soporteautomotortaller-gif.github.io/autotech-soporte/hotline.html";
+
+    const DEFAULT_PLATFORMS = [
+      { id: "p1", name: "Gestor de plan de mantenimiento", url: "https://sites.google.com/automotorpy.com/plan-de-mante/full-page-embed" },
+      { id: "p2", name: "Acceso a sap web", url: "http://192.168.200.229/devwap/" },
+      { id: "p3", name: "Acceso a ccc Hyundai", url: "https://ccc.hyundai.com/nxui/ccc/index.html" },
+      { id: "p4", name: "Acceso general a CCC", url: "https://revisioncuentahta-boop.github.io/mi-autenticador/" },
+      { id: "p5", name: "Automatización de accesos en HTA", url: "https://revisioncuentahta-boop.github.io/Automation-Hyundai/" },
+      { id: "p6", name: "Servicio KGM Automotor", url: "https://sites.google.com/view/itestebanfernandezkgm/inicio" },
+      { id: "p7", name: "Servicio Mahindra Automotor", url: "https://sites.google.com/automotorpy.com/serviciosmahindra/inicio" },
+      { id: "p8", name: "Servicio Lotus Automotor", url: "https://sites.google.com/automotorpy.com/lotus-it-esteban-fernandez/acceso-a-plataformas?authuser=0" }
+    ];
 
     const AUTOMOTOR_BRANDS = [
       "Hyundai",
@@ -983,18 +1156,18 @@
     const BOARD_COLUMNS = [
       { id: "Urgente", label: "URGENTE", icon: "ph-warning-octagon", colBg: "bg-red-50/95 border-2 border-red-300", headerText: "text-red-800", badgeBg: "bg-red-600 text-white", cardBorder: "border-red-300 hover:border-red-500", barColor: "bg-red-600" },
       { id: "Pendiente", label: "PENDIENTE", icon: "ph-hourglass", colBg: "bg-amber-50/85 border border-amber-200/90", headerText: "text-amber-900", badgeBg: "bg-amber-200 text-amber-900", cardBorder: "border-amber-200 hover:border-amber-400", barColor: "bg-amber-500" },
-      { id: "En Proceso", label: "EN PROCESO", icon: "ph-gear-six", colBg: "bg-blue-50/85 border border-blue-200/90", headerText: "text-blue-900", badgeBg: "bg-blue-600 text-white", cardBorder: "border-blue-200 hover:border-blue-400", barColor: "bg-[#0067C0]" },
+      { id: "En Proceso", label: "EN PROCESO", icon: "ph-gear-six", colBg: "bg-blue-50/85 border border-blue-200/90", headerText: "text-blue-900", badgeBg: "bg-blue-600 text-white", cardBorder: "border-blue-200 hover:border-blue-400", barColor: "bg-[#004B93]" },
       { id: "En Prueba", label: "EN PRUEBA", icon: "ph-flask", colBg: "bg-purple-50/85 border border-purple-200/90", headerText: "text-purple-900", badgeBg: "bg-purple-600 text-white", cardBorder: "border-purple-200 hover:border-purple-400", barColor: "bg-purple-600" },
       { id: "Completado", label: "COMPLETADO", icon: "ph-check-circle", colBg: "bg-emerald-50/90 border-2 border-emerald-300", headerText: "text-emerald-900", badgeBg: "bg-emerald-600 text-white", cardBorder: "border-emerald-300 hover:border-emerald-500", barColor: "bg-emerald-600" }
     ];
 
     const SUBCATEGORIES = {
       soporte: [
+        "Consulta Técnica Fábrica (DISS/TAC)",
         "Diagnóstico Especial",
         "Solicitud de Informe Técnico",
         "Consultoría Técnica al Cliente",
         "Mediación y Soporte Postventa (Cliente-Soporte)",
-        "Consulta Técnica Fábrica (DISS/TAC)",
         "Garantía Compleja",
         "Boletín Técnico / Campaña",
         "Asistencia en Bahía Taller"
@@ -1049,6 +1222,8 @@
       users: [],
       pendingUsers: [],
       workshops: DEFAULT_WORKSHOPS,
+      platforms: DEFAULT_PLATFORMS,
+      hotlineRequests: [],
       adminConfig: {
         id: "esteban388",
         pass: "esteban388",
@@ -1059,11 +1234,11 @@
       masterSheetUrl: ""
     };
 
-    let currentSession = null; // { id, name, email, role: 'Administrador' | 'Coordinador' | 'Encargado' }
+    let currentSession = null;
     let appMode = "soporte";
     let activeTab = "dashboard";
     let currentDetailId = null;
-    let currentChatChannel = "general"; // 'general' | 'coordinadores'
+    let currentChatChannel = "general";
     let calDate = new Date();
     let isMobileMode = window.innerWidth < 768;
     let pendingRegTemp = null;
@@ -1071,6 +1246,16 @@
     function escapeHtml(str) {
       if (!str) return "";
       return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function copyTextToClipboard(txt, label = "Dato") {
+      navigator.clipboard.writeText(txt || "");
+      showToast(`${label} copiado al portapapeles`, "success");
+    }
+
+    function copyHotlineRequestLink() {
+      navigator.clipboard.writeText(HOTLINE_REQUEST_PAGE_URL);
+      showToast("Link de solicitud de Hotline copiado para enviar al Jefe de Taller", "success");
     }
 
     function formatWhatsappPhone(raw) {
@@ -1095,8 +1280,11 @@
       }
       if (!Array.isArray(state.users)) state.users = [];
       if (!Array.isArray(state.pendingUsers)) state.pendingUsers = [];
+      if (!Array.isArray(state.hotlineRequests)) state.hotlineRequests = [];
+      if (!Array.isArray(state.platforms) || state.platforms.length === 0) {
+        state.platforms = [...DEFAULT_PLATFORMS];
+      }
 
-      // Limpiar usuarios genéricos antiguos sin contraseña si existían
       state.users = state.users.filter(u => u && u.email && u.id !== "u1" && u.id !== "u2" && u.id !== "u3");
 
       (state.tasks || []).forEach(t => {
@@ -1129,6 +1317,300 @@
     }
 
     // =========================================================================
+    // BANDEJA DE SOPORTE SOLICITADO (JEFES DE TALLER -> CREAR ACCIÓN HOTLINE)
+    // =========================================================================
+    function updateHotlineBadge() {
+      const badge = document.getElementById("hotlineBadgeCount");
+      const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length;
+      if (pendingCount > 0) {
+        badge.textContent = pendingCount;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+
+    function openHotlineRequestsModal() {
+      renderHotlineRequestsList();
+      document.getElementById("hotlineRequestsModal").classList.remove("hidden");
+    }
+
+    function renderHotlineRequestsList() {
+      const box = document.getElementById("hotlineRequestsList");
+      const list = state.hotlineRequests || [];
+
+      if (list.length === 0) {
+        box.innerHTML = `
+          <div class="text-center py-8 space-y-3">
+            <i class="ph-bold ph-tray text-4xl text-slate-300"></i>
+            <p class="text-sm font-bold text-slate-600">No hay solicitudes de Hotline registradas aún.</p>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">Comparte el enlace de solicitud con los Jefes de Taller para que carguen el VIN, foto del tablero y evidencias.</p>
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = list.map((r, idx) => {
+        const isPending = r.status === "Pendiente";
+        const evHtml = (r.evidence || []).map(ev => `
+          <a href="${escapeHtml(ev.viewUrl || ev.url)}" target="_blank" class="group block bg-slate-50 rounded-xl p-2 border border-slate-200 hover:border-[#004B93] transition">
+            <div class="aspect-video bg-slate-200 rounded-lg overflow-hidden mb-1.5 flex items-center justify-center">
+              <img src="${escapeHtml(ev.url)}" alt="${escapeHtml(ev.label)}" onerror="this.style.display='none'" class="w-full h-full object-cover group-hover:scale-105 transition" />
+            </div>
+            <div class="text-[11px] font-bold text-[#004B93] truncate">${escapeHtml(ev.label || ev.name)}</div>
+          </a>
+        `).join("");
+
+        return `
+          <div class="rounded-2xl p-4 sm:p-5 border-2 ${isPending ? 'bg-red-50/40 border-red-300' : 'bg-slate-50/70 border-slate-200'} space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-slate-900 text-white font-mono">${escapeHtml(r.requestCode)}</span>
+                <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg ${isPending ? 'bg-red-600 text-white' : 'bg-emerald-100 text-emerald-800'}">
+                  ${isPending ? '🔴 Pendiente de Atención' : `✅ Convertido (${escapeHtml(r.linkedCaseId)})`}
+                </span>
+                <span class="text-xs text-slate-500 font-semibold">${escapeHtml(r.createdAt)}</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="createSupportFromHotline(${idx})" class="px-3.5 py-2 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm">
+                  <i class="ph-bold ph-plus-circle text-base"></i> Abrir Nueva Acción de Soporte
+                </button>
+                ${isCurrentAdmin() ? `
+                  <button type="button" onclick="deleteHotlineRequest(${idx})" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar solicitud">
+                    <i class="ph-bold ph-trash"></i>
+                  </button>
+                ` : ""}
+              </div>
+            </div>
+
+            <!-- Datos técnicos con botones individuales para copiar cada dato -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 text-xs">
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Taller</span><strong>${escapeHtml(r.workshop)}</strong></div>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.workshop)}', 'Taller')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Taller"><i class="ph-bold ph-copy"></i></button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Marca / Modelo</span><strong>${escapeHtml(r.brand)} ${escapeHtml(r.model)}</strong></div>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.brand + ' ' + r.model)}', 'Marca y Modelo')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Modelo"><i class="ph-bold ph-copy"></i></button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Chasis / VIN</span><strong class="font-mono text-[#004B93]">${escapeHtml(r.vin)}</strong></div>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.vin)}', 'VIN')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar VIN"><i class="ph-bold ph-copy"></i></button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Kilometraje / OR</span><strong>${escapeHtml(r.km)} ${r.orNumber ? `· ${escapeHtml(r.orNumber)}` : ""}</strong></div>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.km)}', 'Kilometraje')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Km"><i class="ph-bold ph-copy"></i></button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Jefe de Taller</span><strong>${escapeHtml(r.chiefName)} (${escapeHtml(r.chiefPhone)})</strong></div>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.chiefName)}', 'Jefe de Taller')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Jefe"><i class="ph-bold ph-copy"></i></button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+                <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Mecánico a Cargo</span><strong>${escapeHtml(r.mechanicName)}</strong></div>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.mechanicName)}', 'Mecánico')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Mecánico"><i class="ph-bold ph-copy"></i></button>
+              </div>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-extrabold uppercase text-slate-400">Falla Reportada y Códigos DTC (${escapeHtml(r.dtcCodes || "Sin DTC")})</span>
+                <button type="button" onclick="copyTextToClipboard(${JSON.stringify(r.faultDescription || '')}, 'Descripción de falla')" class="text-xs font-bold text-[#004B93] hover:underline flex items-center gap-1">
+                  <i class="ph-bold ph-copy"></i> Copiar Falla
+                </button>
+              </div>
+              <p class="text-slate-800 whitespace-pre-line font-medium">${escapeHtml(r.faultDescription)}</p>
+            </div>
+
+            ${evHtml ? `
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-bold text-slate-600">Fotografía del Tablero y Evidencias Adjuntas:</span>
+                  <a href="${escapeHtml(r.folderUrl || 'https://drive.google.com')}" target="_blank" class="text-xs font-bold text-[#004B93] hover:underline">Abrir Carpeta Drive &rarr;</a>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">${evHtml}</div>
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function createSupportFromHotline(idx) {
+      const req = state.hotlineRequests[idx];
+      if (!req) return;
+
+      closeModal("hotlineRequestsModal");
+      if (appMode !== "soporte") switchAppMode("soporte");
+      openTaskModal();
+
+      document.getElementById("taskModalTitle").textContent = `Nueva Acción desde Solicitud ${req.requestCode}`;
+      document.getElementById("sourceHotlineReqId").value = req.id;
+      document.getElementById("tTitle").value = `Consulta Fábrica / Hotline - ${req.brand} ${req.model} (${req.vin})`;
+      document.getElementById("tSubcategory").value = "Consulta Técnica Fábrica (DISS/TAC)";
+      document.getElementById("tHotlineStatus").value = "Hotline Solicitado";
+      document.getElementById("tStatus").value = "Urgente";
+
+      if (req.workshop) {
+        const wsSel = document.getElementById("tWorkshop");
+        const exists = Array.from(wsSel.options).some(o => o.value === req.workshop);
+        if (exists) wsSel.value = req.workshop;
+      }
+
+      if (AUTOMOTOR_BRANDS.includes(req.brand) && req.brand !== "Otras Marcas") {
+        document.getElementById("tBrand").value = req.brand;
+        document.getElementById("tCustomBrand").value = "";
+      } else {
+        document.getElementById("tBrand").value = "Otras Marcas";
+        document.getElementById("tCustomBrand").value = req.brand || "";
+      }
+      toggleCustomBrandField();
+
+      document.getElementById("tModel").value = req.model || "";
+      document.getElementById("tVin").value = req.vin || "";
+      document.getElementById("tKm").value = req.km || "";
+      document.getElementById("tOrNumber").value = req.orNumber || "";
+      document.getElementById("tDtcCodes").value = req.dtcCodes || "";
+      document.getElementById("tChiefName").value = req.chiefName || "";
+      document.getElementById("tMechanicName").value = req.mechanicName || "";
+      document.getElementById("tAdvisorName").value = req.chiefName || "";
+      document.getElementById("tAdvisorWhatsapp").value = req.chiefPhone || "";
+      document.getElementById("tDesc").value = `[Origen: ${req.requestCode} | Jefe: ${req.chiefName} | Mecánico: ${req.mechanicName}]\n${req.faultDescription || ""}`;
+      checkSimilarDtcCases();
+    }
+
+    function deleteHotlineRequest(idx) {
+      if (!isCurrentAdmin()) return;
+      if (!confirm("¿Eliminar esta solicitud de Hotline?")) return;
+      state.hotlineRequests.splice(idx, 1);
+      saveLocalAndCloud();
+      updateHotlineBadge();
+      renderHotlineRequestsList();
+    }
+
+    // =========================================================================
+    // BOTÓN PLATAFORMAS (FAVORITOS ESTILO NAVEGADOR)
+    // =========================================================================
+    function togglePlatformsDropdown(e) {
+      e.stopPropagation();
+      const menu = document.getElementById("platformsDropdown");
+      const willOpen = menu.classList.contains("hidden");
+      if (willOpen) renderPlatformsQuickList();
+      menu.classList.toggle("hidden");
+    }
+
+    document.addEventListener("click", (e) => {
+      const menu = document.getElementById("platformsDropdown");
+      if (menu && !menu.classList.contains("hidden") && !menu.contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+
+    function renderPlatformsQuickList() {
+      const box = document.getElementById("platformsQuickList");
+      const list = state.platforms || [];
+      if (list.length === 0) {
+        box.innerHTML = `<p class="p-4 text-xs text-slate-400 text-center">No hay plataformas guardadas.</p>`;
+        return;
+      }
+      box.innerHTML = list.map(p => `
+        <a href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer" onclick="document.getElementById('platformsDropdown').classList.add('hidden')" class="flex items-center justify-between gap-2.5 px-4 py-2.5 hover:bg-blue-50 transition group">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-7 h-7 rounded-lg bg-blue-100 text-[#004B93] flex items-center justify-center shrink-0 group-hover:bg-[#004B93] group-hover:text-white transition">
+              <i class="ph-bold ph-globe-hemisphere-west text-sm"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-slate-900 truncate">${escapeHtml(p.name)}</div>
+              <div class="text-[10px] text-slate-400 truncate">${escapeHtml(p.url)}</div>
+            </div>
+          </div>
+          <i class="ph-bold ph-arrow-square-out text-slate-400 group-hover:text-[#004B93] shrink-0"></i>
+        </a>
+      `).join("");
+    }
+
+    function openManagePlatformsModal() {
+      document.getElementById("platformsDropdown").classList.add("hidden");
+      resetPlatformForm();
+      renderPlatformsManageList();
+      document.getElementById("platformsModal").classList.remove("hidden");
+    }
+
+    function renderPlatformsManageList() {
+      const box = document.getElementById("platformsManageList");
+      const list = state.platforms || [];
+      box.innerHTML = list.map(p => `
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-wrap items-center justify-between gap-2">
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-slate-900 truncate">${escapeHtml(p.name)}</div>
+            <a href="${escapeHtml(p.url)}" target="_blank" class="text-[11px] text-[#004B93] hover:underline truncate block">${escapeHtml(p.url)}</a>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="editPlatformBookmark('${p.id}')" class="px-2.5 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold">Editar</button>
+            <button type="button" onclick="deletePlatformBookmark('${p.id}')" class="px-2.5 py-1 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Eliminar</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function savePlatformBookmark(e) {
+      e.preventDefault();
+      const editId = document.getElementById("editPlatformId").value;
+      const name = document.getElementById("pNameInput").value.trim();
+      const url = document.getElementById("pUrlInput").value.trim();
+      if (!name || !url) return;
+
+      if (editId) {
+        const item = state.platforms.find(x => x.id === editId);
+        if (item) {
+          item.name = name;
+          item.url = url;
+        }
+        showToast("Favorito actualizado", "success");
+      } else {
+        state.platforms.push({
+          id: "plat_" + Date.now(),
+          name,
+          url
+        });
+        showToast("Plataforma agregada a favoritos", "success");
+      }
+
+      resetPlatformForm();
+      saveLocalAndCloud();
+      renderPlatformsManageList();
+      renderPlatformsQuickList();
+    }
+
+    function editPlatformBookmark(id) {
+      const item = state.platforms.find(x => x.id === id);
+      if (!item) return;
+      document.getElementById("editPlatformId").value = item.id;
+      document.getElementById("pNameInput").value = item.name;
+      document.getElementById("pUrlInput").value = item.url;
+      document.getElementById("platformFormHeading").textContent = "Editando Plataforma Favorita";
+      document.getElementById("btnSavePlatformText").textContent = "Actualizar Favorito";
+      document.getElementById("btnCancelPlatformEdit").classList.remove("hidden");
+    }
+
+    function resetPlatformForm() {
+      document.getElementById("editPlatformId").value = "";
+      document.getElementById("pNameInput").value = "";
+      document.getElementById("pUrlInput").value = "";
+      document.getElementById("platformFormHeading").textContent = "Agregar Nuevo Acceso Favorito";
+      document.getElementById("btnSavePlatformText").textContent = "Guardar en Favoritos";
+      document.getElementById("btnCancelPlatformEdit").classList.add("hidden");
+    }
+
+    function deletePlatformBookmark(id) {
+      if (!confirm("¿Eliminar este acceso de la barra de plataformas?")) return;
+      state.platforms = state.platforms.filter(x => x.id !== id);
+      saveLocalAndCloud();
+      renderPlatformsManageList();
+      renderPlatformsQuickList();
+      showToast("Acceso eliminado", "info");
+    }
+
+    // =========================================================================
     // SISTEMA DE LOGIN, REGISTRO CON PIN POR CORREO Y CONTROL DE SESIÓN
     // =========================================================================
     function switchAuthTab(tab) {
@@ -1140,7 +1622,7 @@
       Object.entries(tabs).forEach(([k, btnId]) => {
         const btn = document.getElementById(btnId);
         if (k === tab) {
-          btn.className = "py-2 rounded-lg bg-white text-[#0067C0] shadow-sm transition";
+          btn.className = "py-2 rounded-lg bg-white text-[#004B93] shadow-sm transition";
         } else {
           btn.className = "py-2 rounded-lg text-slate-600 hover:text-slate-900 transition";
         }
@@ -1195,7 +1677,6 @@
       const email = document.getElementById("regEmail").value.trim().toLowerCase();
       const pass = document.getElementById("regPass").value;
 
-      // Validar dominio corporativo Automotor
       const allowedDomains = ["@automotor.com.py", "@automotor.com", "soporte.automotortaller@gmail.com"];
       const isValidCorp = allowedDomains.some(dom => email.endsWith(dom) || email === dom);
       if (!isValidCorp) {
@@ -1221,8 +1702,8 @@
           body: JSON.stringify({
             action: "sendEmail",
             to: email,
-            subject: `[AutoTech Ops] Código de Verificación de Registro: ${pinCode}`,
-            body: `Hola ${name},\n\nHas solicitado registrarte en la plataforma AutoTech Ops de Automotor S.A.\n\nTu código de verificación de 6 dígitos es:\n\n${pinCode}\n\nIngrésalo en la pantalla de registro para enviar tu solicitud de acceso al Administrador.\n\n---\nMensaje automático de AutoTech Ops.`
+            subject: `[Soporte Técnico Automotor] Código de Verificación: ${pinCode}`,
+            body: `Hola ${name},\n\nHas solicitado registrarte en la plataforma Soporte Técnico Automotor.\n\nTu código de verificación de 6 dígitos es:\n\n${pinCode}\n\nIngrésalo en la pantalla de registro para enviar tu solicitud de acceso al Administrador.\n\n---\nAutomotor S.A.`
           })
         });
         document.getElementById("regConfirmEmailLabel").textContent = email;
@@ -1253,7 +1734,6 @@
         return;
       }
 
-      // Evitar duplicados en pendientes
       state.pendingUsers = state.pendingUsers.filter(u => u.email.toLowerCase() !== pendingRegTemp.email);
       state.pendingUsers.push({
         id: "u_" + Date.now(),
@@ -1266,14 +1746,13 @@
 
       saveLocalAndCloud();
 
-      // Avisar al Administrador por correo que hay un nuevo encargado esperando aprobación
       fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({
           action: "sendEmail",
           to: state.adminConfig.email || "soporte.automotortaller@gmail.com",
-          subject: `[AutoTech Ops] Nueva Solicitud de Registro: ${pendingRegTemp.name}`,
-          body: `Hola Administrador,\n\nEl encargado ${pendingRegTemp.name} (${pendingRegTemp.email}) ha verificado su correo corporativo y solicita acceso al sistema AutoTech Ops.\n\nIngresa con tu cuenta de Administrador (esteban388) y abre "Administrar Equipo" para aceptar o rechazar la solicitud.`
+          subject: `[Soporte Técnico Automotor] Nueva Solicitud de Registro: ${pendingRegTemp.name}`,
+          body: `Hola Administrador,\n\nEl encargado ${pendingRegTemp.name} (${pendingRegTemp.email}) ha verificado su correo corporativo y solicita acceso a Soporte Técnico Automotor.\n\nIngresa con tu cuenta de Administrador (${state.adminConfig.id}) y abre "Equipo" para aceptar o rechazar la solicitud.`
         })
       }).catch(() => {});
 
@@ -1307,6 +1786,8 @@
       document.getElementById("btnPortalConfig").classList.toggle("hidden", !isAdmin);
 
       updatePendingBadge();
+      updateHotlineBadge();
+      renderPlatformsQuickList();
       syncSelectors();
       updateDeviceLayout();
       renderAll();
@@ -1411,7 +1892,9 @@
           }
           localStorage.setItem("autotech_state_v5", JSON.stringify(state));
           updatePendingBadge();
+          updateHotlineBadge();
           if (currentSession) {
+            renderPlatformsQuickList();
             syncSelectors();
             renderAll();
             if (currentDetailId && !document.getElementById("detailModal").classList.contains("hidden")) {
@@ -1483,14 +1966,12 @@
       const body = document.body;
       const btnS = document.getElementById("btnModeSoporte");
       const btnE = document.getElementById("btnModeEntrenamiento");
-      const brandIcon = document.getElementById("brandIcon");
 
       if (mode === "soporte") {
         body.classList.remove("mode-training");
-        btnS.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#0067C0] shadow-sm transition";
+        btnS.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition";
         btnE.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
-        brandIcon.innerHTML = `<i class="ph-bold ph-wrench text-xl"></i>`;
-        document.getElementById("modeSubtitle").textContent = "Soporte Técnico · Red Oficial y Autorizada Automotor";
+        document.getElementById("modeSubtitle").textContent = "Red Oficial y Autorizada · Gestión Integral Postventa";
         document.getElementById("btnNewActionText").textContent = "Nuevo Soporte";
         document.getElementById("btnWorkshops").classList.remove("hidden");
         document.getElementById("filterWorkshop").classList.remove("hidden");
@@ -1500,7 +1981,6 @@
         body.classList.add("mode-training");
         btnE.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#B45309] shadow-sm transition";
         btnS.className = "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
-        brandIcon.innerHTML = `<i class="ph-bold ph-graduation-cap text-xl"></i>`;
         document.getElementById("modeSubtitle").textContent = "Entrenamiento Técnico · Plan de Capacitación y Certificación";
         document.getElementById("btnNewActionText").textContent = "Nuevo Entrenamiento";
         document.getElementById("btnWorkshops").classList.add("hidden");
@@ -1711,7 +2191,7 @@
                     <span class="text-slate-500">${count} caso(s) (${pct}%)</span>
                   </div>
                   <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-slate-800 rounded-full" style="width:${pct}%"></div>
+                    <div class="h-full bg-[#004B93] rounded-full" style="width:${pct}%"></div>
                   </div>
                 </div>
               `;
@@ -1735,7 +2215,7 @@
                     <span class="text-slate-500">${count} (${pct}%)</span>
                   </div>
                   <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full ${isPropio ? 'bg-[#0067C0]' : 'bg-emerald-600'} rounded-full" style="width:${pct}%"></div>
+                    <div class="h-full ${isPropio ? 'bg-[#004B93]' : 'bg-emerald-600'} rounded-full" style="width:${pct}%"></div>
                   </div>
                 </div>
               `;
@@ -1809,7 +2289,7 @@
         }
         if (q) {
           const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "");
-          const hay = `${t.caseId} ${t.brand || ""} ${t.dtcCodes || ""} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""} ${advName}`.toLowerCase();
+          const hay = `${t.caseId} ${t.factoryTicketCode || ""} ${t.hotlineStatus || ""} ${t.brand || ""} ${t.dtcCodes || ""} ${t.title} ${t.subcategory} ${t.workshop || ""} ${t.orNumber || ""} ${t.vehicleVin || ""} ${t.vehicleModel || ""} ${advName}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
@@ -1858,10 +2338,11 @@
                       </div>
                     </div>
 
-                    ${appMode === "soporte" && (t.brand || t.dtcCodes) ? `
+                    ${appMode === "soporte" && (t.brand || t.hotlineStatus || t.factoryTicketCode) ? `
                       <div class="flex flex-wrap items-center gap-1">
-                        ${t.brand ? `<span class="text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded bg-slate-800 text-white">${escapeHtml(t.brand)}</span>` : ""}
-                        ${t.dtcCodes ? `<span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-800 border border-indigo-200">${escapeHtml(t.dtcCodes)}</span>` : ""}
+                        ${t.brand ? `<span class="text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}
+                        ${t.hotlineStatus ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">${escapeHtml(t.hotlineStatus)}</span>` : ""}
+                        ${t.factoryTicketCode ? `<span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-900">${escapeHtml(t.factoryTicketCode)}</span>` : ""}
                       </div>
                     ` : ""}
 
@@ -1877,7 +2358,7 @@
                     ${appMode === "soporte" && (t.vehicleModel || t.orNumber || advName) ? `
                       <div class="text-[11px] text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60 space-y-0.5">
                         <div>${escapeHtml(t.vehicleModel || "")} ${t.orNumber ? `· <strong>${escapeHtml(t.orNumber)}</strong>` : ""}</div>
-                        ${advName ? `<div class="text-[10px] text-emerald-800 font-semibold"><i class="ph-bold ph-user-tie"></i> Asesor: ${escapeHtml(advName)}</div>` : ""}
+                        ${advName ? `<div class="text-[10px] text-emerald-800 font-semibold"><i class="ph-bold ph-user-tie"></i> Contacto: ${escapeHtml(advName)}</div>` : ""}
                       </div>
                     ` : ""}
 
@@ -1968,6 +2449,7 @@
 
     function openTaskModal(presetDate = "", editId = null) {
       document.getElementById("editTaskId").value = editId || "";
+      document.getElementById("sourceHotlineReqId").value = "";
       document.getElementById("similarDtcAlert").classList.add("hidden");
       const subSel = document.getElementById("tSubcategory");
       subSel.innerHTML = SUBCATEGORIES[appMode].map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
@@ -1989,6 +2471,8 @@
         if (t.workshop) document.getElementById("tWorkshop").value = t.workshop;
         document.getElementById("tDate").value = t.date;
         document.getElementById("tStatus").value = t.status;
+        document.getElementById("tHotlineStatus").value = t.hotlineStatus || "";
+        document.getElementById("tFactoryTicketCode").value = t.factoryTicketCode || "";
 
         const savedBrand = t.brand || "Hyundai";
         if (AUTOMOTOR_BRANDS.includes(savedBrand) && savedBrand !== "Otras Marcas") {
@@ -2005,6 +2489,8 @@
         document.getElementById("tVin").value = t.vehicleVin || "";
         document.getElementById("tModel").value = t.vehicleModel || "";
         document.getElementById("tKm").value = t.vehicleKm || "";
+        document.getElementById("tChiefName").value = t.chiefName || "";
+        document.getElementById("tMechanicName").value = t.mechanicName || "";
         document.getElementById("tAdvisorName").value = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
         document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
         document.getElementById("tHours").value = t.hours || 4;
@@ -2018,6 +2504,8 @@
         if (currentSession) document.getElementById("tAssignee").value = currentSession.id;
         document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
         document.getElementById("tStatus").value = "Pendiente";
+        document.getElementById("tHotlineStatus").value = "";
+        document.getElementById("tFactoryTicketCode").value = "";
         document.getElementById("tBrand").value = "Hyundai";
         document.getElementById("tCustomBrand").value = "";
         toggleCustomBrandField();
@@ -2026,6 +2514,8 @@
         document.getElementById("tVin").value = "";
         document.getElementById("tModel").value = "";
         document.getElementById("tKm").value = "";
+        document.getElementById("tChiefName").value = "";
+        document.getElementById("tMechanicName").value = "";
         document.getElementById("tAdvisorName").value = "";
         document.getElementById("tAdvisorWhatsapp").value = "";
         document.getElementById("tDesc").value = "";
@@ -2037,6 +2527,7 @@
     async function saveTask(e) {
       e.preventDefault();
       const editId = document.getElementById("editTaskId").value;
+      const sourceReqId = document.getElementById("sourceHotlineReqId").value;
       const isSoporte = appMode === "soporte";
       const advName = document.getElementById("tAdvisorName").value.trim();
       const advPhone = document.getElementById("tAdvisorWhatsapp").value.trim();
@@ -2048,6 +2539,10 @@
         ? (selectedBrand === "Otras Marcas" ? (customBrand || "Otras Marcas") : selectedBrand)
         : "";
       const dtcCodes = isSoporte ? document.getElementById("tDtcCodes").value.trim().toUpperCase() : "";
+      const hotlineStatus = isSoporte ? document.getElementById("tHotlineStatus").value : "";
+      const factoryTicketCode = isSoporte ? document.getElementById("tFactoryTicketCode").value.trim().toUpperCase() : "";
+      const chiefName = isSoporte ? document.getElementById("tChiefName").value.trim() : "";
+      const mechanicName = isSoporte ? document.getElementById("tMechanicName").value.trim() : "";
 
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
@@ -2062,12 +2557,16 @@
           t.progress = 100;
           if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
         }
+        t.hotlineStatus = hotlineStatus;
+        t.factoryTicketCode = factoryTicketCode;
         t.brand = finalBrand;
         t.dtcCodes = dtcCodes;
         t.orNumber = document.getElementById("tOrNumber").value.trim();
         t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase();
         t.vehicleModel = document.getElementById("tModel").value.trim();
         t.vehicleKm = document.getElementById("tKm").value.trim();
+        t.chiefName = chiefName;
+        t.mechanicName = mechanicName;
         t.advisorName = isSoporte ? advName : "";
         t.advisorWhatsapp = isSoporte ? advPhone : "";
         if (t.clientPortal && isSoporte) {
@@ -2094,6 +2593,29 @@
       const randomPin = String(Math.floor(1000 + Math.random() * 9000));
       const initialStatus = document.getElementById("tStatus").value;
 
+      // Si viene desde una solicitud de Hotline de Jefe de Taller, heredar carpeta Drive y fotos
+      let inheritedFolderId = "";
+      let inheritedFolderUrl = "https://drive.google.com";
+      let inheritedMedia = [];
+
+      if (sourceReqId) {
+        const reqObj = (state.hotlineRequests || []).find(r => r.id === sourceReqId);
+        if (reqObj) {
+          reqObj.status = "Convertido";
+          reqObj.linkedCaseId = caseId;
+          inheritedFolderId = reqObj.folderId || "";
+          inheritedFolderUrl = reqObj.folderUrl || "https://drive.google.com";
+          inheritedMedia = (reqObj.evidence || []).map(ev => ({
+            name: ev.name || ev.label,
+            type: "image",
+            url: ev.url,
+            viewUrl: ev.viewUrl || ev.url,
+            clientVisible: false
+          }));
+          updateHotlineBadge();
+        }
+      }
+
       const newTask = {
         id: "t_" + Date.now(),
         caseId: caseId,
@@ -2105,13 +2627,17 @@
         date: document.getElementById("tDate").value,
         closedDate: initialStatus === "Completado" ? new Date().toISOString().split("T")[0] : "",
         status: initialStatus,
-        progress: initialStatus === "Completado" ? 100 : 10,
+        progress: initialStatus === "Completado" ? 100 : 15,
+        hotlineStatus: hotlineStatus,
+        factoryTicketCode: factoryTicketCode,
         brand: finalBrand,
         dtcCodes: dtcCodes,
         orNumber: document.getElementById("tOrNumber").value.trim(),
         vehicleVin: document.getElementById("tVin").value.trim().toUpperCase(),
         vehicleModel: document.getElementById("tModel").value.trim(),
         vehicleKm: document.getElementById("tKm").value.trim(),
+        chiefName: chiefName,
+        mechanicName: mechanicName,
         advisorName: isSoporte ? advName : "",
         advisorWhatsapp: isSoporte ? advPhone : "",
         hours: Number(document.getElementById("tHours").value) || 0,
@@ -2121,13 +2647,18 @@
         rootCause: "",
         partsReplaced: "",
         finalSolution: "",
-        driveFolderId: "",
-        driveFolderUrl: "https://drive.google.com",
-        notes: [{ date: new Date().toLocaleString(), text: `Apertura inicial registrada por ${currentSession ? currentSession.name : "Usuario"}.` }],
+        driveFolderId: inheritedFolderId,
+        driveFolderUrl: inheritedFolderUrl,
+        notes: [{
+          date: new Date().toLocaleString(),
+          text: sourceReqId
+            ? `Apertura desde Solicitud Hotline de Jefe de Taller por ${currentSession ? currentSession.name : "Usuario"} (${hotlineStatus || "Hotline Solicitado"}).`
+            : `Apertura inicial registrada por ${currentSession ? currentSession.name : "Usuario"}.`
+        }],
         clientNotes: [],
         chatMessages: [],
         coordinatorMessages: [],
-        media: [],
+        media: inheritedMedia,
         clientPortal: {
           enabled: false,
           token: randomPin,
@@ -2142,21 +2673,25 @@
       saveLocalAndCloud();
       closeModal("taskModal");
       renderAll();
-      showToast(`Creando carpeta ${caseId} en Google Drive...`, "info");
 
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
-        });
-        const d = await res.json();
-        if (d.status === "ok") {
-          newTask.driveFolderId = d.folderId;
-          newTask.driveFolderUrl = d.folderUrl;
-          saveLocalAndCloud();
-          showToast(`Carpeta Drive creada para ${caseId}`, "success");
-        }
-      } catch (err) {}
+      if (!inheritedFolderId) {
+        showToast(`Creando carpeta ${caseId} en Google Drive...`, "info");
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
+          });
+          const d = await res.json();
+          if (d.status === "ok") {
+            newTask.driveFolderId = d.folderId;
+            newTask.driveFolderUrl = d.folderUrl;
+            saveLocalAndCloud();
+            showToast(`Carpeta Drive creada para ${caseId}`, "success");
+          }
+        } catch (err) {}
+      } else {
+        showToast(`Caso ${caseId} creado con las fotos y carpeta del Jefe de Taller`, "success");
+      }
 
       const assignee = members.find(u => u.id === newTask.assigneeId);
       if (assignee && assignee.email) {
@@ -2166,14 +2701,14 @@
             action: "sendEmail",
             to: assignee.email,
             cc: state.adminConfig.email || "",
-            subject: `[AutoTech Ops] Nueva Asignación: ${caseId} - ${finalBrand ? finalBrand + " " : ""}${newTask.title}`,
-            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nPrioridad/Estado: ${newTask.status}\nMarca: ${finalBrand || "N/A"}\nModelo: ${newTask.vehicleModel || "N/A"}\nCódigos DTC: ${dtcCodes || "N/A"}\nTítulo: ${newTask.title}\nCategoría: ${newTask.subcategory}\nTaller: ${newTask.workshop || "N/A"}\nAsesor de Servicios: ${advName || "N/A"} (${advPhone || "-"})\nFecha: ${newTask.date}\nCarpeta Drive: ${newTask.driveFolderUrl}`
+            subject: `[Soporte Técnico Automotor] Nueva Asignación: ${caseId} - ${finalBrand ? finalBrand + " " : ""}${newTask.title}`,
+            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nEstado Hotline: ${hotlineStatus || "N/A"} ${factoryTicketCode ? `(Ticket: ${factoryTicketCode})` : ""}\nMarca: ${finalBrand || "N/A"}\nModelo: ${newTask.vehicleModel || "N/A"}\nVIN: ${newTask.vehicleVin || "N/A"}\nTaller: ${newTask.workshop || "N/A"}\nCarpeta Drive: ${newTask.driveFolderUrl}`
           })
         }).catch(() => {});
       }
     }
 
-    // DETALLE DE CASO
+    // DETALLE DE CASO + ASOCIACIÓN RÁPIDA DE TICKET HOTLINE
     function openDetailModal(id) {
       currentDetailId = id;
       currentChatChannel = "general";
@@ -2197,16 +2732,26 @@
         brandBadge.classList.add("hidden");
       }
 
+      const hotlineBadge = document.getElementById("dHotlineBadge");
+      if (isSoporte && (t.hotlineStatus || t.factoryTicketCode)) {
+        hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`;
+        hotlineBadge.classList.remove("hidden");
+      } else {
+        hotlineBadge.classList.add("hidden");
+      }
+
       document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyAdvisorHeader").classList.toggle("hidden", !isSoporte);
       document.getElementById("notifyAdvisorCheckboxRow").classList.toggle("hidden", !isSoporte);
+      document.getElementById("dHotlineControlBar").classList.toggle("hidden", !isSoporte);
       document.getElementById("clientPortalPanel").classList.add("hidden");
       document.getElementById("formalEmailPanel").classList.add("hidden");
       document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
-
-      // Mostrar pestaña Grupo Coordinadores solo si el usuario es Coordinador o Administrador
       document.getElementById("btnChatCoords").classList.toggle("hidden", !isCoordinatorOrAdmin());
+
+      document.getElementById("dHotlineStatusSelect").value = t.hotlineStatus || "";
+      document.getElementById("dFactoryTicketInput").value = t.factoryTicketCode || "";
 
       const assignee = members.find(u => u.id === t.assigneeId);
       const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
@@ -2217,6 +2762,14 @@
       document.getElementById("dMetaLine2").textContent = isSoporte
         ? `Taller: ${t.workshop || "-"} · Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`
         : `Grupo: ${t.group || "-"} · Duración: ${t.hours || 0} hs · Sede: ${t.location || "-"}`;
+
+      const staffLine = document.getElementById("dStaffLine");
+      if (isSoporte && (t.chiefName || t.mechanicName)) {
+        staffLine.textContent = `Jefe de Taller: ${t.chiefName || "-"} · Mecánico a Cargo: ${t.mechanicName || "-"}`;
+        staffLine.classList.remove("hidden");
+      } else {
+        staffLine.classList.add("hidden");
+      }
 
       const dtcLine = document.getElementById("dDtcLine");
       if (isSoporte && t.dtcCodes) {
@@ -2234,8 +2787,8 @@
       if (isSoporte) {
         advisorLine.classList.remove("hidden");
         advisorLine.textContent = advName
-          ? `Asesor de Servicios: ${advName} ${advPhone ? `(${advPhone})` : ""}`
-          : "Asesor de Servicios: Sin asignar (edita el caso para registrar su teléfono)";
+          ? `Contacto Taller / Asesor: ${advName} ${advPhone ? `(${advPhone})` : ""}`
+          : "Contacto Taller / Asesor: Sin asignar";
       } else {
         advisorLine.classList.add("hidden");
       }
@@ -2260,1183 +2813,4 @@
       }
       document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
       document.getElementById("cpClientName").value = t.clientPortal.clientName || "";
-      document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
-      document.getElementById("cpAdvisorName").value = advName || t.clientPortal.advisorName || "";
-      document.getElementById("cpAdvisorWhatsapp").value = advPhone || t.clientPortal.advisorWhatsapp || "";
-      document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
-
-      switchChatChannel("general");
-      renderDetailMedia(t);
-      renderInternalNotes(t);
-      renderClientNotes(t);
-      document.getElementById("detailModal").classList.remove("hidden");
-    }
-
-    // =========================================================================
-    // DOBLE CHAT INTERNO POR CASO: GENERAL VS GRUPO PRIVADO COORDINADORES
-    // =========================================================================
-    function focusCaseChat() {
-      const sec = document.getElementById("caseChatSection");
-      sec.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => document.getElementById("newChatMsgInput").focus(), 250);
-    }
-
-    function switchChatChannel(channel) {
-      if (channel === "coordinadores" && !isCoordinatorOrAdmin()) return;
-      currentChatChannel = channel;
-
-      const btnGen = document.getElementById("btnChatGeneral");
-      const btnCoord = document.getElementById("btnChatCoords");
-      const banner = document.getElementById("coordChannelBanner");
-      const notifyLbl = document.getElementById("notifyChatLabel");
-
-      if (channel === "general") {
-        btnGen.className = "px-3 py-1 rounded-lg bg-white text-indigo-900 shadow-sm transition";
-        btnCoord.className = "px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition flex items-center gap-1";
-        banner.classList.add("hidden");
-        notifyLbl.textContent = "Notificar por correo electrónico al Encargado del caso al enviar";
-      } else {
-        btnCoord.className = "px-3 py-1 rounded-lg bg-amber-500 text-slate-950 shadow-sm transition flex items-center gap-1 font-extrabold";
-        btnGen.className = "px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition";
-        banner.classList.remove("hidden");
-        notifyLbl.textContent = "Notificar por correo a todos los Coordinadores y Administrador";
-      }
-
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (t) renderCaseChatMessages(t);
-    }
-
-    function renderCaseChatMessages(t) {
-      const box = document.getElementById("dChatMessagesList");
-      const msgs = currentChatChannel === "coordinadores"
-        ? (Array.isArray(t.coordinatorMessages) ? t.coordinatorMessages : [])
-        : (Array.isArray(t.chatMessages) ? t.chatMessages : []);
-
-      if (msgs.length === 0) {
-        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">${
-          currentChatChannel === "coordinadores"
-            ? "Sin mensajes privados entre coordinadores en este caso."
-            : "Sin mensajes en este caso aún. Escribe abajo para coordinar con el encargado."
-        }</p>`;
-        return;
-      }
-
-      box.innerHTML = msgs.map((m, idx) => {
-        const isMe = currentSession && m.senderId === currentSession.id;
-        const bubbleStyle = currentChatChannel === "coordinadores"
-          ? (isMe ? "bg-amber-600 text-white rounded-br-sm" : "bg-amber-50 text-slate-900 border border-amber-200 rounded-bl-sm")
-          : (isMe ? "bg-indigo-600 text-white rounded-br-sm" : "bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-sm");
-
-        return `
-          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-            <div class="max-w-[88%] rounded-2xl px-3.5 py-2.5 text-xs shadow-sm ${bubbleStyle}">
-              <div class="flex items-center justify-between gap-3 mb-1 opacity-80 text-[10px] font-bold">
-                <span>${escapeHtml(m.senderName)}</span>
-                <span>${escapeHtml(m.date)}</span>
-              </div>
-              <p class="whitespace-pre-line leading-relaxed text-xs">${escapeHtml(m.text)}</p>
-            </div>
-            ${(isMe || isCurrentAdmin()) ? `
-              <button type="button" onclick="deleteCaseChatMessage(${idx})" class="text-[10px] text-slate-400 hover:text-red-600 mt-0.5 px-1">Eliminar</button>
-            ` : ""}
-          </div>
-        `;
-      }).join("");
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function sendCaseChatMessage(e) {
-      e.preventDefault();
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      const input = document.getElementById("newChatMsgInput");
-      const text = input.value.trim();
-      const shouldNotify = document.getElementById("notifyAssigneeOnChat").checked;
-      if (!t || !text || !currentSession) return;
-
-      const msgEntry = {
-        senderId: currentSession.id,
-        senderName: `${currentSession.name} (${currentSession.role})`,
-        date: new Date().toLocaleString(),
-        text: text
-      };
-
-      if (currentChatChannel === "coordinadores") {
-        if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
-        t.coordinatorMessages.push(msgEntry);
-      } else {
-        if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
-        t.chatMessages.push(msgEntry);
-      }
-
-      input.value = "";
-      saveLocalAndCloud();
-      renderCaseChatMessages(t);
-      renderBoard();
-      showToast("Mensaje enviado", "success");
-
-      if (shouldNotify) {
-        if (currentChatChannel === "coordinadores") {
-          const coordEmails = getAllAssignableMembers()
-            .filter(u => (u.role === "Coordinador" || u.role === "Administrador") && u.email)
-            .map(u => u.email);
-          const uniqueCoords = Array.from(new Set(coordEmails));
-          if (uniqueCoords.length > 0) {
-            fetch(SCRIPT_URL, {
-              method: "POST",
-              body: JSON.stringify({
-                action: "sendEmail",
-                to: uniqueCoords[0],
-                cc: uniqueCoords.slice(1).join(","),
-                subject: `[AutoTech Coordinadores] Mensaje Privado en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
-                body: `Mensaje en el Grupo Privado de Coordinadores sobre el caso ${t.caseId}:\n\nRemitente: ${currentSession.name}\nMensaje: "${text}"\n\nTaller: ${t.workshop || "-"} | Estado: ${t.status}`
-              })
-            }).catch(() => {});
-          }
-        } else {
-          const assignee = getAllAssignableMembers().find(u => u.id === t.assigneeId);
-          if (assignee && assignee.email) {
-            fetch(SCRIPT_URL, {
-              method: "POST",
-              body: JSON.stringify({
-                action: "sendEmail",
-                to: assignee.email,
-                subject: `[AutoTech Chat] Nuevo mensaje en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
-                body: `Hola ${assignee.name},\n\n${currentSession.name} te ha enviado un mensaje interno sobre el caso ${t.caseId}:\n\n"${text}"\n\nDatos del caso:\n• Título: ${t.title}\n• Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""}\n• Taller: ${t.workshop || "-"}\n• Estado actual: ${t.status} (${t.progress || 0}%)\n\nIngresa a AutoTech Ops para responder directamente en el chat del caso.`
-              })
-            }).catch(() => {});
-          }
-        }
-      }
-    }
-
-    function deleteCaseChatMessage(idx) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      if (!confirm("¿Eliminar este mensaje del chat?")) return;
-      if (currentChatChannel === "coordinadores") {
-        t.coordinatorMessages.splice(idx, 1);
-      } else {
-        t.chatMessages.splice(idx, 1);
-      }
-      saveLocalAndCloud();
-      renderCaseChatMessages(t);
-      renderBoard();
-    }
-
-    // =========================================================================
-    // PANEL ADMINISTRADOR: APROBAR / RECHAZAR / CAMBIAR CONTRASEÑAS Y ROLES
-    // =========================================================================
-    function openUsersModal() {
-      if (!isCurrentAdmin()) return;
-      document.getElementById("adminIdDisplay").textContent = state.adminConfig.id;
-      document.getElementById("newAdminPassInput").value = "";
-      renderUsersModalLists();
-      document.getElementById("usersModal").classList.remove("hidden");
-    }
-
-    function renderUsersModalLists() {
-      const pendingBox = document.getElementById("pendingUsersList");
-      const pending = state.pendingUsers || [];
-      if (pending.length === 0) {
-        pendingBox.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl border border-slate-200">No hay solicitudes pendientes de aprobación.</p>`;
-      } else {
-        pendingBox.innerHTML = pending.map(u => `
-          <div class="p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div class="font-bold text-slate-900">${escapeHtml(u.name)} <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Correo Verificado</span></div>
-              <div class="text-slate-600">${escapeHtml(u.email)} · Solicitado: ${escapeHtml(u.requestedAt || "")}</div>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <button type="button" onclick="approvePendingUser('${u.id}', 'Encargado')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Aceptar Encargado</button>
-              <button type="button" onclick="approvePendingUser('${u.id}', 'Coordinador')" class="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold">Aceptar Coordinador</button>
-              <button type="button" onclick="rejectPendingUser('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Rechazar</button>
-            </div>
-          </div>
-        `).join("");
-      }
-
-      const activeBox = document.getElementById("usersList");
-      const active = state.users || [];
-      if (active.length === 0) {
-        activeBox.innerHTML = `<p class="text-xs text-slate-400">Aún no hay encargados aprobados.</p>`;
-      } else {
-        activeBox.innerHTML = active.map(u => `
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div class="font-bold text-slate-900">${escapeHtml(u.name)}</div>
-              <div class="text-slate-500">${escapeHtml(u.email)} · Clave actual: <span class="font-mono font-bold text-slate-700">${escapeHtml(u.password)}</span></div>
-            </div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <select onchange="changeUserRole('${u.id}', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 bg-white font-bold text-[11px]">
-                <option value="Encargado" ${u.role === "Encargado" ? "selected" : ""}>Encargado</option>
-                <option value="Coordinador" ${u.role === "Coordinador" ? "selected" : ""}>Coordinador</option>
-              </select>
-              <button type="button" onclick="adminChangeUserPassword('${u.id}')" class="px-2.5 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold">Cambiar Clave</button>
-              <button type="button" onclick="removeUser('${u.id}')" class="px-2.5 py-1 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Eliminar</button>
-            </div>
-          </div>
-        `).join("");
-      }
-    }
-
-    function approvePendingUser(pendingId, assignedRole) {
-      const idx = state.pendingUsers.findIndex(u => u.id === pendingId);
-      if (idx === -1) return;
-      const user = state.pendingUsers.splice(idx, 1)[0];
-      user.role = assignedRole;
-      state.users.push(user);
-
-      saveLocalAndCloud();
-      updatePendingBadge();
-      syncSelectors();
-      renderUsersModalLists();
-      showToast(`${user.name} aprobado como ${assignedRole}`, "success");
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "sendEmail",
-          to: user.email,
-          subject: `[AutoTech Ops] Acceso Aprobado (${assignedRole})`,
-          body: `Hola ${user.name},\n\nTu solicitud de acceso a AutoTech Ops ha sido aprobada por el Administrador con el rol de ${assignedRole}.\n\nYa puedes ingresar con tu correo corporativo (${user.email}) y la contraseña que registraste.`
-        })
-      }).catch(() => {});
-    }
-
-    function rejectPendingUser(pendingId) {
-      if (!confirm("¿Rechazar y eliminar esta solicitud de registro?")) return;
-      state.pendingUsers = state.pendingUsers.filter(u => u.id !== pendingId);
-      saveLocalAndCloud();
-      updatePendingBadge();
-      renderUsersModalLists();
-      showToast("Solicitud rechazada", "info");
-    }
-
-    function adminAddUserDirect(e) {
-      e.preventDefault();
-      const name = document.getElementById("uName").value.trim();
-      const email = document.getElementById("uEmail").value.trim().toLowerCase();
-      const password = document.getElementById("uPass").value.trim();
-      const role = document.getElementById("uRole").value;
-
-      if (state.users.some(u => u.email.toLowerCase() === email)) {
-        showToast("Ese correo ya existe en el equipo", "warning");
-        return;
-      }
-
-      state.users.push({
-        id: "u_" + Date.now(),
-        name,
-        email,
-        password,
-        role
-      });
-      document.getElementById("uName").value = "";
-      document.getElementById("uEmail").value = "";
-      document.getElementById("uPass").value = "";
-      saveLocalAndCloud();
-      syncSelectors();
-      renderUsersModalLists();
-      showToast(`${name} agregado como ${role}`, "success");
-    }
-
-    function changeUserRole(userId, newRole) {
-      const u = state.users.find(x => x.id === userId);
-      if (!u) return;
-      u.role = newRole;
-      saveLocalAndCloud();
-      syncSelectors();
-      showToast(`Rol de ${u.name} actualizado a ${newRole}`, "success");
-    }
-
-    function adminChangeUserPassword(userId) {
-      const u = state.users.find(x => x.id === userId);
-      if (!u) return;
-      const newPass = prompt(`Nueva contraseña para ${u.name} (${u.email}):`, u.password);
-      if (newPass === null) return;
-      const clean = newPass.trim();
-      if (clean.length < 4) {
-        showToast("La contraseña debe tener al menos 4 caracteres", "warning");
-        return;
-      }
-      u.password = clean;
-      saveLocalAndCloud();
-      renderUsersModalLists();
-      showToast(`Contraseña de ${u.name} actualizada`, "success");
-    }
-
-    function removeUser(id) {
-      if (!confirm("¿Eliminar este encargado del sistema?")) return;
-      state.users = state.users.filter(u => u.id !== id);
-      saveLocalAndCloud();
-      syncSelectors();
-      renderUsersModalLists();
-      showToast("Usuario eliminado", "info");
-    }
-
-    function saveNewAdminPassword() {
-      const newP = document.getElementById("newAdminPassInput").value.trim();
-      if (newP.length < 4) {
-        showToast("La contraseña de Administrador debe tener al menos 4 caracteres", "warning");
-        return;
-      }
-      state.adminConfig.pass = newP;
-      saveLocalAndCloud();
-      document.getElementById("newAdminPassInput").value = "";
-      showToast("Contraseña de Administrador actualizada correctamente", "success");
-    }
-
-    // =========================================================================
-    // FORMALIZAR CORREO, WHATSAPP ASESOR, REGISTROS Y EXPORTACIONES
-    // =========================================================================
-    function toggleFormalEmailSection() {
-      const panel = document.getElementById("formalEmailPanel");
-      const willOpen = panel.classList.contains("hidden");
-      document.getElementById("clientPortalPanel").classList.add("hidden");
-      panel.classList.toggle("hidden");
-      if (willOpen) {
-        renderFormalEmailUsers();
-        regenerateFormalEmailBody();
-      }
-    }
-
-    function renderFormalEmailUsers() {
-      const box = document.getElementById("feUsersChecklist");
-      const members = getAllAssignableMembers();
-      box.innerHTML = members.map(u => `
-        <label class="flex items-center gap-2 text-xs p-1.5 rounded-lg hover:bg-blue-50 cursor-pointer">
-          <input type="checkbox" value="${escapeHtml(u.email)}" class="fe-user-chk w-4 h-4 accent-[#0067C0]" checked />
-          <div class="truncate">
-            <div class="font-bold text-slate-800 truncate">${escapeHtml(u.name)}</div>
-            <div class="text-[11px] text-slate-500 truncate">${escapeHtml(u.email)}</div>
-          </div>
-        </label>
-      `).join("");
-    }
-
-    function regenerateFormalEmailBody() {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-
-      const isSoporte = (t.mode || "soporte") === "soporte";
-      const members = getAllAssignableMembers();
-      const assignee = members.find(u => u.id === t.assigneeId);
-      const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "No especificado";
-      const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
-
-      const subject = isSoporte
-        ? `[Soporte Técnico Automotor] ${t.caseId} | ${t.brand || ""} ${t.vehicleModel || t.title} ${t.orNumber ? `(${t.orNumber})` : ""} - ${t.status}`
-        : `[Entrenamiento Técnico] ${t.caseId} | ${t.title} - ${t.status}`;
-
-      document.getElementById("feSubject").value = subject;
-
-      const historyLines = (t.notes && t.notes.length > 0)
-        ? t.notes.map((n, i) => `${i + 1}. [${n.date}] ${n.text}`).join("\n")
-        : "Sin intervenciones registradas aún.";
-
-      let body = `Estimados,\n\nSe remite el informe formal de seguimiento técnico correspondiente al siguiente expediente:\n\n`;
-      body += `==================================================\n`;
-      body += `DATOS GENERALES DEL EXPEDIENTE\n`;
-      body += `==================================================\n`;
-      body += `• Código de Caso: ${t.caseId}\n`;
-      body += `• Asunto / Título: ${t.title}\n`;
-      body += `• Categoría: ${t.subcategory}\n`;
-      body += `• Estado Actual: ${t.status} (${t.progress || 0}% de progreso)\n`;
-      body += `• Fecha Apertura: ${t.date} (${getElapsedDays(t)} días)\n`;
-      body += `• Especialista Encargado: ${assignee ? assignee.name : "-"}\n`;
-
-      if (isSoporte) {
-        body += `\n==================================================\n`;
-        body += `DATOS DE LA UNIDAD Y TALLER\n`;
-        body += `==================================================\n`;
-        body += `• Taller de Origen: ${t.workshop || "-"}\n`;
-        body += `• Marca: ${t.brand || "-"}\n`;
-        body += `• Modelo de Vehículo: ${t.vehicleModel || "-"}\n`;
-        body += `• Códigos DTC: ${t.dtcCodes || "-"}\n`;
-        body += `• N° Orden de Reparación (OR): ${t.orNumber || "-"}\n`;
-        body += `• Chasis / VIN: ${t.vehicleVin || "-"}\n`;
-        body += `• Kilometraje: ${t.vehicleKm || "-"}\n`;
-        body += `• Asesor de Servicios Encargado: ${advName} ${advPhone ? `(${advPhone})` : ""}\n`;
-      } else {
-        body += `• Grupo Técnico: ${t.group || "-"}\n`;
-        body += `• Duración: ${t.hours || 0} horas\n`;
-        body += `• Sede / Aula: ${t.location || "-"}\n`;
-      }
-
-      if (t.description) {
-        body += `\n==================================================\n`;
-        body += `ALCANCE / DESCRIPCIÓN INICIAL\n`;
-        body += `==================================================\n`;
-        body += `${t.description}\n`;
-      }
-
-      body += `\n==================================================\n`;
-      body += `REGISTRO CRONOLÓGICO DE INTERVENCIÓN E INDICACIONES\n`;
-      body += `==================================================\n`;
-      body += `${historyLines}\n`;
-
-      if (t.rootCause || t.finalSolution) {
-        body += `\n==================================================\n`;
-        body += `CONCLUSIÓN Y SOLUCIÓN APLICADA\n`;
-        body += `==================================================\n`;
-        body += `• Causa Raíz: ${t.rootCause || "-"}\n`;
-        body += `• Repuestos: ${t.partsReplaced || "-"}\n`;
-        body += `• Solución Definitiva: ${t.finalSolution || "-"}\n`;
-      }
-
-      body += `\n==================================================\n`;
-      body += `CARPETA DE EVIDENCIAS Y DOCUMENTACIÓN (GOOGLE DRIVE)\n`;
-      body += `==================================================\n`;
-      body += `${t.driveFolderUrl || "https://drive.google.com"}\n\n`;
-      body += `Atentamente,\n${currentSession ? currentSession.name : "Departamento de Soporte Técnico"}\nAutomotor S.A.`;
-
-      document.getElementById("feBody").value = body;
-    }
-
-    function getSelectedRecipientEmails() {
-      const checked = Array.from(document.querySelectorAll(".fe-user-chk:checked")).map(cb => cb.value.trim()).filter(Boolean);
-      const extras = (document.getElementById("feExtraEmails").value || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(s => s.includes("@"));
-      return Array.from(new Set([...checked, ...extras]));
-    }
-
-    function copyFormalEmailText() {
-      const subj = document.getElementById("feSubject").value;
-      const body = document.getElementById("feBody").value;
-      navigator.clipboard.writeText(`Asunto: ${subj}\n\n${body}`);
-      showToast("Informe completo copiado al portapapeles", "success");
-    }
-
-    function openInPersonalEmailClient() {
-      const recipients = getSelectedRecipientEmails();
-      const subj = encodeURIComponent(document.getElementById("feSubject").value);
-      const body = encodeURIComponent(document.getElementById("feBody").value);
-      const toStr = recipients.join(",");
-      window.location.href = `mailto:${toStr}?subject=${subj}&body=${body}`;
-    }
-
-    async function sendFormalTeamEmail() {
-      const recipients = getSelectedRecipientEmails();
-      if (recipients.length === 0) {
-        showToast("Selecciona al menos un compañero o ingresa un correo destino", "warning");
-        return;
-      }
-      const subj = document.getElementById("feSubject").value.trim();
-      const body = document.getElementById("feBody").value.trim();
-
-      showToast(`Enviando informe formal a ${recipients.length} destinatario(s)...`, "info");
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "sendEmail",
-            to: recipients[0],
-            cc: recipients.slice(1).join(","),
-            subject: subj,
-            body: body
-          })
-        });
-        const d = await res.json();
-        if (d.status === "ok") {
-          showToast("Informe formal enviado por correo electrónico", "success");
-        } else {
-          showToast("No se pudo enviar automáticamente; usa 'Abrir en Mi Correo Personal'", "warning");
-        }
-      } catch (err) {
-        showToast("Error de red; usa 'Abrir en Mi Correo Personal'", "warning");
-      }
-    }
-
-    function notifyAdvisorWhatsapp(customUpdateText = "") {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-
-      const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "Asesor").trim();
-      const rawPhone = (t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim();
-      const cleanPhone = formatWhatsappPhone(rawPhone);
-
-      if (!cleanPhone) {
-        showToast("Registra primero el teléfono del Asesor editando el caso", "warning");
-        return;
-      }
-
-      const lastInternal = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : "Sin observaciones aún";
-      const updateDetail = customUpdateText || lastInternal;
-
-      const msg = encodeURIComponent(
-`Hola *${advName}*, te enviamos una actualización de Soporte Técnico:
-
-• *Caso:* ${t.caseId} - ${t.title}
-• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
-• *Taller:* ${t.workshop || "Automotor"}
-• *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
-• *Último reporte técnico:* ${updateDetail}
-• *Carpeta evidencias:* ${t.driveFolderUrl || ""}`
-      );
-
-      window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
-    }
-
-    function togglePortalSection() {
-      document.getElementById("formalEmailPanel").classList.add("hidden");
-      document.getElementById("clientPortalPanel").classList.toggle("hidden");
-    }
-
-    function getClientTrackingUrl(t) {
-      const base = (state.clientPortalBaseUrl || "").trim() || "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
-      const sep = base.includes("?") ? "&" : "?";
-      return `${base}${sep}caso=${encodeURIComponent(t.caseId)}&token=${encodeURIComponent(t.clientPortal.token)}`;
-    }
-
-    function copyClientPortalLink() {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      const url = getClientTrackingUrl(t);
-      navigator.clipboard.writeText(url);
-      showToast("Enlace de seguimiento del cliente copiado", "success");
-    }
-
-    async function saveClientPortalConfig(sendEmailNow = false) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-
-      const advName = document.getElementById("cpAdvisorName").value.trim();
-      const advPhone = document.getElementById("cpAdvisorWhatsapp").value.trim();
-
-      t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
-      t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
-      t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
-      t.clientPortal.advisorName = advName;
-      t.clientPortal.advisorWhatsapp = advPhone;
-      t.advisorName = advName;
-      t.advisorWhatsapp = advPhone;
-
-      saveLocalAndCloud();
-      renderBoard();
-      renderDashboard();
-      document.getElementById("dAdvisorLine").textContent = advName
-        ? `Asesor de Servicios: ${advName} ${advPhone ? `(${advPhone})` : ""}`
-        : "Asesor de Servicios: Sin asignar";
-
-      if (sendEmailNow) {
-        if (!t.clientPortal.enabled) {
-          showToast("Marca la casilla 'Habilitar Portal' primero", "warning");
-          return;
-        }
-        if (!t.clientPortal.clientEmail) {
-          showToast("Ingresa el correo electrónico del cliente", "warning");
-          return;
-        }
-        await sendClientTrackingEmail(t, "Activación de Seguimiento en Tiempo Real");
-        showToast(`Correo enviado a ${t.clientPortal.clientEmail}`, "success");
-      } else {
-        showToast("Configuración del cliente guardada", "success");
-      }
-    }
-
-    async function sendClientTrackingEmail(t, updateSummary) {
-      if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
-      const link = getClientTrackingUrl(t);
-      const vehicleFull = `${t.brand || ""} ${t.vehicleModel || ""}`.trim() || t.caseId;
-      const subject = `Actualización de tu vehículo (${vehicleFull}) - Caso ${t.caseId}`;
-      const body =
-`Estimado/a ${t.clientPortal.clientName || "Cliente"},
-
-Te informamos que se ha registrado una actualización en el seguimiento técnico de tu vehículo:
-
-• Caso: ${t.caseId}
-• Vehículo: ${vehicleFull} ${t.orNumber ? `(OR: ${t.orNumber})` : ""}
-• Taller: ${t.workshop || "Automotor"}
-• Estado actual: ${t.status} (${t.progress || 0}% de avance)
-• Novedad: ${updateSummary}
-
-Puedes consultar el registro cronológico en tiempo real, fotos/videos aprobados y contactar directamente por WhatsApp a tu Asesor de Servicios (${t.clientPortal.advisorName || "Asesor Asignado"}) ingresando al siguiente enlace:
-
-${link}
-
-(Si el sistema te solicita credenciales manuales, utiliza Código: ${t.caseId} y PIN: ${t.clientPortal.token})
-
----
-AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de seguimiento técnico de Automotor. Por favor no respondas a este correo electrónico, ya que esta casilla no está habilitada para recibir mensajes.`;
-
-      return fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "sendEmail",
-          to: t.clientPortal.clientEmail,
-          subject: subject,
-          body: body
-        })
-      }).catch(() => {});
-    }
-
-    function renderClientNotes(t) {
-      const list = document.getElementById("dClientNotesList");
-      const cNotes = Array.isArray(t.clientNotes) ? t.clientNotes : [];
-      if (cNotes.length === 0) {
-        list.innerHTML = `<p class="text-xs text-slate-400">Aún no has publicado mensajes en el portal del cliente.</p>`;
-        return;
-      }
-      list.innerHTML = cNotes.slice().reverse().map((n, revIdx) => {
-        const realIdx = cNotes.length - 1 - revIdx;
-        return `
-          <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 text-xs space-y-1.5">
-            <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] font-semibold text-emerald-800">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
-              <div class="flex items-center gap-2">
-                <button type="button" onclick="editClientNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-pencil-simple"></i> Editar
-                </button>
-                <button type="button" onclick="deleteClientNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-trash"></i> Eliminar
-                </button>
-              </div>
-            </div>
-            <p class="text-slate-900 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
-          </div>
-        `;
-      }).join("");
-    }
-
-    async function addClientNote(e) {
-      e.preventDefault();
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      const txt = document.getElementById("newClientNoteText").value.trim();
-      const sendMail = document.getElementById("notifyClientOnAdd").checked;
-      if (!t || !txt) return;
-
-      if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
-      t.clientNotes.push({
-        date: new Date().toLocaleString(),
-        text: txt
-      });
-      document.getElementById("newClientNoteText").value = "";
-
-      saveLocalAndCloud();
-      renderClientNotes(t);
-      showToast("Publicado en Registro Cronológico del Cliente", "success");
-
-      if (sendMail && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
-        await sendClientTrackingEmail(t, txt);
-        showToast("Correo automático enviado al cliente", "success");
-      }
-    }
-
-    function editClientNote(idx) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.clientNotes[idx]) return;
-      const updated = prompt("Editar mensaje visible para el cliente:", t.clientNotes[idx].text);
-      if (updated === null) return;
-      const clean = updated.trim();
-      if (!clean) return;
-      t.clientNotes[idx].text = clean;
-      t.clientNotes[idx].edited = true;
-      saveLocalAndCloud();
-      renderClientNotes(t);
-      showToast("Mensaje del cliente actualizado (se verá al instante en su portal)", "success");
-    }
-
-    function deleteClientNote(idx) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.clientNotes[idx]) return;
-      if (!confirm("¿Eliminar este registro del Portal del Cliente?")) return;
-      t.clientNotes.splice(idx, 1);
-      saveLocalAndCloud();
-      renderClientNotes(t);
-      showToast("Registro eliminado del Portal Cliente", "info");
-    }
-
-    function renderInternalNotes(t) {
-      const list = document.getElementById("dInternalNotesList");
-      const iNotes = Array.isArray(t.notes) ? t.notes : [];
-      const isSoporte = (t.mode || "soporte") === "soporte";
-      if (iNotes.length === 0) {
-        list.innerHTML = `<p class="text-xs text-slate-400">Sin registros internos aún.</p>`;
-        return;
-      }
-      list.innerHTML = iNotes.slice().reverse().map((n, revIdx) => {
-        const realIdx = iNotes.length - 1 - revIdx;
-        return `
-          <div class="bg-white p-3 rounded-xl border border-slate-200/90 text-xs space-y-1.5">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[11px] text-slate-400 font-semibold">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
-              <div class="flex items-center gap-2.5">
-                ${isSoporte ? `
-                  <button type="button" onclick="sendSingleInternalNoteToAdvisor(${realIdx})" class="text-emerald-700 font-bold hover:underline flex items-center gap-0.5" title="Enviar este avance por WhatsApp al Asesor">
-                    <i class="ph-bold ph-whatsapp-logo"></i> Avisar Asesor
-                  </button>
-                ` : ""}
-                <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-pencil-simple"></i> Editar
-                </button>
-                <button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-trash"></i> Eliminar
-                </button>
-              </div>
-            </div>
-            <p class="text-slate-800 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function sendSingleInternalNoteToAdvisor(idx) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.notes[idx]) return;
-      notifyAdvisorWhatsapp(t.notes[idx].text);
-    }
-
-    function addInternalNote(e) {
-      e.preventDefault();
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      const txt = document.getElementById("newInternalNoteText").value.trim();
-      const notifyAdv = document.getElementById("notifyAdvisorOnNote").checked;
-      if (!t || !txt) return;
-
-      if (!Array.isArray(t.notes)) t.notes = [];
-      const author = currentSession ? `${currentSession.name}: ` : "";
-      t.notes.push({
-        date: new Date().toLocaleString(),
-        text: author + txt
-      });
-      document.getElementById("newInternalNoteText").value = "";
-      document.getElementById("notifyAdvisorOnNote").checked = false;
-
-      saveLocalAndCloud();
-      renderInternalNotes(t);
-      showToast("Guardado en Registro Cronológico Interno", "success");
-
-      if (notifyAdv) {
-        notifyAdvisorWhatsapp(txt);
-      }
-    }
-
-    function editInternalNote(idx) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.notes[idx]) return;
-      const updated = prompt("Editar registro interno del taller:", t.notes[idx].text);
-      if (updated === null) return;
-      const clean = updated.trim();
-      if (!clean) return;
-      t.notes[idx].text = clean;
-      t.notes[idx].edited = true;
-      saveLocalAndCloud();
-      renderInternalNotes(t);
-      showToast("Registro interno actualizado", "success");
-    }
-
-    function deleteInternalNote(idx) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.notes[idx]) return;
-      if (!confirm("¿Eliminar este registro interno?")) return;
-      t.notes.splice(idx, 1);
-      saveLocalAndCloud();
-      renderInternalNotes(t);
-      showToast("Registro interno eliminado", "info");
-    }
-
-    function renderDetailMedia(t) {
-      const box = document.getElementById("dMediaGallery");
-      const media = t.media || [];
-      if (media.length === 0) {
-        box.innerHTML = `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos aún. Usa "Subir Foto/PDF" para guardar directo en Drive.</p>`;
-        return;
-      }
-      box.innerHTML = media.map((m, idx) => `
-        <div class="bg-white rounded-xl p-2 border border-slate-200 space-y-1.5">
-          <a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block text-xs font-bold text-blue-600 truncate hover:underline">
-            <i class="ph-bold ph-file-image"></i> ${escapeHtml(m.name)}
-          </a>
-          <label class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 cursor-pointer">
-            <input type="checkbox" ${m.clientVisible ? "checked" : ""} onchange="toggleMediaClientVisibility(${idx}, this.checked)" class="accent-emerald-600" />
-            Visible Cliente
-          </label>
-        </div>
-      `).join("");
-    }
-
-    function toggleMediaClientVisibility(idx, isVisible) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.media[idx]) return;
-      t.media[idx].clientVisible = isVisible;
-      saveLocalAndCloud();
-      showToast(isVisible ? "Archivo publicado en Portal Cliente" : "Archivo ocultado al cliente", "info");
-    }
-
-    async function uploadMediaToDrive(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-
-      if (file.size > 15 * 1024 * 1024) {
-        showToast("Video pesado (>15MB): ábrelo directo en la carpeta Drive para subir sin límite", "warning");
-        window.open(t.driveFolderUrl || "https://drive.google.com", "_blank");
-        return;
-      }
-
-      showToast("Subiendo archivo a Google Drive...", "info");
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result.split(",")[1];
-        try {
-          const res = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "uploadFile",
-              folderId: t.driveFolderId,
-              fileName: file.name,
-              mimeType: file.type,
-              base64: base64
-            })
-          });
-          const d = await res.json();
-          if (d.status === "ok") {
-            if (!t.media) t.media = [];
-            t.media.push({
-              name: file.name,
-              type: file.type.startsWith("image/") ? "image" : "file",
-              url: d.fileUrl,
-              viewUrl: d.viewUrl,
-              clientVisible: false
-            });
-            saveLocalAndCloud();
-            renderDetailMedia(t);
-            showToast("Archivo guardado en la carpeta del caso", "success");
-          }
-        } catch (err) {
-          showToast("Error al subir archivo", "warning");
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function updateTaskStatusQuick(val) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      const prevStatus = t.status;
-      t.status = val;
-      if (val === "Completado") {
-        t.progress = 100;
-        if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
-        document.getElementById("dProgressRange").value = 100;
-        document.getElementById("dProgressVal").textContent = "100%";
-      }
-      saveLocalAndCloud();
-      renderAll();
-      if (val === "Completado" && prevStatus !== "Completado" && !t.finalSolution) {
-        openClosureModal(t.id);
-      }
-    }
-
-    function updateTaskProgressQuick(val) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      t.progress = Number(val);
-      document.getElementById("dProgressVal").textContent = val + "%";
-      saveLocalAndCloud();
-      renderAll();
-    }
-
-    function editCurrentTask() {
-      closeModal("detailModal");
-      openTaskModal("", currentDetailId);
-    }
-
-    function deleteCurrentTask() {
-      if (!isCurrentAdmin()) return;
-      if (!confirm("¿Eliminar este registro permanentemente?")) return;
-      state.tasks = state.tasks.filter(x => x.id !== currentDetailId);
-      saveLocalAndCloud();
-      closeModal("detailModal");
-      renderAll();
-      showToast("Registro eliminado", "info");
-    }
-
-    function shareInternalWhatsapp() {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\nTaller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)\nCarpeta Drive: ${t.driveFolderUrl}`);
-      window.open(`https://wa.me/?text=${msg}`, "_blank");
-    }
-
-    function exportExcelHistory() {
-      const list = getFilteredModeTasks();
-      if (list.length === 0) {
-        showToast("No hay casos registrados en esta área para exportar", "warning");
-        return;
-      }
-
-      const members = getAllAssignableMembers();
-      const titleArea = appMode === "soporte" ? "Historial de Casos de Soporte Técnico" : "Historial de Entrenamiento Técnico";
-      let rowsHtml = list.map(t => {
-        const assignee = members.find(u => u.id === t.assigneeId);
-        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
-        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
-        const historyFormatted = (t.notes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
-        const clientHistoryFormatted = (t.clientNotes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
-
-        return `
-          <tr>
-            <td style="font-weight:bold;">${escapeHtml(t.caseId)}</td>
-            <td>${escapeHtml(t.status)}</td>
-            <td>${t.progress || 0}%</td>
-            <td>${escapeHtml(t.date)}</td>
-            <td>${escapeHtml(t.closedDate || "-")}</td>
-            <td>${escapeHtml(t.brand || "-")}</td>
-            <td>${escapeHtml(t.vehicleModel || "-")}</td>
-            <td>${escapeHtml(t.title)}</td>
-            <td>${escapeHtml(t.subcategory)}</td>
-            <td>${escapeHtml(t.dtcCodes || "-")}</td>
-            <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
-            <td>${escapeHtml(t.workshop || "-")}</td>
-            <td>${escapeHtml(t.orNumber || "-")}</td>
-            <td>${escapeHtml(t.vehicleVin || "-")}</td>
-            <td>${escapeHtml(t.vehicleKm || "-")}</td>
-            <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
-            <td>${escapeHtml(t.description || "-")}</td>
-            <td>${historyFormatted || "Sin registros"}</td>
-            <td>${escapeHtml(t.rootCause || "-")}</td>
-            <td>${escapeHtml(t.partsReplaced || "-")}</td>
-            <td>${escapeHtml(t.finalSolution || "-")}</td>
-            <td>${clientHistoryFormatted || "-"}</td>
-            <td>${escapeHtml(t.driveFolderUrl || "-")}</td>
-          </tr>
-        `;
-      }).join("");
-
-      const excelDoc = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-        <head><meta charset="UTF-8"></head>
-        <body>
-          <h2>${titleArea} - Automotor S.A.</h2>
-          <p>Fecha de emisión: ${new Date().toLocaleString()} | Total de registros: ${list.length}</p>
-          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; font-size:11pt;">
-            <thead>
-              <tr style="background-color:#0067C0; color:#ffffff; font-weight:bold;">
-                <th>Código</th>
-                <th>Estado / Prioridad</th>
-                <th>Progreso</th>
-                <th>Fecha Apertura</th>
-                <th>Fecha Cierre</th>
-                <th>Marca</th>
-                <th>Modelo Vehículo</th>
-                <th>Título del Caso</th>
-                <th>Categoría</th>
-                <th>Códigos DTC</th>
-                <th>Encargado Técnico</th>
-                <th>Taller</th>
-                <th>N° Orden (OR)</th>
-                <th>Chasis / VIN</th>
-                <th>Kilometraje</th>
-                <th>Asesor de Servicios</th>
-                <th>Descripción Inicial</th>
-                <th>Registro Cronológico Técnico (Qué se hizo)</th>
-                <th>Causa Raíz</th>
-                <th>Repuestos Reemplazados</th>
-                <th>Solución Definitiva</th>
-                <th>Mensajes Publicados al Cliente</th>
-                <th>Carpeta Google Drive</th>
-              </tr>
-            </thead>
-            <tbody>${rowsHtml}</tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
-      const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `Historial_AutoTech_${appMode}_${new Date().toISOString().split("T")[0]}.xls`;
-      a.click();
-      showToast("Historial descargado en Excel (.xls)", "success");
-    }
-
-    function buildWordDocumentHtml(tasksArray, docTitle) {
-      const members = getAllAssignableMembers();
-      const blocks = tasksArray.map(t => {
-        const assignee = members.find(u => u.id === t.assigneeId);
-        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
-        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
-        const isSoporte = (t.mode || "soporte") === "soporte";
-
-        const statusColor = t.status === "Urgente" ? "#DC2626"
-          : t.status === "Completado" ? "#059669"
-          : t.status === "En Prueba" ? "#7C3AED"
-          : "#0067C0";
-
-        const notesHtml = (t.notes && t.notes.length > 0)
-          ? t.notes.map(n => `<li style="margin-bottom:4px;"><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")
-          : "<li>Sin intervenciones registradas aún.</li>";
-
-        const closureHtml = (t.rootCause || t.finalSolution)
-          ? `<table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-top:8px; background:#ECFDF5;">
-               <tr><td colspan="2" style="background:#059669; color:#ffffff; font-weight:bold;">CIERRE TÉCNICO Y SOLUCIÓN DEFINITIVA</td></tr>
-               <tr><td width="30%"><strong>Causa Raíz:</strong></td><td>${escapeHtml(t.rootCause || "-")}</td></tr>
-               <tr><td><strong>Repuestos Reemplazados:</strong></td><td>${escapeHtml(t.partsReplaced || "-")}</td></tr>
-               <tr><td><strong>Solución Aplicada:</strong></td><td>${escapeHtml(t.finalSolution || "-")}</td></tr>
-             </table>`
-          : "";
-
-        const clientNotesHtml = (t.clientNotes && t.clientNotes.length > 0)
-          ? `<p style="margin-top:10px; font-weight:bold; color:#065F46;">Reportes publicados al Cliente:</p>
-             <ul>${t.clientNotes.map(n => `<li><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")}</ul>`
-          : "";
-
-        return `
-          <div style="border:1px solid #CBD5E1; padding:14px; margin-bottom:20px; page-break-inside:avoid;">
-            <table width="100%" cellspacing="0" cellpadding="4" style="border-bottom:2px solid ${statusColor}; margin-bottom:10px;">
-              <tr>
-                <td><span style="font-size:14pt; font-weight:bold; color:#0F172A;">${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</span></td>
-                <td align="right"><span style="font-weight:bold; color:${statusColor}; font-size:11pt;">ESTADO: ${escapeHtml(t.status.toUpperCase())} (${t.progress || 0}%)</span></td>
-              </tr>
-            </table>
-
-            <table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-bottom:10px;">
-              <tr>
-                <td width="25%" style="background:#F8FAFC;"><strong>Categoría:</strong></td>
-                <td width="25%">${escapeHtml(t.subcategory)}</td>
-                <td width="25%" style="background:#F8FAFC;"><strong>Fecha Apertura:</strong></td>
-                <td width="25%">${escapeHtml(t.date)} ${t.closedDate ? `(Cierre: ${escapeHtml(t.closedDate)})` : ""}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Encargado Técnico:</strong></td>
-                <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
-                <td style="background:#F8FAFC;"><strong>${isSoporte ? "Taller:" : "Sede / Aula:"}</strong></td>
-                <td>${escapeHtml(isSoporte ? (t.workshop || "-") : (t.location || "-"))}</td>
-              </tr>
-              ${isSoporte ? `
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Marca / Modelo:</strong></td>
-                <td>${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")}</td>
-                <td style="background:#F8FAFC;"><strong>Códigos DTC:</strong></td>
-                <td>${escapeHtml(t.dtcCodes || "-")}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>N° Orden (OR):</strong></td>
-                <td>${escapeHtml(t.orNumber || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Chasis / VIN:</strong></td>
-                <td>${escapeHtml(t.vehicleVin || "-")}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Kilometraje:</strong></td>
-                <td>${escapeHtml(t.vehicleKm || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Asesor Servicios:</strong></td>
-                <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
-              </tr>
-              ` : `
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Grupo Técnico:</strong></td>
-                <td>${escapeHtml(t.group || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Duración:</strong></td>
-                <td>${t.hours || 0} horas</td>
-              </tr>
-              `}
-            </table>
-
-            ${t.description ? `<p style="font-size:10pt;"><strong>Descripción / Alcance Inicial:</strong> ${escapeHtml(t.description)}</p>` : ""}
-
-            <p style="font-size:10pt; font-weight:bold; color:#1E293B; margin-bottom:4px;">Registro Cronológico Técnico (Procedimientos y Hallazgos):</p>
-            <ul style="font-size:10pt; margin-top:2px;">${notesHtml}</ul>
-            ${closureHtml}
-            ${clientNotesHtml}
-            <p style="font-size:9pt; color:#475569; margin-top:8px;"><strong>Carpeta Evidencias Google Drive:</strong> ${escapeHtml(t.driveFolderUrl || "-")}</p>
-          </div>
-        `;
-      }).join("");
-
-      return `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-        <head><meta charset="UTF-8"><title>${escapeHtml(docTitle)}</title></head>
-        <body style="font-family:Calibri, Arial, sans-serif; color:#1E293B;">
-          <h1 style="color:#0067C0; border-bottom:2px solid #0067C0; padding-bottom:6px;">${escapeHtml(docTitle)}</h1>
-          <p style="font-size:10pt; color:#64748B;">Automotor S.A. · Departamento de Soporte Técnico y Entrenamiento · Generado el ${new Date().toLocaleString()}</p>
-          ${blocks}
-        </body>
-        </html>
-      `;
-    }
-
-    function exportWordHistory() {
-      const list = getFilteredModeTasks();
-      if (list.length === 0) {
-        showToast("No hay casos registrados en esta área para exportar", "warning");
-        return;
-      }
-      const titleArea = appMode === "soporte"
-        ? "Historial Técnico de Casos de Soporte"
-        : "Memoria Histórica de Entrenamiento Técnico";
-
-      const docHtml = buildWordDocumentHtml(list, titleArea);
-      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `Informe_Historial_AutoTech_${appMode}_${new Date().toISOString().split("T")[0]}.doc`;
-      a.click();
-      showToast("Historial completo descargado en Word (.doc)", "success");
-    }
-
-    function exportSingleCaseWord() {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      const docHtml = buildWordDocumentHtml([t], `Ficha Técnica de Caso — ${t.caseId}`);
-      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `${t.caseId}_${(t.brand || t.vehicleModel || t.title).replace(/[^a-zA-Z0-9_-]/g, "_")}.doc`;
-      a.click();
-      showToast(`Ficha de ${t.caseId} descargada en Word`, "success");
-    }
-
-    function openWorkshopsModal() {
-      renderWorkshopsList();
-      document.getElementById("workshopsModal").classList.remove("hidden");
-    }
-    function renderWorkshopsList() {
-      document.getElementById("workshopsList").innerHTML = state.workshops.map(w => `
-        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-          <div>
-            <div class="font-bold text-slate-900">${escapeHtml(w.name)}</div>
-            <div class="text-slate-500">${escapeHtml(w.city)}</div>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded ${w.type === 'Propio' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">${w.type}</span>
-        </div>
-      `).join("");
-    }
-    function addWorkshop(e) {
-      e.preventDefault();
-      state.workshops.push({
-        id: "w_" + Date.now(),
-        name: document.getElementById("wName").value.trim(),
-        city: document.getElementById("wCity").value.trim(),
-        type: document.getElementById("wType").value
-      });
-      document.getElementById("wName").value = "";
-      document.getElementById("wCity").value = "";
-      saveLocalAndCloud();
-      syncSelectors();
-      renderWorkshopsList();
-      showToast("Taller agregado a la red", "success");
-    }
-
-    function openPortalConfigModal() {
-      if (!isCurrentAdmin()) return;
-      document.getElementById("clientPortalBaseUrlInput").value = state.clientPortalBaseUrl || "";
-      document.getElementById("portalConfigModal").classList.remove("hidden");
-    }
-    function savePortalBaseUrl() {
-      state.clientPortalBaseUrl = document.getElementById("clientPortalBaseUrlInput").value.trim();
-      saveLocalAndCloud();
-      closeModal("portalConfigModal");
-      showToast("URL pública del Portal Cliente guardada", "success");
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add("hidden");
-    }
-  </script>
-</body>
-</html>
+      document.getElementById("cpClientEmail").value = t.client

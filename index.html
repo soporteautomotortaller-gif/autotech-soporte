@@ -265,7 +265,6 @@
           </div>
         </div>
 
-        <!-- Barra de Herramientas, Botón Soporte Solicitado (1 en Rojo), Copiar Link y Plataformas -->
         <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
           <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
@@ -280,7 +279,7 @@
           </nav>
 
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-            <!-- BOTÓN SOPORTE SOLICITADO (JEFES DE TALLER) CON BADGE ROJO + COPIAR LINK -->
+            <!-- BOTÓN SOPORTE SOLICITADO (TIEMPO REAL DESDE FIREBASE) -->
             <div class="inline-flex items-center rounded-xl shadow-sm overflow-hidden border border-red-300 bg-white">
               <button type="button" onclick="openHotlineRequestsModal()" class="touch-target px-3 py-1.5 bg-red-50 hover:bg-red-100 text-xs font-extrabold text-red-800 flex items-center gap-1.5 transition" title="Ver solicitudes de Hotline / Fábrica enviadas por los Jefes de Taller">
                 <i class="ph-bold ph-bell-ringing text-red-600 text-base"></i>
@@ -292,7 +291,7 @@
               </button>
             </div>
 
-            <!-- BOTÓN PLATAFORMAS (ESTILO FAVORITOS DE NAVEGADOR) -->
+            <!-- BOTÓN PLATAFORMAS (FAVORITOS) -->
             <div class="relative">
               <button type="button" onclick="togglePlatformsDropdown(event)" class="touch-target px-3.5 py-1.5 rounded-xl bg-[#004B93] hover:bg-[#003870] text-xs font-bold text-white flex items-center gap-1.5 shadow-sm transition" title="Accesos directos a Plataformas y Favoritos">
                 <i class="ph-bold ph-bookmarks text-base text-amber-300"></i>
@@ -314,14 +313,12 @@
               </div>
             </div>
 
-            <!-- Insignia de Usuario Autenticado -->
             <div class="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <i class="ph-bold ph-user-circle text-accent text-base"></i>
               <span id="loggedUserLabel">Usuario</span>
               <span id="loggedRoleBadge" class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">Encargado</span>
             </div>
 
-            <!-- Botón Panel Administrador -->
             <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-amber-900 flex items-center gap-1.5 relative" title="Administrar Encargados, Solicitudes y Contraseñas">
               <i class="ph-bold ph-shield-star text-base text-amber-600"></i> <span>Equipo</span>
               <span id="pendingUsersBadge" class="hidden px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[10px] font-extrabold">0</span>
@@ -335,7 +332,7 @@
               <i class="ph-bold ph-globe text-emerald-600"></i>
             </button>
 
-            <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar con Google Drive">
+            <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar Nube">
               <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i>
             </button>
 
@@ -363,10 +360,8 @@
       </div>
     </header>
 
-    <!-- Contenido Principal -->
     <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
-
-      <!-- VISTA 1: RESUMEN EJECUTIVO & ANALÍTICA VISUAL -->
+      <!-- VISTA 1: RESUMEN -->
       <section id="view-dashboard" class="space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
 
@@ -436,18 +431,14 @@
 
         <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
       </section>
-
     </main>
 
-    <!-- Botón Flotante en Celular -->
     <button id="mobileFab" onclick="openTaskModal()" class="hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full btn-accent shadow-xl flex items-center justify-center text-2xl">
       <i class="ph-bold ph-plus"></i>
     </button>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL BANDEJA DE SOPORTE SOLICITADO (JEFES DE TALLER -> HOTLINE)        -->
-  <!-- ======================================================================= -->
+  <!-- MODAL BANDEJA DE SOPORTE SOLICITADO -->
   <div id="hotlineRequestsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-red-200 flex flex-wrap items-center justify-between gap-2 bg-red-50">
@@ -510,7 +501,7 @@
     </div>
   </div>
 
-  <!-- MODAL 1: CREAR / EDITAR ACCIÓN (CON ESTADO HOTLINE Y CÓDIGO DE TICKET FÁBRICA) -->
+  <!-- MODAL 1: CREAR / EDITAR ACCIÓN -->
   <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -560,7 +551,6 @@
         </div>
 
         <div id="vehicleFieldsBox" class="space-y-3">
-          <!-- Bloque Hotline / Ticket Fábrica (DISS/TAC) -->
           <div class="bg-purple-50/80 p-3.5 rounded-xl border border-purple-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[11px] font-extrabold text-purple-950 mb-1">Estado Hotline / Consulta Fábrica</label>
@@ -616,7 +606,6 @@
             </div>
           </div>
 
-          <!-- Datos de Jefe de Taller, Mecánico y Asesor -->
           <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Jefe de Taller a Cargo</label>
@@ -668,7 +657,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO + ASOCIACIÓN DE TICKET HOTLINE + DOBLE CHAT -->
+  <!-- MODAL 2: DETALLE DE CASO -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
@@ -679,10 +668,10 @@
           <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-xs">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm" title="Escribir mensaje al encargado o coordinadores">
+          <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm">
             <i class="ph-bold ph-chats-circle text-sm"></i> Chat Caso
           </button>
-          <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1" title="Descargar ficha completa en Word">
+          <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1">
             <i class="ph-bold ph-file-doc text-sm"></i> Word
           </button>
           <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
@@ -691,8 +680,8 @@
           <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-user-focus"></i> Portal Cliente
           </button>
-          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar Datos del Caso"><i class="ph-bold ph-pencil-simple"></i></button>
-          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar Caso (Solo Administrador)"><i class="ph-bold ph-trash"></i></button>
+          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
+          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Eliminar"><i class="ph-bold ph-trash"></i></button>
           <button onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
@@ -716,7 +705,6 @@
           </div>
         </div>
 
-        <!-- BARRA RÁPIDA DE TICKET / HOTLINE FÁBRICA ASOCIADO AL CASO -->
         <div id="dHotlineControlBar" class="bg-purple-50/80 border border-purple-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div class="flex flex-wrap items-center gap-2">
             <span class="font-extrabold text-purple-950 flex items-center gap-1">
@@ -738,11 +726,10 @@
           </div>
         </div>
 
-        <!-- TARJETA DE DIAGNÓSTICO DE CIERRE -->
         <div id="dClosureSummaryBox" class="hidden bg-emerald-50/90 border-2 border-emerald-400 rounded-2xl p-4 space-y-2 text-xs">
           <div class="flex items-center justify-between">
             <h4 class="font-extrabold uppercase text-emerald-950 flex items-center gap-1.5">
-              <i class="ph-bold ph-seal-check text-emerald-600 text-base"></i> Cierre Técnico Documentado (Base de Conocimiento)
+              <i class="ph-bold ph-seal-check text-emerald-600 text-base"></i> Cierre Técnico Documentado
             </h4>
             <button type="button" onclick="openClosureModal(currentDetailId)" class="text-emerald-800 font-bold hover:underline">Editar Cierre</button>
           </div>
@@ -762,14 +749,12 @@
           </div>
         </div>
 
-        <!-- PANEL DESPLEGABLE 1: FORMALIZAR SEGUIMIENTO POR CORREO ELECTRÓNICO -->
         <div id="formalEmailPanel" class="hidden bg-blue-50/80 border-2 border-blue-500/40 rounded-2xl p-4 sm:p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-sm font-bold text-blue-950 flex items-center gap-1.5">
                 <i class="ph-bold ph-paper-plane-right text-[#004B93] text-lg"></i> Formalizar Seguimiento Técnico por Correo Electrónico
               </h4>
-              <p class="text-xs text-blue-800">Genera automáticamente el informe completo del caso con su historial técnico y carpeta Drive para enviarlo a tus compañeros o jefatura.</p>
             </div>
             <button type="button" onclick="regenerateFormalEmailBody()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-blue-200 text-xs font-bold text-[#004B93] flex items-center gap-1">
               <i class="ph-bold ph-arrows-clockwise"></i> Regenerar Texto
@@ -784,7 +769,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Otros Correos Adicionales (separados por coma)</label>
-              <input type="text" id="feExtraEmails" placeholder="jefe.taller@automotor.com.py, garantia@automotor.com.py" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <input type="text" id="feExtraEmails" placeholder="jefe.taller@automotor.com.py" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Asunto del Correo *</label>
@@ -793,7 +778,7 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Cuerpo del Informe Técnico (puedes editar o agregar indicaciones antes de enviar)</label>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Cuerpo del Informe Técnico</label>
             <textarea id="feBody" rows="9" class="w-full p-3 rounded-xl border border-slate-300 text-xs font-mono bg-white leading-relaxed focus:outline-none focus:border-[#004B93]"></textarea>
           </div>
 
@@ -812,14 +797,12 @@
           </div>
         </div>
 
-        <!-- PANEL DESPLEGABLE 2: PORTAL WEB DEL CLIENTE -->
         <div id="clientPortalPanel" class="hidden bg-emerald-50/75 border-2 border-emerald-500/40 rounded-2xl p-4 sm:p-5 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
                 <i class="ph-bold ph-broadcast text-emerald-600"></i> Configuración Portal Público del Cliente
               </h4>
-              <p class="text-xs text-emerald-800">Los reportes publicados aquí son 100% independientes del registro cronológico y chat interno del taller.</p>
             </div>
             <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200">
               <input type="checkbox" id="cpEnabled" class="w-4 h-4 accent-emerald-600" />
@@ -830,19 +813,19 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre del Cliente *</label>
-              <input type="text" id="cpClientName" placeholder="Ej: Sr. Carlos Benítez" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <input type="text" id="cpClientName" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Correo Electrónico del Cliente *</label>
-              <input type="email" id="cpClientEmail" placeholder="cliente@correo.com" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <input type="email" id="cpClientEmail" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Asesor de Servicios Asignado *</label>
-              <input type="text" id="cpAdvisorName" placeholder="Ej: Reinerio Pérez" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <input type="text" id="cpAdvisorName" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Asesor *</label>
-              <input type="text" id="cpAdvisorWhatsapp" placeholder="0993541374" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+              <input type="text" id="cpAdvisorWhatsapp" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
           </div>
 
@@ -862,13 +845,9 @@
           </div>
 
           <div class="bg-white rounded-xl p-4 border border-emerald-200 space-y-3">
-            <div class="flex items-center justify-between">
-              <h5 class="text-xs font-extrabold uppercase text-emerald-900 flex items-center gap-1.5">
-                <i class="ph-bold ph-chat-teardrop-text text-emerald-600 text-base"></i> Registro Cronológico Visible para el Cliente (Exclusivo Cliente)
-              </h5>
-            </div>
+            <h5 class="text-xs font-extrabold uppercase text-emerald-900">Registro Cronológico Visible para el Cliente</h5>
             <form onsubmit="addClientNote(event)" class="space-y-2">
-              <textarea id="newClientNoteText" rows="2" required placeholder="Redacta aquí el reporte oficial que verá el cliente en su web..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-emerald-600"></textarea>
+              <textarea id="newClientNoteText" rows="2" required placeholder="Redacta aquí el reporte oficial que verá el cliente..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm"></textarea>
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <label class="inline-flex items-center gap-2 text-xs text-slate-700 font-semibold cursor-pointer">
                   <input type="checkbox" id="notifyClientOnAdd" checked class="w-4 h-4 accent-emerald-600" />
@@ -883,7 +862,6 @@
           </div>
         </div>
 
-        <!-- Control de Avance y Estado -->
         <div class="space-y-2">
           <div class="flex justify-between items-center text-xs font-bold">
             <span>Progreso Técnico: <span id="dProgressVal" class="text-accent">0%</span></span>
@@ -920,7 +898,7 @@
 
           <div id="coordChannelBanner" class="hidden bg-amber-100/90 border border-amber-300 text-amber-950 px-3 py-2 rounded-xl text-[11px] font-semibold flex items-center gap-1.5">
             <i class="ph-bold ph-shield-check text-amber-700 text-sm"></i>
-            <span>Canal Privado Exclusivo de Coordinadores y Administrador: los encargados regulares no tienen acceso a estos mensajes.</span>
+            <span>Canal Privado Exclusivo de Coordinadores y Administrador.</span>
           </div>
 
           <div id="dChatMessagesList" class="space-y-2.5 max-h-60 overflow-y-auto bg-white/85 p-3 rounded-xl border border-indigo-100"></div>
@@ -939,14 +917,14 @@
           </form>
         </div>
 
-        <!-- Carpeta Google Drive y Evidencia Multimedia -->
+        <!-- Evidencia Multimedia -->
         <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
-                <i class="ph-bold ph-google-drive-logo text-blue-600 text-base"></i> Carpeta Google Drive del Caso
+                <i class="ph-bold ph-images text-blue-600 text-base"></i> Evidencia Fotográfica y Documentos del Caso
               </h4>
-              <p class="text-[11px] text-slate-500">Marca la casilla "Visible Cliente" solo en las fotos/videos que desees mostrarle.</p>
+              <p class="text-[11px] text-slate-500">Marca "Visible Cliente" solo en las imágenes que desees mostrar en el portal del cliente.</p>
             </div>
             <div class="flex items-center gap-2">
               <a id="dDriveFolderBtn" href="https://drive.google.com" target="_blank" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -985,7 +963,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE CIERRE TÉCNICO OBLIGATORIO AL COMPLETAR UN CASO -->
+  <!-- MODAL DE CIERRE TÉCNICO -->
   <div id="closureModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-emerald-300 overflow-hidden">
       <div class="px-5 py-4 border-b border-emerald-200 flex items-center justify-between bg-emerald-50">
@@ -997,23 +975,18 @@
       </div>
       <form onsubmit="saveTechnicalClosure(event)" class="p-5 space-y-4">
         <input type="hidden" id="closureTaskId" />
-        <p class="text-xs text-slate-600">Documenta el diagnóstico final para que quede guardado en el <strong>Historial Maestro</strong> y sirva como referencia ante futuras fallas similares.</p>
-
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Causa Raíz Detectada *</label>
-          <input type="text" id="cRootCause" required placeholder="Ej: Sensor de presión riel común defectuoso / Falso contacto masa" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+          <input type="text" id="cRootCause" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
         </div>
-
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Repuestos Reemplazados / Insumos</label>
-          <input type="text" id="cParts" placeholder="Ej: Sensor FRP OEM 31400-2F000, kit sellos" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
+          <input type="text" id="cParts" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm" />
         </div>
-
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">Solución Definitiva / Procedimiento Ejecutado *</label>
-          <textarea id="cSolution" rows="3" required placeholder="Describe la reparación, calibración o actualización de software realizada..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm"></textarea>
+          <textarea id="cSolution" rows="3" required class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm"></textarea>
         </div>
-
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
           <button type="button" onclick="closeModal('closureModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">Omitir por ahora</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm">Guardar Cierre Técnico</button>
@@ -1075,7 +1048,7 @@
     </div>
   </div>
 
-  <!-- MODAL 4: RED DE TALLERES PROPIOS Y AUTORIZADOS -->
+  <!-- MODAL 4: RED DE TALLERES -->
   <div id="workshopsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -1097,7 +1070,7 @@
     </div>
   </div>
 
-  <!-- MODAL 5: CONFIGURAR URL DE GITHUB PARA PORTAL CLIENTE -->
+  <!-- MODAL 5: CONFIGURAR URL CLIENTE -->
   <div id="portalConfigModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -1105,7 +1078,6 @@
         <button onclick="closeModal('portalConfigModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
       </div>
       <div class="p-5 space-y-4">
-        <p class="text-xs text-slate-600">Pega aquí la URL pública donde subiste <strong>cliente.html</strong> en GitHub Pages.</p>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">URL Pública de cliente.html</label>
           <input type="url" id="clientPortalBaseUrlInput" placeholder="https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs" />
@@ -1120,6 +1092,7 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLRN54nymuTe32fX-RMGRAlqj1QnQulYroAdG8KT-pPNlY6Hi9lPrNVYL1CBblF1ugPA/exec";
+    const FIREBASE_DB_URL = "https://autotech-hotline-default-rtdb.firebaseio.com";
     const HOTLINE_REQUEST_PAGE_URL = "https://soporteautomotortaller-gif.github.io/autotech-soporte/hotline.html";
 
     const DEFAULT_PLATFORMS = [
@@ -1134,23 +1107,9 @@
     ];
 
     const AUTOMOTOR_BRANDS = [
-      "Hyundai",
-      "Hyundai Camiones y Buses",
-      "Hyundai Maquinarias",
-      "Isuzu",
-      "Geely",
-      "SsangYong / KGM",
-      "Maserati",
-      "Lynk & Co",
-      "Mahindra",
-      "Riddara",
-      "Farizon",
-      "Lotus",
-      "Shacman",
-      "Lonking",
-      "Cummins",
-      "Repsol",
-      "Otras Marcas"
+      "Hyundai", "Hyundai Camiones y Buses", "Hyundai Maquinarias", "Isuzu", "Geely",
+      "SsangYong / KGM", "Maserati", "Lynk & Co", "Mahindra", "Riddara",
+      "Farizon", "Lotus", "Shacman", "Lonking", "Cummins", "Repsol", "Otras Marcas"
     ];
 
     const BOARD_COLUMNS = [
@@ -1317,8 +1276,29 @@
     }
 
     // =========================================================================
-    // BANDEJA DE SOPORTE SOLICITADO (JEFES DE TALLER -> CREAR ACCIÓN HOTLINE)
+    // SINCRONIZACIÓN EN TIEMPO REAL DE SOLICITUDES HOTLINE DESDE FIREBASE
     // =========================================================================
+    async function fetchFirebaseHotlineRequests() {
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`);
+        const obj = await res.json();
+        if (obj && typeof obj === "object") {
+          const list = Object.values(obj).sort((a, b) => (b.id > a.id ? 1 : -1));
+          state.hotlineRequests = list;
+        } else {
+          state.hotlineRequests = [];
+        }
+        updateHotlineBadge();
+        if (!document.getElementById("hotlineRequestsModal").classList.contains("hidden")) {
+          renderHotlineRequestsList();
+        }
+      } catch (e) {}
+    }
+
+    setInterval(() => {
+      if (currentSession) fetchFirebaseHotlineRequests();
+    }, 8000);
+
     function updateHotlineBadge() {
       const badge = document.getElementById("hotlineBadgeCount");
       const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length;
@@ -1331,6 +1311,7 @@
     }
 
     function openHotlineRequestsModal() {
+      fetchFirebaseHotlineRequests();
       renderHotlineRequestsList();
       document.getElementById("hotlineRequestsModal").classList.remove("hidden");
     }
@@ -1353,12 +1334,15 @@
       box.innerHTML = list.map((r, idx) => {
         const isPending = r.status === "Pendiente";
         const evHtml = (r.evidence || []).map(ev => `
-          <a href="${escapeHtml(ev.viewUrl || ev.url)}" target="_blank" class="group block bg-slate-50 rounded-xl p-2 border border-slate-200 hover:border-[#004B93] transition">
-            <div class="aspect-video bg-slate-200 rounded-lg overflow-hidden mb-1.5 flex items-center justify-center">
-              <img src="${escapeHtml(ev.url)}" alt="${escapeHtml(ev.label)}" onerror="this.style.display='none'" class="w-full h-full object-cover group-hover:scale-105 transition" />
+          <div class="group block bg-slate-50 rounded-xl p-2 border border-slate-200 hover:border-[#004B93] transition">
+            <div onclick="openImagePreviewWindow('${ev.url}')" class="aspect-video bg-slate-200 rounded-lg overflow-hidden mb-1.5 flex items-center justify-center cursor-pointer">
+              <img src="${ev.url}" alt="${escapeHtml(ev.label)}" class="w-full h-full object-cover group-hover:scale-105 transition" />
             </div>
-            <div class="text-[11px] font-bold text-[#004B93] truncate">${escapeHtml(ev.label || ev.name)}</div>
-          </a>
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-[11px] font-bold text-[#004B93] truncate">${escapeHtml(ev.label || ev.name)}</span>
+              <a href="${ev.url}" download="${escapeHtml(ev.name || 'evidencia.jpg')}" class="text-[10px] font-bold text-slate-500 hover:text-slate-900" title="Descargar foto"><i class="ph-bold ph-download-simple"></i></a>
+            </div>
+          </div>
         `).join("");
 
         return `
@@ -1383,31 +1367,30 @@
               </div>
             </div>
 
-            <!-- Datos técnicos con botones individuales para copiar cada dato -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 text-xs">
               <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                 <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Taller</span><strong>${escapeHtml(r.workshop)}</strong></div>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.workshop)}', 'Taller')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Taller"><i class="ph-bold ph-copy"></i></button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.workshop)}', 'Taller')" class="text-slate-400 hover:text-[#004B93] p-1"><i class="ph-bold ph-copy"></i></button>
               </div>
               <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                 <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Marca / Modelo</span><strong>${escapeHtml(r.brand)} ${escapeHtml(r.model)}</strong></div>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.brand + ' ' + r.model)}', 'Marca y Modelo')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Modelo"><i class="ph-bold ph-copy"></i></button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.brand + ' ' + r.model)}', 'Marca y Modelo')" class="text-slate-400 hover:text-[#004B93] p-1"><i class="ph-bold ph-copy"></i></button>
               </div>
               <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                 <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Chasis / VIN</span><strong class="font-mono text-[#004B93]">${escapeHtml(r.vin)}</strong></div>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.vin)}', 'VIN')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar VIN"><i class="ph-bold ph-copy"></i></button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.vin)}', 'VIN')" class="text-slate-400 hover:text-[#004B93] p-1"><i class="ph-bold ph-copy"></i></button>
               </div>
               <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                 <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Kilometraje / OR</span><strong>${escapeHtml(r.km)} ${r.orNumber ? `· ${escapeHtml(r.orNumber)}` : ""}</strong></div>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.km)}', 'Kilometraje')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Km"><i class="ph-bold ph-copy"></i></button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.km)}', 'Kilometraje')" class="text-slate-400 hover:text-[#004B93] p-1"><i class="ph-bold ph-copy"></i></button>
               </div>
               <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                 <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Jefe de Taller</span><strong>${escapeHtml(r.chiefName)} (${escapeHtml(r.chiefPhone)})</strong></div>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.chiefName)}', 'Jefe de Taller')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Jefe"><i class="ph-bold ph-copy"></i></button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.chiefName)}', 'Jefe de Taller')" class="text-slate-400 hover:text-[#004B93] p-1"><i class="ph-bold ph-copy"></i></button>
               </div>
               <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
                 <div class="truncate"><span class="block text-[10px] text-slate-400 font-bold uppercase">Mecánico a Cargo</span><strong>${escapeHtml(r.mechanicName)}</strong></div>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.mechanicName)}', 'Mecánico')" class="text-slate-400 hover:text-[#004B93] p-1" title="Copiar Mecánico"><i class="ph-bold ph-copy"></i></button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.mechanicName)}', 'Mecánico')" class="text-slate-400 hover:text-[#004B93] p-1"><i class="ph-bold ph-copy"></i></button>
               </div>
             </div>
 
@@ -1423,16 +1406,20 @@
 
             ${evHtml ? `
               <div class="space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-bold text-slate-600">Fotografía del Tablero y Evidencias Adjuntas:</span>
-                  <a href="${escapeHtml(r.folderUrl || 'https://drive.google.com')}" target="_blank" class="text-xs font-bold text-[#004B93] hover:underline">Abrir Carpeta Drive &rarr;</a>
-                </div>
+                <span class="text-[11px] font-bold text-slate-600">Fotografía del Tablero y Evidencias Adjuntas (Clic para ampliar):</span>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">${evHtml}</div>
               </div>
             ` : ""}
           </div>
         `;
       }).join("");
+    }
+
+    function openImagePreviewWindow(dataUrl) {
+      const w = window.open("");
+      if (w) {
+        w.document.write(`<img src="${dataUrl}" style="max-width:100%; height:auto; display:block; margin:auto;" />`);
+      }
     }
 
     function createSupportFromHotline(idx) {
@@ -1481,7 +1468,11 @@
     function deleteHotlineRequest(idx) {
       if (!isCurrentAdmin()) return;
       if (!confirm("¿Eliminar esta solicitud de Hotline?")) return;
+      const target = state.hotlineRequests[idx];
       state.hotlineRequests.splice(idx, 1);
+      if (target) {
+        fetch(`${FIREBASE_DB_URL}/hotlineRequests/${target.id}.json`, { method: "DELETE" }).catch(() => {});
+      }
       saveLocalAndCloud();
       updateHotlineBadge();
       renderHotlineRequestsList();
@@ -1786,7 +1777,7 @@
       document.getElementById("btnPortalConfig").classList.toggle("hidden", !isAdmin);
 
       updatePendingBadge();
-      updateHotlineBadge();
+      fetchFirebaseHotlineRequests();
       renderPlatformsQuickList();
       syncSelectors();
       updateDeviceLayout();
@@ -1824,7 +1815,7 @@
     }
 
     // =========================================================================
-    // SINCRONIZACIÓN CON GOOGLE DRIVE
+    // SINCRONIZACIÓN CON GOOGLE DRIVE Y FIREBASE
     // =========================================================================
     window.addEventListener("DOMContentLoaded", async () => {
       if (localStorage.getItem("autotech_dark_mode") === "1") {
@@ -1878,13 +1869,16 @@
       const icon = document.getElementById("syncIcon");
       if (icon) icon.className = "ph-bold ph-arrows-clockwise animate-spin text-blue-600";
       try {
+        await fetchFirebaseHotlineRequests();
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify({ action: "loadState" })
         });
         const data = await res.json();
         if (data.status === "ok" && data.state) {
+          const fbRequests = state.hotlineRequests || [];
           state = { ...state, ...data.state };
+          if (fbRequests.length > 0) state.hotlineRequests = fbRequests;
           if (data.masterSheetUrl) state.masterSheetUrl = data.masterSheetUrl;
           normalizeStateData();
           if (!state.clientPortalBaseUrl) {
@@ -1902,14 +1896,14 @@
               if (openT) renderCaseChatMessages(openT);
             }
           }
-          if (manual) showToast("Datos sincronizados con Google Drive", "success");
+          if (manual) showToast("Datos sincronizados con la nube", "success");
         } else if (data.status === "empty") {
           saveLocalAndCloud();
         }
         if (icon) icon.className = "ph-bold ph-cloud-check text-emerald-600";
       } catch (e) {
         if (icon) icon.className = "ph-bold ph-cloud-slash text-amber-500";
-        if (manual) showToast("Trabajando en modo local sin conexión", "warning");
+        if (manual) showToast("Sincronización parcial completada", "info");
       }
     }
 
@@ -2330,9 +2324,9 @@
                       <span class="text-[11px] font-extrabold ${col.id === 'Urgente' ? 'text-red-600' : col.id === 'Completado' ? 'text-emerald-700' : 'text-accent'}">${escapeHtml(t.caseId)}</span>
                       <div class="flex items-center gap-1">
                         ${slaBadge}
-                        ${chatCount > 0 ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 flex items-center gap-0.5" title="Chat interno"><i class="ph-bold ph-chats-circle"></i> ${chatCount}</span>` : ""}
+                        ${chatCount > 0 ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 flex items-center gap-0.5"><i class="ph-bold ph-chats-circle"></i> ${chatCount}</span>` : ""}
                         ${t.clientPortal && t.clientPortal.enabled
-                          ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800" title="Portal Cliente Activo"><i class="ph-bold ph-broadcast"></i></span>`
+                          ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800"><i class="ph-bold ph-broadcast"></i></span>`
                           : ""
                         }
                       </div>
@@ -2593,9 +2587,6 @@
       const randomPin = String(Math.floor(1000 + Math.random() * 9000));
       const initialStatus = document.getElementById("tStatus").value;
 
-      // Si viene desde una solicitud de Hotline de Jefe de Taller, heredar carpeta Drive y fotos
-      let inheritedFolderId = "";
-      let inheritedFolderUrl = "https://drive.google.com";
       let inheritedMedia = [];
 
       if (sourceReqId) {
@@ -2603,8 +2594,6 @@
         if (reqObj) {
           reqObj.status = "Convertido";
           reqObj.linkedCaseId = caseId;
-          inheritedFolderId = reqObj.folderId || "";
-          inheritedFolderUrl = reqObj.folderUrl || "https://drive.google.com";
           inheritedMedia = (reqObj.evidence || []).map(ev => ({
             name: ev.name || ev.label,
             type: "image",
@@ -2612,6 +2601,11 @@
             viewUrl: ev.viewUrl || ev.url,
             clientVisible: false
           }));
+          fetch(`${FIREBASE_DB_URL}/hotlineRequests/${reqObj.id}.json`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "Convertido", linkedCaseId: caseId })
+          }).catch(() => {});
           updateHotlineBadge();
         }
       }
@@ -2647,8 +2641,8 @@
         rootCause: "",
         partsReplaced: "",
         finalSolution: "",
-        driveFolderId: inheritedFolderId,
-        driveFolderUrl: inheritedFolderUrl,
+        driveFolderId: "",
+        driveFolderUrl: "https://drive.google.com",
         notes: [{
           date: new Date().toLocaleString(),
           text: sourceReqId
@@ -2674,24 +2668,20 @@
       closeModal("taskModal");
       renderAll();
 
-      if (!inheritedFolderId) {
-        showToast(`Creando carpeta ${caseId} en Google Drive...`, "info");
-        try {
-          const res = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
-          });
-          const d = await res.json();
-          if (d.status === "ok") {
-            newTask.driveFolderId = d.folderId;
-            newTask.driveFolderUrl = d.folderUrl;
-            saveLocalAndCloud();
-            showToast(`Carpeta Drive creada para ${caseId}`, "success");
-          }
-        } catch (err) {}
-      } else {
-        showToast(`Caso ${caseId} creado con las fotos y carpeta del Jefe de Taller`, "success");
-      }
+      showToast(`Caso ${caseId} creado correctamente`, "success");
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
+        });
+        const d = await res.json();
+        if (d.status === "ok") {
+          newTask.driveFolderId = d.folderId;
+          newTask.driveFolderUrl = d.folderUrl;
+          saveLocalAndCloud();
+        }
+      } catch (err) {}
 
       const assignee = members.find(u => u.id === newTask.assigneeId);
       if (assignee && assignee.email) {
@@ -2702,13 +2692,12 @@
             to: assignee.email,
             cc: state.adminConfig.email || "",
             subject: `[Soporte Técnico Automotor] Nueva Asignación: ${caseId} - ${finalBrand ? finalBrand + " " : ""}${newTask.title}`,
-            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nEstado Hotline: ${hotlineStatus || "N/A"} ${factoryTicketCode ? `(Ticket: ${factoryTicketCode})` : ""}\nMarca: ${finalBrand || "N/A"}\nModelo: ${newTask.vehicleModel || "N/A"}\nVIN: ${newTask.vehicleVin || "N/A"}\nTaller: ${newTask.workshop || "N/A"}\nCarpeta Drive: ${newTask.driveFolderUrl}`
+            body: `Se ha registrado una nueva acción asignada a ${assignee.name}.\n\nCódigo: ${caseId}\nEstado Hotline: ${hotlineStatus || "N/A"} ${factoryTicketCode ? `(Ticket: ${factoryTicketCode})` : ""}\nMarca: ${finalBrand || "N/A"}\nModelo: ${newTask.vehicleModel || "N/A"}\nVIN: ${newTask.vehicleVin || "N/A"}\nTaller: ${newTask.workshop || "N/A"}`
           })
         }).catch(() => {});
       }
     }
 
-    // DETALLE DE CASO + ASOCIACIÓN RÁPIDA DE TICKET HOTLINE
     function openDetailModal(id) {
       currentDetailId = id;
       currentChatChannel = "general";
@@ -3005,9 +2994,7 @@
       renderBoard();
     }
 
-    // =========================================================================
     // PANEL ADMINISTRADOR
-    // =========================================================================
     function openUsersModal() {
       if (!isCurrentAdmin()) return;
       document.getElementById("adminIdDisplay").textContent = state.adminConfig.id;
@@ -3073,16 +3060,6 @@
       syncSelectors();
       renderUsersModalLists();
       showToast(`${user.name} aprobado como ${assignedRole}`, "success");
-
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "sendEmail",
-          to: user.email,
-          subject: `[Soporte Técnico Automotor] Acceso Aprobado (${assignedRole})`,
-          body: `Hola ${user.name},\n\nTu solicitud de acceso a Soporte Técnico Automotor ha sido aprobada por el Administrador con el rol de ${assignedRole}.\n\nYa puedes ingresar con tu correo corporativo (${user.email}) y la contraseña que registraste.`
-        })
-      }).catch(() => {});
     }
 
     function rejectPendingUser(pendingId) {
@@ -3106,13 +3083,7 @@
         return;
       }
 
-      state.users.push({
-        id: "u_" + Date.now(),
-        name,
-        email,
-        password,
-        role
-      });
+      state.users.push({ id: "u_" + Date.now(), name, email, password, role });
       document.getElementById("uName").value = "";
       document.getElementById("uEmail").value = "";
       document.getElementById("uPass").value = "";
@@ -3168,9 +3139,7 @@
       showToast("Contraseña de Administrador actualizada correctamente", "success");
     }
 
-    // =========================================================================
-    // FORMALIZAR CORREO, WHATSAPP ASESOR, REGISTROS Y EXPORTACIONES
-    // =========================================================================
+    // CORREOS, WHATSAPP, MULTIMEDIA Y EXPORTACIONES
     function toggleFormalEmailSection() {
       const panel = document.getElementById("formalEmailPanel");
       const willOpen = panel.classList.contains("hidden");
@@ -3243,10 +3212,6 @@
         body += `• Kilometraje: ${t.vehicleKm || "-"}\n`;
         body += `• Jefe de Taller: ${t.chiefName || "-"} | Mecánico: ${t.mechanicName || "-"}\n`;
         body += `• Asesor / Contacto Taller: ${advName} ${advPhone ? `(${advPhone})` : ""}\n`;
-      } else {
-        body += `• Grupo Técnico: ${t.group || "-"}\n`;
-        body += `• Duración: ${t.hours || 0} horas\n`;
-        body += `• Sede / Aula: ${t.location || "-"}\n`;
       }
 
       if (t.description) {
@@ -3270,21 +3235,13 @@
         body += `• Solución Definitiva: ${t.finalSolution || "-"}\n`;
       }
 
-      body += `\n==================================================\n`;
-      body += `CARPETA DE EVIDENCIAS Y DOCUMENTACIÓN (GOOGLE DRIVE)\n`;
-      body += `==================================================\n`;
-      body += `${t.driveFolderUrl || "https://drive.google.com"}\n\n`;
-      body += `Atentamente,\n${currentSession ? currentSession.name : "Departamento de Soporte Técnico"}\nAutomotor S.A.`;
-
+      body += `\nAtentamente,\n${currentSession ? currentSession.name : "Departamento de Soporte Técnico"}\nAutomotor S.A.`;
       document.getElementById("feBody").value = body;
     }
 
     function getSelectedRecipientEmails() {
       const checked = Array.from(document.querySelectorAll(".fe-user-chk:checked")).map(cb => cb.value.trim()).filter(Boolean);
-      const extras = (document.getElementById("feExtraEmails").value || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(s => s.includes("@"));
+      const extras = (document.getElementById("feExtraEmails").value || "").split(",").map(s => s.trim()).filter(s => s.includes("@"));
       return Array.from(new Set([...checked, ...extras]));
     }
 
@@ -3299,8 +3256,7 @@
       const recipients = getSelectedRecipientEmails();
       const subj = encodeURIComponent(document.getElementById("feSubject").value);
       const body = encodeURIComponent(document.getElementById("feBody").value);
-      const toStr = recipients.join(",");
-      window.location.href = `mailto:${toStr}?subject=${subj}&body=${body}`;
+      window.location.href = `mailto:${recipients.join(",")}?subject=${subj}&body=${body}`;
     }
 
     async function sendFormalTeamEmail() {
@@ -3311,25 +3267,15 @@
       }
       const subj = document.getElementById("feSubject").value.trim();
       const body = document.getElementById("feBody").value.trim();
-
       showToast(`Enviando informe formal a ${recipients.length} destinatario(s)...`, "info");
       try {
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
-          body: JSON.stringify({
-            action: "sendEmail",
-            to: recipients[0],
-            cc: recipients.slice(1).join(","),
-            subject: subj,
-            body: body
-          })
+          body: JSON.stringify({ action: "sendEmail", to: recipients[0], cc: recipients.slice(1).join(","), subject: subj, body: body })
         });
         const d = await res.json();
-        if (d.status === "ok") {
-          showToast("Informe formal enviado por correo electrónico", "success");
-        } else {
-          showToast("No se pudo enviar automáticamente; usa 'Abrir en Mi Correo Personal'", "warning");
-        }
+        if (d.status === "ok") showToast("Informe formal enviado por correo electrónico", "success");
+        else showToast("Usa 'Abrir en Mi Correo Personal'", "warning");
       } catch (err) {
         showToast("Error de red; usa 'Abrir en Mi Correo Personal'", "warning");
       }
@@ -3338,19 +3284,14 @@
     function notifyAdvisorWhatsapp(customUpdateText = "") {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
-
       const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "Asesor").trim();
-      const rawPhone = (t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim();
-      const cleanPhone = formatWhatsappPhone(rawPhone);
-
+      const cleanPhone = formatWhatsappPhone((t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim());
       if (!cleanPhone) {
         showToast("Registra primero el teléfono del Asesor o Jefe editando el caso", "warning");
         return;
       }
-
       const lastInternal = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : "Sin observaciones aún";
       const updateDetail = customUpdateText || lastInternal;
-
       const msg = encodeURIComponent(
 `Hola *${advName}*, te enviamos una actualización de Soporte Técnico Automotor:
 
@@ -3358,10 +3299,8 @@
 ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode} (${t.hotlineStatus || ""})\n` : ""}• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
 • *Taller:* ${t.workshop || "Automotor"}
 • *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
-• *Último reporte técnico:* ${updateDetail}
-• *Carpeta evidencias:* ${t.driveFolderUrl || ""}`
+• *Último reporte técnico:* ${updateDetail}`
       );
-
       window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
     }
 
@@ -3379,18 +3318,15 @@ ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode}
     function copyClientPortalLink() {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
-      const url = getClientTrackingUrl(t);
-      navigator.clipboard.writeText(url);
+      navigator.clipboard.writeText(getClientTrackingUrl(t));
       showToast("Enlace de seguimiento del cliente copiado", "success");
     }
 
     async function saveClientPortalConfig(sendEmailNow = false) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
-
       const advName = document.getElementById("cpAdvisorName").value.trim();
       const advPhone = document.getElementById("cpAdvisorWhatsapp").value.trim();
-
       t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
       t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
       t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
@@ -3398,23 +3334,10 @@ ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode}
       t.clientPortal.advisorWhatsapp = advPhone;
       t.advisorName = advName;
       t.advisorWhatsapp = advPhone;
-
       saveLocalAndCloud();
       renderBoard();
       renderDashboard();
-      document.getElementById("dAdvisorLine").textContent = advName
-        ? `Contacto Taller / Asesor: ${advName} ${advPhone ? `(${advPhone})` : ""}`
-        : "Contacto Taller / Asesor: Sin asignar";
-
-      if (sendEmailNow) {
-        if (!t.clientPortal.enabled) {
-          showToast("Marca la casilla 'Habilitar Portal' primero", "warning");
-          return;
-        }
-        if (!t.clientPortal.clientEmail) {
-          showToast("Ingresa el correo electrónico del cliente", "warning");
-          return;
-        }
+      if (sendEmailNow && t.clientPortal.enabled && t.clientPortal.clientEmail) {
         await sendClientTrackingEmail(t, "Activación de Seguimiento en Tiempo Real");
         showToast(`Correo enviado a ${t.clientPortal.clientEmail}`, "success");
       } else {
@@ -3426,34 +3349,13 @@ ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode}
       if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
       const link = getClientTrackingUrl(t);
       const vehicleFull = `${t.brand || ""} ${t.vehicleModel || ""}`.trim() || t.caseId;
-      const subject = `Actualización de tu vehículo (${vehicleFull}) - Caso ${t.caseId}`;
-      const body =
-`Estimado/a ${t.clientPortal.clientName || "Cliente"},
-
-Te informamos que se ha registrado una actualización en el seguimiento técnico de tu vehículo:
-
-• Caso: ${t.caseId}
-• Vehículo: ${vehicleFull} ${t.orNumber ? `(OR: ${t.orNumber})` : ""}
-• Taller: ${t.workshop || "Automotor"}
-• Estado actual: ${t.status} (${t.progress || 0}% de avance)
-• Novedad: ${updateSummary}
-
-Puedes consultar el registro cronológico en tiempo real, fotos/videos aprobados y contactar directamente por WhatsApp a tu Asesor de Servicios (${t.clientPortal.advisorName || "Asesor Asignado"}) ingresando al siguiente enlace:
-
-${link}
-
-(Si el sistema te solicita credenciales manuales, utiliza Código: ${t.caseId} y PIN: ${t.clientPortal.token})
-
----
-AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de seguimiento técnico de Automotor S.A. Por favor no respondas a este correo electrónico, ya que esta casilla no está habilitada para recibir mensajes.`;
-
       return fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify({
           action: "sendEmail",
           to: t.clientPortal.clientEmail,
-          subject: subject,
-          body: body
+          subject: `Actualización de tu vehículo (${vehicleFull}) - Caso ${t.caseId}`,
+          body: `Estimado/a ${t.clientPortal.clientName || "Cliente"},\n\nSe registró una novedad en tu vehículo (${vehicleFull}):\n• Estado: ${t.status} (${t.progress || 0}%)\n• Novedad: ${updateSummary}\n\nSigue el proceso aquí:\n${link}`
         })
       }).catch(() => {});
     }
@@ -3470,14 +3372,10 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         return `
           <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 text-xs space-y-1.5">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] font-semibold text-emerald-800">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
+              <span class="text-[11px] font-semibold text-emerald-800">${escapeHtml(n.date)}</span>
               <div class="flex items-center gap-2">
-                <button type="button" onclick="editClientNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-pencil-simple"></i> Editar
-                </button>
-                <button type="button" onclick="deleteClientNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-trash"></i> Eliminar
-                </button>
+                <button type="button" onclick="editClientNote(${realIdx})" class="text-blue-700 font-bold hover:underline">Editar</button>
+                <button type="button" onclick="deleteClientNote(${realIdx})" class="text-red-600 font-bold hover:underline">Eliminar</button>
               </div>
             </div>
             <p class="text-slate-900 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
@@ -3492,21 +3390,14 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       const txt = document.getElementById("newClientNoteText").value.trim();
       const sendMail = document.getElementById("notifyClientOnAdd").checked;
       if (!t || !txt) return;
-
       if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
-      t.clientNotes.push({
-        date: new Date().toLocaleString(),
-        text: txt
-      });
+      t.clientNotes.push({ date: new Date().toLocaleString(), text: txt });
       document.getElementById("newClientNoteText").value = "";
-
       saveLocalAndCloud();
       renderClientNotes(t);
       showToast("Publicado en Registro Cronológico del Cliente", "success");
-
       if (sendMail && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
         await sendClientTrackingEmail(t, txt);
-        showToast("Correo automático enviado al cliente", "success");
       }
     }
 
@@ -3514,14 +3405,10 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t || !t.clientNotes[idx]) return;
       const updated = prompt("Editar mensaje visible para el cliente:", t.clientNotes[idx].text);
-      if (updated === null) return;
-      const clean = updated.trim();
-      if (!clean) return;
-      t.clientNotes[idx].text = clean;
-      t.clientNotes[idx].edited = true;
+      if (!updated || !updated.trim()) return;
+      t.clientNotes[idx].text = updated.trim();
       saveLocalAndCloud();
       renderClientNotes(t);
-      showToast("Mensaje del cliente actualizado (se verá al instante en su portal)", "success");
     }
 
     function deleteClientNote(idx) {
@@ -3531,7 +3418,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       t.clientNotes.splice(idx, 1);
       saveLocalAndCloud();
       renderClientNotes(t);
-      showToast("Registro eliminado del Portal Cliente", "info");
     }
 
     function renderInternalNotes(t) {
@@ -3547,19 +3433,11 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         return `
           <div class="bg-white p-3 rounded-xl border border-slate-200/90 text-xs space-y-1.5">
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[11px] text-slate-400 font-semibold">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
+              <span class="text-[11px] text-slate-400 font-semibold">${escapeHtml(n.date)}</span>
               <div class="flex items-center gap-2.5">
-                ${isSoporte ? `
-                  <button type="button" onclick="sendSingleInternalNoteToAdvisor(${realIdx})" class="text-emerald-700 font-bold hover:underline flex items-center gap-0.5" title="Enviar este avance por WhatsApp al Asesor / Jefe">
-                    <i class="ph-bold ph-whatsapp-logo"></i> Avisar WhatsApp
-                  </button>
-                ` : ""}
-                <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-pencil-simple"></i> Editar
-                </button>
-                <button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
-                  <i class="ph-bold ph-trash"></i> Eliminar
-                </button>
+                ${isSoporte ? `<button type="button" onclick="sendSingleInternalNoteToAdvisor(${realIdx})" class="text-emerald-700 font-bold hover:underline">Avisar WhatsApp</button>` : ""}
+                <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline">Editar</button>
+                <button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline">Eliminar</button>
               </div>
             </div>
             <p class="text-slate-800 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
@@ -3570,8 +3448,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
 
     function sendSingleInternalNoteToAdvisor(idx) {
       const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t || !t.notes[idx]) return;
-      notifyAdvisorWhatsapp(t.notes[idx].text);
+      if (t && t.notes[idx]) notifyAdvisorWhatsapp(t.notes[idx].text);
     }
 
     function addInternalNote(e) {
@@ -3580,37 +3457,25 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       const txt = document.getElementById("newInternalNoteText").value.trim();
       const notifyAdv = document.getElementById("notifyAdvisorOnNote").checked;
       if (!t || !txt) return;
-
       if (!Array.isArray(t.notes)) t.notes = [];
       const author = currentSession ? `${currentSession.name}: ` : "";
-      t.notes.push({
-        date: new Date().toLocaleString(),
-        text: author + txt
-      });
+      t.notes.push({ date: new Date().toLocaleString(), text: author + txt });
       document.getElementById("newInternalNoteText").value = "";
       document.getElementById("notifyAdvisorOnNote").checked = false;
-
       saveLocalAndCloud();
       renderInternalNotes(t);
       showToast("Guardado en Registro Cronológico Interno", "success");
-
-      if (notifyAdv) {
-        notifyAdvisorWhatsapp(txt);
-      }
+      if (notifyAdv) notifyAdvisorWhatsapp(txt);
     }
 
     function editInternalNote(idx) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t || !t.notes[idx]) return;
-      const updated = prompt("Editar registro interno del taller:", t.notes[idx].text);
-      if (updated === null) return;
-      const clean = updated.trim();
-      if (!clean) return;
-      t.notes[idx].text = clean;
-      t.notes[idx].edited = true;
+      const updated = prompt("Editar registro interno:", t.notes[idx].text);
+      if (!updated || !updated.trim()) return;
+      t.notes[idx].text = updated.trim();
       saveLocalAndCloud();
       renderInternalNotes(t);
-      showToast("Registro interno actualizado", "success");
     }
 
     function deleteInternalNote(idx) {
@@ -3620,21 +3485,22 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       t.notes.splice(idx, 1);
       saveLocalAndCloud();
       renderInternalNotes(t);
-      showToast("Registro interno eliminado", "info");
     }
 
     function renderDetailMedia(t) {
       const box = document.getElementById("dMediaGallery");
       const media = t.media || [];
       if (media.length === 0) {
-        box.innerHTML = `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos aún. Usa "Subir Foto/PDF" para guardar directo en Drive.</p>`;
+        box.innerHTML = `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos aún.</p>`;
         return;
       }
       box.innerHTML = media.map((m, idx) => `
         <div class="bg-white rounded-xl p-2 border border-slate-200 space-y-1.5">
-          <a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block text-xs font-bold text-blue-600 truncate hover:underline">
-            <i class="ph-bold ph-file-image"></i> ${escapeHtml(m.name)}
-          </a>
+          ${m.url && m.url.startsWith("data:image")
+            ? `<img src="${m.url}" onclick="openImagePreviewWindow('${m.url}')" class="w-full h-24 object-cover rounded-lg cursor-pointer" />`
+            : `<a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block text-xs font-bold text-blue-600 truncate hover:underline"><i class="ph-bold ph-file-image"></i> ${escapeHtml(m.name)}</a>`
+          }
+          <div class="text-[11px] font-bold text-slate-700 truncate">${escapeHtml(m.name)}</div>
           <label class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 cursor-pointer">
             <input type="checkbox" ${m.clientVisible ? "checked" : ""} onchange="toggleMediaClientVisibility(${idx}, this.checked)" class="accent-emerald-600" />
             Visible Cliente
@@ -3648,7 +3514,6 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       if (!t || !t.media[idx]) return;
       t.media[idx].clientVisible = isVisible;
       saveLocalAndCloud();
-      showToast(isVisible ? "Archivo publicado en Portal Cliente" : "Archivo ocultado al cliente", "info");
     }
 
     async function uploadMediaToDrive(e) {
@@ -3657,44 +3522,19 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
 
-      if (file.size > 15 * 1024 * 1024) {
-        showToast("Video pesado (>15MB): ábrelo directo en la carpeta Drive para subir sin límite", "warning");
-        window.open(t.driveFolderUrl || "https://drive.google.com", "_blank");
-        return;
-      }
-
-      showToast("Subiendo archivo a Google Drive...", "info");
       const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result.split(",")[1];
-        try {
-          const res = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "uploadFile",
-              folderId: t.driveFolderId,
-              fileName: file.name,
-              mimeType: file.type,
-              base64: base64
-            })
-          });
-          const d = await res.json();
-          if (d.status === "ok") {
-            if (!t.media) t.media = [];
-            t.media.push({
-              name: file.name,
-              type: file.type.startsWith("image/") ? "image" : "file",
-              url: d.fileUrl,
-              viewUrl: d.viewUrl,
-              clientVisible: false
-            });
-            saveLocalAndCloud();
-            renderDetailMedia(t);
-            showToast("Archivo guardado en la carpeta del caso", "success");
-          }
-        } catch (err) {
-          showToast("Error al subir archivo", "warning");
-        }
+      reader.onload = () => {
+        if (!t.media) t.media = [];
+        t.media.push({
+          name: file.name,
+          type: file.type.startsWith("image/") ? "image" : "file",
+          url: reader.result,
+          viewUrl: reader.result,
+          clientVisible: false
+        });
+        saveLocalAndCloud();
+        renderDetailMedia(t);
+        showToast("Archivo adjuntado al expediente", "success");
       };
       reader.readAsDataURL(file);
     }
@@ -3744,7 +3584,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
     function shareInternalWhatsapp() {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
-      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\n${t.factoryTicketCode ? `Ticket Fábrica: ${t.factoryTicketCode}\n` : ""}Taller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)\nCarpeta Drive: ${t.driveFolderUrl}`);
+      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\n${t.factoryTicketCode ? `Ticket Fábrica: ${t.factoryTicketCode}\n` : ""}Taller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)`);
       window.open(`https://wa.me/?text=${msg}`, "_blank");
     }
 
@@ -3754,45 +3594,32 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         showToast("No hay casos registrados en esta área para exportar", "warning");
         return;
       }
-
       const members = getAllAssignableMembers();
-      const titleArea = appMode === "soporte" ? "Historial de Casos — Soporte Técnico Automotor" : "Historial de Entrenamiento Técnico";
       let rowsHtml = list.map(t => {
         const assignee = members.find(u => u.id === t.assigneeId);
-        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
-        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
+        const advName = t.advisorName || "-";
+        const advPhone = t.advisorWhatsapp || "-";
         const historyFormatted = (t.notes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
-        const clientHistoryFormatted = (t.clientNotes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
-
         return `
           <tr>
-            <td style="font-weight:bold;">${escapeHtml(t.caseId)}</td>
+            <td>${escapeHtml(t.caseId)}</td>
             <td>${escapeHtml(t.status)}</td>
             <td>${escapeHtml(t.hotlineStatus || "-")}</td>
             <td>${escapeHtml(t.factoryTicketCode || "-")}</td>
             <td>${t.progress || 0}%</td>
             <td>${escapeHtml(t.date)}</td>
-            <td>${escapeHtml(t.closedDate || "-")}</td>
             <td>${escapeHtml(t.brand || "-")}</td>
             <td>${escapeHtml(t.vehicleModel || "-")}</td>
             <td>${escapeHtml(t.title)}</td>
-            <td>${escapeHtml(t.subcategory)}</td>
             <td>${escapeHtml(t.dtcCodes || "-")}</td>
             <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
             <td>${escapeHtml(t.workshop || "-")}</td>
-            <td>${escapeHtml(t.chiefName || "-")}</td>
-            <td>${escapeHtml(t.mechanicName || "-")}</td>
             <td>${escapeHtml(t.orNumber || "-")}</td>
             <td>${escapeHtml(t.vehicleVin || "-")}</td>
-            <td>${escapeHtml(t.vehicleKm || "-")}</td>
             <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
-            <td>${escapeHtml(t.description || "-")}</td>
             <td>${historyFormatted || "Sin registros"}</td>
             <td>${escapeHtml(t.rootCause || "-")}</td>
-            <td>${escapeHtml(t.partsReplaced || "-")}</td>
             <td>${escapeHtml(t.finalSolution || "-")}</td>
-            <td>${clientHistoryFormatted || "-"}</td>
-            <td>${escapeHtml(t.driveFolderUrl || "-")}</td>
           </tr>
         `;
       }).join("");
@@ -3801,38 +3628,12 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
         <head><meta charset="UTF-8"></head>
         <body>
-          <h2>${titleArea} - Automotor S.A.</h2>
-          <p>Fecha de emisión: ${new Date().toLocaleString()} | Total de registros: ${list.length}</p>
-          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; font-size:11pt;">
+          <table border="1">
             <thead>
-              <tr style="background-color:#004B93; color:#ffffff; font-weight:bold;">
-                <th>Código</th>
-                <th>Estado / Prioridad</th>
-                <th>Estado Hotline Fábrica</th>
-                <th>Ticket Fábrica</th>
-                <th>Progreso</th>
-                <th>Fecha Apertura</th>
-                <th>Fecha Cierre</th>
-                <th>Marca</th>
-                <th>Modelo Vehículo</th>
-                <th>Título del Caso</th>
-                <th>Categoría</th>
-                <th>Códigos DTC</th>
-                <th>Encargado Técnico</th>
-                <th>Taller</th>
-                <th>Jefe de Taller</th>
-                <th>Mecánico a Cargo</th>
-                <th>N° Orden (OR)</th>
-                <th>Chasis / VIN</th>
-                <th>Kilometraje</th>
-                <th>Asesor / Contacto</th>
-                <th>Descripción Inicial</th>
-                <th>Registro Cronológico Técnico (Qué se hizo)</th>
-                <th>Causa Raíz</th>
-                <th>Repuestos Reemplazados</th>
-                <th>Solución Definitiva</th>
-                <th>Mensajes Publicados al Cliente</th>
-                <th>Carpeta Google Drive</th>
+              <tr style="background-color:#004B93; color:#ffffff;">
+                <th>Código</th><th>Estado</th><th>Hotline</th><th>Ticket Fábrica</th><th>Progreso</th><th>Fecha</th>
+                <th>Marca</th><th>Modelo</th><th>Título</th><th>DTC</th><th>Encargado</th><th>Taller</th>
+                <th>OR</th><th>VIN</th><th>Contacto</th><th>Historial</th><th>Causa Raíz</th><th>Solución</th>
               </tr>
             </thead>
             <tbody>${rowsHtml}</tbody>
@@ -3840,172 +3641,60 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
         </body>
         </html>
       `;
-
       const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = `Historial_Automotor_${appMode}_${new Date().toISOString().split("T")[0]}.xls`;
       a.click();
-      showToast("Historial descargado en Excel (.xls)", "success");
     }
 
     function buildWordDocumentHtml(tasksArray, docTitle) {
       const members = getAllAssignableMembers();
       const blocks = tasksArray.map(t => {
         const assignee = members.find(u => u.id === t.assigneeId);
-        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
-        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
-        const isSoporte = (t.mode || "soporte") === "soporte";
-
-        const statusColor = t.status === "Urgente" ? "#DC2626"
-          : t.status === "Completado" ? "#059669"
-          : t.status === "En Prueba" ? "#7C3AED"
-          : "#004B93";
-
-        const notesHtml = (t.notes && t.notes.length > 0)
-          ? t.notes.map(n => `<li style="margin-bottom:4px;"><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")
-          : "<li>Sin intervenciones registradas aún.</li>";
-
-        const closureHtml = (t.rootCause || t.finalSolution)
-          ? `<table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-top:8px; background:#ECFDF5;">
-               <tr><td colspan="2" style="background:#059669; color:#ffffff; font-weight:bold;">CIERRE TÉCNICO Y SOLUCIÓN DEFINITIVA</td></tr>
-               <tr><td width="30%"><strong>Causa Raíz:</strong></td><td>${escapeHtml(t.rootCause || "-")}</td></tr>
-               <tr><td><strong>Repuestos Reemplazados:</strong></td><td>${escapeHtml(t.partsReplaced || "-")}</td></tr>
-               <tr><td><strong>Solución Aplicada:</strong></td><td>${escapeHtml(t.finalSolution || "-")}</td></tr>
-             </table>`
-          : "";
-
-        const clientNotesHtml = (t.clientNotes && t.clientNotes.length > 0)
-          ? `<p style="margin-top:10px; font-weight:bold; color:#065F46;">Reportes publicados al Cliente:</p>
-             <ul>${t.clientNotes.map(n => `<li><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")}</ul>`
-          : "";
-
+        const notesHtml = (t.notes || []).map(n => `<li><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("");
         return `
-          <div style="border:1px solid #CBD5E1; padding:14px; margin-bottom:20px; page-break-inside:avoid;">
-            <table width="100%" cellspacing="0" cellpadding="4" style="border-bottom:2px solid ${statusColor}; margin-bottom:10px;">
-              <tr>
-                <td><span style="font-size:14pt; font-weight:bold; color:#0F172A;">${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</span></td>
-                <td align="right"><span style="font-weight:bold; color:${statusColor}; font-size:11pt;">ESTADO: ${escapeHtml(t.status.toUpperCase())} (${t.progress || 0}%)</span></td>
-              </tr>
-            </table>
-
-            <table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-bottom:10px;">
-              <tr>
-                <td width="25%" style="background:#F8FAFC;"><strong>Categoría:</strong></td>
-                <td width="25%">${escapeHtml(t.subcategory)}</td>
-                <td width="25%" style="background:#F8FAFC;"><strong>Fecha Apertura:</strong></td>
-                <td width="25%">${escapeHtml(t.date)} ${t.closedDate ? `(Cierre: ${escapeHtml(t.closedDate)})` : ""}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Encargado Técnico:</strong></td>
-                <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
-                <td style="background:#F8FAFC;"><strong>${isSoporte ? "Taller:" : "Sede / Aula:"}</strong></td>
-                <td>${escapeHtml(isSoporte ? (t.workshop || "-") : (t.location || "-"))}</td>
-              </tr>
-              ${isSoporte ? `
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Estado Hotline Fábrica:</strong></td>
-                <td>${escapeHtml(t.hotlineStatus || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Código Ticket Fábrica:</strong></td>
-                <td>${escapeHtml(t.factoryTicketCode || "-")}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Marca / Modelo:</strong></td>
-                <td>${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")}</td>
-                <td style="background:#F8FAFC;"><strong>Códigos DTC:</strong></td>
-                <td>${escapeHtml(t.dtcCodes || "-")}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>N° Orden (OR):</strong></td>
-                <td>${escapeHtml(t.orNumber || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Chasis / VIN:</strong></td>
-                <td>${escapeHtml(t.vehicleVin || "-")}</td>
-              </tr>
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Jefe de Taller / Mecánico:</strong></td>
-                <td>${escapeHtml(t.chiefName || "-")} / ${escapeHtml(t.mechanicName || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Contacto / Asesor:</strong></td>
-                <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
-              </tr>
-              ` : `
-              <tr>
-                <td style="background:#F8FAFC;"><strong>Grupo Técnico:</strong></td>
-                <td>${escapeHtml(t.group || "-")}</td>
-                <td style="background:#F8FAFC;"><strong>Duración:</strong></td>
-                <td>${t.hours || 0} horas</td>
-              </tr>
-              `}
-            </table>
-
-            ${t.description ? `<p style="font-size:10pt;"><strong>Descripción / Alcance Inicial:</strong> ${escapeHtml(t.description)}</p>` : ""}
-
-            <p style="font-size:10pt; font-weight:bold; color:#1E293B; margin-bottom:4px;">Registro Cronológico Técnico (Procedimientos y Hallazgos):</p>
-            <ul style="font-size:10pt; margin-top:2px;">${notesHtml}</ul>
-            ${closureHtml}
-            ${clientNotesHtml}
-            <p style="font-size:9pt; color:#475569; margin-top:8px;"><strong>Carpeta Evidencias Google Drive:</strong> ${escapeHtml(t.driveFolderUrl || "-")}</p>
+          <div style="border:1px solid #CBD5E1; padding:14px; margin-bottom:20px;">
+            <h2>${escapeHtml(t.caseId)} — ${escapeHtml(t.title)} (${escapeHtml(t.status)})</h2>
+            <p><strong>Marca/Modelo:</strong> ${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")} | <strong>VIN:</strong> ${escapeHtml(t.vehicleVin || "-")} | <strong>OR:</strong> ${escapeHtml(t.orNumber || "-")}</p>
+            <p><strong>Taller:</strong> ${escapeHtml(t.workshop || "-")} | <strong>Encargado:</strong> ${escapeHtml(assignee ? assignee.name : "-")} | <strong>Ticket Fábrica:</strong> ${escapeHtml(t.factoryTicketCode || "-")}</p>
+            <ul>${notesHtml}</ul>
           </div>
         `;
       }).join("");
-
-      return `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-        <head><meta charset="UTF-8"><title>${escapeHtml(docTitle)}</title></head>
-        <body style="font-family:Calibri, Arial, sans-serif; color:#1E293B;">
-          <h1 style="color:#004B93; border-bottom:2px solid #004B93; padding-bottom:6px;">${escapeHtml(docTitle)}</h1>
-          <p style="font-size:10pt; color:#64748B;">Automotor S.A. · Soporte Técnico Automotor · Generado el ${new Date().toLocaleString()}</p>
-          ${blocks}
-        </body>
-        </html>
-      `;
+      return `<html><head><meta charset="UTF-8"></head><body><h1>${escapeHtml(docTitle)}</h1>${blocks}</body></html>`;
     }
 
     function exportWordHistory() {
       const list = getFilteredModeTasks();
-      if (list.length === 0) {
-        showToast("No hay casos registrados en esta área para exportar", "warning");
-        return;
-      }
-      const titleArea = appMode === "soporte"
-        ? "Historial Técnico de Casos — Soporte Técnico Automotor"
-        : "Memoria Histórica de Entrenamiento Técnico";
-
-      const docHtml = buildWordDocumentHtml(list, titleArea);
-      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
+      if (list.length === 0) return;
+      const blob = new Blob(["\uFEFF" + buildWordDocumentHtml(list, "Historial Soporte Técnico Automotor")], { type: "application/msword;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `Informe_Historial_Automotor_${appMode}_${new Date().toISOString().split("T")[0]}.doc`;
+      a.download = `Historial_Automotor_${appMode}.doc`;
       a.click();
-      showToast("Historial completo descargado en Word (.doc)", "success");
     }
 
     function exportSingleCaseWord() {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
-      const docHtml = buildWordDocumentHtml([t], `Ficha Técnica de Caso — ${t.caseId}`);
-      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
+      const blob = new Blob(["\uFEFF" + buildWordDocumentHtml([t], `Ficha ${t.caseId}`)], { type: "application/msword;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `${t.caseId}_${(t.brand || t.vehicleModel || t.title).replace(/[^a-zA-Z0-9_-]/g, "_")}.doc`;
+      a.download = `${t.caseId}.doc`;
       a.click();
-      showToast(`Ficha de ${t.caseId} descargada en Word`, "success");
     }
 
     function openWorkshopsModal() {
-      renderWorkshopsList();
-      document.getElementById("workshopsModal").classList.remove("hidden");
-    }
-    function renderWorkshopsList() {
       document.getElementById("workshopsList").innerHTML = state.workshops.map(w => `
         <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
-          <div>
-            <div class="font-bold text-slate-900">${escapeHtml(w.name)}</div>
-            <div class="text-slate-500">${escapeHtml(w.city)}</div>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded ${w.type === 'Propio' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">${w.type}</span>
+          <div><div class="font-bold text-slate-900">${escapeHtml(w.name)}</div><div class="text-slate-500">${escapeHtml(w.city)}</div></div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">${w.type}</span>
         </div>
       `).join("");
+      document.getElementById("workshopsModal").classList.remove("hidden");
     }
+
     function addWorkshop(e) {
       e.preventDefault();
       state.workshops.push({
@@ -4018,8 +3707,7 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       document.getElementById("wCity").value = "";
       saveLocalAndCloud();
       syncSelectors();
-      renderWorkshopsList();
-      showToast("Taller agregado a la red", "success");
+      openWorkshopsModal();
     }
 
     function openPortalConfigModal() {
@@ -4027,11 +3715,12 @@ AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de segu
       document.getElementById("clientPortalBaseUrlInput").value = state.clientPortalBaseUrl || "";
       document.getElementById("portalConfigModal").classList.remove("hidden");
     }
+
     function savePortalBaseUrl() {
       state.clientPortalBaseUrl = document.getElementById("clientPortalBaseUrlInput").value.trim();
       saveLocalAndCloud();
       closeModal("portalConfigModal");
-      showToast("URL pública del Portal Cliente guardada", "success");
+      showToast("URL guardada", "success");
     }
 
     function closeModal(id) {

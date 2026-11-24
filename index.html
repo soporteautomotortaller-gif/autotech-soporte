@@ -2813,4 +2813,1230 @@
       }
       document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
       document.getElementById("cpClientName").value = t.clientPortal.clientName || "";
-      document.getElementById("cpClientEmail").value = t.client
+      document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
+      document.getElementById("cpAdvisorName").value = advName || t.clientPortal.advisorName || "";
+      document.getElementById("cpAdvisorWhatsapp").value = advPhone || t.clientPortal.advisorWhatsapp || "";
+      document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
+
+      switchChatChannel("general");
+      renderDetailMedia(t);
+      renderInternalNotes(t);
+      renderClientNotes(t);
+      document.getElementById("detailModal").classList.remove("hidden");
+    }
+
+    function quickSaveHotlineInfo(showMsg = false) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const newStatus = document.getElementById("dHotlineStatusSelect").value;
+      const newTicket = document.getElementById("dFactoryTicketInput").value.trim().toUpperCase();
+
+      t.hotlineStatus = newStatus;
+      t.factoryTicketCode = newTicket;
+
+      const hotlineBadge = document.getElementById("dHotlineBadge");
+      if (t.hotlineStatus || t.factoryTicketCode) {
+        hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`;
+        hotlineBadge.classList.remove("hidden");
+      } else {
+        hotlineBadge.classList.add("hidden");
+      }
+
+      if (showMsg && newTicket) {
+        if (!Array.isArray(t.notes)) t.notes = [];
+        t.notes.push({
+          date: new Date().toLocaleString(),
+          text: `${currentSession ? currentSession.name + ": " : ""}Ticket de Fábrica asociado: ${newTicket} (${newStatus || "Hotline Solicitado"}).`
+        });
+        renderInternalNotes(t);
+      }
+
+      saveLocalAndCloud();
+      renderBoard();
+      if (showMsg) showToast("Ticket de Fábrica asociado y guardado en Historial Maestro", "success");
+    }
+
+    // DOBLE CHAT INTERNO POR CASO
+    function focusCaseChat() {
+      const sec = document.getElementById("caseChatSection");
+      sec.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => document.getElementById("newChatMsgInput").focus(), 250);
+    }
+
+    function switchChatChannel(channel) {
+      if (channel === "coordinadores" && !isCoordinatorOrAdmin()) return;
+      currentChatChannel = channel;
+
+      const btnGen = document.getElementById("btnChatGeneral");
+      const btnCoord = document.getElementById("btnChatCoords");
+      const banner = document.getElementById("coordChannelBanner");
+      const notifyLbl = document.getElementById("notifyChatLabel");
+
+      if (channel === "general") {
+        btnGen.className = "px-3 py-1 rounded-lg bg-white text-indigo-900 shadow-sm transition";
+        btnCoord.className = "px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition flex items-center gap-1";
+        banner.classList.add("hidden");
+        notifyLbl.textContent = "Notificar por correo electrónico al Encargado del caso al enviar";
+      } else {
+        btnCoord.className = "px-3 py-1 rounded-lg bg-amber-500 text-slate-950 shadow-sm transition flex items-center gap-1 font-extrabold";
+        btnGen.className = "px-3 py-1 rounded-lg text-indigo-900 hover:bg-white/60 transition";
+        banner.classList.remove("hidden");
+        notifyLbl.textContent = "Notificar por correo a todos los Coordinadores y Administrador";
+      }
+
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (t) renderCaseChatMessages(t);
+    }
+
+    function renderCaseChatMessages(t) {
+      const box = document.getElementById("dChatMessagesList");
+      const msgs = currentChatChannel === "coordinadores"
+        ? (Array.isArray(t.coordinatorMessages) ? t.coordinatorMessages : [])
+        : (Array.isArray(t.chatMessages) ? t.chatMessages : []);
+
+      if (msgs.length === 0) {
+        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">${
+          currentChatChannel === "coordinadores"
+            ? "Sin mensajes privados entre coordinadores en este caso."
+            : "Sin mensajes en este caso aún. Escribe abajo para coordinar con el encargado."
+        }</p>`;
+        return;
+      }
+
+      box.innerHTML = msgs.map((m, idx) => {
+        const isMe = currentSession && m.senderId === currentSession.id;
+        const bubbleStyle = currentChatChannel === "coordinadores"
+          ? (isMe ? "bg-amber-600 text-white rounded-br-sm" : "bg-amber-50 text-slate-900 border border-amber-200 rounded-bl-sm")
+          : (isMe ? "bg-indigo-600 text-white rounded-br-sm" : "bg-slate-100 text-slate-800 border border-slate-200 rounded-bl-sm");
+
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+            <div class="max-w-[88%] rounded-2xl px-3.5 py-2.5 text-xs shadow-sm ${bubbleStyle}">
+              <div class="flex items-center justify-between gap-3 mb-1 opacity-80 text-[10px] font-bold">
+                <span>${escapeHtml(m.senderName)}</span>
+                <span>${escapeHtml(m.date)}</span>
+              </div>
+              <p class="whitespace-pre-line leading-relaxed text-xs">${escapeHtml(m.text)}</p>
+            </div>
+            ${(isMe || isCurrentAdmin()) ? `
+              <button type="button" onclick="deleteCaseChatMessage(${idx})" class="text-[10px] text-slate-400 hover:text-red-600 mt-0.5 px-1">Eliminar</button>
+            ` : ""}
+          </div>
+        `;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendCaseChatMessage(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const input = document.getElementById("newChatMsgInput");
+      const text = input.value.trim();
+      const shouldNotify = document.getElementById("notifyAssigneeOnChat").checked;
+      if (!t || !text || !currentSession) return;
+
+      const msgEntry = {
+        senderId: currentSession.id,
+        senderName: `${currentSession.name} (${currentSession.role})`,
+        date: new Date().toLocaleString(),
+        text: text
+      };
+
+      if (currentChatChannel === "coordinadores") {
+        if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
+        t.coordinatorMessages.push(msgEntry);
+      } else {
+        if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
+        t.chatMessages.push(msgEntry);
+      }
+
+      input.value = "";
+      saveLocalAndCloud();
+      renderCaseChatMessages(t);
+      renderBoard();
+      showToast("Mensaje enviado", "success");
+
+      if (shouldNotify) {
+        if (currentChatChannel === "coordinadores") {
+          const coordEmails = getAllAssignableMembers()
+            .filter(u => (u.role === "Coordinador" || u.role === "Administrador") && u.email)
+            .map(u => u.email);
+          const uniqueCoords = Array.from(new Set(coordEmails));
+          if (uniqueCoords.length > 0) {
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "sendEmail",
+                to: uniqueCoords[0],
+                cc: uniqueCoords.slice(1).join(","),
+                subject: `[Soporte Técnico Automotor · Coordinadores] Mensaje en ${t.caseId}`,
+                body: `Mensaje en el Grupo Privado de Coordinadores sobre el caso ${t.caseId}:\n\nRemitente: ${currentSession.name}\nMensaje: "${text}"\n\nTaller: ${t.workshop || "-"} | Estado: ${t.status}`
+              })
+            }).catch(() => {});
+          }
+        } else {
+          const assignee = getAllAssignableMembers().find(u => u.id === t.assigneeId);
+          if (assignee && assignee.email) {
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "sendEmail",
+                to: assignee.email,
+                subject: `[Soporte Técnico Automotor] Nuevo mensaje en ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title})`,
+                body: `Hola ${assignee.name},\n\n${currentSession.name} te ha enviado un mensaje interno sobre el caso ${t.caseId}:\n\n"${text}"\n\nDatos del caso:\n• Título: ${t.title}\n• Marca/Modelo: ${t.brand || "-"} ${t.vehicleModel || ""}\n• Taller: ${t.workshop || "-"}\n• Estado actual: ${t.status} (${t.progress || 0}%)\n\nIngresa a Soporte Técnico Automotor para responder directamente en el chat del caso.`
+              })
+            }).catch(() => {});
+          }
+        }
+      }
+    }
+
+    function deleteCaseChatMessage(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      if (!confirm("¿Eliminar este mensaje del chat?")) return;
+      if (currentChatChannel === "coordinadores") {
+        t.coordinatorMessages.splice(idx, 1);
+      } else {
+        t.chatMessages.splice(idx, 1);
+      }
+      saveLocalAndCloud();
+      renderCaseChatMessages(t);
+      renderBoard();
+    }
+
+    // =========================================================================
+    // PANEL ADMINISTRADOR
+    // =========================================================================
+    function openUsersModal() {
+      if (!isCurrentAdmin()) return;
+      document.getElementById("adminIdDisplay").textContent = state.adminConfig.id;
+      document.getElementById("newAdminPassInput").value = "";
+      renderUsersModalLists();
+      document.getElementById("usersModal").classList.remove("hidden");
+    }
+
+    function renderUsersModalLists() {
+      const pendingBox = document.getElementById("pendingUsersList");
+      const pending = state.pendingUsers || [];
+      if (pending.length === 0) {
+        pendingBox.innerHTML = `<p class="text-xs text-slate-400 bg-slate-50 p-3 rounded-xl border border-slate-200">No hay solicitudes pendientes de aprobación.</p>`;
+      } else {
+        pendingBox.innerHTML = pending.map(u => `
+          <div class="p-3 rounded-xl bg-amber-50 border border-amber-300 text-xs flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-bold text-slate-900">${escapeHtml(u.name)} <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Correo Verificado</span></div>
+              <div class="text-slate-600">${escapeHtml(u.email)} · Solicitado: ${escapeHtml(u.requestedAt || "")}</div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="approvePendingUser('${u.id}', 'Encargado')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Aceptar Encargado</button>
+              <button type="button" onclick="approvePendingUser('${u.id}', 'Coordinador')" class="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold">Aceptar Coordinador</button>
+              <button type="button" onclick="rejectPendingUser('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Rechazar</button>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      const activeBox = document.getElementById("usersList");
+      const active = state.users || [];
+      if (active.length === 0) {
+        activeBox.innerHTML = `<p class="text-xs text-slate-400">Aún no hay encargados aprobados.</p>`;
+      } else {
+        activeBox.innerHTML = active.map(u => `
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-bold text-slate-900">${escapeHtml(u.name)}</div>
+              <div class="text-slate-500">${escapeHtml(u.email)} · Clave actual: <span class="font-mono font-bold text-slate-700">${escapeHtml(u.password)}</span></div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              <select onchange="changeUserRole('${u.id}', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 bg-white font-bold text-[11px]">
+                <option value="Encargado" ${u.role === "Encargado" ? "selected" : ""}>Encargado</option>
+                <option value="Coordinador" ${u.role === "Coordinador" ? "selected" : ""}>Coordinador</option>
+              </select>
+              <button type="button" onclick="adminChangeUserPassword('${u.id}')" class="px-2.5 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold">Cambiar Clave</button>
+              <button type="button" onclick="removeUser('${u.id}')" class="px-2.5 py-1 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold">Eliminar</button>
+            </div>
+          </div>
+        `).join("");
+      }
+    }
+
+    function approvePendingUser(pendingId, assignedRole) {
+      const idx = state.pendingUsers.findIndex(u => u.id === pendingId);
+      if (idx === -1) return;
+      const user = state.pendingUsers.splice(idx, 1)[0];
+      user.role = assignedRole;
+      state.users.push(user);
+
+      saveLocalAndCloud();
+      updatePendingBadge();
+      syncSelectors();
+      renderUsersModalLists();
+      showToast(`${user.name} aprobado como ${assignedRole}`, "success");
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendEmail",
+          to: user.email,
+          subject: `[Soporte Técnico Automotor] Acceso Aprobado (${assignedRole})`,
+          body: `Hola ${user.name},\n\nTu solicitud de acceso a Soporte Técnico Automotor ha sido aprobada por el Administrador con el rol de ${assignedRole}.\n\nYa puedes ingresar con tu correo corporativo (${user.email}) y la contraseña que registraste.`
+        })
+      }).catch(() => {});
+    }
+
+    function rejectPendingUser(pendingId) {
+      if (!confirm("¿Rechazar y eliminar esta solicitud de registro?")) return;
+      state.pendingUsers = state.pendingUsers.filter(u => u.id !== pendingId);
+      saveLocalAndCloud();
+      updatePendingBadge();
+      renderUsersModalLists();
+      showToast("Solicitud rechazada", "info");
+    }
+
+    function adminAddUserDirect(e) {
+      e.preventDefault();
+      const name = document.getElementById("uName").value.trim();
+      const email = document.getElementById("uEmail").value.trim().toLowerCase();
+      const password = document.getElementById("uPass").value.trim();
+      const role = document.getElementById("uRole").value;
+
+      if (state.users.some(u => u.email.toLowerCase() === email)) {
+        showToast("Ese correo ya existe en el equipo", "warning");
+        return;
+      }
+
+      state.users.push({
+        id: "u_" + Date.now(),
+        name,
+        email,
+        password,
+        role
+      });
+      document.getElementById("uName").value = "";
+      document.getElementById("uEmail").value = "";
+      document.getElementById("uPass").value = "";
+      saveLocalAndCloud();
+      syncSelectors();
+      renderUsersModalLists();
+      showToast(`${name} agregado como ${role}`, "success");
+    }
+
+    function changeUserRole(userId, newRole) {
+      const u = state.users.find(x => x.id === userId);
+      if (!u) return;
+      u.role = newRole;
+      saveLocalAndCloud();
+      syncSelectors();
+      showToast(`Rol de ${u.name} actualizado a ${newRole}`, "success");
+    }
+
+    function adminChangeUserPassword(userId) {
+      const u = state.users.find(x => x.id === userId);
+      if (!u) return;
+      const newPass = prompt(`Nueva contraseña para ${u.name} (${u.email}):`, u.password);
+      if (newPass === null) return;
+      const clean = newPass.trim();
+      if (clean.length < 4) {
+        showToast("La contraseña debe tener al menos 4 caracteres", "warning");
+        return;
+      }
+      u.password = clean;
+      saveLocalAndCloud();
+      renderUsersModalLists();
+      showToast(`Contraseña de ${u.name} actualizada`, "success");
+    }
+
+    function removeUser(id) {
+      if (!confirm("¿Eliminar este encargado del sistema?")) return;
+      state.users = state.users.filter(u => u.id !== id);
+      saveLocalAndCloud();
+      syncSelectors();
+      renderUsersModalLists();
+      showToast("Usuario eliminado", "info");
+    }
+
+    function saveNewAdminPassword() {
+      const newP = document.getElementById("newAdminPassInput").value.trim();
+      if (newP.length < 4) {
+        showToast("La contraseña de Administrador debe tener al menos 4 caracteres", "warning");
+        return;
+      }
+      state.adminConfig.pass = newP;
+      saveLocalAndCloud();
+      document.getElementById("newAdminPassInput").value = "";
+      showToast("Contraseña de Administrador actualizada correctamente", "success");
+    }
+
+    // =========================================================================
+    // FORMALIZAR CORREO, WHATSAPP ASESOR, REGISTROS Y EXPORTACIONES
+    // =========================================================================
+    function toggleFormalEmailSection() {
+      const panel = document.getElementById("formalEmailPanel");
+      const willOpen = panel.classList.contains("hidden");
+      document.getElementById("clientPortalPanel").classList.add("hidden");
+      panel.classList.toggle("hidden");
+      if (willOpen) {
+        renderFormalEmailUsers();
+        regenerateFormalEmailBody();
+      }
+    }
+
+    function renderFormalEmailUsers() {
+      const box = document.getElementById("feUsersChecklist");
+      const members = getAllAssignableMembers();
+      box.innerHTML = members.map(u => `
+        <label class="flex items-center gap-2 text-xs p-1.5 rounded-lg hover:bg-blue-50 cursor-pointer">
+          <input type="checkbox" value="${escapeHtml(u.email)}" class="fe-user-chk w-4 h-4 accent-[#004B93]" checked />
+          <div class="truncate">
+            <div class="font-bold text-slate-800 truncate">${escapeHtml(u.name)}</div>
+            <div class="text-[11px] text-slate-500 truncate">${escapeHtml(u.email)}</div>
+          </div>
+        </label>
+      `).join("");
+    }
+
+    function regenerateFormalEmailBody() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      const isSoporte = (t.mode || "soporte") === "soporte";
+      const members = getAllAssignableMembers();
+      const assignee = members.find(u => u.id === t.assigneeId);
+      const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "No especificado";
+      const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
+
+      const subject = isSoporte
+        ? `[Soporte Técnico Automotor] ${t.caseId} | ${t.brand || ""} ${t.vehicleModel || t.title} ${t.factoryTicketCode ? `[${t.factoryTicketCode}]` : ""} - ${t.status}`
+        : `[Entrenamiento Técnico] ${t.caseId} | ${t.title} - ${t.status}`;
+
+      document.getElementById("feSubject").value = subject;
+
+      const historyLines = (t.notes && t.notes.length > 0)
+        ? t.notes.map((n, i) => `${i + 1}. [${n.date}] ${n.text}`).join("\n")
+        : "Sin intervenciones registradas aún.";
+
+      let body = `Estimados,\n\nSe remite el informe formal de seguimiento técnico correspondiente al siguiente expediente:\n\n`;
+      body += `==================================================\n`;
+      body += `DATOS GENERALES DEL EXPEDIENTE\n`;
+      body += `==================================================\n`;
+      body += `• Código de Caso: ${t.caseId}\n`;
+      body += `• Asunto / Título: ${t.title}\n`;
+      body += `• Categoría: ${t.subcategory}\n`;
+      if (t.hotlineStatus || t.factoryTicketCode) {
+        body += `• Estado Hotline Fábrica: ${t.hotlineStatus || "-"} | Ticket: ${t.factoryTicketCode || "-"}\n`;
+      }
+      body += `• Estado Actual: ${t.status} (${t.progress || 0}% de progreso)\n`;
+      body += `• Fecha Apertura: ${t.date} (${getElapsedDays(t)} días)\n`;
+      body += `• Especialista Encargado: ${assignee ? assignee.name : "-"}\n`;
+
+      if (isSoporte) {
+        body += `\n==================================================\n`;
+        body += `DATOS DE LA UNIDAD Y TALLER\n`;
+        body += `==================================================\n`;
+        body += `• Taller de Origen: ${t.workshop || "-"}\n`;
+        body += `• Marca: ${t.brand || "-"}\n`;
+        body += `• Modelo de Vehículo: ${t.vehicleModel || "-"}\n`;
+        body += `• Códigos DTC: ${t.dtcCodes || "-"}\n`;
+        body += `• N° Orden de Reparación (OR): ${t.orNumber || "-"}\n`;
+        body += `• Chasis / VIN: ${t.vehicleVin || "-"}\n`;
+        body += `• Kilometraje: ${t.vehicleKm || "-"}\n`;
+        body += `• Jefe de Taller: ${t.chiefName || "-"} | Mecánico: ${t.mechanicName || "-"}\n`;
+        body += `• Asesor / Contacto Taller: ${advName} ${advPhone ? `(${advPhone})` : ""}\n`;
+      } else {
+        body += `• Grupo Técnico: ${t.group || "-"}\n`;
+        body += `• Duración: ${t.hours || 0} horas\n`;
+        body += `• Sede / Aula: ${t.location || "-"}\n`;
+      }
+
+      if (t.description) {
+        body += `\n==================================================\n`;
+        body += `ALCANCE / DESCRIPCIÓN INICIAL\n`;
+        body += `==================================================\n`;
+        body += `${t.description}\n`;
+      }
+
+      body += `\n==================================================\n`;
+      body += `REGISTRO CRONOLÓGICO DE INTERVENCIÓN E INDICACIONES\n`;
+      body += `==================================================\n`;
+      body += `${historyLines}\n`;
+
+      if (t.rootCause || t.finalSolution) {
+        body += `\n==================================================\n`;
+        body += `CONCLUSIÓN Y SOLUCIÓN APLICADA\n`;
+        body += `==================================================\n`;
+        body += `• Causa Raíz: ${t.rootCause || "-"}\n`;
+        body += `• Repuestos: ${t.partsReplaced || "-"}\n`;
+        body += `• Solución Definitiva: ${t.finalSolution || "-"}\n`;
+      }
+
+      body += `\n==================================================\n`;
+      body += `CARPETA DE EVIDENCIAS Y DOCUMENTACIÓN (GOOGLE DRIVE)\n`;
+      body += `==================================================\n`;
+      body += `${t.driveFolderUrl || "https://drive.google.com"}\n\n`;
+      body += `Atentamente,\n${currentSession ? currentSession.name : "Departamento de Soporte Técnico"}\nAutomotor S.A.`;
+
+      document.getElementById("feBody").value = body;
+    }
+
+    function getSelectedRecipientEmails() {
+      const checked = Array.from(document.querySelectorAll(".fe-user-chk:checked")).map(cb => cb.value.trim()).filter(Boolean);
+      const extras = (document.getElementById("feExtraEmails").value || "")
+        .split(",")
+        .map(s => s.trim())
+        .filter(s => s.includes("@"));
+      return Array.from(new Set([...checked, ...extras]));
+    }
+
+    function copyFormalEmailText() {
+      const subj = document.getElementById("feSubject").value;
+      const body = document.getElementById("feBody").value;
+      navigator.clipboard.writeText(`Asunto: ${subj}\n\n${body}`);
+      showToast("Informe completo copiado al portapapeles", "success");
+    }
+
+    function openInPersonalEmailClient() {
+      const recipients = getSelectedRecipientEmails();
+      const subj = encodeURIComponent(document.getElementById("feSubject").value);
+      const body = encodeURIComponent(document.getElementById("feBody").value);
+      const toStr = recipients.join(",");
+      window.location.href = `mailto:${toStr}?subject=${subj}&body=${body}`;
+    }
+
+    async function sendFormalTeamEmail() {
+      const recipients = getSelectedRecipientEmails();
+      if (recipients.length === 0) {
+        showToast("Selecciona al menos un compañero o ingresa un correo destino", "warning");
+        return;
+      }
+      const subj = document.getElementById("feSubject").value.trim();
+      const body = document.getElementById("feBody").value.trim();
+
+      showToast(`Enviando informe formal a ${recipients.length} destinatario(s)...`, "info");
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendEmail",
+            to: recipients[0],
+            cc: recipients.slice(1).join(","),
+            subject: subj,
+            body: body
+          })
+        });
+        const d = await res.json();
+        if (d.status === "ok") {
+          showToast("Informe formal enviado por correo electrónico", "success");
+        } else {
+          showToast("No se pudo enviar automáticamente; usa 'Abrir en Mi Correo Personal'", "warning");
+        }
+      } catch (err) {
+        showToast("Error de red; usa 'Abrir en Mi Correo Personal'", "warning");
+      }
+    }
+
+    function notifyAdvisorWhatsapp(customUpdateText = "") {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "Asesor").trim();
+      const rawPhone = (t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim();
+      const cleanPhone = formatWhatsappPhone(rawPhone);
+
+      if (!cleanPhone) {
+        showToast("Registra primero el teléfono del Asesor o Jefe editando el caso", "warning");
+        return;
+      }
+
+      const lastInternal = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : "Sin observaciones aún";
+      const updateDetail = customUpdateText || lastInternal;
+
+      const msg = encodeURIComponent(
+`Hola *${advName}*, te enviamos una actualización de Soporte Técnico Automotor:
+
+• *Caso:* ${t.caseId} - ${t.title}
+${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode} (${t.hotlineStatus || ""})\n` : ""}• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
+• *Taller:* ${t.workshop || "Automotor"}
+• *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
+• *Último reporte técnico:* ${updateDetail}
+• *Carpeta evidencias:* ${t.driveFolderUrl || ""}`
+      );
+
+      window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
+    }
+
+    function togglePortalSection() {
+      document.getElementById("formalEmailPanel").classList.add("hidden");
+      document.getElementById("clientPortalPanel").classList.toggle("hidden");
+    }
+
+    function getClientTrackingUrl(t) {
+      const base = (state.clientPortalBaseUrl || "").trim() || "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
+      const sep = base.includes("?") ? "&" : "?";
+      return `${base}${sep}caso=${encodeURIComponent(t.caseId)}&token=${encodeURIComponent(t.clientPortal.token)}`;
+    }
+
+    function copyClientPortalLink() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const url = getClientTrackingUrl(t);
+      navigator.clipboard.writeText(url);
+      showToast("Enlace de seguimiento del cliente copiado", "success");
+    }
+
+    async function saveClientPortalConfig(sendEmailNow = false) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      const advName = document.getElementById("cpAdvisorName").value.trim();
+      const advPhone = document.getElementById("cpAdvisorWhatsapp").value.trim();
+
+      t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
+      t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
+      t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
+      t.clientPortal.advisorName = advName;
+      t.clientPortal.advisorWhatsapp = advPhone;
+      t.advisorName = advName;
+      t.advisorWhatsapp = advPhone;
+
+      saveLocalAndCloud();
+      renderBoard();
+      renderDashboard();
+      document.getElementById("dAdvisorLine").textContent = advName
+        ? `Contacto Taller / Asesor: ${advName} ${advPhone ? `(${advPhone})` : ""}`
+        : "Contacto Taller / Asesor: Sin asignar";
+
+      if (sendEmailNow) {
+        if (!t.clientPortal.enabled) {
+          showToast("Marca la casilla 'Habilitar Portal' primero", "warning");
+          return;
+        }
+        if (!t.clientPortal.clientEmail) {
+          showToast("Ingresa el correo electrónico del cliente", "warning");
+          return;
+        }
+        await sendClientTrackingEmail(t, "Activación de Seguimiento en Tiempo Real");
+        showToast(`Correo enviado a ${t.clientPortal.clientEmail}`, "success");
+      } else {
+        showToast("Configuración del cliente guardada", "success");
+      }
+    }
+
+    async function sendClientTrackingEmail(t, updateSummary) {
+      if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
+      const link = getClientTrackingUrl(t);
+      const vehicleFull = `${t.brand || ""} ${t.vehicleModel || ""}`.trim() || t.caseId;
+      const subject = `Actualización de tu vehículo (${vehicleFull}) - Caso ${t.caseId}`;
+      const body =
+`Estimado/a ${t.clientPortal.clientName || "Cliente"},
+
+Te informamos que se ha registrado una actualización en el seguimiento técnico de tu vehículo:
+
+• Caso: ${t.caseId}
+• Vehículo: ${vehicleFull} ${t.orNumber ? `(OR: ${t.orNumber})` : ""}
+• Taller: ${t.workshop || "Automotor"}
+• Estado actual: ${t.status} (${t.progress || 0}% de avance)
+• Novedad: ${updateSummary}
+
+Puedes consultar el registro cronológico en tiempo real, fotos/videos aprobados y contactar directamente por WhatsApp a tu Asesor de Servicios (${t.clientPortal.advisorName || "Asesor Asignado"}) ingresando al siguiente enlace:
+
+${link}
+
+(Si el sistema te solicita credenciales manuales, utiliza Código: ${t.caseId} y PIN: ${t.clientPortal.token})
+
+---
+AVISO IMPORTANTE: Este es un mensaje automático generado por el sistema de seguimiento técnico de Automotor S.A. Por favor no respondas a este correo electrónico, ya que esta casilla no está habilitada para recibir mensajes.`;
+
+      return fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "sendEmail",
+          to: t.clientPortal.clientEmail,
+          subject: subject,
+          body: body
+        })
+      }).catch(() => {});
+    }
+
+    function renderClientNotes(t) {
+      const list = document.getElementById("dClientNotesList");
+      const cNotes = Array.isArray(t.clientNotes) ? t.clientNotes : [];
+      if (cNotes.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400">Aún no has publicado mensajes en el portal del cliente.</p>`;
+        return;
+      }
+      list.innerHTML = cNotes.slice().reverse().map((n, revIdx) => {
+        const realIdx = cNotes.length - 1 - revIdx;
+        return `
+          <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 text-xs space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-semibold text-emerald-800">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="editClientNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-pencil-simple"></i> Editar
+                </button>
+                <button type="button" onclick="deleteClientNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+            <p class="text-slate-900 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function addClientNote(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const txt = document.getElementById("newClientNoteText").value.trim();
+      const sendMail = document.getElementById("notifyClientOnAdd").checked;
+      if (!t || !txt) return;
+
+      if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
+      t.clientNotes.push({
+        date: new Date().toLocaleString(),
+        text: txt
+      });
+      document.getElementById("newClientNoteText").value = "";
+
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Publicado en Registro Cronológico del Cliente", "success");
+
+      if (sendMail && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
+        await sendClientTrackingEmail(t, txt);
+        showToast("Correo automático enviado al cliente", "success");
+      }
+    }
+
+    function editClientNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.clientNotes[idx]) return;
+      const updated = prompt("Editar mensaje visible para el cliente:", t.clientNotes[idx].text);
+      if (updated === null) return;
+      const clean = updated.trim();
+      if (!clean) return;
+      t.clientNotes[idx].text = clean;
+      t.clientNotes[idx].edited = true;
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Mensaje del cliente actualizado (se verá al instante en su portal)", "success");
+    }
+
+    function deleteClientNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.clientNotes[idx]) return;
+      if (!confirm("¿Eliminar este registro del Portal del Cliente?")) return;
+      t.clientNotes.splice(idx, 1);
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Registro eliminado del Portal Cliente", "info");
+    }
+
+    function renderInternalNotes(t) {
+      const list = document.getElementById("dInternalNotesList");
+      const iNotes = Array.isArray(t.notes) ? t.notes : [];
+      const isSoporte = (t.mode || "soporte") === "soporte";
+      if (iNotes.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400">Sin registros internos aún.</p>`;
+        return;
+      }
+      list.innerHTML = iNotes.slice().reverse().map((n, revIdx) => {
+        const realIdx = iNotes.length - 1 - revIdx;
+        return `
+          <div class="bg-white p-3 rounded-xl border border-slate-200/90 text-xs space-y-1.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] text-slate-400 font-semibold">${escapeHtml(n.date)} ${n.edited ? "(editado)" : ""}</span>
+              <div class="flex items-center gap-2.5">
+                ${isSoporte ? `
+                  <button type="button" onclick="sendSingleInternalNoteToAdvisor(${realIdx})" class="text-emerald-700 font-bold hover:underline flex items-center gap-0.5" title="Enviar este avance por WhatsApp al Asesor / Jefe">
+                    <i class="ph-bold ph-whatsapp-logo"></i> Avisar WhatsApp
+                  </button>
+                ` : ""}
+                <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-pencil-simple"></i> Editar
+                </button>
+                <button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline flex items-center gap-0.5">
+                  <i class="ph-bold ph-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+            <p class="text-slate-800 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function sendSingleInternalNoteToAdvisor(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      notifyAdvisorWhatsapp(t.notes[idx].text);
+    }
+
+    function addInternalNote(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const txt = document.getElementById("newInternalNoteText").value.trim();
+      const notifyAdv = document.getElementById("notifyAdvisorOnNote").checked;
+      if (!t || !txt) return;
+
+      if (!Array.isArray(t.notes)) t.notes = [];
+      const author = currentSession ? `${currentSession.name}: ` : "";
+      t.notes.push({
+        date: new Date().toLocaleString(),
+        text: author + txt
+      });
+      document.getElementById("newInternalNoteText").value = "";
+      document.getElementById("notifyAdvisorOnNote").checked = false;
+
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Guardado en Registro Cronológico Interno", "success");
+
+      if (notifyAdv) {
+        notifyAdvisorWhatsapp(txt);
+      }
+    }
+
+    function editInternalNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      const updated = prompt("Editar registro interno del taller:", t.notes[idx].text);
+      if (updated === null) return;
+      const clean = updated.trim();
+      if (!clean) return;
+      t.notes[idx].text = clean;
+      t.notes[idx].edited = true;
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Registro interno actualizado", "success");
+    }
+
+    function deleteInternalNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.notes[idx]) return;
+      if (!confirm("¿Eliminar este registro interno?")) return;
+      t.notes.splice(idx, 1);
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Registro interno eliminado", "info");
+    }
+
+    function renderDetailMedia(t) {
+      const box = document.getElementById("dMediaGallery");
+      const media = t.media || [];
+      if (media.length === 0) {
+        box.innerHTML = `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos aún. Usa "Subir Foto/PDF" para guardar directo en Drive.</p>`;
+        return;
+      }
+      box.innerHTML = media.map((m, idx) => `
+        <div class="bg-white rounded-xl p-2 border border-slate-200 space-y-1.5">
+          <a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block text-xs font-bold text-blue-600 truncate hover:underline">
+            <i class="ph-bold ph-file-image"></i> ${escapeHtml(m.name)}
+          </a>
+          <label class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 cursor-pointer">
+            <input type="checkbox" ${m.clientVisible ? "checked" : ""} onchange="toggleMediaClientVisibility(${idx}, this.checked)" class="accent-emerald-600" />
+            Visible Cliente
+          </label>
+        </div>
+      `).join("");
+    }
+
+    function toggleMediaClientVisibility(idx, isVisible) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !t.media[idx]) return;
+      t.media[idx].clientVisible = isVisible;
+      saveLocalAndCloud();
+      showToast(isVisible ? "Archivo publicado en Portal Cliente" : "Archivo ocultado al cliente", "info");
+    }
+
+    async function uploadMediaToDrive(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+
+      if (file.size > 15 * 1024 * 1024) {
+        showToast("Video pesado (>15MB): ábrelo directo en la carpeta Drive para subir sin límite", "warning");
+        window.open(t.driveFolderUrl || "https://drive.google.com", "_blank");
+        return;
+      }
+
+      showToast("Subiendo archivo a Google Drive...", "info");
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result.split(",")[1];
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              action: "uploadFile",
+              folderId: t.driveFolderId,
+              fileName: file.name,
+              mimeType: file.type,
+              base64: base64
+            })
+          });
+          const d = await res.json();
+          if (d.status === "ok") {
+            if (!t.media) t.media = [];
+            t.media.push({
+              name: file.name,
+              type: file.type.startsWith("image/") ? "image" : "file",
+              url: d.fileUrl,
+              viewUrl: d.viewUrl,
+              clientVisible: false
+            });
+            saveLocalAndCloud();
+            renderDetailMedia(t);
+            showToast("Archivo guardado en la carpeta del caso", "success");
+          }
+        } catch (err) {
+          showToast("Error al subir archivo", "warning");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateTaskStatusQuick(val) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const prevStatus = t.status;
+      t.status = val;
+      if (val === "Completado") {
+        t.progress = 100;
+        if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
+        document.getElementById("dProgressRange").value = 100;
+        document.getElementById("dProgressVal").textContent = "100%";
+      }
+      saveLocalAndCloud();
+      renderAll();
+      if (val === "Completado" && prevStatus !== "Completado" && !t.finalSolution) {
+        openClosureModal(t.id);
+      }
+    }
+
+    function updateTaskProgressQuick(val) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      t.progress = Number(val);
+      document.getElementById("dProgressVal").textContent = val + "%";
+      saveLocalAndCloud();
+      renderAll();
+    }
+
+    function editCurrentTask() {
+      closeModal("detailModal");
+      openTaskModal("", currentDetailId);
+    }
+
+    function deleteCurrentTask() {
+      if (!isCurrentAdmin()) return;
+      if (!confirm("¿Eliminar este registro permanentemente?")) return;
+      state.tasks = state.tasks.filter(x => x.id !== currentDetailId);
+      saveLocalAndCloud();
+      closeModal("detailModal");
+      renderAll();
+      showToast("Registro eliminado", "info");
+    }
+
+    function shareInternalWhatsapp() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\n${t.factoryTicketCode ? `Ticket Fábrica: ${t.factoryTicketCode}\n` : ""}Taller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)\nCarpeta Drive: ${t.driveFolderUrl}`);
+      window.open(`https://wa.me/?text=${msg}`, "_blank");
+    }
+
+    function exportExcelHistory() {
+      const list = getFilteredModeTasks();
+      if (list.length === 0) {
+        showToast("No hay casos registrados en esta área para exportar", "warning");
+        return;
+      }
+
+      const members = getAllAssignableMembers();
+      const titleArea = appMode === "soporte" ? "Historial de Casos — Soporte Técnico Automotor" : "Historial de Entrenamiento Técnico";
+      let rowsHtml = list.map(t => {
+        const assignee = members.find(u => u.id === t.assigneeId);
+        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
+        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
+        const historyFormatted = (t.notes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
+        const clientHistoryFormatted = (t.clientNotes || []).map(n => `[${n.date}] ${n.text}`).join("<br/>");
+
+        return `
+          <tr>
+            <td style="font-weight:bold;">${escapeHtml(t.caseId)}</td>
+            <td>${escapeHtml(t.status)}</td>
+            <td>${escapeHtml(t.hotlineStatus || "-")}</td>
+            <td>${escapeHtml(t.factoryTicketCode || "-")}</td>
+            <td>${t.progress || 0}%</td>
+            <td>${escapeHtml(t.date)}</td>
+            <td>${escapeHtml(t.closedDate || "-")}</td>
+            <td>${escapeHtml(t.brand || "-")}</td>
+            <td>${escapeHtml(t.vehicleModel || "-")}</td>
+            <td>${escapeHtml(t.title)}</td>
+            <td>${escapeHtml(t.subcategory)}</td>
+            <td>${escapeHtml(t.dtcCodes || "-")}</td>
+            <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
+            <td>${escapeHtml(t.workshop || "-")}</td>
+            <td>${escapeHtml(t.chiefName || "-")}</td>
+            <td>${escapeHtml(t.mechanicName || "-")}</td>
+            <td>${escapeHtml(t.orNumber || "-")}</td>
+            <td>${escapeHtml(t.vehicleVin || "-")}</td>
+            <td>${escapeHtml(t.vehicleKm || "-")}</td>
+            <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
+            <td>${escapeHtml(t.description || "-")}</td>
+            <td>${historyFormatted || "Sin registros"}</td>
+            <td>${escapeHtml(t.rootCause || "-")}</td>
+            <td>${escapeHtml(t.partsReplaced || "-")}</td>
+            <td>${escapeHtml(t.finalSolution || "-")}</td>
+            <td>${clientHistoryFormatted || "-"}</td>
+            <td>${escapeHtml(t.driveFolderUrl || "-")}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const excelDoc = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+          <h2>${titleArea} - Automotor S.A.</h2>
+          <p>Fecha de emisión: ${new Date().toLocaleString()} | Total de registros: ${list.length}</p>
+          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; font-size:11pt;">
+            <thead>
+              <tr style="background-color:#004B93; color:#ffffff; font-weight:bold;">
+                <th>Código</th>
+                <th>Estado / Prioridad</th>
+                <th>Estado Hotline Fábrica</th>
+                <th>Ticket Fábrica</th>
+                <th>Progreso</th>
+                <th>Fecha Apertura</th>
+                <th>Fecha Cierre</th>
+                <th>Marca</th>
+                <th>Modelo Vehículo</th>
+                <th>Título del Caso</th>
+                <th>Categoría</th>
+                <th>Códigos DTC</th>
+                <th>Encargado Técnico</th>
+                <th>Taller</th>
+                <th>Jefe de Taller</th>
+                <th>Mecánico a Cargo</th>
+                <th>N° Orden (OR)</th>
+                <th>Chasis / VIN</th>
+                <th>Kilometraje</th>
+                <th>Asesor / Contacto</th>
+                <th>Descripción Inicial</th>
+                <th>Registro Cronológico Técnico (Qué se hizo)</th>
+                <th>Causa Raíz</th>
+                <th>Repuestos Reemplazados</th>
+                <th>Solución Definitiva</th>
+                <th>Mensajes Publicados al Cliente</th>
+                <th>Carpeta Google Drive</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Historial_Automotor_${appMode}_${new Date().toISOString().split("T")[0]}.xls`;
+      a.click();
+      showToast("Historial descargado en Excel (.xls)", "success");
+    }
+
+    function buildWordDocumentHtml(tasksArray, docTitle) {
+      const members = getAllAssignableMembers();
+      const blocks = tasksArray.map(t => {
+        const assignee = members.find(u => u.id === t.assigneeId);
+        const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "-";
+        const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "-";
+        const isSoporte = (t.mode || "soporte") === "soporte";
+
+        const statusColor = t.status === "Urgente" ? "#DC2626"
+          : t.status === "Completado" ? "#059669"
+          : t.status === "En Prueba" ? "#7C3AED"
+          : "#004B93";
+
+        const notesHtml = (t.notes && t.notes.length > 0)
+          ? t.notes.map(n => `<li style="margin-bottom:4px;"><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")
+          : "<li>Sin intervenciones registradas aún.</li>";
+
+        const closureHtml = (t.rootCause || t.finalSolution)
+          ? `<table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-top:8px; background:#ECFDF5;">
+               <tr><td colspan="2" style="background:#059669; color:#ffffff; font-weight:bold;">CIERRE TÉCNICO Y SOLUCIÓN DEFINITIVA</td></tr>
+               <tr><td width="30%"><strong>Causa Raíz:</strong></td><td>${escapeHtml(t.rootCause || "-")}</td></tr>
+               <tr><td><strong>Repuestos Reemplazados:</strong></td><td>${escapeHtml(t.partsReplaced || "-")}</td></tr>
+               <tr><td><strong>Solución Aplicada:</strong></td><td>${escapeHtml(t.finalSolution || "-")}</td></tr>
+             </table>`
+          : "";
+
+        const clientNotesHtml = (t.clientNotes && t.clientNotes.length > 0)
+          ? `<p style="margin-top:10px; font-weight:bold; color:#065F46;">Reportes publicados al Cliente:</p>
+             <ul>${t.clientNotes.map(n => `<li><strong>[${escapeHtml(n.date)}]</strong> ${escapeHtml(n.text)}</li>`).join("")}</ul>`
+          : "";
+
+        return `
+          <div style="border:1px solid #CBD5E1; padding:14px; margin-bottom:20px; page-break-inside:avoid;">
+            <table width="100%" cellspacing="0" cellpadding="4" style="border-bottom:2px solid ${statusColor}; margin-bottom:10px;">
+              <tr>
+                <td><span style="font-size:14pt; font-weight:bold; color:#0F172A;">${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</span></td>
+                <td align="right"><span style="font-weight:bold; color:${statusColor}; font-size:11pt;">ESTADO: ${escapeHtml(t.status.toUpperCase())} (${t.progress || 0}%)</span></td>
+              </tr>
+            </table>
+
+            <table width="100%" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; font-size:10pt; margin-bottom:10px;">
+              <tr>
+                <td width="25%" style="background:#F8FAFC;"><strong>Categoría:</strong></td>
+                <td width="25%">${escapeHtml(t.subcategory)}</td>
+                <td width="25%" style="background:#F8FAFC;"><strong>Fecha Apertura:</strong></td>
+                <td width="25%">${escapeHtml(t.date)} ${t.closedDate ? `(Cierre: ${escapeHtml(t.closedDate)})` : ""}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Encargado Técnico:</strong></td>
+                <td>${escapeHtml(assignee ? assignee.name : "-")}</td>
+                <td style="background:#F8FAFC;"><strong>${isSoporte ? "Taller:" : "Sede / Aula:"}</strong></td>
+                <td>${escapeHtml(isSoporte ? (t.workshop || "-") : (t.location || "-"))}</td>
+              </tr>
+              ${isSoporte ? `
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Estado Hotline Fábrica:</strong></td>
+                <td>${escapeHtml(t.hotlineStatus || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Código Ticket Fábrica:</strong></td>
+                <td>${escapeHtml(t.factoryTicketCode || "-")}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Marca / Modelo:</strong></td>
+                <td>${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")}</td>
+                <td style="background:#F8FAFC;"><strong>Códigos DTC:</strong></td>
+                <td>${escapeHtml(t.dtcCodes || "-")}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>N° Orden (OR):</strong></td>
+                <td>${escapeHtml(t.orNumber || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Chasis / VIN:</strong></td>
+                <td>${escapeHtml(t.vehicleVin || "-")}</td>
+              </tr>
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Jefe de Taller / Mecánico:</strong></td>
+                <td>${escapeHtml(t.chiefName || "-")} / ${escapeHtml(t.mechanicName || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Contacto / Asesor:</strong></td>
+                <td>${escapeHtml(advName)} (${escapeHtml(advPhone)})</td>
+              </tr>
+              ` : `
+              <tr>
+                <td style="background:#F8FAFC;"><strong>Grupo Técnico:</strong></td>
+                <td>${escapeHtml(t.group || "-")}</td>
+                <td style="background:#F8FAFC;"><strong>Duración:</strong></td>
+                <td>${t.hours || 0} horas</td>
+              </tr>
+              `}
+            </table>
+
+            ${t.description ? `<p style="font-size:10pt;"><strong>Descripción / Alcance Inicial:</strong> ${escapeHtml(t.description)}</p>` : ""}
+
+            <p style="font-size:10pt; font-weight:bold; color:#1E293B; margin-bottom:4px;">Registro Cronológico Técnico (Procedimientos y Hallazgos):</p>
+            <ul style="font-size:10pt; margin-top:2px;">${notesHtml}</ul>
+            ${closureHtml}
+            ${clientNotesHtml}
+            <p style="font-size:9pt; color:#475569; margin-top:8px;"><strong>Carpeta Evidencias Google Drive:</strong> ${escapeHtml(t.driveFolderUrl || "-")}</p>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"><title>${escapeHtml(docTitle)}</title></head>
+        <body style="font-family:Calibri, Arial, sans-serif; color:#1E293B;">
+          <h1 style="color:#004B93; border-bottom:2px solid #004B93; padding-bottom:6px;">${escapeHtml(docTitle)}</h1>
+          <p style="font-size:10pt; color:#64748B;">Automotor S.A. · Soporte Técnico Automotor · Generado el ${new Date().toLocaleString()}</p>
+          ${blocks}
+        </body>
+        </html>
+      `;
+    }
+
+    function exportWordHistory() {
+      const list = getFilteredModeTasks();
+      if (list.length === 0) {
+        showToast("No hay casos registrados en esta área para exportar", "warning");
+        return;
+      }
+      const titleArea = appMode === "soporte"
+        ? "Historial Técnico de Casos — Soporte Técnico Automotor"
+        : "Memoria Histórica de Entrenamiento Técnico";
+
+      const docHtml = buildWordDocumentHtml(list, titleArea);
+      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Informe_Historial_Automotor_${appMode}_${new Date().toISOString().split("T")[0]}.doc`;
+      a.click();
+      showToast("Historial completo descargado en Word (.doc)", "success");
+    }
+
+    function exportSingleCaseWord() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const docHtml = buildWordDocumentHtml([t], `Ficha Técnica de Caso — ${t.caseId}`);
+      const blob = new Blob(["\uFEFF" + docHtml], { type: "application/msword;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${t.caseId}_${(t.brand || t.vehicleModel || t.title).replace(/[^a-zA-Z0-9_-]/g, "_")}.doc`;
+      a.click();
+      showToast(`Ficha de ${t.caseId} descargada en Word`, "success");
+    }
+
+    function openWorkshopsModal() {
+      renderWorkshopsList();
+      document.getElementById("workshopsModal").classList.remove("hidden");
+    }
+    function renderWorkshopsList() {
+      document.getElementById("workshopsList").innerHTML = state.workshops.map(w => `
+        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between">
+          <div>
+            <div class="font-bold text-slate-900">${escapeHtml(w.name)}</div>
+            <div class="text-slate-500">${escapeHtml(w.city)}</div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded ${w.type === 'Propio' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">${w.type}</span>
+        </div>
+      `).join("");
+    }
+    function addWorkshop(e) {
+      e.preventDefault();
+      state.workshops.push({
+        id: "w_" + Date.now(),
+        name: document.getElementById("wName").value.trim(),
+        city: document.getElementById("wCity").value.trim(),
+        type: document.getElementById("wType").value
+      });
+      document.getElementById("wName").value = "";
+      document.getElementById("wCity").value = "";
+      saveLocalAndCloud();
+      syncSelectors();
+      renderWorkshopsList();
+      showToast("Taller agregado a la red", "success");
+    }
+
+    function openPortalConfigModal() {
+      if (!isCurrentAdmin()) return;
+      document.getElementById("clientPortalBaseUrlInput").value = state.clientPortalBaseUrl || "";
+      document.getElementById("portalConfigModal").classList.remove("hidden");
+    }
+    function savePortalBaseUrl() {
+      state.clientPortalBaseUrl = document.getElementById("clientPortalBaseUrlInput").value.trim();
+      saveLocalAndCloud();
+      closeModal("portalConfigModal");
+      showToast("URL pública del Portal Cliente guardada", "success");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+  </script>
+</body>
+</html>

@@ -944,7 +944,10 @@
               </h4>
               <p class="text-[11px] text-slate-500">Marca "Visible Cliente" solo en las imágenes que desees mostrar en el portal del cliente.</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" id="btnSyncMediaDrive" onclick="syncAllCaseMediaToDrive()" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-amber-900 flex items-center gap-1.5" title="Guardar todas las fotos de este caso en su carpeta de Google Drive">
+                <i class="ph-bold ph-cloud-arrow-up text-amber-600"></i> Sincronizar a Drive
+              </button>
               <a id="dDriveFolderBtn" href="https://drive.google.com" target="_blank" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5">
                 <i class="ph-bold ph-folder-open text-amber-500"></i> Abrir Drive
               </a>
@@ -2646,6 +2649,98 @@
       document.getElementById("taskModal").classList.remove("hidden");
     }
 
+    // Sube un archivo Base64 a una carpeta específica de Google Drive
+    async function uploadSingleMediaItemToDrive(taskObj, mediaItem) {
+      if (!mediaItem || !mediaItem.url || !mediaItem.url.startsWith("data:")) return false;
+      const mimeMatch = mediaItem.url.match(/^data:([^;]+);base64,/);
+      const mimeType = mimeMatch ? mimeMatch[1] : "image/jpeg";
+      const folderTitle = `${taskObj.caseId} | ${taskObj.brand ? taskObj.brand + " - " : ""}${taskObj.title}`;
+
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "uploadFile",
+          folderId: taskObj.driveFolderId || "",
+          folderName: folderTitle,
+          fileName: mediaItem.name || ("EVIDENCIA_" + Date.now() + ".jpg"),
+          mimeType: mimeType,
+          base64Data: mediaItem.url
+        })
+      });
+      const d = await res.json();
+      if (d && d.status === "ok") {
+        if (d.folderId) taskObj.driveFolderId = d.folderId;
+        if (d.folderUrl) taskObj.driveFolderUrl = d.folderUrl;
+        mediaItem.driveFileId = d.fileId;
+        mediaItem.viewUrl = d.fileUrl;
+        mediaItem.syncedToDrive = true;
+        return true;
+      }
+      return false;
+    }
+
+    // Sube en segundo plano todas las fotos pendientes de un caso a su carpeta de Google Drive
+    async function syncAllCaseMediaToDrive(specificTaskId = null) {
+      const targetId = specificTaskId || currentDetailId;
+      const t = state.tasks.find(x => x.id === targetId);
+      if (!t) return;
+
+      const mediaList = t.media || [];
+      if (mediaList.length === 0) {
+        if (!specificTaskId) showToast("Este caso no tiene fotos para subir a Drive", "info");
+        return;
+      }
+
+      const btn = document.getElementById("btnSyncMediaDrive");
+      if (btn && !specificTaskId) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="ph-bold ph-spinner-gap animate-spin"></i> Subiendo a Drive...`;
+      } else if (!specificTaskId) {
+        showToast("Subiendo fotos a la carpeta del caso en Google Drive...", "info");
+      }
+
+      try {
+        if (!t.driveFolderId) {
+          const folderTitle = `${t.caseId} | ${t.brand ? t.brand + " - " : ""}${t.title}`;
+          const fRes = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "createFolder", folderName: folderTitle })
+          });
+          const fData = await fRes.json();
+          if (fData && fData.status === "ok") {
+            t.driveFolderId = fData.folderId;
+            t.driveFolderUrl = fData.folderUrl;
+          }
+        }
+
+        let uploadedCount = 0;
+        for (let i = 0; i < mediaList.length; i++) {
+          if (!mediaList[i].syncedToDrive && mediaList[i].url && mediaList[i].url.startsWith("data:")) {
+            const ok = await uploadSingleMediaItemToDrive(t, mediaList[i]);
+            if (ok) uploadedCount++;
+          }
+        }
+
+        saveLocalAndCloud();
+        if (currentDetailId === t.id && !document.getElementById("detailModal").classList.contains("hidden")) {
+          document.getElementById("dDriveFolderBtn").href = t.driveFolderUrl || "https://drive.google.com";
+          renderDetailMedia(t);
+        }
+        if (uploadedCount > 0) {
+          showToast(`${uploadedCount} archivo(s) guardado(s) en la carpeta de Google Drive del caso`, "success");
+        } else if (!specificTaskId) {
+          showToast("Todas las fotos ya estaban respaldadas en Google Drive", "info");
+        }
+      } catch (err) {
+        if (!specificTaskId) showToast("Error al sincronizar archivos con Google Drive", "warning");
+      } finally {
+        if (btn && !specificTaskId) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="ph-bold ph-cloud-arrow-up text-amber-600"></i> Sincronizar a Drive`;
+        }
+      }
+    }
+
     async function saveTask(e) {
       e.preventDefault();
       const editId = document.getElementById("editTaskId").value;
@@ -2734,7 +2829,8 @@
             type: "image",
             url: ev.url,
             viewUrl: ev.viewUrl || ev.url,
-            clientVisible: false
+            clientVisible: false,
+            syncedToDrive: false
           }));
           fetch(`${FIREBASE_DB_URL}/hotlineRequests/${reqObj.id}.json`, {
             method: "PATCH",
@@ -2806,20 +2902,26 @@
       closeModal("taskModal");
       renderAll();
 
-      showToast(`Caso ${caseId} creado correctamente`, "success");
+      showToast(`Caso ${caseId} creado. Creando carpeta y respaldando fotos en Drive...`, "success");
 
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
-        });
-        const d = await res.json();
-        if (d.status === "ok") {
-          newTask.driveFolderId = d.folderId;
-          newTask.driveFolderUrl = d.folderUrl;
-          saveLocalAndCloud();
-        }
-      } catch (err) {}
+      // Crea la carpeta en Drive y sube automáticamente todas las fotos heredadas de Hotline
+      (async () => {
+        try {
+          const res = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "createFolder", folderName: `${caseId} | ${finalBrand ? finalBrand + " - " : ""}${newTask.title}` })
+          });
+          const d = await res.json();
+          if (d.status === "ok") {
+            newTask.driveFolderId = d.folderId;
+            newTask.driveFolderUrl = d.folderUrl;
+            saveLocalAndCloud();
+            if (newTask.media && newTask.media.length > 0) {
+              await syncAllCaseMediaToDrive(newTask.id);
+            }
+          }
+        } catch (err) {}
+      })();
 
       const assignee = members.find(u => u.id === newTask.assigneeId);
       if (assignee && assignee.email) {
@@ -3480,7 +3582,6 @@
       }
     }
 
-    // Abre WhatsApp Web en una pestaña nueva sin reemplazar tu sesión abierta
     function openWhatsAppWeb(phone, messageText) {
       const cleanPhone = formatWhatsappPhone(phone);
       const encoded = encodeURIComponent(messageText);
@@ -3537,7 +3638,6 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       openWhatsAppWeb(rawPhone, text);
     }
 
-    // Mensaje de WhatsApp al Cliente SIN porcentaje de avance
     function notifyClientWhatsapp() {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
@@ -3618,7 +3718,6 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       }
     }
 
-    // Correo de actualización al Cliente SIN porcentaje de avance
     async function sendClientTrackingEmail(t, updateSummary) {
       if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
       const link = getClientTrackingUrl(t);
@@ -3774,11 +3873,20 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
             ? `<img src="${m.url}" onclick="openImagePreviewWindow('${m.url}')" class="w-full h-24 object-cover rounded-lg cursor-pointer" />`
             : `<a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block text-xs font-bold text-blue-600 truncate hover:underline"><i class="ph-bold ph-file-image"></i> ${escapeHtml(m.name)}</a>`
           }
-          <div class="text-[11px] font-bold text-slate-700 truncate">${escapeHtml(m.name)}</div>
-          <label class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 cursor-pointer">
-            <input type="checkbox" ${m.clientVisible ? "checked" : ""} onchange="toggleMediaClientVisibility(${idx}, this.checked)" class="accent-emerald-600" />
-            Visible Cliente
-          </label>
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-[11px] font-bold text-slate-700 truncate">${escapeHtml(m.name)}</span>
+            <a href="${m.url}" download="${escapeHtml(m.name || 'archivo.jpg')}" class="text-slate-400 hover:text-[#004B93] shrink-0" title="Descargar archivo"><i class="ph-bold ph-download-simple"></i></a>
+          </div>
+          <div class="flex items-center justify-between gap-1">
+            <label class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 cursor-pointer">
+              <input type="checkbox" ${m.clientVisible ? "checked" : ""} onchange="toggleMediaClientVisibility(${idx}, this.checked)" class="accent-emerald-600" />
+              Visible Cliente
+            </label>
+            ${m.syncedToDrive
+              ? `<span class="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5" title="Guardado en Google Drive"><i class="ph-bold ph-check-circle"></i> Drive</span>`
+              : `<span class="text-[10px] font-semibold text-amber-600" title="Pendiente de subir a Drive">Local</span>`
+            }
+          </div>
         </div>
       `).join("");
     }
@@ -3797,18 +3905,32 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       if (!t) return;
 
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         if (!t.media) t.media = [];
-        t.media.push({
+        const newMediaItem = {
           name: file.name,
           type: file.type.startsWith("image/") ? "image" : "file",
           url: reader.result,
           viewUrl: reader.result,
-          clientVisible: false
-        });
+          clientVisible: false,
+          syncedToDrive: false
+        };
+        t.media.push(newMediaItem);
         saveLocalAndCloud();
         renderDetailMedia(t);
-        showToast("Archivo adjuntado al expediente", "success");
+        showToast("Subiendo archivo a la carpeta del caso en Google Drive...", "info");
+
+        const ok = await uploadSingleMediaItemToDrive(t, newMediaItem);
+        saveLocalAndCloud();
+        if (currentDetailId === t.id) {
+          document.getElementById("dDriveFolderBtn").href = t.driveFolderUrl || "https://drive.google.com";
+          renderDetailMedia(t);
+        }
+        if (ok) {
+          showToast("Archivo guardado en Google Drive correctamente", "success");
+        } else {
+          showToast("Guardado en el caso (usa 'Sincronizar a Drive' si no subió)", "warning");
+        }
       };
       reader.readAsDataURL(file);
     }

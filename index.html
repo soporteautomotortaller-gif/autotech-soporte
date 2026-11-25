@@ -610,16 +610,28 @@
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Mecánico a Cargo</label>
               <input type="text" id="tMechanicName" placeholder="Nombre del Mecánico" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-bold text-teal-900 mb-1">WhatsApp / Teléfono del Mecánico (Opcional)</label>
+              <input type="text" id="tMechanicWhatsapp" placeholder="Ej: 0981123456" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
           </div>
 
           <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[11px] font-bold text-emerald-900 mb-1">Asesor / Contacto Encargado *</label>
-              <input type="text" id="tAdvisorName" placeholder="Ej: Reinerio Pérez" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <input type="text" id="tAdvisorName" placeholder="Ej: Horacio Alvarenga" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp / Teléfono *</label>
-              <input type="text" id="tAdvisorWhatsapp" placeholder="Ej: 0993541374 o 595993541374" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp Asesor / Jefe *</label>
+              <input type="text" id="tAdvisorWhatsapp" placeholder="Ej: 0981380202" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-sky-900 mb-1">Nombre del Cliente (Opcional)</label>
+              <input type="text" id="tClientName" placeholder="Ej: Sr. Carlos Benítez" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-sky-900 mb-1">WhatsApp del Cliente (Opcional)</label>
+              <input type="text" id="tClientWhatsapp" placeholder="Ej: 0971555444" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
           </div>
         </div>
@@ -689,13 +701,20 @@
             <div id="dStaffLine" class="text-slate-700 font-semibold hidden"></div>
             <div id="dDtcLine" class="text-indigo-800 font-mono font-bold hidden"></div>
             <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
+            <div id="dClientLine" class="text-sky-800 font-bold hidden"></div>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5 shadow-sm transition">
-              <i class="ph-bold ph-whatsapp-logo text-base"></i> Avisar al Asesor / Jefe
+            <button id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5 shadow-sm transition" title="Enviar avance completo por WhatsApp Web al Asesor / Jefe">
+              <i class="ph-bold ph-whatsapp-logo text-base"></i> Asesor / Jefe
             </button>
-            <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold flex items-center gap-1.5">
-              <i class="ph-bold ph-share-network text-base"></i> Compartir Taller
+            <button id="btnNotifyMechanicHeader" onclick="notifyMechanicWhatsapp()" class="px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold flex items-center gap-1.5 shadow-sm transition" title="Enviar indicación técnica por WhatsApp Web al Mecánico">
+              <i class="ph-bold ph-wrench text-base"></i> Mecánico
+            </button>
+            <button id="btnNotifyClientHeader" onclick="notifyClientWhatsapp()" class="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold flex items-center gap-1.5 shadow-sm transition" title="Enviar estado por WhatsApp Web al Cliente">
+              <i class="ph-bold ph-user text-base"></i> Cliente
+            </button>
+            <button onclick="shareInternalWhatsapp()" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold flex items-center gap-1.5" title="Compartir resumen en WhatsApp Web">
+              <i class="ph-bold ph-share-network text-base"></i> Compartir
             </button>
           </div>
         </div>
@@ -815,10 +834,14 @@
               <input type="email" id="cpClientEmail" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
             <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Cliente</label>
+              <input type="text" id="cpClientWhatsapp" placeholder="Ej: 0971555444" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+            </div>
+            <div>
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Asesor de Servicios Asignado *</label>
               <input type="text" id="cpAdvisorName" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
-            <div>
+            <div class="sm:col-span-2">
               <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Asesor *</label>
               <input type="text" id="cpAdvisorWhatsapp" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
             </div>
@@ -949,7 +972,7 @@
             </div>
             <label id="notifyAdvisorCheckboxRow" class="inline-flex items-center gap-2 text-xs text-emerald-800 font-bold cursor-pointer">
               <input type="checkbox" id="notifyAdvisorOnNote" class="w-4 h-4 accent-emerald-600" />
-              <i class="ph-bold ph-whatsapp-logo text-emerald-600 text-sm"></i> Avisar también al Asesor / Jefe por WhatsApp al registrar
+              <i class="ph-bold ph-whatsapp-logo text-emerald-600 text-sm"></i> Avisar también al Asesor / Jefe por WhatsApp Web al registrar
             </label>
           </form>
           <div id="dInternalNotesList" class="space-y-2 max-h-60 overflow-y-auto"></div>
@@ -1495,6 +1518,7 @@
       document.getElementById("tDtcCodes").value = req.dtcCodes || "";
       document.getElementById("tChiefName").value = req.chiefName || "";
       document.getElementById("tMechanicName").value = req.mechanicName || "";
+      document.getElementById("tMechanicWhatsapp").value = req.mechanicPhone || "";
       document.getElementById("tAdvisorName").value = req.chiefName || "";
       document.getElementById("tAdvisorWhatsapp").value = req.chiefPhone || "";
       document.getElementById("tDesc").value = `[Origen: ${req.requestCode} | Jefe: ${req.chiefName} | Mecánico: ${req.mechanicName}]\n${req.faultDescription || ""}`;
@@ -1925,7 +1949,7 @@
       try {
         const lightweightState = {
           ...state,
-          hotlineRequests: [] // Las solicitudes con fotos se leen directo desde Firebase
+          hotlineRequests: []
         };
         localStorage.setItem("autotech_state_v5", JSON.stringify(lightweightState));
       } catch (storageErr) {
@@ -2583,8 +2607,11 @@
         document.getElementById("tKm").value = t.vehicleKm || "";
         document.getElementById("tChiefName").value = t.chiefName || "";
         document.getElementById("tMechanicName").value = t.mechanicName || "";
+        document.getElementById("tMechanicWhatsapp").value = t.mechanicWhatsapp || "";
         document.getElementById("tAdvisorName").value = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
         document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
+        document.getElementById("tClientName").value = t.clientName || (t.clientPortal && t.clientPortal.clientName) || "";
+        document.getElementById("tClientWhatsapp").value = t.clientWhatsapp || "";
         document.getElementById("tHours").value = t.hours || 4;
         document.getElementById("tGroup").value = t.group || "";
         document.getElementById("tLocation").value = t.location || "";
@@ -2608,8 +2635,11 @@
         document.getElementById("tKm").value = "";
         document.getElementById("tChiefName").value = "";
         document.getElementById("tMechanicName").value = "";
+        document.getElementById("tMechanicWhatsapp").value = "";
         document.getElementById("tAdvisorName").value = "";
         document.getElementById("tAdvisorWhatsapp").value = "";
+        document.getElementById("tClientName").value = "";
+        document.getElementById("tClientWhatsapp").value = "";
         document.getElementById("tDesc").value = "";
         document.getElementById("btnSaveTask").textContent = "Guardar Acción";
       }
@@ -2623,6 +2653,10 @@
       const isSoporte = appMode === "soporte";
       const advName = document.getElementById("tAdvisorName").value.trim();
       const advPhone = document.getElementById("tAdvisorWhatsapp").value.trim();
+      const mechName = isSoporte ? document.getElementById("tMechanicName").value.trim() : "";
+      const mechPhone = isSoporte ? document.getElementById("tMechanicWhatsapp").value.trim() : "";
+      const cliName = isSoporte ? document.getElementById("tClientName").value.trim() : "";
+      const cliPhone = isSoporte ? document.getElementById("tClientWhatsapp").value.trim() : "";
       const members = getAllAssignableMembers();
 
       const selectedBrand = document.getElementById("tBrand").value;
@@ -2634,7 +2668,6 @@
       const hotlineStatus = isSoporte ? document.getElementById("tHotlineStatus").value : "";
       const factoryTicketCode = isSoporte ? document.getElementById("tFactoryTicketCode").value.trim().toUpperCase() : "";
       const chiefName = isSoporte ? document.getElementById("tChiefName").value.trim() : "";
-      const mechanicName = isSoporte ? document.getElementById("tMechanicName").value.trim() : "";
 
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
@@ -2658,12 +2691,16 @@
         t.vehicleModel = document.getElementById("tModel").value.trim();
         t.vehicleKm = document.getElementById("tKm").value.trim();
         t.chiefName = chiefName;
-        t.mechanicName = mechanicName;
+        t.mechanicName = mechName;
+        t.mechanicWhatsapp = mechPhone;
         t.advisorName = isSoporte ? advName : "";
         t.advisorWhatsapp = isSoporte ? advPhone : "";
+        t.clientName = cliName;
+        t.clientWhatsapp = cliPhone;
         if (t.clientPortal && isSoporte) {
           t.clientPortal.advisorName = advName;
           t.clientPortal.advisorWhatsapp = advPhone;
+          if (cliName) t.clientPortal.clientName = cliName;
         }
         t.hours = Number(document.getElementById("tHours").value) || 0;
         t.group = document.getElementById("tGroup").value.trim();
@@ -2729,9 +2766,12 @@
         vehicleModel: document.getElementById("tModel").value.trim(),
         vehicleKm: document.getElementById("tKm").value.trim(),
         chiefName: chiefName,
-        mechanicName: mechanicName,
+        mechanicName: mechName,
+        mechanicWhatsapp: mechPhone,
         advisorName: isSoporte ? advName : "",
         advisorWhatsapp: isSoporte ? advPhone : "",
+        clientName: cliName,
+        clientWhatsapp: cliPhone,
         hours: Number(document.getElementById("tHours").value) || 0,
         group: document.getElementById("tGroup").value.trim(),
         location: document.getElementById("tLocation").value.trim(),
@@ -2754,7 +2794,7 @@
         clientPortal: {
           enabled: false,
           token: randomPin,
-          clientName: "",
+          clientName: cliName,
           clientEmail: "",
           advisorName: isSoporte ? advName : "",
           advisorWhatsapp: isSoporte ? advPhone : ""
@@ -2830,6 +2870,8 @@
       document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyAdvisorHeader").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnNotifyMechanicHeader").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnNotifyClientHeader").classList.toggle("hidden", !isSoporte);
       document.getElementById("notifyAdvisorCheckboxRow").classList.toggle("hidden", !isSoporte);
       document.getElementById("dHotlineControlBar").classList.toggle("hidden", !isSoporte);
       document.getElementById("clientPortalPanel").classList.add("hidden");
@@ -2843,6 +2885,8 @@
       const assignee = members.find(u => u.id === t.assigneeId);
       const advName = t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "";
       const advPhone = t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "";
+      const cliName = t.clientName || (t.clientPortal && t.clientPortal.clientName) || "";
+      const cliPhone = t.clientWhatsapp || "";
       const daysOpen = getElapsedDays(t);
 
       document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"} · Tiempo: ${daysOpen} día(s)`;
@@ -2852,7 +2896,7 @@
 
       const staffLine = document.getElementById("dStaffLine");
       if (isSoporte && (t.chiefName || t.mechanicName)) {
-        staffLine.textContent = `Jefe de Taller: ${t.chiefName || "-"} · Mecánico a Cargo: ${t.mechanicName || "-"}`;
+        staffLine.textContent = `Jefe de Taller: ${t.chiefName || "-"} · Mecánico: ${t.mechanicName || "-"} ${t.mechanicWhatsapp ? `(${t.mechanicWhatsapp})` : ""}`;
         staffLine.classList.remove("hidden");
       } else {
         staffLine.classList.add("hidden");
@@ -2874,10 +2918,18 @@
       if (isSoporte) {
         advisorLine.classList.remove("hidden");
         advisorLine.textContent = advName
-          ? `Contacto Taller / Asesor: ${advName} ${advPhone ? `(${advPhone})` : ""}`
-          : "Contacto Taller / Asesor: Sin asignar";
+          ? `Asesor / Jefe Taller: ${advName} ${advPhone ? `(${advPhone})` : ""}`
+          : "Asesor / Jefe Taller: Sin asignar";
       } else {
         advisorLine.classList.add("hidden");
+      }
+
+      const clientLine = document.getElementById("dClientLine");
+      if (isSoporte && (cliName || cliPhone)) {
+        clientLine.classList.remove("hidden");
+        clientLine.textContent = `Cliente: ${cliName || "-"} ${cliPhone ? `(${cliPhone})` : ""}`;
+      } else {
+        clientLine.classList.add("hidden");
       }
 
       const closureBox = document.getElementById("dClosureSummaryBox");
@@ -2896,11 +2948,12 @@
       document.getElementById("dDriveFolderBtn").href = t.driveFolderUrl || "https://drive.google.com";
 
       if (!t.clientPortal) {
-        t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: advName, advisorWhatsapp: advPhone };
+        t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: cliName, clientEmail: "", advisorName: advName, advisorWhatsapp: advPhone };
       }
       document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
-      document.getElementById("cpClientName").value = t.clientPortal.clientName || "";
+      document.getElementById("cpClientName").value = cliName || t.clientPortal.clientName || "";
       document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
+      document.getElementById("cpClientWhatsapp").value = cliPhone || "";
       document.getElementById("cpAdvisorName").value = advName || t.clientPortal.advisorName || "";
       document.getElementById("cpAdvisorWhatsapp").value = advPhone || t.clientPortal.advisorWhatsapp || "";
       document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
@@ -3283,7 +3336,9 @@
       showToast("Contraseña de Administrador actualizada correctamente", "success");
     }
 
-    // CORREOS, WHATSAPP, MULTIMEDIA Y EXPORTACIONES
+    // =========================================================================
+    // FORMALIZAR CORREO, WHATSAPP WEB (ASESOR/JEFE, MECÁNICO, CLIENTE) Y PORTAL
+    // =========================================================================
     function toggleFormalEmailSection() {
       const panel = document.getElementById("formalEmailPanel");
       const willOpen = panel.classList.contains("hidden");
@@ -3425,27 +3480,94 @@
       }
     }
 
+    // Abre WhatsApp Web en PC (sin llamar a la app de escritorio) y la app móvil en celular
+    function openWhatsAppWeb(phone, messageText) {
+      const cleanPhone = formatWhatsappPhone(phone);
+      const encoded = encodeURIComponent(messageText);
+      const isActualPhone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const baseWa = isActualPhone ? "https://api.whatsapp.com/send" : "https://web.whatsapp.com/send";
+      const url = cleanPhone
+        ? `${baseWa}?phone=${cleanPhone}&text=${encoded}`
+        : `${baseWa}?text=${encoded}`;
+      window.open(url, "whatsapp_web_tab");
+    }
+
     function notifyAdvisorWhatsapp(customUpdateText = "") {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
       const advName = (t.advisorName || (t.clientPortal && t.clientPortal.advisorName) || "Asesor").trim();
-      const cleanPhone = formatWhatsappPhone((t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim());
-      if (!cleanPhone) {
+      const rawPhone = (t.advisorWhatsapp || (t.clientPortal && t.clientPortal.advisorWhatsapp) || "").trim();
+      if (!formatWhatsappPhone(rawPhone)) {
         showToast("Registra primero el teléfono del Asesor o Jefe editando el caso", "warning");
         return;
       }
       const lastInternal = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : "Sin observaciones aún";
       const updateDetail = customUpdateText || lastInternal;
-      const msg = encodeURIComponent(
+      const text =
 `Hola *${advName}*, te enviamos una actualización de Soporte Técnico Automotor:
 
 • *Caso:* ${t.caseId} - ${t.title}
 ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode} (${t.hotlineStatus || ""})\n` : ""}• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
 • *Taller:* ${t.workshop || "Automotor"}
 • *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
-• *Último reporte técnico:* ${updateDetail}`
-      );
-      window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
+• *Último reporte técnico:* ${updateDetail}`;
+
+      openWhatsAppWeb(rawPhone, text);
+    }
+
+    function notifyMechanicWhatsapp() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const mechName = (t.mechanicName || "Técnico").trim();
+      const rawPhone = (t.mechanicWhatsapp || "").trim();
+      if (!formatWhatsappPhone(rawPhone)) {
+        showToast("Registra primero el WhatsApp del Mecánico editando el caso", "warning");
+        return;
+      }
+      const lastInternal = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : (t.description || "En revisión");
+      const text =
+`Hola *${mechName}*, seguimiento técnico de Soporte Automotor:
+
+• *Caso:* ${t.caseId}
+• *Unidad:* ${t.brand || ""} ${t.vehicleModel || ""} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""}
+• *VIN:* ${t.vehicleVin || "-"}
+${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode ? `• *Ticket Fábrica:* ${t.factoryTicketCode} (${t.hotlineStatus || ""})\n` : ""}• *Estado:* ${t.status} (${t.progress || 0}%)
+• *Indicación / Último reporte:* ${lastInternal}`;
+
+      openWhatsAppWeb(rawPhone, text);
+    }
+
+    function notifyClientWhatsapp() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const cliName = (t.clientName || (t.clientPortal && t.clientPortal.clientName) || "Cliente").trim();
+      const rawPhone = (t.clientWhatsapp || "").trim();
+      if (!formatWhatsappPhone(rawPhone)) {
+        showToast("Registra primero el WhatsApp del Cliente editando el caso o en Portal Cliente", "warning");
+        return;
+      }
+      const lastClientNote = (t.clientNotes && t.clientNotes.length > 0)
+        ? t.clientNotes[t.clientNotes.length - 1].text
+        : `Tu vehículo se encuentra actualmente en estado: ${t.status} (${t.progress || 0}% de avance).`;
+
+      const portalInfo = (t.clientPortal && t.clientPortal.enabled)
+        ? `\n\nPuedes ver el detalle y fotos en tiempo real aquí:\n${getClientTrackingUrl(t)}`
+        : "";
+
+      const text =
+`Estimado/a *${cliName}*, le saludamos desde *Automotor S.A.* para informarle sobre su vehículo *${t.brand || ""} ${t.vehicleModel || ""}* (${t.caseId}):
+
+• *Estado actual:* ${t.status} (${t.progress || 0}% de avance)
+• *Novedad:* ${lastClientNote}${portalInfo}`;
+
+      openWhatsAppWeb(rawPhone, text);
+    }
+
+    function shareInternalWhatsapp() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const text = `*${t.caseId} - ${t.title}*\n${t.factoryTicketCode ? `Ticket Fábrica: ${t.factoryTicketCode}\n` : ""}Taller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)`;
+      openWhatsAppWeb("", text);
     }
 
     function togglePortalSection() {
@@ -3469,15 +3591,21 @@ ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode}
     async function saveClientPortalConfig(sendEmailNow = false) {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
+      const cliName = document.getElementById("cpClientName").value.trim();
+      const cliPhone = document.getElementById("cpClientWhatsapp").value.trim();
       const advName = document.getElementById("cpAdvisorName").value.trim();
       const advPhone = document.getElementById("cpAdvisorWhatsapp").value.trim();
+
       t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
-      t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
+      t.clientPortal.clientName = cliName;
       t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
       t.clientPortal.advisorName = advName;
       t.clientPortal.advisorWhatsapp = advPhone;
+      t.clientName = cliName;
+      t.clientWhatsapp = cliPhone;
       t.advisorName = advName;
       t.advisorWhatsapp = advPhone;
+
       saveLocalAndCloud();
       renderBoard();
       renderDashboard();
@@ -3723,13 +3851,6 @@ ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode}
       closeModal("detailModal");
       renderAll();
       showToast("Registro eliminado", "info");
-    }
-
-    function shareInternalWhatsapp() {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      const msg = encodeURIComponent(`*${t.caseId} - ${t.title}*\n${t.factoryTicketCode ? `Ticket Fábrica: ${t.factoryTicketCode}\n` : ""}Taller: ${t.workshop || "N/A"}\nUnidad: ${t.brand || ""} ${t.vehicleModel || "-"} (${t.orNumber || "-"})\nEstado: ${t.status} (${t.progress}%)`);
-      window.open(`https://wa.me/?text=${msg}`, "_blank");
     }
 
     function exportExcelHistory() {

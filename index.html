@@ -882,7 +882,7 @@
 
         <div class="space-y-2">
           <div class="flex justify-between items-center text-xs font-bold">
-            <span>Progreso Técnico: <span id="dProgressVal" class="text-accent">0%</span></span>
+            <span>Progreso Técnico (Uso Interno): <span id="dProgressVal" class="text-accent">0%</span></span>
             <select id="dStatusSelect" onchange="updateTaskStatusQuick(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
               <option value="Urgente">🔴 Urgente</option>
               <option value="Pendiente">⚪ Pendiente</option>
@@ -3480,7 +3480,7 @@
       }
     }
 
-    // Abre WhatsApp Web en PC (sin llamar a la app de escritorio) y la app móvil en celular
+    // Abre WhatsApp Web en una pestaña nueva sin reemplazar tu sesión abierta
     function openWhatsAppWeb(phone, messageText) {
       const cleanPhone = formatWhatsappPhone(phone);
       const encoded = encodeURIComponent(messageText);
@@ -3489,7 +3489,7 @@
       const url = cleanPhone
         ? `${baseWa}?phone=${cleanPhone}&text=${encoded}`
         : `${baseWa}?text=${encoded}`;
-      window.open(url, "whatsapp_web_tab");
+      window.open(url, "_blank");
     }
 
     function notifyAdvisorWhatsapp(customUpdateText = "") {
@@ -3537,6 +3537,7 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       openWhatsAppWeb(rawPhone, text);
     }
 
+    // Mensaje de WhatsApp al Cliente SIN porcentaje de avance
     function notifyClientWhatsapp() {
       const t = state.tasks.find(x => x.id === currentDetailId);
       if (!t) return;
@@ -3548,7 +3549,7 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       }
       const lastClientNote = (t.clientNotes && t.clientNotes.length > 0)
         ? t.clientNotes[t.clientNotes.length - 1].text
-        : `Tu vehículo se encuentra actualmente en estado: ${t.status} (${t.progress || 0}% de avance).`;
+        : `Tu vehículo se encuentra actualmente en estado: ${t.status}.`;
 
       const portalInfo = (t.clientPortal && t.clientPortal.enabled)
         ? `\n\nPuedes ver el detalle y fotos en tiempo real aquí:\n${getClientTrackingUrl(t)}`
@@ -3557,7 +3558,7 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       const text =
 `Estimado/a *${cliName}*, le saludamos desde *Automotor S.A.* para informarle sobre su vehículo *${t.brand || ""} ${t.vehicleModel || ""}* (${t.caseId}):
 
-• *Estado actual:* ${t.status} (${t.progress || 0}% de avance)
+• *Estado actual:* ${t.status}
 • *Novedad:* ${lastClientNote}${portalInfo}`;
 
       openWhatsAppWeb(rawPhone, text);
@@ -3617,6 +3618,7 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
       }
     }
 
+    // Correo de actualización al Cliente SIN porcentaje de avance
     async function sendClientTrackingEmail(t, updateSummary) {
       if (!t.clientPortal || !t.clientPortal.enabled || !t.clientPortal.clientEmail) return;
       const link = getClientTrackingUrl(t);
@@ -3627,7 +3629,7 @@ ${t.dtcCodes ? `• *Códigos DTC:* ${t.dtcCodes}\n` : ""}${t.factoryTicketCode 
           action: "sendEmail",
           to: t.clientPortal.clientEmail,
           subject: `Actualización de tu vehículo (${vehicleFull}) - Caso ${t.caseId}`,
-          body: `Estimado/a ${t.clientPortal.clientName || "Cliente"},\n\nSe registró una novedad en tu vehículo (${vehicleFull}):\n• Estado: ${t.status} (${t.progress || 0}%)\n• Novedad: ${updateSummary}\n\nSigue el proceso aquí:\n${link}`
+          body: `Estimado/a ${t.clientPortal.clientName || "Cliente"},\n\nSe registró una novedad en tu vehículo (${vehicleFull}):\n• Estado actual: ${t.status}\n• Novedad: ${updateSummary}\n\nSigue el proceso aquí:\n${link}`
         })
       }).catch(() => {});
     }

@@ -1267,7 +1267,7 @@
       el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 ${colors[type] || colors.info}`;
       el.innerHTML = `<i class="ph-bold ph-info"></i> <span>${escapeHtml(msg)}</span>`;
       box.appendChild(el);
-      setTimeout(() => el.remove(), 4000);
+      setTimeout(() => el.remove(), 4500);
     }
 
     // =========================================================================
@@ -1794,7 +1794,10 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newUserReq)
         });
-        if (!fbRes.ok) throw new Error("Error HTTP " + fbRes.status);
+        if (!fbRes.ok) {
+          const errTxt = await fbRes.text();
+          throw new Error(`HTTP ${fbRes.status} (${errTxt})`);
+        }
 
         saveLocalAndCloud();
 
@@ -1816,7 +1819,7 @@
         switchAuthTab("user");
         showToast("¡Solicitud enviada! Aguarda la aprobación del Administrador.", "success");
       } catch (err) {
-        showToast("No se pudo guardar en Firebase. Verifica las reglas de la base de datos.", "warning");
+        showToast("Error Firebase: " + err.message, "warning");
       } finally {
         btn.disabled = false;
         btn.textContent = "Confirmar y Solicitar Aprobación";
@@ -1919,7 +1922,6 @@
     function saveLocalAndCloud() {
       localStorage.setItem("autotech_state_v5", JSON.stringify(state));
 
-      // Respaldo inmediato en Firebase Realtime Database
       fetch(`${FIREBASE_DB_URL}/appState.json`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -3427,11 +3429,11 @@
       const msg = encodeURIComponent(
 `Hola *${advName}*, te enviamos una actualización de Soporte Técnico Automotor:
 
-- *Caso:* ${t.caseId} - ${t.title}
+• *Caso:* ${t.caseId} - ${t.title}
 ${t.factoryTicketCode ? `• *Ticket Fábrica / Hotline:* ${t.factoryTicketCode} (${t.hotlineStatus || ""})\n` : ""}• *Marca / Modelo:* ${t.brand || ""} ${t.vehicleModel || "Unidad"} ${t.orNumber ? `| *OR:* ${t.orNumber}` : ""} ${t.vehicleVin ? `| *VIN:* ${t.vehicleVin}` : ""}
-- *Taller:* ${t.workshop || "Automotor"}
-- *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
-- *Último reporte técnico:* ${updateDetail}`
+• *Taller:* ${t.workshop || "Automotor"}
+• *Estado actual:* ${t.status} (*${t.progress || 0}%* de avance)
+• *Último reporte técnico:* ${updateDetail}`
       );
       window.open(`https://wa.me/${cleanPhone}?text=${msg}`, "_blank");
     }

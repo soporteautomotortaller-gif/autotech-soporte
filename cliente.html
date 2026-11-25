@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seguimiento Técnico de Vehículo | Automotor</title>
+  <title>Seguimiento de Vehículo | Automotor S.A.</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
@@ -14,180 +14,156 @@
                   #f1f5f9;
       min-height: 100vh;
     }
-    .fluent-card {
-      background: rgba(255, 255, 255, 0.85);
+    .win-card {
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+    }
+    .automotor-wordmark {
+      font-family: 'Arial Black', 'Segoe UI', Impact, sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #004B93;
     }
   </style>
 </head>
 <body class="text-slate-800 antialiased pb-12">
 
   <!-- Barra Superior -->
-  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30">
-    <div class="max-w-3xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-2">
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-[#0067C0] text-white flex items-center justify-center shadow-sm">
-          <i class="ph-bold ph-car-profile text-xl"></i>
+        <div class="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 shadow-sm overflow-hidden">
+          <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" />
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 leading-tight">Seguimiento Técnico de Unidad</h1>
-          <p class="text-xs text-slate-500">Soporte Técnico Especializado · Automotor</p>
+          <div class="flex items-baseline gap-1">
+            <span class="automotor-wordmark text-lg leading-none">Automotor</span>
+            <span class="automotor-wordmark text-[10px] leading-none">S.A.</span>
+          </div>
+          <p class="text-xs font-bold text-slate-600 mt-0.5">Portal de Seguimiento Técnico de Vehículos</p>
         </div>
       </div>
-      <div id="liveTimerBox" class="hidden inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-        <span>En vivo · Actualiza en <strong id="countdownText" class="font-mono">5</strong>s</span>
-      </div>
+      <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+        En Tiempo Real
+      </span>
     </div>
   </header>
 
   <main class="max-w-3xl mx-auto px-4 pt-6 space-y-5">
 
-    <!-- Buscador Manual -->
-    <section id="loginCard" class="fluent-card rounded-2xl p-6 sm:p-8 hidden">
-      <div class="text-center max-w-md mx-auto space-y-3">
-        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#0067C0] flex items-center justify-center mx-auto">
-          <i class="ph-bold ph-magnifying-glass text-2xl"></i>
+    <!-- Pantalla de Acceso por Caso y PIN -->
+    <section id="loginSection" class="win-card rounded-3xl p-6 sm:p-8 max-w-md mx-auto space-y-5">
+      <div class="text-center space-y-1.5">
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 text-[#004B93] flex items-center justify-center mx-auto">
+          <i class="ph-bold ph-shield-check text-3xl"></i>
         </div>
-        <h2 class="text-xl font-bold text-slate-900">Consulta el estado de tu vehículo</h2>
-        <p class="text-sm text-slate-500">Ingresa el <strong>Código de Caso</strong> y el <strong>PIN de Seguridad</strong> enviados a tu correo electrónico.</p>
+        <h2 class="text-lg font-extrabold text-slate-900">Consulta el Estado de tu Vehículo</h2>
+        <p class="text-xs text-slate-500">Ingresa el código de caso y el PIN de seguridad enviados a tu correo electrónico.</p>
       </div>
-      <form onsubmit="manualSearch(event)" class="max-w-md mx-auto mt-6 space-y-4">
+
+      <form onsubmit="handleClientLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Código de Caso</label>
-          <input type="text" id="inputCaseId" required placeholder="Ej: CASO-2026-101" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 bg-white text-sm font-semibold uppercase focus:outline-none focus:border-[#0067C0]" />
+          <label class="block text-xs font-bold text-slate-700 mb-1">Código de Caso *</label>
+          <input type="text" id="inputCaseId" required placeholder="Ej: CASO-2026-101" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm uppercase font-mono bg-white" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">PIN de Acceso (4 dígitos)</label>
-          <input type="text" id="inputToken" required maxlength="6" placeholder="Ej: 4829" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 bg-white text-sm font-semibold tracking-widest focus:outline-none focus:border-[#0067C0]" />
+          <label class="block text-xs font-bold text-slate-700 mb-1">PIN de Acceso (4 dígitos) *</label>
+          <input type="text" id="inputPin" required maxlength="6" placeholder="••••" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono tracking-widest bg-white" />
         </div>
-        <button type="submit" class="w-full py-3 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white font-semibold text-sm shadow-sm transition">
-          Ver Estado de mi Vehículo
+        <button type="submit" id="btnAccess" class="w-full py-3 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white font-bold text-sm shadow-sm transition">
+          Ver Seguimiento en Tiempo Real
         </button>
       </form>
+      <p id="loginError" class="text-xs font-bold text-red-600 text-center hidden"></p>
     </section>
 
-    <!-- Cargando -->
-    <section id="loadingCard" class="fluent-card rounded-2xl p-10 text-center space-y-3">
-      <i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[#0067C0]"></i>
-      <p class="text-sm font-medium text-slate-600">Consultando diagnóstico y registro cronológico en tiempo real...</p>
-    </section>
+    <!-- Vista del Expediente del Cliente (SIN PORCENTAJE DE AVANCE) -->
+    <section id="trackingSection" class="hidden space-y-5">
 
-    <!-- Error / No encontrado -->
-    <section id="errorCard" class="fluent-card rounded-2xl p-8 text-center space-y-4 hidden">
-      <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
-        <i class="ph-bold ph-warning-circle text-2xl"></i>
+      <!-- Tarjeta Principal del Vehículo y Estado -->
+      <div class="win-card rounded-3xl p-5 sm:p-7 space-y-4">
+        <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200/80 pb-4">
+          <div>
+            <span id="vCaseBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-blue-100 text-[#004B93]">CASO-2026-101</span>
+            <h2 id="vTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 mt-2">Vehículo en Servicio</h2>
+            <p id="vClientGreeting" class="text-xs text-slate-500 mt-0.5"></p>
+          </div>
+          <div class="text-right">
+            <span class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Estado Actual</span>
+            <span id="vStatusBadge" class="inline-block text-xs font-extrabold px-3.5 py-1.5 rounded-full bg-blue-600 text-white">En Proceso</span>
+          </div>
+        </div>
+
+        <!-- Ficha Técnica Resumida -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/70">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">Vehículo</span>
+            <strong id="vModel" class="text-slate-800 mt-0.5 block">-</strong>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/70">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">N° Orden (OR)</span>
+            <strong id="vOr" class="text-slate-800 mt-0.5 block">-</strong>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/70">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">Taller</span>
+            <strong id="vWorkshop" class="text-slate-800 mt-0.5 block">-</strong>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200/70">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">Chasis / VIN</span>
+            <strong id="vVin" class="text-slate-800 font-mono mt-0.5 block">-</strong>
+          </div>
+        </div>
       </div>
-      <h2 class="text-lg font-bold text-slate-900">No pudimos validar el enlace de seguimiento</h2>
-      <p class="text-sm text-slate-600 max-w-md mx-auto">Verifica que el enlace de tu correo esté completo o ingresa manualmente tu Código de Caso y PIN.</p>
-      <button onclick="showManualForm()" class="px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold">Ingresar Código Manualmente</button>
-    </section>
 
-    <!-- Vista Principal del Vehículo del Cliente -->
-    <div id="vehicleView" class="space-y-5 hidden">
-
-      <!-- Tarjeta Resumen del Vehículo -->
-      <section class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4">
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span id="vCaseId" class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-blue-100 text-[#0067C0]">CASO-2026-101</span>
-              <span id="vStatusBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800">En Proceso</span>
-            </div>
-            <h2 id="vTitle" class="text-lg sm:text-xl font-bold text-slate-900">Diagnóstico Técnico</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Estimado/a <strong id="vClientName" class="text-slate-700">Cliente</strong> · Última sincronización: <span id="lastSyncTime">--:--:--</span></p>
-          </div>
-          <button id="manualRefreshBtn" onclick="manualRefreshNow()" class="px-3.5 py-2 rounded-xl bg-[#0067C0] hover:bg-[#005a9e] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
-            <i id="refreshSpinIcon" class="ph-bold ph-arrows-clockwise"></i> Actualizar ahora
-          </button>
-        </div>
-
-        <!-- Barra de Progreso -->
-        <div class="bg-slate-100/80 rounded-xl p-4 border border-slate-200/60">
-          <div class="flex justify-between items-center text-xs font-bold mb-2">
-            <span class="text-slate-600 uppercase tracking-wider">Avance Técnico General</span>
-            <span id="vProgressText" class="text-[#0067C0] text-sm">0%</span>
-          </div>
-          <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
-            <div id="vProgressBar" class="h-full bg-[#0067C0] rounded-full transition-all duration-500" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <!-- Datos Técnicos del Vehículo -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
-            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Modelo</span>
-            <span id="vModel" class="text-sm font-bold text-slate-800">-</span>
-          </div>
-          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
-            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Orden Taller (OR)</span>
-            <span id="vOr" class="text-sm font-bold text-slate-800">-</span>
-          </div>
-          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
-            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Chasis / VIN</span>
-            <span id="vVin" class="text-sm font-bold text-slate-800">-</span>
-          </div>
-          <div class="bg-white/70 rounded-xl p-3 border border-slate-200/70">
-            <span class="block text-[11px] font-semibold text-slate-400 uppercase">Taller Asignado</span>
-            <span id="vWorkshop" class="text-sm font-bold text-slate-800 truncate block">-</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- Contacto Directo con Asesor de Servicios (WhatsApp) -->
-      <section id="advisorCard" class="fluent-card rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-emerald-500">
-        <div class="flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-            <i class="ph-bold ph-user-circle text-2xl"></i>
+      <!-- Tarjeta de Contacto Directo por WhatsApp con el Asesor -->
+      <div class="win-card rounded-3xl p-5 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-[#25D366]">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+            <i class="ph-bold ph-user-tie text-2xl"></i>
           </div>
           <div>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Asesor de Servicios Asignado</span>
-            <h3 id="vAdvisorName" class="text-base font-bold text-slate-900">Asesor Postventa</h3>
+            <span class="text-[11px] font-bold uppercase text-slate-400">Tu Asesor de Servicios Asignado</span>
+            <h3 id="vAdvisorName" class="text-sm sm:text-base font-extrabold text-slate-900">Asesor Automotor</h3>
             <p class="text-xs text-slate-500">¿Tienes alguna consulta sobre tu vehículo? Escríbele directamente.</p>
           </div>
         </div>
-        <a id="vWhatsappBtn" href="#" target="_blank" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition">
-          <i class="ph-bold ph-whatsapp-logo text-lg"></i> Mensaje por WhatsApp
+        <a id="btnWhatsappAdvisor" href="#" target="_blank" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-md transition">
+          <i class="ph-bold ph-whatsapp-logo text-xl"></i> Contactar por WhatsApp
         </a>
-      </section>
+      </div>
 
-      <!-- Registro Cronológico Exclusivo del Cliente -->
-      <section class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4">
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <i class="ph-bold ph-clock-counter-clockwise text-lg text-[#0067C0]"></i>
-            <h3 class="text-base font-bold text-slate-900">Registro Cronológico de Servicio</h3>
-          </div>
-          <span class="text-[11px] font-semibold text-slate-400">Actualización automática c/ 5s</span>
+      <!-- Registro Cronológico de Novedades -->
+      <div class="win-card rounded-3xl p-5 sm:p-7 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="ph-bold ph-clock-counter-clockwise text-[#004B93] text-lg"></i> Historial de Actualizaciones
+          </h3>
+          <button onclick="refreshCaseData()" class="text-xs font-bold text-[#004B93] hover:underline flex items-center gap-1">
+            <i class="ph-bold ph-arrows-clockwise"></i> Actualizar
+          </button>
         </div>
-        <div id="vTimeline" class="space-y-4 border-l-2 border-blue-200 ml-2.5 pl-5 py-1"></div>
-      </section>
+        <div id="vTimeline" class="space-y-3"></div>
+      </div>
 
-      <!-- Evidencia Multimedia Aprobada -->
-      <section id="mediaSection" class="fluent-card rounded-2xl p-5 sm:p-6 space-y-4 hidden">
-        <div class="flex items-center gap-2">
-          <i class="ph-bold ph-images text-lg text-[#0067C0]"></i>
-          <h3 class="text-base font-bold text-slate-900">Evidencia Multimedia del Diagnóstico</h3>
-        </div>
-        <div id="vMediaGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-      </section>
+      <!-- Evidencia Fotográfica Autorizada -->
+      <div id="mediaSection" class="win-card rounded-3xl p-5 sm:p-7 space-y-4 hidden">
+        <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+          <i class="ph-bold ph-camera text-[#004B93] text-lg"></i> Imágenes del Seguimiento
+        </h3>
+        <div id="vMediaGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+      </div>
 
-      <footer class="text-center text-xs text-slate-400 pt-2">
-        Sistema Oficial de Seguimiento Técnico · Los correos enviados por esta plataforma son automáticos y no admiten respuestas.
-      </footer>
-    </div>
+    </section>
+
   </main>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLRN54nymuTe32fX-RMGRAlqj1QnQulYroAdG8KT-pPNlY6Hi9lPrNVYL1CBblF1ugPA/exec";
-    let currentCaseId = "";
-    let currentToken = "";
-    let autoRefreshInterval = null;
-    let countdownValue = 5;
-    let isFetching = false;
+    const FIREBASE_DB_URL = "https://autotech-hotline-default-rtdb.firebaseio.com";
+    let activeCaseId = "";
+    let activeToken = "";
 
     function escapeHtml(str) {
       if (!str) return "";
@@ -196,179 +172,149 @@
 
     window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
-      const caso = params.get("caso");
-      const token = params.get("token");
-
-      if (caso && token) {
-        currentCaseId = caso.trim().toUpperCase();
-        currentToken = token.trim();
-        fetchCaseData(currentCaseId, currentToken, false);
-      } else {
-        showManualForm();
+      const c = params.get("caso");
+      const t = params.get("token");
+      if (c && t) {
+        activeCaseId = c.trim().toUpperCase();
+        activeToken = t.trim();
+        document.getElementById("inputCaseId").value = activeCaseId;
+        document.getElementById("inputPin").value = activeToken;
+        loadPublicCase(activeCaseId, activeToken);
       }
     });
 
-    function stopAutoRefresh() {
-      if (autoRefreshInterval) {
-        clearInterval(autoRefreshInterval);
-        autoRefreshInterval = null;
-      }
-      document.getElementById("liveTimerBox").classList.add("hidden");
-    }
-
-    function startAutoRefresh() {
-      stopAutoRefresh();
-      countdownValue = 5;
-      document.getElementById("countdownText").textContent = countdownValue;
-      document.getElementById("liveTimerBox").classList.remove("hidden");
-
-      autoRefreshInterval = setInterval(() => {
-        countdownValue--;
-        if (countdownValue <= 0) {
-          countdownValue = 5;
-          document.getElementById("countdownText").textContent = "5";
-          fetchCaseData(currentCaseId, currentToken, true);
-        } else {
-          document.getElementById("countdownText").textContent = countdownValue;
-        }
-      }, 1000);
-    }
-
-    function showManualForm() {
-      stopAutoRefresh();
-      document.getElementById("loadingCard").classList.add("hidden");
-      document.getElementById("errorCard").classList.add("hidden");
-      document.getElementById("vehicleView").classList.add("hidden");
-      document.getElementById("loginCard").classList.remove("hidden");
-    }
-
-    function manualSearch(e) {
+    function handleClientLogin(e) {
       e.preventDefault();
-      currentCaseId = document.getElementById("inputCaseId").value.trim().toUpperCase();
-      currentToken = document.getElementById("inputToken").value.trim();
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("loadingCard").classList.remove("hidden");
-      fetchCaseData(currentCaseId, currentToken, false);
+      activeCaseId = document.getElementById("inputCaseId").value.trim().toUpperCase();
+      activeToken = document.getElementById("inputPin").value.trim();
+      loadPublicCase(activeCaseId, activeToken);
     }
 
-    function manualRefreshNow() {
-      if (!currentCaseId || !currentToken) return;
-      countdownValue = 5;
-      document.getElementById("countdownText").textContent = "5";
-      fetchCaseData(currentCaseId, currentToken, true);
+    function refreshCaseData() {
+      if (activeCaseId && activeToken) {
+        loadPublicCase(activeCaseId, activeToken);
+      }
     }
 
-    async function fetchCaseData(caseId, token, silent = false) {
-      if (isFetching) return;
-      isFetching = true;
-      const spinIcon = document.getElementById("refreshSpinIcon");
-      if (spinIcon) spinIcon.classList.add("animate-spin");
+    async function loadPublicCase(caseId, token) {
+      const btn = document.getElementById("btnAccess");
+      const err = document.getElementById("loginError");
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Consultando estado...";
+      }
+      err.classList.add("hidden");
 
       try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "getPublicCase", caseId: caseId, token: token })
-        });
-        const data = await res.json();
-        if (!silent) document.getElementById("loadingCard").classList.add("hidden");
+        const res = await fetch(`${FIREBASE_DB_URL}/appState/tasks.json`);
+        const tasksData = await res.json();
+        const tasksList = Array.isArray(tasksData)
+          ? tasksData
+          : (tasksData && typeof tasksData === "object" ? Object.values(tasksData) : []);
 
-        if (data.status === "ok" && data.vehicle) {
-          renderVehicle(data.vehicle);
-          if (!autoRefreshInterval) startAutoRefresh();
-        } else if (!silent) {
-          stopAutoRefresh();
-          document.getElementById("errorCard").classList.remove("hidden");
+        const task = tasksList.find(t =>
+          t &&
+          String(t.caseId || "").toUpperCase() === caseId &&
+          t.clientPortal &&
+          t.clientPortal.enabled === true &&
+          String(t.clientPortal.token || "") === token
+        );
+
+        if (task) {
+          renderVehicleData(task);
+          document.getElementById("loginSection").classList.add("hidden");
+          document.getElementById("trackingSection").classList.remove("hidden");
+        } else {
+          err.textContent = "No se encontró el caso o el enlace aún no está habilitado por el taller.";
+          err.classList.remove("hidden");
         }
-      } catch (err) {
-        if (!silent) {
-          stopAutoRefresh();
-          document.getElementById("loadingCard").classList.add("hidden");
-          document.getElementById("errorCard").classList.remove("hidden");
-        }
+      } catch (e) {
+        err.textContent = "Error de conexión. Verifica tu internet e intenta nuevamente.";
+        err.classList.remove("hidden");
       } finally {
-        isFetching = false;
-        if (spinIcon) spinIcon.classList.remove("animate-spin");
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Ver Seguimiento en Tiempo Real";
+        }
       }
     }
 
-    function renderVehicle(v) {
-      document.getElementById("errorCard").classList.add("hidden");
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("vehicleView").classList.remove("hidden");
+    function openImagePreview(url) {
+      const w = window.open("");
+      if (w) {
+        w.document.write(`<img src="${url}" style="max-width:100%; height:auto; display:block; margin:auto;" />`);
+      }
+    }
 
-      document.getElementById("vCaseId").textContent = v.caseId;
-      document.getElementById("vStatusBadge").textContent = v.status || "En Proceso";
-      document.getElementById("vTitle").textContent = v.title || "Soporte Técnico Vehicular";
-      document.getElementById("vClientName").textContent = v.clientName || "Cliente";
-      document.getElementById("lastSyncTime").textContent = new Date().toLocaleTimeString();
+    function renderVehicleData(t) {
+      const portal = t.clientPortal || {};
+      const modelFull = `${t.brand || ""} ${t.vehicleModel || ""}`.trim() || "-";
 
-      const prog = Number(v.progress) || 0;
-      document.getElementById("vProgressText").textContent = prog + "%";
-      document.getElementById("vProgressBar").style.width = prog + "%";
+      document.getElementById("vCaseBadge").textContent = t.caseId;
+      document.getElementById("vTitle").textContent = modelFull !== "-" ? modelFull : t.title;
+      document.getElementById("vClientGreeting").textContent = portal.clientName ? `Propietario / Contacto: ${portal.clientName}` : "";
 
-      document.getElementById("vModel").textContent = v.model || "No especificado";
-      document.getElementById("vOr").textContent = v.orNumber || "En proceso";
-      document.getElementById("vVin").textContent = v.vin || "-";
-      document.getElementById("vWorkshop").textContent = v.workshop || "Automotor";
-
-      const advisorCard = document.getElementById("advisorCard");
-      if (v.advisorName || v.advisorWhatsapp) {
-        advisorCard.classList.remove("hidden");
-        document.getElementById("vAdvisorName").textContent = v.advisorName || "Asesor de Servicios";
-        let phone = (v.advisorWhatsapp || "").replace(/\D/g, "");
-        if (phone.startsWith("0")) phone = "595" + phone.substring(1);
-        const msg = encodeURIComponent(`Hola ${v.advisorName || ''}, te escribo por el seguimiento de mi vehículo (${v.model || ''}) - Caso ${v.caseId}.`);
-        document.getElementById("vWhatsappBtn").href = phone ? `https://wa.me/${phone}?text=${msg}` : "#";
+      const statusBadge = document.getElementById("vStatusBadge");
+      statusBadge.textContent = t.status;
+      if (t.status === "Completado") {
+        statusBadge.className = "inline-block text-xs font-extrabold px-3.5 py-1.5 rounded-full bg-emerald-600 text-white";
+      } else if (t.status === "Urgente") {
+        statusBadge.className = "inline-block text-xs font-extrabold px-3.5 py-1.5 rounded-full bg-red-600 text-white";
+      } else if (t.status === "En Prueba") {
+        statusBadge.className = "inline-block text-xs font-extrabold px-3.5 py-1.5 rounded-full bg-purple-600 text-white";
       } else {
-        advisorCard.classList.add("hidden");
+        statusBadge.className = "inline-block text-xs font-extrabold px-3.5 py-1.5 rounded-full bg-[#004B93] text-white";
+      }
+
+      document.getElementById("vModel").textContent = modelFull;
+      document.getElementById("vOr").textContent = t.orNumber || "-";
+      document.getElementById("vWorkshop").textContent = t.workshop || "Automotor S.A.";
+      document.getElementById("vVin").textContent = t.vehicleVin || "-";
+
+      const advName = portal.advisorName || t.advisorName || "Asesor de Servicios";
+      document.getElementById("vAdvisorName").textContent = advName;
+
+      let phone = (portal.advisorWhatsapp || t.advisorWhatsapp || "").replace(/\D/g, "");
+      if (phone.startsWith("0")) phone = "595" + phone.substring(1);
+
+      const waMsg = encodeURIComponent(`Hola ${advName}, te consulto por el seguimiento de mi vehículo (${modelFull} - ${t.caseId}).`);
+      const btnWa = document.getElementById("btnWhatsappAdvisor");
+      if (phone) {
+        btnWa.href = `https://wa.me/${phone}?text=${waMsg}`;
+        btnWa.classList.remove("opacity-50", "pointer-events-none");
+      } else {
+        btnWa.href = "#";
+        btnWa.classList.add("opacity-50", "pointer-events-none");
       }
 
       const timeline = document.getElementById("vTimeline");
-      const notes = Array.isArray(v.notes) ? v.notes : [];
+      const notes = Array.isArray(t.clientNotes) ? t.clientNotes : [];
       if (notes.length === 0) {
-        timeline.innerHTML = `<p class="text-sm text-slate-500">Tu vehículo se encuentra en evaluación técnica. Te notificaremos por correo ante cada nuevo registro.</p>`;
+        timeline.innerHTML = `<p class="text-xs text-slate-400">Tu vehículo se encuentra en evaluación técnica. Pronto publicaremos novedades aquí.</p>`;
       } else {
         timeline.innerHTML = notes.slice().reverse().map(n => `
-          <div class="relative">
-            <span class="absolute -left-[27px] top-1 w-3.5 h-3.5 rounded-full bg-[#0067C0] ring-4 ring-blue-50"></span>
-            <div class="bg-white/80 rounded-xl p-3.5 border border-slate-200/80 shadow-sm">
-              <div class="flex items-center justify-between gap-2 mb-1">
-                <span class="text-xs font-bold text-[#0067C0]">Actualización de Servicio</span>
-                <span class="text-[11px] font-medium text-slate-400">${escapeHtml(n.date || "")}</span>
-              </div>
-              <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(n.text)}</p>
-            </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-1">
+            <span class="text-[11px] font-bold text-[#004B93]">${escapeHtml(n.date)}</span>
+            <p class="text-xs sm:text-sm text-slate-800 font-medium whitespace-pre-line">${escapeHtml(n.text)}</p>
           </div>
         `).join("");
       }
 
-      const mediaSection = document.getElementById("mediaSection");
+      const mediaSec = document.getElementById("mediaSection");
       const mediaGrid = document.getElementById("vMediaGrid");
-      const media = Array.isArray(v.media) ? v.media : [];
-      if (media.length === 0) {
-        mediaSection.classList.add("hidden");
-      } else {
-        mediaSection.classList.remove("hidden");
-        mediaGrid.innerHTML = media.map(m => {
-          const isImg = (m.type === "image" || (m.url && m.url.includes("export=view")));
-          return `
-            <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
-              ${isImg
-                ? `<a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="block aspect-video bg-slate-100 overflow-hidden">
-                     <img src="${escapeHtml(m.url)}" alt="${escapeHtml(m.name)}" class="w-full h-full object-cover hover:scale-105 transition" />
-                   </a>`
-                : `<div class="aspect-video bg-slate-900 text-white flex flex-col items-center justify-center p-4 text-center">
-                     <i class="ph-bold ph-video-camera text-3xl text-blue-400 mb-2"></i>
-                     <span class="text-xs font-semibold line-clamp-1">${escapeHtml(m.name)}</span>
-                   </div>`
-              }
-              <div class="p-3 flex items-center justify-between gap-2 bg-white">
-                <span class="text-xs font-semibold text-slate-700 truncate">${escapeHtml(m.name)}</span>
-                <a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="text-xs font-bold text-[#0067C0] hover:underline shrink-0">Ver archivo</a>
-              </div>
+      const media = (t.media || []).filter(m => m.clientVisible === true);
+      if (media.length > 0) {
+        mediaSec.classList.remove("hidden");
+        mediaGrid.innerHTML = media.map(m => `
+          <div onclick="openImagePreview('${m.viewUrl || m.url}')" class="group block bg-slate-50 rounded-2xl p-2.5 border border-slate-200 hover:border-[#004B93] transition cursor-pointer">
+            <div class="aspect-video bg-slate-200 rounded-xl overflow-hidden mb-2 flex items-center justify-center">
+              <img src="${m.url}" alt="${escapeHtml(m.name)}" class="w-full h-full object-cover group-hover:scale-105 transition" />
             </div>
-          `;
-        }).join("");
+            <span class="text-xs font-bold text-slate-700 truncate block">${escapeHtml(m.name)}</span>
+          </div>
+        `).join("");
+      } else {
+        mediaSec.classList.add("hidden");
       }
     }
   </script>

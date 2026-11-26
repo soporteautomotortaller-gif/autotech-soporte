@@ -2183,7 +2183,10 @@
     // =========================================================================
     function openTrainingPlanModal() { const brandOpts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join(""); document.getElementById("tpBrandInput").innerHTML = brandOpts; document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas las Marcas</option>` + brandOpts; if (!document.getElementById("tpDateInput").value) document.getElementById("tpDateInput").value = new Date().toISOString().split("T")[0]; renderTrainingPlanModal(); document.getElementById("trainingPlanModal").classList.remove("hidden"); }
     function addTrainingPlanEntry(e) { e.preventDefault(); const brand = document.getElementById("tpBrandInput").value; const date = document.getElementById("tpDateInput").value; const topic = document.getElementById("tpTopicInput").value.trim(); const duration = document.getElementById("tpDurationInput").value.trim(); if (!brand || !date || !topic) return; state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand, date, topic, duration, createdBy: currentSession ? currentSession.name : "Usuario" }); pushActivityNotification({ area: "entrenamiento", targetType: "plan", targetId: "tp", message: `${currentSession.name} agregó al Plan de Entrenamiento (${brand} · ${date}): "${topic}"` }); document.getElementById("tpTopicInput").value = ""; document.getElementById("tpDurationInput").value = ""; saveLocalAndCloud(); renderTrainingPlanModal(); showToast("Tema guardado en Plan de Entrenamiento", "success"); }
-    function deleteTrainingPlanEntry(entryId) { state.trainingPlanEntries = (state.trainingPlanEntries || []).filter(x => x.id !== entryId); saveLocalAndCloud(); renderTrainingPlanModal(); }
+    function deleteTrainingPlanEntry(entryId) {
+      if (!moveToTrash("trainingPlanEntries", entryId)) return;
+      renderTrainingPlanModal();
+    }
     function getUnifiedTrainingPlanItems(brandFilter, yearStr) { const manualEntries = (state.trainingPlanEntries || []).filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter)); const boardCourses = (state.tasks || []).filter(t => (t.mode || "soporte") === "entrenamiento" && t.date && t.date.startsWith(yearStr) && (brandFilter === "ALL" || (t.brand || "Otras Marcas") === brandFilter)).map(t => ({ id: "course_" + t.id, brand: t.brand || "Multimarca", date: t.date, topic: `${t.title} (${t.subcategory})`, duration: t.hours ? `${t.hours} hs` : "" })); return [...manualEntries, ...boardCourses].sort((a, b) => (a.date > b.date ? 1 : -1)); }
     function renderTrainingPlanModal() {
       const brandFilter = document.getElementById("tpFilterBrand").value, yearStr = document.getElementById("tpFilterYear").value, monthFilter = document.getElementById("tpFilterMonth").value;
@@ -2382,7 +2385,11 @@
             if (Array.isArray(objApp.todos)) state.todos = objApp.todos;
           }
           if (Array.isArray(objApp.credentialsDb)) state.credentialsDb = objApp.credentialsDb;
-          if (Array.isArray(objApp.trainingPlanEntries)) state.trainingPlanEntries = objApp.trainingPlanEntries;
+          // Firebase omits empty arrays, so the count also identifies an empty plan.
+          if (cloudRevision >= state.trashRevision) {
+            if (Array.isArray(objApp.trainingPlanEntries)) state.trainingPlanEntries = objApp.trainingPlanEntries;
+            else if (objApp.trainingPlanEntryCount === 0) state.trainingPlanEntries = [];
+          }
           if (Array.isArray(objApp.notifications)) state.notifications = objApp.notifications;
           if (Array.isArray(objApp.htcBank) && objApp.htcBank.length > 0) state.htcBank = objApp.htcBank;
           if (Array.isArray(objApp.platforms) && objApp.platforms.length > 0) state.platforms = objApp.platforms;
@@ -2409,6 +2416,7 @@
         }
         if (activeTab === "tasks") renderTodos();
         if (activeTab === "completed") renderCompletedTab();
+        return objApp;
       } catch (e) {}
     }
 
@@ -2590,6 +2598,7 @@
         trashRevision: state.trashRevision,
         credentialsDb: state.credentialsDb || [],
         trainingPlanEntries: state.trainingPlanEntries || [],
+        trainingPlanEntryCount: state.trainingPlanEntries.length,
         notifications: state.notifications || [],
         htcBank: state.htcBank || [],
         platforms: state.platforms || [],
@@ -2609,14 +2618,17 @@
       if (icon) icon.className = "ph-bold ph-arrows-clockwise animate-spin text-blue-600";
       try {
         const generation = saveGeneration;
-        await syncFirebaseRealtime();
+        const firebaseState = await syncFirebaseRealtime();
         await driveSave;
         const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "loadState" }) });
         const data = await res.json();
         if (generation === saveGeneration && data.status === "ok" && data.state) {
-          const localTrash = { trashRevision: state.trashRevision, trash: state.trash, tasks: state.tasks, todos: state.todos };
+          const localTrash = {
+            trashRevision: state.trashRevision, trash: state.trash, tasks: state.tasks,
+            todos: state.todos, trainingPlanEntries: state.trainingPlanEntries
+          };
           const driveRevision = Number(data.state.trashRevision) || 0;
-          const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbCreds = state.credentialsDb, fbPlan = state.trainingPlanEntries, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
+          const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbCreds = state.credentialsDb, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
           state = { ...state, ...data.state };
           if (fbReq.length > 0) state.hotlineRequests = fbReq;
           if (fbPend.length > 0) state.pendingUsers = fbPend;
@@ -2624,7 +2636,11 @@
           if (driveRevision < localTrash.trashRevision) Object.assign(state, localTrash);
           if (driveRevision === localTrash.trashRevision && fbTodos.length > 0) state.todos = fbTodos;
           if (fbCreds.length > 0) state.credentialsDb = fbCreds;
-          if (fbPlan.length > 0) state.trainingPlanEntries = fbPlan;
+          if (firebaseState && (Number(firebaseState.trashRevision) || 0) === driveRevision &&
+              driveRevision === localTrash.trashRevision &&
+              (Array.isArray(firebaseState.trainingPlanEntries) || firebaseState.trainingPlanEntryCount === 0)) {
+            state.trainingPlanEntries = localTrash.trainingPlanEntries;
+          }
           if (fbNotifs.length > 0) state.notifications = fbNotifs;
           if (fbAdmin) state.adminConfig = fbAdmin;
           if (data.masterSheetUrl) state.masterSheetUrl = data.masterSheetUrl;
@@ -2632,6 +2648,7 @@
           if (currentSession) {
             renderPlatformsQuickList(); syncSelectors(); renderAll(); refreshNotificationsUI();
             if (document.getElementById("trashModal").open) renderTrash();
+            if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
           }
           if (manual) showToast("Sincronizado", "success");
         }
@@ -3320,12 +3337,19 @@
       if (!currentSession || (collection === "tasks" && !isCurrentAdmin())) return false;
       const index = state[collection].findIndex(item => item.id === id);
       if (index < 0) return false;
+      const trashId = crypto.randomUUID();
       const [payload] = state[collection].splice(index, 1);
+      const isPlanEntry = collection === "trainingPlanEntries";
+      const itemType = {
+        tasks: payload.mode === "entrenamiento" ? "Curso" : "Caso de soporte",
+        todos: "Tarea",
+        trainingPlanEntries: "Plan de Entrenamiento"
+      }[collection];
       state.trash.unshift({
-        trashId: crypto.randomUUID(),
+        trashId,
         collection,
-        itemType: collection === "todos" ? "Tarea" : payload.mode === "entrenamiento" ? "Curso" : "Caso de soporte",
-        itemLabel: [payload.caseId, payload.title].filter(Boolean).join(" · "),
+        itemType,
+        itemLabel: (isPlanEntry ? [payload.topic, payload.brand, payload.date] : [payload.caseId, payload.title]).filter(Boolean).join(" · "),
         deletedBy: currentSession.name,
         deletedById: currentSession.id,
         deletedAt: new Date().toISOString(),
@@ -3337,7 +3361,8 @@
     }
 
     function canRestoreTrash(entry) {
-      return !!currentSession && (isCurrentAdmin() || (entry.collection === "todos" && entry.deletedById === currentSession.id));
+      return !!currentSession && (isCurrentAdmin() ||
+        (["todos", "trainingPlanEntries"].includes(entry.collection) && entry.deletedById === currentSession.id));
     }
 
     function openTrashModal() {
@@ -3388,6 +3413,8 @@
       markTrashChanged();
       syncSelectors();
       renderAll();
+      if (entry.collection === "trainingPlanEntries" &&
+          !document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
       renderTrash("Registro restaurado.");
     }
 

@@ -109,6 +109,201 @@
       color: #60a5fa;
     }
   </style>
+<style>
+  :root {
+    --glass-blur: blur(24px) saturate(180%);
+    --glass-light: rgba(250, 252, 255, .68);
+    --glass-panel: rgba(249, 251, 255, .89);
+    --glass-edge: rgba(255, 255, 255, .52);
+    --glass-ink: #17233b;
+    --glass-muted: #465672;
+    --glass-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 -1px 0 rgba(126,141,182,.16), 0 8px 22px rgba(42,37,90,.11), 0 25px 64px -26px rgba(29,30,85,.44);
+    --glass-ease: cubic-bezier(.16, 1, .3, 1);
+    --glass-x: 0px;
+    --glass-y: 16px;
+  }
+  body, body.mode-training, body.dark-theme {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+    background: radial-gradient(ellipse at 14% 19%, #a6e5ff 0%, transparent 44%),
+      radial-gradient(ellipse at 80% 85%, #ffc5af 0%, transparent 46%),
+      radial-gradient(ellipse at 75% 18%, #d5b7fa 0%, transparent 53%),
+      linear-gradient(132deg, #7fafea, #b4baf5 48%, #dcc7ef 73%, #f6c5ac);
+    background-attachment: fixed;
+    color: var(--glass-ink);
+  }
+  body.dark-theme {
+    --glass-light: rgba(23,32,58,.73);
+    --glass-panel: rgba(23,32,52,.92);
+    --glass-edge: rgba(219,229,255,.23);
+    --glass-ink: #f1f5ff;
+    --glass-muted: #c3d0e7;
+    --glass-shadow: inset 0 1px 0 rgba(255,255,255,.13), inset 0 -1px 0 rgba(235,241,255,.06), 0 12px 24px rgba(4,6,20,.28), 0 25px 65px -26px rgba(3,6,20,.75);
+    background: radial-gradient(ellipse at 9% 18%, #285c91, transparent 49%),
+      radial-gradient(ellipse at 86% 82%, #824454, transparent 52%),
+      radial-gradient(ellipse at 74% 18%, #463785, transparent 49%),
+      #151d3c;
+    background-attachment: fixed;
+  }
+  [hidden], .glass-window-hidden { display: none !important; }
+  button { transition: scale 280ms var(--glass-ease), background-color 170ms ease, box-shadow 200ms ease; }
+  button:not(:disabled):active { scale: .95; }
+  :is(button, a, input, select, textarea):focus-visible { outline: 2px solid #2d70d5; outline-offset: 3px; }
+  body.dark-theme :is(button, a, input, select, textarea):focus-visible { outline-color: #a8cdff; }
+  #mainAppContainer { padding: 55px clamp(9px, 2.5vw, 44px) 106px; }
+  .glass-menu, .glass-workspace, .glass-dock, .glass-control,
+  .glass-panel, dialog[id], #notifDropdown, #platformsDropdown,
+  body .win-mica, body.dark-theme .win-mica {
+    background: var(--glass-light);
+    border: 1px solid var(--glass-edge);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-shadow);
+  }
+  .glass-menu {
+    position: fixed; inset: 0 0 auto; z-index: 41; min-height: 39px; padding: 0 clamp(12px, 3vw, 44px);
+    display: flex; align-items: center; gap: 15px; box-shadow: inset 0 -1px rgba(255,255,255,.23), 0 3px 16px rgba(24,29,65,.10);
+    border-width: 0 0 1px; color: var(--glass-ink); font-size: 13px;
+  }
+  .glass-menu-brand { display: grid; place-items: center; color: var(--glass-ink); font-size: 21px; padding: 4px; }
+  .glass-menu-nav, .glass-system { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .glass-system { margin-left: auto; gap: 12px; }
+  .glass-system time { font-variant-numeric: tabular-nums; min-width: 40px; }
+  .glass-system i { font-size: 16px; }
+  .glass-menu button { border-radius: 9999px; padding: 4px 8px; }
+  .glass-menu button:hover, .glass-menu button[aria-current="page"] { background: rgba(83,111,183,.14); }
+  .glass-control {
+    position: absolute; right: 14px; top: calc(100% + 7px); width: min(265px, calc(100vw - 28px));
+    border-radius: 20px; padding: 12px; display: grid; gap: 6px; background: var(--glass-panel);
+    animation: glass-open 420ms var(--glass-ease) both;
+  }
+  .glass-control button { display: flex; gap: 9px; align-items: center; text-align: left; padding: 9px; }
+  .glass-workspace { max-width: 1640px; margin: auto; min-width: 0; border-radius: 20px; }
+  .glass-workspace.glass-expanded { max-width: none; margin-inline: calc(clamp(9px, 2.5vw, 44px) * -.72); }
+  .glass-window-bar, .glass-modal-bar {
+    min-height: 36px; padding: 0 14px; display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid rgba(88,108,159,.16); color: var(--glass-muted);
+  }
+  .glass-window-bar { border-radius: 20px 20px 0 0; background: rgba(126,145,205,.10); }
+  #glassWindowTitle { font-size: 12px; font-weight: 650; }
+  .glass-lights { display: flex; align-items: center; gap: 3px; flex: none; }
+  .glass-light { display: grid; place-items: center; width: 20px; height: 25px; background: none; color: #1d2230; }
+  .glass-light::before {
+    content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--light-color);
+    box-shadow: inset 0 0 0 1px rgba(25,30,50,.20), inset 0 1px 1px rgba(255,255,255,.58);
+    grid-area: 1 / 1;
+  }
+  .glass-light span { font-size: 10px; line-height: 1; font-weight: 800; grid-area: 1 / 1; opacity: 0; }
+  .glass-light:is(:hover,:focus-visible) span { opacity: 1; }
+  .glass-light-close { --light-color: #ff665e; }
+  .glass-light-minimize { --light-color: #ffc44f; }
+  .glass-light-expand { --light-color: #46cc73; }
+  .glass-toolbar { position: relative; z-index: 3; border-bottom: 1px solid rgba(83,104,156,.19); }
+  .glass-toolbar-heading h1 { font-size: clamp(17px, 2vw, 25px); letter-spacing: -.04em; line-height: 1.2; }
+  .glass-brand-fallback { color: var(--accent); font-size: 23px; line-height: 1; }
+  .glass-tools-toggle { display: none; align-items: center; gap: 6px; background: var(--glass-light); border: 1px solid var(--glass-edge); }
+  .glass-layout { display: grid; grid-template-columns: 178px minmax(0,1fr); min-height: 55vh; }
+  .glass-sidebar {
+    min-width: 0; background: rgba(118,139,207,.095); padding: 15px 9px; border-right: 1px solid rgba(92,113,167,.17);
+    border-radius: 0 0 0 20px; backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .glass-sidebar-label { display: block; margin: 4px 8px 9px; font-size: 11px; font-weight: 700; color: var(--glass-muted); }
+  .glass-sidebar-nav { display: grid; gap: 4px; }
+  .glass-sidebar-nav .win-tab { justify-content: flex-start; white-space: nowrap; padding-inline: 9px; }
+  .glass-sidebar-nav .win-tab.active { background: rgba(86,123,208,.17); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
+  .glass-sidebar-nav .win-tab.active::after { left: 0; top: 25%; bottom: auto; width: 3px; height: 50%; transform: none; }
+  .glass-content { width: 100%; min-width: 0; padding-bottom: 24px; }
+  .glass-toolbar :is(button, .btn-accent):not(#btnHotlineGroup button), .glass-content .btn-accent, #authScreen button { border-radius: 9999px; }
+  .glass-actions { justify-content: flex-start; }
+  .glass-actions > :is(button, div) { max-width: 100%; }
+  .glass-toolbar .touch-target { min-height: 34px; }
+  #notifDropdown, #platformsDropdown { background: var(--glass-panel); z-index: 55; }
+  .glass-dock {
+    position: fixed; z-index: 40; left: 50%; bottom: max(12px, env(safe-area-inset-bottom));
+    transform: translateX(-50%); display: flex; gap: clamp(3px, 1vw, 11px); align-items: flex-end;
+    border-radius: 16px; padding: 7px clamp(6px, 1.1vw, 13px) 9px; color: var(--glass-ink);
+  }
+  .glass-dock-item { position: relative; width: clamp(37px, 8vw, 53px); height: clamp(40px, 9vw, 55px); transform-origin: center bottom; }
+  .glass-dock-item[aria-current="page"]::after {
+    content: ""; position: absolute; bottom: -5px; left: 50%; width: 4px; height: 4px; border-radius: 50%; background: currentColor; transform: translateX(-50%);
+  }
+  .glass-dock-icon {
+    display: grid; place-items: center; width: 100%; aspect-ratio: 1; border-radius: 13px; font-size: clamp(19px, 5vw, 27px);
+    background: linear-gradient(145deg, var(--dock-light), var(--dock-dark)); color: #fff;
+    border: 1px solid rgba(255,255,255,.44);
+    box-shadow: inset 0 1px rgba(255,255,255,.53), inset 0 -1px rgba(0,0,0,.14), 0 4px 9px rgba(25,33,74,.26);
+    transition: transform 360ms var(--glass-ease);
+  }
+  .glass-icon-blue { --dock-light: #5aa5f5; --dock-dark: #2862c9; }
+  .glass-icon-violet { --dock-light: #a284f4; --dock-dark: #6045c7; }
+  .glass-icon-rose { --dock-light: #f47792; --dock-dark: #be3956; }
+  .glass-icon-teal { --dock-light: #44bab6; --dock-dark: #178182; }
+  .glass-icon-amber { --dock-light: #e9a750; --dock-dark: #a85f16; }
+  .glass-icon-slate { --dock-light: #8c9dbc; --dock-dark: #4b5878; }
+  .glass-dock-label {
+    opacity: 0; position: absolute; bottom: calc(100% + 14px); left: 50%; transform: translateX(-50%);
+    pointer-events: none; white-space: nowrap; padding: 4px 8px; border-radius: 9999px;
+    color: var(--glass-ink); background: var(--glass-panel); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shadow);
+    font-size: 11px; font-weight: 650; transition: opacity 180ms ease;
+  }
+  .glass-dock-item:is(:hover,:focus-visible) .glass-dock-label { opacity: 1; }
+  @media (hover: hover) {
+    .glass-dock-item:is(:hover,:focus-visible) .glass-dock-icon { transform: translateY(-5px) scale(1.18); }
+    .glass-dock-item:has(+ .glass-dock-item:hover) .glass-dock-icon,
+    .glass-dock-item:hover + .glass-dock-item .glass-dock-icon { transform: translateY(-2px) scale(1.07); }
+  }
+  #mobileFab { bottom: 88px; }
+  #toastBox { top: 47px; }
+  .glass-panel, dialog[id], body.dark-theme .glass-panel {
+    border-radius: 20px; background: var(--glass-panel) !important;
+  }
+  dialog[id]::backdrop { background: rgba(27,35,70,.40); backdrop-filter: blur(6px); }
+  .glass-panel.glass-expanded, dialog.glass-expanded { width: min(96vw, 1440px); max-width: none; }
+  .glass-modal-bar { background: rgba(99,124,183,.08); margin: 0; }
+  dialog[id] > .glass-modal-bar { margin: -20px -20px 14px; }
+  :is(.glass-panel, dialog[id], .glass-workspace).glass-opening { animation: glass-open 480ms var(--glass-ease) both; }
+  :is(.glass-panel, dialog[id], .glass-workspace).glass-closing { animation: glass-close 210ms cubic-bezier(.32,0,.67,0) both; }
+  @keyframes glass-open {
+    from { opacity: 0; transform: translate(var(--glass-x), var(--glass-y)) scale(.85); }
+    to { opacity: 1; transform: translate(0,0) scale(1); }
+  }
+  @keyframes glass-close {
+    to { opacity: 0; transform: translate(var(--glass-x), var(--glass-y)) scale(.85); }
+  }
+  #authScreen > .win-mica { background: var(--glass-panel); border-radius: 20px; }
+  body.dark-theme :is(dialog[id], #notifDropdown, #platformsDropdown) {
+    background: var(--glass-panel) !important; color: var(--glass-ink); border-color: var(--glass-edge);
+  }
+  body.dark-theme :is(.glass-workspace, dialog[id], .glass-panel) .text-slate-500 { color: #aebbd2 !important; }
+  @media (max-width: 960px) {
+    .glass-layout { grid-template-columns: minmax(0,1fr); }
+    .glass-sidebar { padding: 7px; border-right: 0; border-bottom: 1px solid rgba(92,113,167,.17); border-radius: 0; }
+    .glass-sidebar-label { display: none; }
+    .glass-sidebar-nav { display: flex; overflow-x: auto; gap: 4px; }
+    .glass-sidebar-nav .win-tab { flex: none; }
+  }
+  @media (max-width: 760px) {
+    .glass-tools-toggle { display: inline-flex; }
+    .glass-actions:not(.glass-tools-open) { display: none; }
+    #notifDropdown { position: absolute; top: calc(100% + 7px); inset-inline: auto 0; width: min(440px, calc(100vw - 48px)); }
+    .glass-actions > div:has(#platformsDropdown) { position: static; }
+    #platformsDropdown { right: 10px; width: min(390px, calc(100vw - 42px)); }
+    #mobileFab { right: 12px; }
+  }
+  @media (max-width: 490px) {
+    .glass-menu-nav { display: none; }
+    .glass-menu { gap: 8px; }
+    .glass-toolbar-heading h1 { letter-spacing: -.02em; }
+    .glass-toolbar-heading #modeSubtitle { font-size: 11px; }
+    .glass-content { padding-inline: 8px; }
+  }
+  .glass-content.glass-view-transition { animation: glass-view 400ms var(--glass-ease) both; }
+  @keyframes glass-view { from { opacity: .45; transform: translateY(10px); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    .glass-dock-icon { transform: none !important; }
+  }
+
+</style>
 </head>
 <body class="text-slate-800 antialiased">
 
@@ -222,9 +417,34 @@
   <!-- ======================================================================= -->
   <div id="mainAppContainer" class="hidden pb-16">
 
-    <header class="win-mica sticky top-0 z-30 border-b border-slate-200/80">
+    <div class="glass-menu" aria-label="Barra de menús">
+      <a href="#glassWorkspace" class="glass-menu-brand" aria-label="Abrir Automotor" data-glass-home><i class="ph-fill ph-steering-wheel" aria-hidden="true"></i></a>
+      <strong>Automotor</strong>
+      <nav class="glass-menu-nav" aria-label="Menú de la aplicación">
+        <button type="button" data-glass-view="board">Tablero</button>
+        <button type="button" data-glass-view="tasks">Tareas</button>
+        <button type="button" data-glass-view="calendar">Calendario</button>
+      </nav>
+      <div class="glass-system">
+        <i id="glassNetwork" class="ph-bold ph-wifi-high" aria-label="Conexión de red" role="img"></i>
+        <button type="button" id="glassControlToggle" aria-expanded="false" aria-controls="glassControl" aria-label="Centro de control"><i class="ph-bold ph-sliders-horizontal" aria-hidden="true"></i></button>
+        <time id="glassClock" aria-label="Hora de Paraguay"></time>
+      </div>
+      <section id="glassControl" class="glass-control" hidden aria-label="Centro de control">
+        <strong>Centro de control</strong>
+        <button type="button" data-glass-target="darkModeBtn"><i class="ph-bold ph-moon" aria-hidden="true"></i> Cambiar apariencia</button>
+        <button type="button" data-glass-target="deviceBadge"><i class="ph-bold ph-device-mobile" aria-hidden="true"></i> Cambiar vista de dispositivo</button>
+        <button type="button" data-glass-target="glassSyncButton"><i class="ph-bold ph-cloud-arrow-down" aria-hidden="true"></i> Sincronizar con la nube</button>
+      </section>
+    </div>
+    <div id="glassWorkspace" class="glass-workspace" aria-label="Ventana de Automotor">
+      <div class="glass-window-bar">
+        <div class="glass-lights" data-glass-controls="glassWorkspace"></div>
+        <span id="glassWindowTitle">Tablero</span>
+      </div>
+      <header class="glass-toolbar">
       <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-3 space-y-2.5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="glass-toolbar-heading flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm p-1 shrink-0 overflow-hidden">
               <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" />
@@ -237,7 +457,7 @@
                   <span class="automotor-wordmark text-[8px]">S.A.</span>
                 </span>
                 <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1">
-                  <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
+                  <i class="ph-bold ph-desktop"></i> <span>Computadora</span>
                 </button>
                 <button onclick="toggleDarkMode()" id="darkModeBtn" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1">
                   <i class="ph-bold ph-moon"></i>
@@ -250,10 +470,10 @@
           <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
             <div class="flex items-center bg-slate-200/75 p-1 rounded-xl flex-1 sm:flex-none">
               <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition">
-                <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
+                <i class="ph-bold ph-wrench"></i> Soporte técnico
               </button>
               <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
-                <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
+                <i class="ph-bold ph-graduation-cap"></i> Entrenamiento
               </button>
             </div>
 
@@ -283,31 +503,16 @@
 
         <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
           <!-- BARRA DE PESTAÑAS CON PESTAÑA COMPLETADOS -->
-          <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start overflow-x-auto">
-            <button onclick="switchTab('board')" id="tab-board" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
-              <i class="ph-bold ph-kanban text-accent"></i> Tablero
-            </button>
-            <button onclick="switchTab('completed')" id="tab-completed" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
-              <i class="ph-bold ph-check-circle text-emerald-600"></i> Completados
-              <span id="completedTabCount" class="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">0</span>
-            </button>
-            <button onclick="switchTab('tasks')" id="tab-tasks" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
-              <i class="ph-bold ph-check-square-offset text-accent"></i> Tareas
-              <span id="myTasksBadge" class="hidden px-1.5 py-0.2 rounded-full bg-[#004B93] text-white text-[10px] font-extrabold">0</span>
-            </button>
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
-              <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
-            </button>
-            <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
-              <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
-            </button>
-          </nav>
 
-          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+
+          <button type="button" id="glassToolsToggle" aria-controls="glassActions" aria-expanded="false" class="glass-tools-toggle touch-target rounded-full px-3 text-xs font-bold">
+            <i class="ph-bold ph-toolbox" aria-hidden="true"></i> Herramientas
+          </button>
+          <div id="glassActions" class="glass-actions flex flex-wrap items-center gap-2 w-full">
 
             <button type="button" onclick="openCredentialsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition" title="Base de datos de accesos, links, IDs, credenciales, equipos y notas">
               <i class="ph-bold ph-key text-amber-400 text-base"></i>
-              <span>Accesos / Claves</span>
+              <span>Accesos y claves</span>
             </button>
 
             <button type="button" id="btnVinHistory" onclick="openVinHistoryModal()" class="touch-target px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 text-xs font-extrabold text-indigo-900 flex items-center gap-1.5 transition">
@@ -322,7 +527,7 @@
                 <span id="hotlineBadgeCount" class="hidden px-2 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-black animate-pulse">0</span>
               </button>
               <button type="button" onclick="copyHotlineRequestLink()" class="touch-target px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1 border-l border-red-400 transition">
-                <i class="ph-bold ph-link"></i> <span class="hidden sm:inline">Copiar Link</span>
+                <i class="ph-bold ph-link"></i> <span class="hidden sm:inline">Copiar enlace</span>
               </button>
             </div>
 
@@ -333,7 +538,7 @@
 
             <button type="button" id="btnHtcBank" onclick="openHtcBankModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-extrabold text-amber-900 flex items-center gap-1.5 transition">
               <i class="ph-bold ph-books text-amber-600 text-base"></i>
-              <span>Banco Actividades HTC</span>
+              <span>Actividades HTC</span>
             </button>
 
             <div class="relative">
@@ -376,14 +581,14 @@
               <i class="ph-bold ph-globe text-emerald-600"></i>
             </button>
 
-            <button type="button" onclick="openContacts()" aria-label="Directorio de contactos" title="Directorio de contactos" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+            <button type="button" id="glassContactsButton" onclick="openContacts()" aria-label="Directorio de contactos" title="Directorio de contactos" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
               <i class="ph-bold ph-address-book" aria-hidden="true"></i><span class="hidden sm:inline">Contactos</span>
             </button>
             <button type="button" id="openTrashButton" onclick="openTrashModal()" aria-label="Papelera" title="Papelera" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
               <i class="ph-bold ph-trash" aria-hidden="true"></i> <span class="hidden sm:inline">Papelera</span>
             </button>
 
-            <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar Nube">
+            <button id="glassSyncButton" onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar Nube">
               <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i>
             </button>
 
@@ -400,7 +605,7 @@
             </button>
 
             <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
-              <i class="ph-bold ph-plus"></i> <span id="btnNewActionText">Nuevo Soporte</span>
+              <i class="ph-bold ph-plus"></i> <span id="btnNewActionText">Nuevo caso</span>
             </button>
 
             <button onclick="logoutSession()" class="touch-target px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-1" title="Cerrar Sesión">
@@ -429,9 +634,31 @@
         </div>
 
       </div>
-    </header>
-
-    <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
+      </header>
+      <div class="glass-layout">
+        <aside class="glass-sidebar">
+          <span class="glass-sidebar-label">Espacio de trabajo</span>
+          <nav class="glass-sidebar-nav" aria-label="Vistas del portal">
+            <button onclick="switchTab('board')" id="tab-board" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i class="ph-bold ph-kanban text-accent"></i> Tablero
+            </button>
+            <button onclick="switchTab('completed')" id="tab-completed" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i class="ph-bold ph-check-circle text-emerald-600"></i> Completados
+              <span id="completedTabCount" class="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">0</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="tab-tasks" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i class="ph-bold ph-check-square-offset text-accent"></i> Tareas
+              <span id="myTasksBadge" class="hidden px-1.5 py-0.2 rounded-full bg-[#004B93] text-white text-[10px] font-extrabold">0</span>
+            </button>
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
+            </button>
+            <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
+            </button>
+          </nav>
+        </aside>
+        <main class="glass-content max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
 
       <!-- VISTA 1: TABLERO KANBAN (MÁXIMO 10 CASOS RECIENTES EN COMPLETADO) -->
       <section id="view-board" class="space-y-4">
@@ -617,7 +844,18 @@
           <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
         </div>
       </section>
-    </main>
+        </main>
+      </div>
+    </div>
+    <nav class="glass-dock" id="glassDock" aria-label="Accesos rápidos">
+      <button type="button" class="glass-dock-item glass-icon-blue" data-glass-view="board" aria-label="Tablero" title="Tablero"><span class="glass-dock-icon"><i class="ph-fill ph-kanban" aria-hidden="true"></i></span><span class="glass-dock-label">Tablero</span></button>
+      <button type="button" class="glass-dock-item glass-icon-violet" data-glass-view="tasks" aria-label="Tareas" title="Tareas"><span class="glass-dock-icon"><i class="ph-fill ph-check-square-offset" aria-hidden="true"></i></span><span class="glass-dock-label">Tareas</span></button>
+      <button type="button" class="glass-dock-item glass-icon-rose" data-glass-view="calendar" aria-label="Calendario" title="Calendario"><span class="glass-dock-icon"><i class="ph-fill ph-calendar-blank" aria-hidden="true"></i></span><span class="glass-dock-label">Calendario</span></button>
+      <button type="button" class="glass-dock-item glass-icon-teal" data-glass-view="dashboard" aria-label="Resumen" title="Resumen"><span class="glass-dock-icon"><i class="ph-fill ph-chart-pie-slice" aria-hidden="true"></i></span><span class="glass-dock-label">Resumen</span></button>
+      <button type="button" class="glass-dock-item glass-icon-amber" data-glass-target="glassContactsButton" aria-label="Contactos" title="Contactos"><span class="glass-dock-icon"><i class="ph-fill ph-address-book" aria-hidden="true"></i></span><span class="glass-dock-label">Contactos</span></button>
+      <button type="button" class="glass-dock-item glass-icon-slate" data-glass-target="openTrashButton" aria-label="Papelera" title="Papelera"><span class="glass-dock-icon"><i class="ph-fill ph-trash" aria-hidden="true"></i></span><span class="glass-dock-label">Papelera</span></button>
+      <button type="button" class="glass-dock-item glass-icon-blue" id="glassRestore" aria-label="Restaurar ventana" title="Restaurar ventana" hidden><span class="glass-dock-icon"><i class="ph-bold ph-browsers" aria-hidden="true"></i></span><span class="glass-dock-label">Restaurar</span></button>
+    </nav>
 
     <button id="mobileFab" onclick="openTaskModal()" class="hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full btn-accent shadow-xl flex items-center justify-center text-2xl">
       <i class="ph-bold ph-plus"></i>
@@ -626,7 +864,7 @@
 
   <!-- MODAL BASE DE DATOS DE ACCESOS, LINKS, IDs, CREDENCIALES Y UBICACIÓN -->
   <div id="credentialsModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-900 text-white">
         <div class="flex items-center gap-2.5">
           <i class="ph-bold ph-key text-2xl text-amber-400"></i>
@@ -719,7 +957,7 @@
 
   <!-- MODAL PLAN DE ENTRENAMIENTO POR MARCA + EXPORTACIÓN EXCEL CALENDARIO -->
   <div id="trainingPlanModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-emerald-200 flex flex-wrap items-center justify-between gap-2 bg-emerald-50">
         <div class="flex items-center gap-2.5">
           <i class="ph-bold ph-calendar-check text-2xl text-emerald-700"></i>
@@ -820,7 +1058,7 @@
 
   <!-- MODAL 1: CREAR / EDITAR SOPORTE O ENTRENAMIENTO -->
   <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <h3 id="taskModalTitle" class="text-base font-bold text-slate-900">Nueva Acción</h3>
         <button onclick="closeModal('taskModal')" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
@@ -1072,7 +1310,7 @@
 
   <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
         <div class="flex flex-wrap items-center gap-2">
           <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#004B93]">CASO-2026-101</span>
@@ -1342,7 +1580,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-200/80">
               <div class="text-xs text-slate-700">
                 PIN Cliente: <strong id="cpTokenDisplay" class="font-mono bg-white px-2 py-0.5 rounded border border-slate-300">----</strong>
-                <button type="button" onclick="copyClientPortalLink()" class="ml-2 text-emerald-700 font-bold hover:underline">Copiar Link</button>
+                <button type="button" onclick="copyClientPortalLink()" class="ml-2 text-emerald-700 font-bold hover:underline">Copiar enlace</button>
               </div>
               <div class="flex gap-2">
                 <button type="button" onclick="saveClientPortalConfig(false)" class="px-3.5 py-2 rounded-xl bg-white border border-emerald-300 text-emerald-900 text-xs font-bold">Solo Guardar</button>
@@ -1591,7 +1829,7 @@
 
   <!-- MODAL BANCO HTC -->
   <div id="htcBankModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-amber-200 flex items-center justify-between bg-amber-50">
         <h3 class="text-base font-bold text-amber-950">Banco Reutilizable de Actividades HTC</h3>
         <button onclick="closeModal('htcBankModal')" class="p-1.5 rounded-lg hover:bg-amber-200/70"><i class="ph-bold ph-x"></i></button>
@@ -1620,7 +1858,7 @@
 
   <!-- MODAL HISTORIAL VIN -->
   <div id="vinHistoryModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-indigo-200 flex items-center justify-between bg-indigo-50">
         <h3 class="text-base font-extrabold text-indigo-950">Historial Clínico por Chasis (VIN) y Repetibilidad</h3>
         <button onclick="closeModal('vinHistoryModal')" class="p-1.5 rounded-lg hover:bg-indigo-200/70"><i class="ph-bold ph-x"></i></button>
@@ -1637,7 +1875,7 @@
 
   <!-- MODAL TAREAS -->
   <div id="todoModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <h3 id="todoModalTitle" class="text-base font-bold text-slate-900">Nueva Tarea</h3>
         <button onclick="closeModal('todoModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
@@ -1704,11 +1942,11 @@
 
   <!-- MODAL BANDEJA DE SOPORTE SOLICITADO -->
   <div id="hotlineRequestsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-red-200 flex flex-wrap items-center justify-between gap-2 bg-red-50">
         <h3 class="text-base font-extrabold text-red-950">Solicitudes de Hotline / Consulta a Fábrica</h3>
         <div class="flex items-center gap-2">
-          <button type="button" onclick="copyHotlineRequestLink()" class="px-3 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold">Copiar Link</button>
+          <button type="button" onclick="copyHotlineRequestLink()" class="px-3 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold">Copiar enlace</button>
           <button onclick="closeModal('hotlineRequestsModal')" class="p-1.5 rounded-lg hover:bg-red-200/70"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
@@ -1718,7 +1956,7 @@
 
   <!-- MODAL GESTOR DE PLATAFORMAS -->
   <div id="platformsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <h3 class="text-base font-bold text-slate-900">Gestor de Plataformas y Favoritos</h3>
         <button onclick="closeModal('platformsModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
@@ -1743,7 +1981,7 @@
 
   <!-- MODAL DE CIERRE TÉCNICO -->
   <div id="closureModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-emerald-300 overflow-hidden">
+    <div class="glass-panel bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-emerald-300 overflow-hidden">
       <div class="px-5 py-4 border-b border-emerald-200 flex items-center justify-between bg-emerald-50">
         <h3 class="text-base font-bold text-emerald-950">Cierre Técnico y Solución Aplicada</h3>
         <button onclick="closeModal('closureModal')" class="p-1.5 rounded-lg hover:bg-emerald-200/60"><i class="ph-bold ph-x"></i></button>
@@ -1772,7 +2010,7 @@
 
   <!-- MODAL PANEL ADMINISTRADOR -->
   <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+    <div class="glass-panel bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
         <h3 class="text-base font-bold text-slate-900">Panel de Administración · Equipo y Contraseñas</h3>
         <button onclick="closeModal('usersModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
@@ -1816,7 +2054,7 @@
 
   <!-- MODAL RED DE TALLERES -->
   <div id="workshopsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+    <div class="glass-panel bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <h3 class="text-base font-bold text-slate-900">Talleres Propios y Autorizados Automotor</h3>
         <button onclick="closeModal('workshopsModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
@@ -1838,7 +2076,7 @@
 
   <!-- MODAL CONFIGURAR URL CLIENTE -->
   <div id="portalConfigModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+    <div class="glass-panel bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <h3 class="text-base font-bold text-slate-900">Enlace Web del Portal Cliente</h3>
         <button onclick="closeModal('portalConfigModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
@@ -3931,6 +4169,229 @@
     function savePortalBaseUrl() { state.clientPortalBaseUrl = document.getElementById("clientPortalBaseUrlInput").value.trim(); saveLocalAndCloud(); closeModal("portalConfigModal"); }
     function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
   </script>
+<script>
+  (() => {
+    const byId = id => document.getElementById(id);
+    const workspace = byId("glassWorkspace");
+    const dock = byId("glassDock");
+    const restore = byId("glassRestore");
+    const control = byId("glassControl");
+    const controlToggle = byId("glassControlToggle");
+    const tabs = { board: "Tablero", completed: "Completados", tasks: "Tareas", dashboard: "Resumen", calendar: "Calendario" };
+    const windows = [...document.querySelectorAll(".glass-panel, dialog[id]")].map(panel => ({
+      panel, host: panel.matches("dialog") ? panel : panel.parentElement, native: panel.matches("dialog")
+    }));
+    const minimized = [];
+    let origin;
+    const toolsToggle = byId("glassToolsToggle");
+    const actions = byId("glassActions");
+    function setTools(open) {
+      actions.classList.toggle("glass-tools-open", open);
+      toolsToggle.setAttribute("aria-expanded", String(open));
+    }
+    toolsToggle.addEventListener("click", () => setTools(!actions.classList.contains("glass-tools-open")));
+    document.querySelectorAll('img[src="logo-am.png"]').forEach(img => {
+      function fallback() {
+        if (!img.isConnected) return;
+        const mark = document.createElement("i");
+        mark.className = "ph-fill ph-steering-wheel glass-brand-fallback";
+        mark.setAttribute("aria-label", "Automotor");
+        mark.setAttribute("role", "img");
+        img.replaceWith(mark);
+      }
+      if (img.complete && !img.naturalWidth) fallback();
+      else img.addEventListener("error", fallback, { once: true });
+    });
+
+    function animateWindow(panel, closing = false, finish) {
+      panel.classList.remove("glass-opening", "glass-closing");
+      const box = panel.getBoundingClientRect();
+      const dx = origin ? origin.x - (box.left + box.width / 2) : 0;
+      const dy = origin ? origin.y - (box.top + box.height / 2) : 70;
+      const clamp = value => Math.max(-60, Math.min(60, value * .22));
+      panel.style.setProperty("--glass-x", clamp(dx) + "px");
+      panel.style.setProperty("--glass-y", clamp(dy) + "px");
+      void panel.offsetWidth;
+      const className = closing ? "glass-closing" : "glass-opening";
+      panel.classList.add(className);
+      const animation = panel.getAnimations().find(item => item.animationName === (closing ? "glass-close" : "glass-open"));
+      const done = () => {
+        panel.classList.remove(className);
+        if (finish) finish();
+      };
+      if (animation) animation.finished.then(done, () => {});
+      else done();
+    }
+
+    function setControl(open) {
+      control.hidden = !open;
+      controlToggle.setAttribute("aria-expanded", String(open));
+    }
+
+    function showWorkspace() {
+      if (workspace.classList.contains("glass-window-hidden")) {
+        workspace.classList.remove("glass-window-hidden");
+        animateWindow(workspace);
+      }
+      const index = minimized.indexOf(workspace);
+      if (index !== -1) minimized.splice(index, 1);
+      restore.hidden = minimized.length === 0;
+    }
+
+    function closeWindow(item, keep) {
+      if (item.panel.classList.contains("glass-closing")) return;
+      animateWindow(item.panel, true, () => {
+        if (item.panel === workspace) workspace.classList.add("glass-window-hidden");
+        else if (item.native) item.host.close();
+        else closeModal(item.host.id);
+        if (keep && !minimized.includes(item)) minimized.push(item);
+        if (item.panel === workspace) {
+          if (keep) minimized[minimized.indexOf(item)] = workspace;
+          dock.querySelector("button").focus();
+        } else if (item.trigger?.isConnected) item.trigger.focus();
+        restore.hidden = minimized.length === 0;
+      });
+    }
+
+    function addControls(container, item) {
+      for (const [action, label, symbol] of [
+        ["close", "Cerrar ventana", "×"], ["minimize", "Minimizar ventana", "−"], ["expand", "Ampliar ventana", "+"]
+      ]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "glass-light glass-light-" + action;
+        button.setAttribute("aria-label", label);
+        button.title = label;
+        if (action === "expand") button.setAttribute("aria-pressed", "false");
+        const icon = document.createElement("span");
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = symbol;
+        button.append(icon);
+        button.addEventListener("click", () => {
+          if (action === "expand") button.setAttribute("aria-pressed", String(item.panel.classList.toggle("glass-expanded")));
+          else closeWindow(item, action === "minimize");
+        });
+        container.append(button);
+      }
+    }
+
+    addControls(workspace.querySelector(".glass-lights"), { panel: workspace });
+    for (const item of windows) {
+      const bar = document.createElement("div");
+      bar.className = "glass-modal-bar";
+      const controls = document.createElement("div");
+      controls.className = "glass-lights";
+      addControls(controls, item);
+      bar.append(controls);
+      item.panel.prepend(bar);
+      const isVisible = () => item.native ? item.host.open : !item.host.classList.contains("hidden");
+      new MutationObserver(() => {
+        const visible = isVisible();
+        if (visible && !item.visible) {
+          const index = minimized.indexOf(item);
+          if (index !== -1) minimized.splice(index, 1);
+          restore.hidden = minimized.length === 0;
+          animateWindow(item.panel);
+        }
+        item.visible = visible;
+      }).observe(item.host, { attributes: true, attributeFilter: [item.native ? "open" : "class"] });
+    }
+
+    restore.addEventListener("click", () => {
+      const item = minimized.pop();
+      restore.hidden = minimized.length === 0;
+      if (item === workspace) showWorkspace();
+      else if (item?.native) item.host.showModal();
+      else if (item) item.host.classList.remove("hidden");
+    });
+
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest("button, [data-glass-home]");
+      if (trigger && event.isTrusted) {
+        const bounds = trigger.getBoundingClientRect();
+        origin = { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+        if (!trigger.matches(".glass-light")) {
+          for (const item of windows) if (!item.visible) item.trigger = trigger;
+        }
+      }
+      if (!control.hidden && !control.contains(event.target) && !controlToggle.contains(event.target)) setControl(false);
+    }, true);
+
+    document.querySelectorAll("[data-glass-view], [data-glass-target], [data-glass-home]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.preventDefault();
+        showWorkspace();
+        if (button.dataset.glassView) {
+          const tab = byId("tab-" + button.dataset.glassView);
+          if (!tab.classList.contains("active")) {
+            tab.click();
+            const content = workspace.querySelector(".glass-content");
+            content.classList.remove("glass-view-transition");
+            void content.offsetWidth;
+            content.classList.add("glass-view-transition");
+          }
+          setTools(false);
+        }
+        if (button.dataset.glassTarget) {
+          setControl(false);
+          byId(button.dataset.glassTarget).click();
+        }
+      });
+    });
+
+    controlToggle.addEventListener("click", () => setControl(control.hidden));
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !control.hidden) {
+        setControl(false);
+        controlToggle.focus();
+      }
+    });
+
+    function updateNavigation() {
+      const active = Object.keys(tabs).find(key => byId("tab-" + key).classList.contains("active")) || "board";
+      byId("glassWindowTitle").textContent = tabs[active];
+      document.querySelectorAll("[data-glass-view], .glass-sidebar-nav .win-tab").forEach(button => {
+        if ((button.dataset.glassView || button.id.slice(4)) === active) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+      });
+    }
+
+    const navObserver = new MutationObserver(updateNavigation);
+    document.querySelectorAll(".glass-sidebar-nav .win-tab").forEach(button => navObserver.observe(button, { attributes: true, attributeFilter: ["class"] }));
+    updateNavigation();
+    new MutationObserver(() => {
+      if (!byId("mainAppContainer").classList.contains("hidden")) {
+        showWorkspace();
+        animateWindow(workspace);
+      } else {
+        minimized.length = 0;
+        restore.hidden = true;
+        setControl(false);
+        setTools(false);
+      }
+    }).observe(byId("mainAppContainer"), { attributes: true, attributeFilter: ["class"] });
+
+    const timeFormat = new Intl.DateTimeFormat("es-PY", { timeZone: "America/Asuncion", hour: "2-digit", minute: "2-digit", hour12: false });
+    const updateClock = () => {
+      const now = new Date();
+      const clock = byId("glassClock");
+      clock.dateTime = now.toISOString();
+      clock.textContent = timeFormat.format(now);
+    };
+    const updateNetwork = () => {
+      const indicator = byId("glassNetwork");
+      indicator.classList.toggle("ph-wifi-high", navigator.onLine);
+      indicator.classList.toggle("ph-wifi-slash", !navigator.onLine);
+      indicator.setAttribute("aria-label", navigator.onLine ? "Con conexión de red" : "Sin conexión de red");
+    };
+    updateClock();
+    updateNetwork();
+    setInterval(updateClock, 1000 * 15);
+    window.addEventListener("online", updateNetwork);
+    window.addEventListener("offline", updateNetwork);
+  })();
+
+</script>
 </body>
 </html>
 

@@ -376,6 +376,10 @@
               <i class="ph-bold ph-globe text-emerald-600"></i>
             </button>
 
+            <button type="button" id="openTrashButton" onclick="openTrashModal()" aria-label="Papelera" title="Papelera" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-trash" aria-hidden="true"></i> <span class="hidden sm:inline">Papelera</span>
+            </button>
+
             <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar Nube">
               <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i>
             </button>
@@ -1827,6 +1831,15 @@
     </div>
   </div>
 
+  <dialog id="trashModal" aria-labelledby="trashTitle" class="m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] rounded-2xl bg-white text-slate-900 p-5 shadow-xl backdrop:bg-slate-900/50">
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <h2 id="trashTitle" class="text-lg font-bold">Papelera</h2>
+      <form method="dialog"><button autofocus class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar</button></form>
+    </div>
+    <p id="trashStatus" class="text-sm text-slate-600 mb-3" aria-live="polite"></p>
+    <ul id="trashList" class="space-y-2"></ul>
+  </dialog>
+
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLRN54nymuTe32fX-RMGRAlqj1QnQulYroAdG8KT-pPNlY6Hi9lPrNVYL1CBblF1ugPA/exec";
     const FIREBASE_DB_URL = "https://autotech-hotline-default-rtdb.firebaseio.com";
@@ -1945,6 +1958,8 @@
     let state = {
       tasks: [],
       todos: [],
+      trash: [],
+      trashRevision: 0,
       credentialsDb: [],
       trainingPlanEntries: [],
       notifications: [],
@@ -1965,6 +1980,9 @@
     };
 
     let currentSession = null;
+    let saveGeneration = 0;
+    let firebaseSave = Promise.resolve();
+    let driveSave = Promise.resolve();
     let appMode = "soporte";
     let activeTab = "board";
     let currentDetailId = null;
@@ -2321,6 +2339,7 @@
       if (!Array.isArray(state.pendingUsers)) state.pendingUsers = [];
       if (!Array.isArray(state.hotlineRequests)) state.hotlineRequests = [];
       if (!Array.isArray(state.todos)) state.todos = [];
+      if (!Array.isArray(state.trash)) state.trash = [];
       if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
       if (!Array.isArray(state.trainingPlanEntries)) state.trainingPlanEntries = [];
       if (!Array.isArray(state.notifications)) state.notifications = [];
@@ -2335,20 +2354,33 @@
     function showToast(msg, type = "info") { const box = document.getElementById("toastBox"); const el = document.createElement("div"); const colors = { success: "bg-emerald-600 text-white", warning: "bg-amber-600 text-white", info: "bg-slate-900 text-white" }; el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 ${colors[type] || colors.info}`; el.innerHTML = `<i class="ph-bold ph-info"></i> <span>${escapeHtml(msg)}</span>`; box.appendChild(el); setTimeout(() => el.remove(), 4500); }
 
     async function syncFirebaseRealtime() {
+      const generation = saveGeneration;
       try {
+        await firebaseSave;
         const [resHr, resPend, resUsers, resAdmin, resApp] = await Promise.all([
           fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`), fetch(`${FIREBASE_DB_URL}/pendingUsers.json`),
           fetch(`${FIREBASE_DB_URL}/approvedUsers.json`), fetch(`${FIREBASE_DB_URL}/adminConfig.json`),
           fetch(`${FIREBASE_DB_URL}/appState.json`)
         ]);
         const [objHr, objPend, objUsers, objAdmin, objApp] = await Promise.all([resHr.json(), resPend.json(), resUsers.json(), resAdmin.json(), resApp.json()]);
+        if (generation !== saveGeneration) return;
         state.hotlineRequests = (objHr && typeof objHr === "object") ? Object.values(objHr).sort((a, b) => (b.id > a.id ? 1 : -1)) : [];
         state.pendingUsers = (objPend && typeof objPend === "object") ? Object.values(objPend) : [];
         if (objUsers && typeof objUsers === "object") state.users = Object.values(objUsers);
         if (objAdmin && typeof objAdmin === "object" && objAdmin.id) state.adminConfig = { ...state.adminConfig, ...objAdmin };
+        let trashChanged = false;
         if (objApp && typeof objApp === "object") {
-          if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0 && state.tasks.length === 0) state.tasks = objApp.tasks;
-          if (Array.isArray(objApp.todos)) state.todos = objApp.todos;
+          const cloudRevision = Number(objApp.trashRevision) || 0;
+          trashChanged = cloudRevision > state.trashRevision;
+          if (trashChanged) {
+            state.trashRevision = cloudRevision;
+            state.trash = objApp.trash || [];
+            state.tasks = objApp.tasks || [];
+            state.todos = objApp.todos || [];
+          } else if (cloudRevision === state.trashRevision) {
+            if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0 && state.tasks.length === 0) state.tasks = objApp.tasks;
+            if (Array.isArray(objApp.todos)) state.todos = objApp.todos;
+          }
           if (Array.isArray(objApp.credentialsDb)) state.credentialsDb = objApp.credentialsDb;
           if (Array.isArray(objApp.trainingPlanEntries)) state.trainingPlanEntries = objApp.trainingPlanEntries;
           if (Array.isArray(objApp.notifications)) state.notifications = objApp.notifications;
@@ -2367,6 +2399,14 @@
         if (!document.getElementById("usersModal").classList.contains("hidden")) renderUsersModalLists();
         if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
         if (!document.getElementById("credentialsModal").classList.contains("hidden")) renderCredentialsTable();
+        if (trashChanged) {
+          try { localStorage.setItem("autotech_state_v5", JSON.stringify({ ...state, hotlineRequests: [] })); } catch (e) {}
+          if (currentSession) {
+            if (currentDetailId && !state.tasks.some(t => t.id === currentDetailId)) closeModal("detailModal");
+            renderAll();
+            if (document.getElementById("trashModal").open) renderTrash();
+          }
+        }
         if (activeTab === "tasks") renderTodos();
         if (activeTab === "completed") renderCompletedTab();
       } catch (e) {}
@@ -2449,7 +2489,11 @@
     function saveTodoItem(e) { e.preventDefault(); const editId = document.getElementById("editTodoId").value; const title = document.getElementById("tdTitle").value.trim(); const assigneeId = document.getElementById("tdAssignee").value; const priority = document.getElementById("tdPriority").value; const dueDate = document.getElementById("tdDueDate").value; const linkedCaseId = document.getElementById("tdLinkedCase").value; const workshop = document.getElementById("tdWorkshop").value; const notes = document.getElementById("tdNotes").value.trim(); const members = getAllAssignableMembers(); const assignee = members.find(u => u.id === assigneeId); if (editId) { const td = state.todos.find(x => x.id === editId); if (td) Object.assign(td, { title, assigneeId, priority, dueDate, linkedCaseId, workshop, notes, subtasks: draftSubtasks }); } else { const newTodo = { id: "td_" + Date.now(), area: appMode, title, assigneeId, createdBy: currentSession.name, createdAt: new Date().toLocaleString(), dueDate, priority, linkedCaseId, workshop, notes, subtasks: draftSubtasks, completed: false }; state.todos.unshift(newTodo); pushActivityNotification({ area: appMode, targetType: "todo", targetId: newTodo.id, targetUserId: assigneeId, message: `${currentSession.name} asignó nueva tarea "${title}" a ${assignee ? assignee.name : "Encargado"}` }); } saveLocalAndCloud(); closeModal("todoModal"); updateMyTasksBadge(); renderTodos(); }
     function toggleTodoComplete(todoId) { const td = state.todos.find(x => x.id === todoId); if (!td) return; td.completed = !td.completed; td.completedAt = td.completed ? new Date().toLocaleString() : ""; td.completedBy = td.completed && currentSession ? currentSession.name : ""; pushActivityNotification({ area: td.area || appMode, targetType: "todo", targetId: td.id, message: `${currentSession.name} ${td.completed ? "completó la tarea" : "reabrió la tarea"} "${td.title}"` }); saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
     function toggleSubtaskDone(todoId, subIdx) { const td = state.todos.find(x => x.id === todoId); if (!td) return; td.subtasks[subIdx].done = !td.subtasks[subIdx].done; if (td.subtasks.length > 0 && td.subtasks.every(s => s.done)) td.completed = true; saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
-    function deleteTodoItem(todoId) { state.todos = state.todos.filter(x => x.id !== todoId); saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
+    function deleteTodoItem(todoId) {
+      if (!moveToTrash("todos", todoId)) return;
+      updateMyTasksBadge();
+      renderTodos();
+    }
     function renderTodos() {
       const box = document.getElementById("todoListContainer");
       if (!box) return;
@@ -2505,7 +2549,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -2534,27 +2578,29 @@
     }
 
     function saveLocalAndCloud() {
+      saveGeneration += 1;
       const cleanedTasks = buildLightweightTasksForFirebase(state.tasks || []);
       state.tasks = cleanedTasks;
       try { localStorage.setItem("autotech_state_v5", JSON.stringify({ ...state, hotlineRequests: [] })); } catch (e) {}
 
-      fetch(`${FIREBASE_DB_URL}/appState.json`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tasks: cleanedTasks,
-          todos: state.todos || [],
-          credentialsDb: state.credentialsDb || [],
-          trainingPlanEntries: state.trainingPlanEntries || [],
-          notifications: state.notifications || [],
-          htcBank: state.htcBank || [],
-          platforms: state.platforms || [],
-          workshops: state.workshops || [],
-          clientPortalBaseUrl: state.clientPortalBaseUrl || ""
-        })
-      }).catch(() => {});
-
-      fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveState", state: state }) })
+      const firebaseBody = JSON.stringify({
+        tasks: cleanedTasks,
+        todos: state.todos || [],
+        trash: state.trash,
+        trashRevision: state.trashRevision,
+        credentialsDb: state.credentialsDb || [],
+        trainingPlanEntries: state.trainingPlanEntries || [],
+        notifications: state.notifications || [],
+        htcBank: state.htcBank || [],
+        platforms: state.platforms || [],
+        workshops: state.workshops || [],
+        clientPortalBaseUrl: state.clientPortalBaseUrl || ""
+      });
+      const driveBody = JSON.stringify({ action: "saveState", state });
+      firebaseSave = firebaseSave.then(() => fetch(`${FIREBASE_DB_URL}/appState.json`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: firebaseBody
+      })).catch(() => {});
+      driveSave = driveSave.then(() => fetch(SCRIPT_URL, { method: "POST", body: driveBody }))
         .then(r => r.json()).then(d => { if (d && d.masterSheetUrl) state.masterSheetUrl = d.masterSheetUrl; }).catch(() => {});
     }
 
@@ -2562,23 +2608,31 @@
       const icon = document.getElementById("syncIcon");
       if (icon) icon.className = "ph-bold ph-arrows-clockwise animate-spin text-blue-600";
       try {
+        const generation = saveGeneration;
         await syncFirebaseRealtime();
+        await driveSave;
         const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "loadState" }) });
         const data = await res.json();
-        if (data.status === "ok" && data.state) {
+        if (generation === saveGeneration && data.status === "ok" && data.state) {
+          const localTrash = { trashRevision: state.trashRevision, trash: state.trash, tasks: state.tasks, todos: state.todos };
+          const driveRevision = Number(data.state.trashRevision) || 0;
           const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbCreds = state.credentialsDb, fbPlan = state.trainingPlanEntries, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
           state = { ...state, ...data.state };
           if (fbReq.length > 0) state.hotlineRequests = fbReq;
           if (fbPend.length > 0) state.pendingUsers = fbPend;
           if (fbUsers.length > 0) state.users = fbUsers;
-          if (fbTodos.length > 0) state.todos = fbTodos;
+          if (driveRevision < localTrash.trashRevision) Object.assign(state, localTrash);
+          if (driveRevision === localTrash.trashRevision && fbTodos.length > 0) state.todos = fbTodos;
           if (fbCreds.length > 0) state.credentialsDb = fbCreds;
           if (fbPlan.length > 0) state.trainingPlanEntries = fbPlan;
           if (fbNotifs.length > 0) state.notifications = fbNotifs;
           if (fbAdmin) state.adminConfig = fbAdmin;
           if (data.masterSheetUrl) state.masterSheetUrl = data.masterSheetUrl;
           normalizeStateData();
-          if (currentSession) { renderPlatformsQuickList(); syncSelectors(); renderAll(); refreshNotificationsUI(); }
+          if (currentSession) {
+            renderPlatformsQuickList(); syncSelectors(); renderAll(); refreshNotificationsUI();
+            if (document.getElementById("trashModal").open) renderTrash();
+          }
           if (manual) showToast("Sincronizado", "success");
         }
         if (icon) icon.className = "ph-bold ph-cloud-check text-emerald-600";
@@ -2979,7 +3033,8 @@
 
       const currentYear = new Date().getFullYear();
       const prefix = isSoporte ? `CASO-${currentYear}-` : `ENT-${currentYear}-`;
-      const existingNums = state.tasks.filter(x => String(x.caseId || "").startsWith(prefix)).map(x => parseInt(String(x.caseId).replace(prefix, ""), 10) || 100);
+      const reservedCases = state.trash.filter(entry => entry.collection === "tasks").map(entry => entry.payload);
+      const existingNums = [...state.tasks, ...reservedCases].filter(x => String(x.caseId || "").startsWith(prefix)).map(x => parseInt(String(x.caseId).replace(prefix, ""), 10) || 100);
       const nextNum = existingNums.length > 0 ? Math.max(...existingNums) + 1 : 101;
       const caseId = `${prefix}${nextNum}`;
       const assigneeId = document.getElementById("tAssignee").value;
@@ -3249,7 +3304,92 @@
     function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || t.status === val) return; t.status = val; if (val === "Completado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} cambió ${t.caseId} (${t.title}) a estado "${val}"` }); saveLocalAndCloud(); openDetailModal(t.id); renderAll(); }
     function updateTaskProgressQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.progress = Number(val); document.getElementById("dProgressVal").textContent = val + "%"; pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} actualizó el avance de ${t.caseId} (${t.title}) al ${val}%` }); saveLocalAndCloud(); renderAll(); }
     function editCurrentTask() { closeModal("detailModal"); openTaskModal("", currentDetailId); }
-    function deleteCurrentTask() { if (isCurrentAdmin() && confirm("¿Eliminar?")) { state.tasks = state.tasks.filter(x => x.id !== currentDetailId); saveLocalAndCloud(); closeModal("detailModal"); renderAll(); } }
+    function deleteCurrentTask() {
+      if (!isCurrentAdmin() || !confirm("¿Mover este registro a la papelera?")) return;
+      if (!moveToTrash("tasks", currentDetailId)) return;
+      closeModal("detailModal");
+      renderAll();
+    }
+
+    function markTrashChanged() {
+      state.trashRevision = Math.max(Date.now(), state.trashRevision + 1);
+      saveLocalAndCloud();
+    }
+
+    function moveToTrash(collection, id) {
+      if (!currentSession || (collection === "tasks" && !isCurrentAdmin())) return false;
+      const index = state[collection].findIndex(item => item.id === id);
+      if (index < 0) return false;
+      const [payload] = state[collection].splice(index, 1);
+      state.trash.unshift({
+        trashId: crypto.randomUUID(),
+        collection,
+        itemType: collection === "todos" ? "Tarea" : payload.mode === "entrenamiento" ? "Curso" : "Caso de soporte",
+        itemLabel: [payload.caseId, payload.title].filter(Boolean).join(" · "),
+        deletedBy: currentSession.name,
+        deletedById: currentSession.id,
+        deletedAt: new Date().toISOString(),
+        payload
+      });
+      markTrashChanged();
+      showToast("Registro movido a la papelera", "success");
+      return true;
+    }
+
+    function canRestoreTrash(entry) {
+      return !!currentSession && (isCurrentAdmin() || (entry.collection === "todos" && entry.deletedById === currentSession.id));
+    }
+
+    function openTrashModal() {
+      if (!currentSession) return;
+      renderTrash();
+      document.getElementById("trashModal").showModal();
+    }
+
+    function renderTrash(message) {
+      const list = document.getElementById("trashList");
+      const entries = state.trash.filter(canRestoreTrash);
+      document.getElementById("trashStatus").textContent = message || (entries.length ? "" : "No hay registros para recuperar.");
+      list.replaceChildren();
+      entries.forEach(entry => {
+        const row = document.createElement("li");
+        row.className = "flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-300 p-3";
+        const details = document.createElement("div");
+        details.className = "min-w-0 break-words";
+        const title = document.createElement("p");
+        title.className = "text-sm font-semibold";
+        title.textContent = entry.itemLabel || entry.itemType;
+        const meta = document.createElement("p");
+        meta.className = "text-xs text-slate-600";
+        meta.textContent = [entry.itemType, entry.deletedBy, new Date(entry.deletedAt).toLocaleString("es-PY")].join(" · ");
+        details.append(title, meta);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "touch-target btn-accent rounded-lg px-3 text-sm font-semibold";
+        button.textContent = "Restaurar";
+        button.addEventListener("click", () => restoreTrashItem(entry.trashId));
+        row.append(details, button);
+        list.append(row);
+      });
+    }
+
+    function restoreTrashItem(trashId) {
+      const index = state.trash.findIndex(entry => entry.trashId === trashId);
+      const entry = state.trash[index];
+      if (!entry || !canRestoreTrash(entry)) return;
+      const records = state[entry.collection];
+      const item = entry.payload;
+      if (records.some(record => record.id === item.id || (item.caseId && record.caseId === item.caseId))) {
+        renderTrash("Ya hay un registro activo con ese identificador. El registro eliminado sigue en la papelera.");
+        return;
+      }
+      records.unshift(item);
+      state.trash.splice(index, 1);
+      markTrashChanged();
+      syncSelectors();
+      renderAll();
+      renderTrash("Registro restaurado.");
+    }
 
     function exportExcelHistory() { const list = getFilteredModeTasks(); const rows = list.map(t => `<tr><td>${escapeHtml(t.caseId)}</td><td>${escapeHtml(t.trainingData ? t.trainingData.stage : t.status)}</td><td>${escapeHtml(t.date)}</td><td>${escapeHtml(t.title)}</td></tr>`).join(""); const blob = new Blob(["\uFEFF<table><thead><tr><th>Código</th><th>Estado</th><th>Fecha</th><th>Título</th></tr></thead><tbody>" + rows + "</tbody></table>"], { type: "application/vnd.ms-excel;charset=utf-8;" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Historial_${appMode}.xls`; a.click(); }
     function exportWordHistory() { const list = getFilteredModeTasks(); const html = list.map(t => `<h3>${escapeHtml(t.caseId)} - ${escapeHtml(t.title)}</h3>`).join(""); const blob = new Blob(["\uFEFF<html><body>" + html + "</body></html>"], { type: "application/msword;charset=utf-8;" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Informe_${appMode}.doc`; a.click(); }
@@ -3269,3 +3409,5 @@
   </script>
 </body>
 </html>
+
+Mostrando index.html.

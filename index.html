@@ -376,6 +376,9 @@
               <i class="ph-bold ph-globe text-emerald-600"></i>
             </button>
 
+            <button type="button" onclick="openContacts()" aria-label="Directorio de contactos" title="Directorio de contactos" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-address-book" aria-hidden="true"></i><span class="hidden sm:inline">Contactos</span>
+            </button>
             <button type="button" id="openTrashButton" onclick="openTrashModal()" aria-label="Papelera" title="Papelera" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
               <i class="ph-bold ph-trash" aria-hidden="true"></i> <span class="hidden sm:inline">Papelera</span>
             </button>
@@ -962,6 +965,10 @@
             <div class="sm:col-span-2">
               <label class="block text-[11px] font-bold text-teal-900 mb-1">WhatsApp Mecánico</label>
               <input type="text" id="tMechanicWhatsapp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <div class="mt-1 flex flex-wrap gap-x-4">
+                <button type="button" onclick="openContacts('mechanic')" class="min-h-10 text-xs font-semibold text-accent">Elegir contacto</button>
+                <button type="button" onclick="saveCaseContact('mechanic')" class="min-h-10 text-xs font-semibold text-accent">+ Guardar contacto</button>
+              </div>
             </div>
           </div>
 
@@ -973,6 +980,10 @@
             <div>
               <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp Asesor / Jefe *</label>
               <input type="text" id="tAdvisorWhatsapp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <div class="mt-1 flex flex-wrap gap-x-4">
+                <button type="button" onclick="openContacts('advisor')" class="min-h-10 text-xs font-semibold text-accent">Elegir contacto</button>
+                <button type="button" onclick="saveCaseContact('advisor')" class="min-h-10 text-xs font-semibold text-accent">+ Guardar contacto</button>
+              </div>
             </div>
             <div>
               <label class="block text-[11px] font-bold text-sky-900 mb-1">Nombre del Cliente</label>
@@ -981,6 +992,10 @@
             <div>
               <label class="block text-[11px] font-bold text-sky-900 mb-1">WhatsApp del Cliente</label>
               <input type="text" id="tClientWhatsapp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <div class="mt-1 flex flex-wrap gap-x-4">
+                <button type="button" onclick="openContacts('client')" class="min-h-10 text-xs font-semibold text-accent">Elegir contacto</button>
+                <button type="button" onclick="saveCaseContact('client')" class="min-h-10 text-xs font-semibold text-accent">+ Guardar contacto</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1831,6 +1846,29 @@
     </div>
   </div>
 
+  <dialog id="contactsModal" aria-labelledby="contactsTitle" class="m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] rounded-2xl bg-white text-slate-900 p-5 shadow-xl backdrop:bg-slate-900/50">
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <h2 id="contactsTitle" class="text-lg font-bold">Directorio de contactos</h2>
+      <form method="dialog"><button class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar</button></form>
+    </div>
+    <div class="grid sm:grid-cols-2 gap-2 mb-3">
+      <input autofocus type="search" id="contactsSearch" oninput="renderContacts()" aria-label="Buscar por nombre o teléfono" placeholder="Buscar por nombre o teléfono" class="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+      <select id="contactsFilter" onchange="renderContacts()" aria-label="Filtrar por perfil" class="rounded-lg border border-slate-300 px-3 py-2 text-sm"></select>
+    </div>
+    <form id="contactForm" onsubmit="saveDirectoryContact(event)" class="grid sm:grid-cols-2 gap-2 mb-4 rounded-xl border border-slate-300 p-3">
+      <h3 id="contactFormTitle" class="sm:col-span-2 text-sm font-bold">Nuevo contacto</h3>
+      <label class="text-sm">Perfil<select id="contactRole" required class="block w-full rounded-lg border border-slate-300 px-3 py-2"></select></label>
+      <label class="text-sm">Nombre<input id="contactName" required maxlength="120" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <label class="text-sm">WhatsApp<input id="contactPhone" type="tel" required maxlength="40" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <div class="flex flex-wrap items-end gap-2">
+        <button class="touch-target btn-accent px-3 rounded-lg text-sm font-semibold">Guardar contacto</button>
+        <button type="button" id="cancelContactEdit" onclick="editDirectoryContact()" class="hidden touch-target px-3 rounded-lg border border-slate-300 text-sm">Cancelar edición</button>
+      </div>
+    </form>
+    <p id="contactsStatus" role="status" class="text-sm text-slate-600 mb-2"></p>
+    <ul id="contactsList" class="space-y-2"></ul>
+  </dialog>
+
   <dialog id="trashModal" aria-labelledby="trashTitle" class="m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] rounded-2xl bg-white text-slate-900 p-5 shadow-xl backdrop:bg-slate-900/50">
     <div class="flex items-center justify-between gap-3 mb-4">
       <h2 id="trashTitle" class="text-lg font-bold">Papelera</h2>
@@ -1960,6 +1998,8 @@
       todos: [],
       trash: [],
       trashRevision: 0,
+      contacts: [],
+      contactsRevision: 0,
       credentialsDb: [],
       trainingPlanEntries: [],
       notifications: [],
@@ -2343,6 +2383,7 @@
       if (!Array.isArray(state.hotlineRequests)) state.hotlineRequests = [];
       if (!Array.isArray(state.todos)) state.todos = [];
       if (!Array.isArray(state.trash)) state.trash = [];
+      if (!Array.isArray(state.contacts)) state.contacts = [];
       if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
       if (!Array.isArray(state.trainingPlanEntries)) state.trainingPlanEntries = [];
       if (!Array.isArray(state.notifications)) state.notifications = [];
@@ -2372,7 +2413,14 @@
         if (objUsers && typeof objUsers === "object") state.users = Object.values(objUsers);
         if (objAdmin && typeof objAdmin === "object" && objAdmin.id) state.adminConfig = { ...state.adminConfig, ...objAdmin };
         let trashChanged = false;
+        let contactsChanged = false;
         if (objApp && typeof objApp === "object") {
+          const contactsRevision = Number(objApp.contactsRevision) || 0;
+          if (contactsRevision > state.contactsRevision) {
+            state.contacts = Array.isArray(objApp.contacts) ? objApp.contacts : [];
+            state.contactsRevision = contactsRevision;
+            contactsChanged = true;
+          }
           const cloudRevision = Number(objApp.trashRevision) || 0;
           trashChanged = cloudRevision > state.trashRevision;
           if (trashChanged) {
@@ -2406,14 +2454,15 @@
         if (!document.getElementById("usersModal").classList.contains("hidden")) renderUsersModalLists();
         if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
         if (!document.getElementById("credentialsModal").classList.contains("hidden")) renderCredentialsTable();
-        if (trashChanged) {
+        if (trashChanged || contactsChanged) {
           try { localStorage.setItem("autotech_state_v5", JSON.stringify({ ...state, hotlineRequests: [] })); } catch (e) {}
-          if (currentSession) {
+          if (trashChanged && currentSession) {
             if (currentDetailId && !state.tasks.some(t => t.id === currentDetailId)) closeModal("detailModal");
             renderAll();
             if (document.getElementById("trashModal").open) renderTrash();
           }
         }
+        if (contactsChanged && document.getElementById("contactsModal").open) renderContacts();
         if (activeTab === "tasks") renderTodos();
         if (activeTab === "completed") renderCompletedTab();
         return objApp;
@@ -2557,7 +2606,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -2596,6 +2645,8 @@
         todos: state.todos || [],
         trash: state.trash,
         trashRevision: state.trashRevision,
+        contacts: state.contacts,
+        contactsRevision: state.contactsRevision,
         credentialsDb: state.credentialsDb || [],
         trainingPlanEntries: state.trainingPlanEntries || [],
         trainingPlanEntryCount: state.trainingPlanEntries.length,
@@ -2629,7 +2680,9 @@
           };
           const driveRevision = Number(data.state.trashRevision) || 0;
           const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbCreds = state.credentialsDb, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
+          const localContacts = { contacts: state.contacts, contactsRevision: state.contactsRevision };
           state = { ...state, ...data.state };
+          if ((Number(data.state.contactsRevision) || 0) <= localContacts.contactsRevision) Object.assign(state, localContacts);
           if (fbReq.length > 0) state.hotlineRequests = fbReq;
           if (fbPend.length > 0) state.pendingUsers = fbPend;
           if (fbUsers.length > 0) state.users = fbUsers;
@@ -2649,6 +2702,7 @@
             renderPlatformsQuickList(); syncSelectors(); renderAll(); refreshNotificationsUI();
             if (document.getElementById("trashModal").open) renderTrash();
             if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
+            if (document.getElementById("contactsModal").open) renderContacts();
           }
           if (manual) showToast("Sincronizado", "success");
         }
@@ -3328,7 +3382,164 @@
       renderAll();
     }
 
-    function markTrashChanged() {
+    const CONTACT_ROLES = {
+      advisor: { label: "Jefe de Taller / Gerente / Asesor", field: "Advisor" },
+      mechanic: { label: "Mecánico", field: "Mechanic" },
+      client: { label: "Cliente", field: "Client" }
+    };
+    let contactPickerRole = "";
+    let editingContactId = "";
+
+    function normalizeContactName(name) {
+      return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, " ").toLowerCase();
+    }
+
+    function normalizeContactPhone(phone) {
+      const digits = phone.replace(/\D/g, "").replace(/^00/, "");
+      if (/^9\d{8}$/.test(digits)) return "595" + digits;
+      return formatWhatsappPhone(digits);
+    }
+
+    function findDuplicateContact(contact) {
+      const name = normalizeContactName(contact.name);
+      const phone = normalizeContactPhone(contact.phone);
+      return state.contacts.find(item => item.id !== contact.id && item.role === contact.role &&
+        (normalizeContactName(item.name) === name || normalizeContactPhone(item.phone) === phone));
+    }
+
+    function advanceContactsRevision() {
+      state.contactsRevision = Math.max(Date.now(), state.contactsRevision + 1);
+    }
+
+    function storeContact(contact) {
+      if (!currentSession) return "Inicia sesión para guardar contactos.";
+      const role = Object.hasOwn(CONTACT_ROLES, contact.role) ? contact.role : "";
+      const name = contact.name.trim();
+      const phone = contact.phone.trim();
+      if (!role || !name) return "Completa el perfil y el nombre.";
+      if (!/^[+\d\s().-]+$/.test(phone) || !/^\d{7,15}$/.test(normalizeContactPhone(phone))) return "Introduce un número de WhatsApp válido.";
+      const record = { id: contact.id || crypto.randomUUID(), role, name, phone };
+      const duplicate = findDuplicateContact(record);
+      if (duplicate) return "Ya existe un contacto con ese nombre o teléfono en este perfil: " + duplicate.name + ".";
+      if (contact.id) {
+        const index = state.contacts.findIndex(item => item.id === contact.id);
+        if (index < 0) return "El contacto ya no está disponible.";
+        state.contacts[index] = record;
+      } else {
+        state.contacts.push(record);
+      }
+      advanceContactsRevision();
+      saveLocalAndCloud();
+      return "";
+    }
+
+    function openContacts(role = "") {
+      if (!currentSession) return;
+      contactPickerRole = role;
+      const options = Object.entries(CONTACT_ROLES).map(([value, item]) => new Option(item.label, value));
+      const filter = document.getElementById("contactsFilter");
+      filter.replaceChildren(new Option("Todos los perfiles", ""), ...options);
+      filter.value = role;
+      filter.disabled = !!role;
+      document.getElementById("contactsTitle").textContent = role ? "Elegir contacto · " + CONTACT_ROLES[role].label : "Directorio de contactos";
+      document.getElementById("contactsSearch").value = "";
+      document.getElementById("contactRole").replaceChildren(...options.map(option => option.cloneNode(true)));
+      document.getElementById("contactForm").classList.toggle("hidden", !!role);
+      editDirectoryContact();
+      renderContacts();
+      document.getElementById("contactsModal").showModal();
+    }
+
+    function editDirectoryContact(contact) {
+      editingContactId = contact?.id || "";
+      document.getElementById("contactRole").value = contact?.role || "advisor";
+      document.getElementById("contactName").value = contact?.name || "";
+      document.getElementById("contactPhone").value = contact?.phone || "";
+      document.getElementById("contactFormTitle").textContent = contact ? "Editar contacto" : "Nuevo contacto";
+      document.getElementById("cancelContactEdit").classList.toggle("hidden", !contact);
+      if (contact) document.getElementById("contactName").focus();
+    }
+
+    function saveDirectoryContact(event) {
+      event.preventDefault();
+      const error = storeContact({
+        id: editingContactId,
+        role: document.getElementById("contactRole").value,
+        name: document.getElementById("contactName").value,
+        phone: document.getElementById("contactPhone").value
+      });
+      if (!error) editDirectoryContact();
+      renderContacts(error || "Contacto guardado.");
+    }
+
+    function saveCaseContact(role) {
+      const field = CONTACT_ROLES[role].field;
+      const error = storeContact({
+        role,
+        name: document.getElementById("t" + field + "Name").value,
+        phone: document.getElementById("t" + field + "Whatsapp").value
+      });
+      showToast(error || "Contacto guardado en el directorio", error ? "warning" : "success");
+    }
+
+    function renderContacts(message = "") {
+      const list = document.getElementById("contactsList");
+      const query = normalizeContactName(document.getElementById("contactsSearch").value);
+      const digits = /^\+?[\d\s().-]+$/.test(query) ? query.replace(/\D/g, "") : "";
+      const normalizedPhone = normalizeContactPhone(digits);
+      const role = contactPickerRole || document.getElementById("contactsFilter").value;
+      const contacts = state.contacts.filter(item => (!role || item.role === role) &&
+        (normalizeContactName(item.name).includes(query) || (digits &&
+          (item.phone.replace(/\D/g, "").includes(digits) || (normalizedPhone && normalizeContactPhone(item.phone).includes(normalizedPhone))))))
+        .sort((a, b) => a.name.localeCompare(b.name, "es-PY"));
+      document.getElementById("contactsStatus").textContent = message || (contacts.length ? "" : "No hay contactos que coincidan.");
+      list.replaceChildren();
+      contacts.forEach(contact => {
+        const row = document.createElement("li");
+        row.className = "flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-300 p-3";
+        const details = document.createElement("div");
+        details.className = "min-w-0 break-words";
+        const name = document.createElement("p");
+        name.className = "font-semibold text-sm";
+        name.textContent = contact.name;
+        const detailsLine = document.createElement("p");
+        detailsLine.className = "text-xs text-slate-600";
+        detailsLine.textContent = CONTACT_ROLES[contact.role].label + " · " + contact.phone;
+        details.append(name, detailsLine);
+        row.append(details);
+        const actions = document.createElement("div");
+        actions.className = "flex gap-2";
+        const addAction = (label, handler) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold";
+          button.textContent = label;
+          button.addEventListener("click", handler);
+          actions.append(button);
+        };
+        if (contactPickerRole) {
+          addAction("Elegir", () => {
+            const field = CONTACT_ROLES[contactPickerRole].field;
+            document.getElementById("t" + field + "Name").value = contact.name;
+            document.getElementById("t" + field + "Whatsapp").value = normalizeContactPhone(contact.phone);
+            document.getElementById("contactsModal").close();
+          });
+        } else {
+          addAction("Editar", () => editDirectoryContact(contact));
+          addAction("Mover a papelera", () => {
+            if (moveToTrash("contacts", contact.id)) {
+              if (editingContactId === contact.id) editDirectoryContact();
+              renderContacts("Contacto movido a la papelera.");
+            }
+          });
+        }
+        row.append(actions);
+        list.append(row);
+      });
+    }
+
+    function markTrashChanged(collection) {
+      if (collection === "contacts") advanceContactsRevision();
       state.trashRevision = Math.max(Date.now(), state.trashRevision + 1);
       saveLocalAndCloud();
     }
@@ -3343,26 +3554,28 @@
       const itemType = {
         tasks: payload.mode === "entrenamiento" ? "Curso" : "Caso de soporte",
         todos: "Tarea",
-        trainingPlanEntries: "Plan de Entrenamiento"
+        trainingPlanEntries: "Plan de Entrenamiento",
+        contacts: "Contacto"
       }[collection];
       state.trash.unshift({
         trashId,
         collection,
         itemType,
-        itemLabel: (isPlanEntry ? [payload.topic, payload.brand, payload.date] : [payload.caseId, payload.title]).filter(Boolean).join(" · "),
+        itemLabel: (isPlanEntry ? [payload.topic, payload.brand, payload.date] :
+          collection === "contacts" ? [payload.name, CONTACT_ROLES[payload.role].label] : [payload.caseId, payload.title]).filter(Boolean).join(" · "),
         deletedBy: currentSession.name,
         deletedById: currentSession.id,
         deletedAt: new Date().toISOString(),
         payload
       });
-      markTrashChanged();
+      markTrashChanged(collection);
       showToast("Registro movido a la papelera", "success");
       return true;
     }
 
     function canRestoreTrash(entry) {
       return !!currentSession && (isCurrentAdmin() ||
-        (["todos", "trainingPlanEntries"].includes(entry.collection) && entry.deletedById === currentSession.id));
+        (["todos", "trainingPlanEntries", "contacts"].includes(entry.collection) && entry.deletedById === currentSession.id));
     }
 
     function openTrashModal() {
@@ -3404,13 +3617,14 @@
       if (!entry || !canRestoreTrash(entry)) return;
       const records = state[entry.collection];
       const item = entry.payload;
-      if (records.some(record => record.id === item.id || (item.caseId && record.caseId === item.caseId))) {
+      if (records.some(record => record.id === item.id || (item.caseId && record.caseId === item.caseId)) ||
+          (entry.collection === "contacts" && findDuplicateContact(item))) {
         renderTrash("Ya hay un registro activo con ese identificador. El registro eliminado sigue en la papelera.");
         return;
       }
       records.unshift(item);
       state.trash.splice(index, 1);
-      markTrashChanged();
+      markTrashChanged(entry.collection);
       syncSelectors();
       renderAll();
       if (entry.collection === "trainingPlanEntries" &&

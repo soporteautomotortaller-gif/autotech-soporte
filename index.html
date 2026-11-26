@@ -119,7 +119,7 @@
 </head>
 <body class="text-slate-800 antialiased">
 
-  <div id="toastBox" class="fixed top-4 right-4 z-[60] space-y-2 pointer-events-none"></div>
+  <div id="toastBox" class="fixed top-4 right-4 z-[70] space-y-2 pointer-events-none"></div>
 
   <!-- ======================================================================= -->
   <!-- PANTALLA 0: ACCESO AL PORTAL                                            -->
@@ -128,7 +128,7 @@
     <div class="win-mica rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-slate-200/90 shadow-2xl">
       <div class="text-center space-y-2">
         <div class="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto shadow-md p-1.5 overflow-hidden">
-          <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" />
+          <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" onerror="this.style.display='none'" />
         </div>
         <div class="flex items-baseline justify-center gap-1 pt-1">
           <span class="automotor-wordmark text-2xl sm:text-3xl leading-none">Automotor</span>
@@ -177,7 +177,7 @@
           <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña de Administrador *</label>
           <input type="password" id="loginAdminPass" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-amber-600" />
         </div>
-        <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+        <button type="submit" id="btnLoginAdminSubmit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
           <i class="ph-bold ph-key text-base"></i> Ingresar como Administrador
         </button>
       </form>
@@ -225,7 +225,7 @@
   </div>
 
   <!-- ======================================================================= -->
-  <!-- APLICACIÓN PRINCIPAL: SOPORTE TÉCNICO Y ENTRENAMIENTO                   -->
+  <!-- APLICACIÓN PRINCIPAL                                                    -->
   <!-- ======================================================================= -->
   <div id="mainAppContainer" class="hidden pb-16">
 
@@ -234,7 +234,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm p-1 shrink-0 overflow-hidden">
-              <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" />
+              <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" onerror="this.style.display='none'" />
             </div>
             <div>
               <div class="flex flex-wrap items-center gap-2">
@@ -243,10 +243,10 @@
                   <span class="automotor-wordmark text-xs">Automotor</span>
                   <span class="automotor-wordmark text-[8px]">S.A.</span>
                 </span>
-                <button onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1">
+                <button type="button" onclick="toggleDevicePreview()" id="deviceBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1">
                   <i class="ph-bold ph-desktop"></i> <span>PC / Notebook</span>
                 </button>
-                <button onclick="toggleDarkMode()" id="darkModeBtn" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1">
+                <button type="button" onclick="toggleDarkMode()" id="darkModeBtn" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 hover:bg-slate-300/80 flex items-center gap-1">
                   <i class="ph-bold ph-moon"></i>
                 </button>
               </div>
@@ -256,10 +256,10 @@
 
           <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
             <div class="flex items-center bg-slate-200/75 p-1 rounded-xl flex-1 sm:flex-none">
-              <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition">
+              <button type="button" onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition">
                 <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
               </button>
-              <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
+              <button type="button" onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
                 <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
               </button>
             </div>
@@ -291,21 +291,21 @@
         <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
           <!-- BARRA DE PESTAÑAS -->
           <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start overflow-x-auto">
-            <button onclick="switchTab('board')" id="tab-board" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <button type="button" onclick="switchTab('board')" id="tab-board" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-kanban text-accent"></i> Tablero
             </button>
-            <button onclick="switchTab('completed')" id="tab-completed" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <button type="button" onclick="switchTab('completed')" id="tab-completed" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-check-circle text-emerald-600"></i> Completados
               <span id="completedTabCount" class="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">0</span>
             </button>
-            <button onclick="switchTab('tasks')" id="tab-tasks" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <button type="button" onclick="switchTab('tasks')" id="tab-tasks" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-check-square-offset text-accent"></i> Tareas
               <span id="myTasksBadge" class="hidden px-1.5 py-0.2 rounded-full bg-[#004B93] text-white text-[10px] font-extrabold">0</span>
             </button>
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <button type="button" onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
             </button>
-            <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <button type="button" onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
             </button>
           </nav>
@@ -354,7 +354,7 @@
               <span>Banco Actividades HTC</span>
             </button>
 
-            <div class="relative">
+            <div class="relative" id="platformsWrapper">
               <button type="button" onclick="togglePlatformsDropdown(event)" class="touch-target px-3.5 py-1.5 rounded-xl bg-[#004B93] hover:bg-[#003870] text-xs font-bold text-white flex items-center gap-1.5 shadow-sm transition">
                 <i class="ph-bold ph-bookmarks text-base text-amber-300"></i>
                 <span>Plataformas</span>
@@ -375,19 +375,19 @@
               </div>
             </div>
 
-            <!-- DISTINTIVO DE USUARIO CON CÍRCULO TIPO LINKEDIN -->
+            <!-- DISTINTIVO DE USUARIO CON AVATAR CIRCULAR LINKEDIN -->
             <button type="button" onclick="openPlatformSettingsModal()" class="px-2.5 py-1 rounded-full bg-white hover:bg-slate-50 border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-2 shadow-sm transition" title="Clic para editar tu foto de perfil o configuración">
               <div id="headerUserAvatarContainer" class="shrink-0"></div>
               <span id="loggedUserLabel" class="max-w-[140px] truncate">Usuario</span>
               <span id="loggedRoleBadge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-800">Encargado</span>
             </button>
 
-            <button id="btnAdminUsers" onclick="openUsersModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-amber-900 flex items-center gap-1.5 relative">
+            <button type="button" id="btnAdminUsers" onclick="openUsersModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-bold text-amber-900 flex items-center gap-1.5 relative">
               <i class="ph-bold ph-shield-star text-base text-amber-600"></i> <span>Equipo</span>
               <span id="pendingUsersBadge" class="hidden px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-extrabold animate-pulse">0</span>
             </button>
 
-            <button id="btnWorkshops" onclick="openWorkshopsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+            <button type="button" id="btnWorkshops" onclick="openWorkshopsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
               <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden lg:inline">Talleres (33)</span>
             </button>
 
@@ -396,27 +396,27 @@
               <span class="hidden xl:inline">Configuración</span>
             </button>
 
-            <button onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar Nube">
+            <button type="button" onclick="syncFromCloud(true)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5" title="Sincronizar Nube">
               <i id="syncIcon" class="ph-bold ph-cloud-check text-emerald-600"></i>
             </button>
 
-            <button onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm">
+            <button type="button" onclick="openMasterSheet()" class="touch-target px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-sm">
               <i class="ph-bold ph-table text-base"></i> <span class="hidden sm:inline">Historial Maestro</span>
             </button>
 
-            <button onclick="exportExcelHistory()" class="touch-target px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1" title="Exportar Excel">
+            <button type="button" onclick="exportExcelHistory()" class="touch-target px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-800 flex items-center gap-1" title="Exportar Excel">
               <i class="ph-bold ph-microsoft-excel-logo text-base text-emerald-700"></i>
             </button>
 
-            <button onclick="exportWordHistory()" class="touch-target px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1" title="Exportar Word">
+            <button type="button" onclick="exportWordHistory()" class="touch-target px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-300 text-xs font-bold text-blue-800 flex items-center gap-1" title="Exportar Word">
               <i class="ph-bold ph-microsoft-word-logo text-base text-blue-700"></i>
             </button>
 
-            <button onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="openTaskModal()" id="btnNewAction" class="touch-target px-4 py-2 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
               <i class="ph-bold ph-plus"></i> <span id="btnNewActionText">Nuevo Soporte</span>
             </button>
 
-            <button onclick="logoutSession()" class="touch-target px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-1" title="Cerrar Sesión">
+            <button type="button" onclick="logoutSession()" class="touch-target px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-1" title="Cerrar Sesión">
               <i class="ph-bold ph-sign-out text-base"></i>
             </button>
           </div>
@@ -538,19 +538,32 @@
       <!-- VISTA: RESUMEN -->
       <section id="view-dashboard" class="hidden space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="win-mica rounded-2xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900">Distribución por Categoría</h3>
+            <div id="subcatBreakdown" class="space-y-2.5"></div>
+          </div>
+          <div class="win-mica rounded-2xl p-5 space-y-3">
+            <h3 class="text-sm font-bold text-slate-900">Carga y Avance por Especialista</h3>
+            <div id="teamBreakdown" class="space-y-2.5"></div>
+          </div>
+        </div>
       </section>
 
       <!-- VISTA: CALENDARIO -->
       <section id="view-calendar" class="hidden space-y-4">
         <div class="win-mica rounded-2xl p-4 sm:p-5 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white border"><i class="ph-bold ph-caret-left"></i></button>
+            <button type="button" onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white border"><i class="ph-bold ph-caret-left"></i></button>
             <h2 id="calMonthTitle" class="text-base font-bold min-w-[170px] text-center capitalize"></h2>
-            <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white border"><i class="ph-bold ph-caret-right"></i></button>
+            <button type="button" onclick="changeMonth(1)" class="p-2 rounded-xl bg-white border"><i class="ph-bold ph-caret-right"></i></button>
           </div>
-          <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white border text-xs font-bold">Hoy</button>
+          <button type="button" onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white border text-xs font-bold">Hoy</button>
         </div>
         <div class="win-mica rounded-2xl p-3 sm:p-5">
+          <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 pb-2">
+            <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+          </div>
           <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
         </div>
       </section>
@@ -558,7 +571,7 @@
   </div>
 
   <!-- ======================================================================= -->
-  <!-- MODAL CONFIGURACIÓN GENERAL + CARGA DE FOTO DE PERFIL CIRCULAR          -->
+  <!-- MODAL CONFIGURACIÓN GENERAL + FOTO DE PERFIL CIRCULAR                   -->
   <!-- ======================================================================= -->
   <div id="platformSettingsModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
@@ -567,7 +580,7 @@
           <i class="ph-bold ph-gear text-xl text-[#004B93]"></i>
           <h3 class="text-base font-extrabold text-slate-900">Configuración de Perfil y Plataforma</h3>
         </div>
-        <button onclick="closeModal('platformSettingsModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
+        <button type="button" onclick="closeModal('platformSettingsModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
       </div>
 
       <form onsubmit="savePlatformSettings(event)" class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
@@ -633,7 +646,7 @@
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-teal-200 flex items-center justify-between bg-teal-700 text-white">
         <h3 class="text-base font-extrabold">Directorio de Contactos por Perfil</h3>
-        <button onclick="closeModal('contactsModal')" class="p-1.5 rounded-lg hover:bg-teal-600"><i class="ph-bold ph-x"></i></button>
+        <button type="button" onclick="closeModal('contactsModal')" class="p-1.5 rounded-lg hover:bg-teal-600"><i class="ph-bold ph-x"></i></button>
       </div>
       <div class="p-5 space-y-4 max-h-[84vh] overflow-y-auto text-xs">
         <form onsubmit="saveContactFromModal(event)" class="bg-teal-50/60 p-4 rounded-2xl border border-teal-200 space-y-3">
@@ -680,7 +693,7 @@
         <h3 class="text-base font-extrabold text-rose-950">Papelera General · Recuperar / Rehacer Elementos Borrados</h3>
         <div class="flex gap-2">
           <button type="button" id="btnEmptyTrash" onclick="emptyTrashPermanently()" class="hidden px-3 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold">Vaciar Papelera</button>
-          <button onclick="closeModal('trashModal')" class="p-1.5 rounded-lg hover:bg-rose-200/70"><i class="ph-bold ph-x"></i></button>
+          <button type="button" onclick="closeModal('trashModal')" class="p-1.5 rounded-lg hover:bg-rose-200/70"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
       <div id="trashListContainer" class="p-5 space-y-2.5 max-h-[82vh] overflow-y-auto text-xs"></div>
@@ -694,7 +707,7 @@
         <h3 class="text-base font-extrabold">Base de Datos de Accesos, Credenciales y Equipos</h3>
         <div class="flex gap-2">
           <button type="button" onclick="exportCredentialsExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Descargar Excel</button>
-          <button onclick="closeModal('credentialsModal')" class="p-1.5 rounded-lg hover:bg-slate-700"><i class="ph-bold ph-x"></i></button>
+          <button type="button" onclick="closeModal('credentialsModal')" class="p-1.5 rounded-lg hover:bg-slate-700"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
       <div class="p-5 space-y-4 max-h-[84vh] overflow-y-auto text-xs">
@@ -736,7 +749,7 @@
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
         <h3 id="taskModalTitle" class="text-base font-bold text-slate-900">Nueva Acción</h3>
-        <button onclick="closeModal('taskModal')" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
+        <button type="button" onclick="closeModal('taskModal')" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
       </div>
       <form onsubmit="saveTask(event)" class="p-5 space-y-4 max-h-[84vh] overflow-y-auto">
         <input type="hidden" id="editTaskId" />
@@ -813,6 +826,18 @@
             </div>
           </div>
 
+          <div class="bg-rose-50/75 p-3.5 rounded-xl border border-rose-200 space-y-2.5">
+            <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-extrabold text-rose-950">
+              <input type="checkbox" id="tIsVor" onchange="toggleVorFields()" class="w-4 h-4 accent-rose-600" />
+              <span>🚨 Unidad Detenida por Repuesto Crítico (VOR)</span>
+            </label>
+            <div id="vorDetailsBox" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              <input type="text" id="tPartOrderNumber" placeholder="N° Pedido Repuesto" class="px-2.5 py-2 rounded-lg border border-rose-300 text-xs bg-white font-mono uppercase" />
+              <input type="text" id="tPartDescription" placeholder="Repuesto Solicitado" class="px-2.5 py-2 rounded-lg border border-rose-300 text-xs bg-white" />
+              <input type="date" id="tPartEta" class="px-2.5 py-2 rounded-lg border border-rose-300 text-xs bg-white" />
+            </div>
+          </div>
+
           <!-- CONTACTOS FILTRADOS POR PERFIL -->
           <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
@@ -857,6 +882,12 @@
           </div>
         </div>
 
+        <div id="trainingFieldsBox" class="hidden bg-amber-50/70 p-4 rounded-xl border border-amber-200 grid grid-cols-3 gap-3">
+          <input type="number" id="tHours" min="1" max="200" value="4" placeholder="Horas" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <input type="text" id="tGroup" placeholder="Grupo Técnico" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+          <input type="text" id="tLocation" placeholder="Sede / Aula" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+        </div>
+
         <textarea id="tDesc" rows="2" placeholder="Descripción / Alcance..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
           <button type="button" onclick="closeModal('taskModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Cancelar</button>
@@ -866,20 +897,35 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO -->
+  <!-- ======================================================================= -->
+  <!-- MODAL 2: DETALLE COMPLETO DE CASO (CHAT, WORD, CORREO, PORTAL CLIENTE)  -->
+  <!-- ======================================================================= -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
         <div class="flex flex-wrap items-center gap-2">
           <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#004B93]">CASO-2026-101</span>
+          <span id="dBrandBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-[#004B93] text-white hidden">HYUNDAI</span>
           <span id="dHotlineBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 hidden">Hotline</span>
-          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[220px] sm:max-w-sm">Detalle</h3>
+          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[200px] sm:max-w-sm">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <button id="btnReopenClaimHeader" onclick="reopenCaseAsClaim(currentDetailId)" class="hidden px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-extrabold">Reabrir por Reclamo (Urgente)</button>
-          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600"><i class="ph-bold ph-pencil-simple"></i></button>
-          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600"><i class="ph-bold ph-trash"></i></button>
-          <button onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
+          <button type="button" id="btnReopenClaimHeader" onclick="reopenCaseAsClaim(currentDetailId)" class="hidden px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-extrabold">Reabrir por Reclamo (Urgente)</button>
+          <button type="button" onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm">
+            <i class="ph-bold ph-chats-circle text-sm"></i> Chat
+          </button>
+          <button type="button" onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1">
+            <i class="ph-bold ph-file-doc text-sm"></i> Word
+          </button>
+          <button type="button" onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i class="ph-bold ph-envelope-simple"></i> Formalizar Correo
+          </button>
+          <button type="button" id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i class="ph-bold ph-user-focus"></i> Portal Cliente
+          </button>
+          <button type="button" onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
+          <button type="button" id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Enviar a Papelera"><i class="ph-bold ph-trash"></i></button>
+          <button type="button" onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
 
@@ -890,14 +936,109 @@
             <div id="dMetaLine2" class="text-slate-500"></div>
             <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
           </div>
-          <div class="flex gap-2">
-            <button onclick="notifyAdvisorWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] text-white font-bold">Asesor / Jefe</button>
-            <button onclick="notifyMechanicWhatsapp()" class="px-3 py-2 rounded-xl bg-teal-600 text-white font-bold">Mecánico</button>
-            <button onclick="notifyClientWhatsapp()" class="px-3 py-2 rounded-xl bg-sky-600 text-white font-bold">Cliente</button>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1">
+              <i class="ph-bold ph-whatsapp-logo"></i> Asesor / Jefe
+            </button>
+            <button type="button" id="btnNotifyMechanicHeader" onclick="notifyMechanicWhatsapp()" class="px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold flex items-center gap-1">
+              <i class="ph-bold ph-wrench"></i> Mecánico
+            </button>
+            <button type="button" id="btnNotifyClientHeader" onclick="notifyClientWhatsapp()" class="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold flex items-center gap-1">
+              <i class="ph-bold ph-user"></i> Cliente
+            </button>
           </div>
         </div>
 
-        <div class="bg-purple-50/80 border border-purple-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <!-- PANEL FORMALIZAR CORREO -->
+        <div id="formalEmailPanel" class="hidden bg-blue-50/80 border-2 border-blue-500/40 rounded-2xl p-4 sm:p-5 space-y-3 text-xs">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-blue-950 text-sm">Formalizar Seguimiento por Correo Electrónico</h4>
+            <button type="button" onclick="regenerateFormalEmailBody()" class="px-3 py-1 rounded-lg bg-white border text-[#004B93] font-bold">Regenerar Texto</button>
+          </div>
+          <div id="feUsersChecklist" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white p-3 rounded-xl border border-blue-200 max-h-32 overflow-y-auto"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" id="feExtraEmails" placeholder="Otros correos (separados por coma)" class="px-3 py-2 rounded-xl border bg-white" />
+            <input type="text" id="feSubject" placeholder="Asunto" class="px-3 py-2 rounded-xl border bg-white font-semibold" />
+          </div>
+          <textarea id="feBody" rows="6" class="w-full p-3 rounded-xl border bg-white font-mono"></textarea>
+          <div class="flex justify-end gap-2">
+            <button type="button" onclick="copyFormalEmailText()" class="px-3 py-2 rounded-xl bg-white border font-bold">Copiar Texto</button>
+            <button type="button" onclick="sendFormalTeamEmail()" class="px-4 py-2 rounded-xl bg-[#004B93] text-white font-bold">Enviar Directo</button>
+          </div>
+        </div>
+
+        <!-- PANEL PORTAL DEL CLIENTE (COMPLETO Y FUNCIONAL) -->
+        <div id="clientPortalPanel" class="hidden bg-emerald-50/85 border-2 border-emerald-500/40 rounded-2xl p-4 sm:p-5 space-y-4 text-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h4 class="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
+              <i class="ph-bold ph-broadcast text-emerald-600 text-lg"></i> Portal Público del Cliente (Seguimiento en Vivo)
+            </h4>
+            <label class="inline-flex items-center gap-2 cursor-pointer bg-white px-3 py-1.5 rounded-xl border border-emerald-200">
+              <input type="checkbox" id="cpEnabled" class="w-4 h-4 accent-emerald-600" />
+              <span class="font-bold text-slate-800">Habilitar Portal Cliente</span>
+            </label>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Nombre del Cliente *</label>
+              <input type="text" id="cpClientName" class="w-full px-3 py-2 rounded-xl border bg-white" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Correo del Cliente *</label>
+              <input type="email" id="cpClientEmail" class="w-full px-3 py-2 rounded-xl border bg-white" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">WhatsApp del Cliente</label>
+              <input type="text" id="cpClientWhatsapp" class="w-full px-3 py-2 rounded-xl border bg-white" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Asesor de Servicios *</label>
+              <input type="text" id="cpAdvisorName" class="w-full px-3 py-2 rounded-xl border bg-white" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-700 mb-1">WhatsApp del Asesor *</label>
+              <input type="text" id="cpAdvisorWhatsapp" class="w-full px-3 py-2 rounded-xl border bg-white" />
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-emerald-200">
+            <div>
+              PIN Acceso Cliente: <strong id="cpTokenDisplay" class="font-mono bg-white px-2 py-0.5 rounded border">----</strong>
+              <button type="button" onclick="copyClientPortalLink()" class="ml-2 text-emerald-700 font-bold hover:underline">Copiar Link Cliente</button>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" onclick="saveClientPortalConfig(false)" class="px-3.5 py-2 rounded-xl bg-white border border-emerald-300 text-emerald-900 font-bold">Solo Guardar</button>
+              <button type="button" onclick="saveClientPortalConfig(true)" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">Guardar y Enviar Correo</button>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl p-4 border border-emerald-200 space-y-2.5">
+            <h5 class="font-extrabold uppercase text-emerald-900">Reportes Publicados al Cliente</h5>
+            <form onsubmit="addClientNote(event)" class="space-y-2">
+              <textarea id="newClientNoteText" rows="2" required placeholder="Escribe aquí el avance oficial que verá el cliente..." class="w-full px-3 py-2 rounded-xl border"></textarea>
+              <div class="flex justify-between items-center">
+                <label class="inline-flex items-center gap-1.5 font-semibold"><input type="checkbox" id="notifyClientOnAdd" checked /> Notificar al cliente por correo</label>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">Publicar al Cliente</button>
+              </div>
+            </form>
+            <div id="dClientNotesList" class="space-y-2 max-h-44 overflow-y-auto"></div>
+          </div>
+        </div>
+
+        <!-- CONTROL VOR -->
+        <div id="dVorControlBar" class="bg-rose-50/80 border border-rose-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <label class="inline-flex items-center gap-2 cursor-pointer font-extrabold text-rose-950">
+            <input type="checkbox" id="dIsVorCheck" onchange="quickSaveVorInfo()" class="w-4 h-4 accent-rose-600" />
+            <span>🚨 VOR (Repuesto Crítico):</span>
+          </label>
+          <div class="flex flex-wrap items-center gap-2 flex-1 justify-end">
+            <input type="text" id="dPartOrderInput" placeholder="N° Pedido (ej: PED-9941)" class="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-white font-mono uppercase text-xs w-36" />
+            <input type="text" id="dPartDescInput" placeholder="Descripción repuesto..." class="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-white text-xs w-44" />
+            <input type="date" id="dPartEtaInput" class="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-white text-xs" />
+            <button type="button" onclick="quickSaveVorInfo(true)" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs">Guardar VOR</button>
+          </div>
+        </div>
+
+        <!-- CONTROL HOTLINE -->
+        <div id="dHotlineControlBar" class="bg-purple-50/80 border border-purple-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div class="flex items-center gap-2">
             <span class="font-extrabold text-purple-950">Hotline / Ticket Fábrica:</span>
             <select id="dHotlineStatusSelect" onchange="quickSaveHotlineInfo()" class="px-2.5 py-1.5 rounded-lg border border-purple-300 bg-white font-bold text-xs">
@@ -928,6 +1069,17 @@
           <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#004B93]" />
         </div>
 
+        <!-- CHAT INTERNO DEL CASO -->
+        <div id="caseChatSection" class="bg-indigo-50/75 rounded-2xl p-4 border-2 border-indigo-200 space-y-3 text-xs">
+          <h4 class="font-extrabold uppercase text-indigo-950">Mensajería Interna del Caso</h4>
+          <div id="dChatMessagesList" class="space-y-2 max-h-48 overflow-y-auto bg-white p-3 rounded-xl border border-indigo-100"></div>
+          <form onsubmit="sendCaseChatMessage(event)" class="flex gap-2">
+            <input type="text" id="newChatMsgInput" required placeholder="Escribe un mensaje interno..." class="flex-1 px-3 py-2 rounded-xl border border-indigo-300 bg-white" />
+            <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold">Enviar</button>
+          </form>
+        </div>
+
+        <!-- REGISTRO CRONOLÓGICO DE EVENTOS Y NOTAS -->
         <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200 space-y-3">
           <h4 class="text-xs font-extrabold uppercase text-slate-800">Registro Cronológico de Eventos y Notas</h4>
           <form onsubmit="addInternalNote(event)" class="flex gap-2">
@@ -940,61 +1092,15 @@
     </div>
   </div>
 
-  <!-- MODAL PANEL ADMINISTRADOR -->
-  <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
-      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-amber-50">
-        <h3 class="text-base font-bold text-slate-900">Panel de Administración · Equipo y Contraseñas</h3>
-        <button onclick="closeModal('usersModal')" class="p-1.5 rounded-lg hover:bg-slate-200"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-5 space-y-5 max-h-[82vh] overflow-y-auto text-xs">
-        <div class="space-y-2">
-          <h4 class="font-extrabold uppercase text-amber-900">Solicitudes Pendientes</h4>
-          <div id="pendingUsersList" class="space-y-2"></div>
-        </div>
-        <div class="space-y-2 pt-2 border-t border-slate-200">
-          <h4 class="font-extrabold uppercase text-slate-700">Registrar Encargado / Instructor / Coordinador</h4>
-          <form onsubmit="adminAddUserDirect(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-            <input type="text" id="uName" required placeholder="Nombre y Apellido" class="px-3 py-2 rounded-lg border border-slate-300 bg-white" />
-            <input type="email" id="uEmail" required placeholder="ejemplo@correo.com" class="px-3 py-2 rounded-lg border border-slate-300 bg-white" />
-            <input type="text" id="uPass" required placeholder="Contraseña inicial" class="px-3 py-2 rounded-lg border border-slate-300 bg-white" />
-            <div class="flex gap-2">
-              <select id="uRole" class="flex-1 px-3 py-2 rounded-lg border border-slate-300 bg-white font-semibold">
-                <option value="Encargado">Encargado / Instructor</option>
-                <option value="Coordinador">Coordinador / Revisor</option>
-              </select>
-              <button type="submit" class="px-3.5 py-2 rounded-lg btn-accent font-bold">Crear</button>
-            </div>
-          </form>
-        </div>
-        <div class="space-y-2 pt-2 border-t border-slate-200">
-          <h4 class="font-extrabold uppercase text-slate-700">Equipo Activo</h4>
-          <div id="usersList" class="space-y-2 max-h-56 overflow-y-auto"></div>
-        </div>
-        <div class="pt-3 border-t border-slate-200 bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
-          <div><div class="font-bold text-amber-400">Administrador (<span id="adminIdDisplay">esteban388</span>)</div></div>
-          <div class="flex gap-2">
-            <input type="text" id="newAdminPassInput" placeholder="Nueva contraseña" class="px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-white" />
-            <button type="button" onclick="saveNewAdminPassword()" class="px-3.5 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-extrabold">Cambiar Clave</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL RED DE TALLERES -->
-  <div id="workshopsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4">
-      <div class="flex justify-between items-center"><h3 class="font-bold">Talleres Automotor</h3><button onclick="closeModal('workshopsModal')">x</button></div>
-      <form onsubmit="addWorkshop(event)" class="flex gap-2">
-        <input type="text" id="wName" required placeholder="Nombre" class="flex-1 px-3 py-2 border rounded-xl text-xs" />
-        <input type="text" id="wCity" required placeholder="Ciudad" class="w-32 px-3 py-2 border rounded-xl text-xs" />
-        <select id="wType" class="px-3 py-2 border rounded-xl text-xs"><option value="Propio">Propio</option><option value="Autorizado">Autorizado</option></select>
-        <button type="submit" class="px-3 py-2 btn-accent rounded-xl text-xs font-bold">Añadir</button>
-      </form>
-      <div id="workshopsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto"></div>
-    </div>
-  </div>
+  <!-- MODALES AUXILIARES -->
+  <div id="htcBankModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Banco HTC</h3><button type="button" onclick="closeModal('htcBankModal')">x</button></div><div id="htcBankList" class="space-y-2"></div></div></div>
+  <div id="vinHistoryModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-4xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Historial Clínico por VIN</h3><button type="button" onclick="closeModal('vinHistoryModal')">x</button></div><input type="text" id="vinSearchInput" oninput="renderVinHistoryResults()" placeholder="Buscar VIN..." class="w-full px-3 py-2 border rounded-xl uppercase font-mono" /><div id="vinHistoryResults" class="space-y-2 max-h-80 overflow-y-auto"></div></div></div>
+  <div id="todoModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Nueva Tarea</h3><button type="button" onclick="closeModal('todoModal')">x</button></div><form onsubmit="saveTodoItem(event)" class="space-y-3 text-xs"><input type="text" id="tdTitle" required placeholder="Título *" class="w-full px-3 py-2 border rounded-xl" /><select id="tdAssignee" required class="w-full px-2 py-2 border rounded-xl"></select><div class="flex justify-end gap-2"><button type="button" onclick="closeModal('todoModal')" class="px-3 py-2 border rounded-xl">Cancelar</button><button type="submit" class="px-4 py-2 btn-accent rounded-xl font-bold">Guardar</button></div></form></div></div>
+  <div id="hotlineRequestsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-4xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Solicitudes Hotline</h3><button type="button" onclick="closeModal('hotlineRequestsModal')">x</button></div><div id="hotlineRequestsList" class="space-y-2 max-h-80 overflow-y-auto"></div></div></div>
+  <div id="platformsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Plataformas</h3><button type="button" onclick="closeModal('platformsModal')">x</button></div><form onsubmit="savePlatformBookmark(event)" class="flex gap-2"><input type="text" id="pNameInput" required placeholder="Nombre" class="flex-1 px-3 py-2 border rounded-xl text-xs" /><input type="url" id="pUrlInput" required placeholder="https://..." class="flex-1 px-3 py-2 border rounded-xl text-xs" /><button type="submit" class="px-4 py-2 bg-[#004B93] text-white rounded-xl text-xs font-bold">Guardar</button></form><div id="platformsManageList" class="space-y-2 max-h-60 overflow-y-auto"></div></div></div>
+  <div id="trainingPlanModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-4xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Plan de Entrenamiento</h3><button type="button" onclick="closeModal('trainingPlanModal')">x</button></div><form onsubmit="addTrainingPlanEntry(event)" class="flex gap-2 text-xs"><select id="tpBrandInput" class="px-3 py-2 border rounded-xl"></select><input type="date" id="tpDateInput" required class="px-3 py-2 border rounded-xl" /><input type="text" id="tpTopicInput" required placeholder="Tema *" class="flex-1 px-3 py-2 border rounded-xl" /><button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold">Agregar</button></form><div id="tpEntriesList" class="space-y-1.5 max-h-60 overflow-y-auto text-xs"></div></div></div>
+  <div id="usersModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4 text-xs"><div class="flex justify-between"><h3 class="font-bold text-base">Equipo y Contraseñas</h3><button type="button" onclick="closeModal('usersModal')">x</button></div><div id="pendingUsersList" class="space-y-2"></div><form onsubmit="adminAddUserDirect(event)" class="grid grid-cols-2 gap-2"><input type="text" id="uName" required placeholder="Nombre" class="px-3 py-2 border rounded-xl" /><input type="email" id="uEmail" required placeholder="Correo" class="px-3 py-2 border rounded-xl" /><input type="text" id="uPass" required placeholder="Clave" class="px-3 py-2 border rounded-xl" /><select id="uRole" class="px-3 py-2 border rounded-xl"><option value="Encargado">Encargado</option><option value="Coordinador">Coordinador</option></select><button type="submit" class="col-span-2 py-2 btn-accent rounded-xl font-bold">Crear Usuario</button></form><div id="usersList" class="space-y-2 max-h-52 overflow-y-auto"></div></div></div>
+  <div id="workshopsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4"><div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4"><div class="flex justify-between"><h3 class="font-bold">Talleres Automotor</h3><button type="button" onclick="closeModal('workshopsModal')">x</button></div><form onsubmit="addWorkshop(event)" class="flex gap-2 text-xs"><input type="text" id="wName" required placeholder="Nombre" class="flex-1 px-3 py-2 border rounded-xl" /><input type="text" id="wCity" required placeholder="Ciudad" class="w-32 px-3 py-2 border rounded-xl" /><select id="wType" class="px-3 py-2 border rounded-xl"><option value="Propio">Propio</option><option value="Autorizado">Autorizado</option></select><button type="submit" class="px-3 py-2 btn-accent rounded-xl font-bold">Añadir</button></form><div id="workshopsList" class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto"></div></div></div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLRN54nymuTe32fX-RMGRAlqj1QnQulYroAdG8KT-pPNlY6Hi9lPrNVYL1CBblF1ugPA/exec";
@@ -1004,7 +1110,12 @@
     const DEFAULT_PLATFORMS = [
       { id: "p1", name: "Gestor de plan de mantenimiento", url: "https://sites.google.com/automotorpy.com/plan-de-mante/full-page-embed" },
       { id: "p2", name: "Acceso a sap web", url: "http://192.168.200.229/devwap/" },
-      { id: "p3", name: "Acceso a ccc Hyundai", url: "https://ccc.hyundai.com/nxui/ccc/index.html" }
+      { id: "p3", name: "Acceso a ccc Hyundai", url: "https://ccc.hyundai.com/nxui/ccc/index.html" },
+      { id: "p4", name: "Acceso general a CCC", url: "https://revisioncuentahta-boop.github.io/mi-autenticador/" },
+      { id: "p5", name: "Automatización de accesos en HTA", url: "https://revisioncuentahta-boop.github.io/Automation-Hyundai/" },
+      { id: "p6", name: "Servicio KGM Automotor", url: "https://sites.google.com/view/itestebanfernandezkgm/inicio" },
+      { id: "p7", name: "Servicio Mahindra Automotor", url: "https://sites.google.com/automotorpy.com/serviciosmahindra/inicio" },
+      { id: "p8", name: "Servicio Lotus Automotor", url: "https://sites.google.com/automotorpy.com/lotus-it-esteban-fernandez/acceso-a-plataformas?authuser=0" }
     ];
 
     let AUTOMOTOR_BRANDS = [
@@ -1029,8 +1140,11 @@
     const DEFAULT_WORKSHOPS = [
       { id: "w1", name: "Automotor Central", city: "Asunción", type: "Propio" },
       { id: "w2", name: "Automotor Plaza - Taller", city: "Asunción", type: "Propio" },
+      { id: "w3", name: "Quick Service Paseo La Galería", city: "Asunción", type: "Propio" },
+      { id: "w4", name: "Automotor - Servicio Pesado", city: "Asunción", type: "Propio" },
       { id: "w5", name: "Automotor Encarnación", city: "Encarnación", type: "Propio" },
-      { id: "w6", name: "Automotor CDE", city: "Ciudad del Este", type: "Propio" }
+      { id: "w6", name: "Automotor CDE", city: "Ciudad del Este", type: "Propio" },
+      { id: "w7", name: "Automotor Hernandarias", city: "Hernandarias", type: "Propio" }
     ];
 
     let state = {
@@ -1042,12 +1156,126 @@
       masterSheetUrl: ""
     };
 
-    let currentSession = null, appMode = "soporte", activeTab = "board", currentDetailId = null, calDate = new Date(), isMobileMode = window.innerWidth < 768, pendingRegTemp = null, revealedCredIds = {}, contactProfileFilter = "ALL";
+    let currentSession = null, appMode = "soporte", activeTab = "board", currentDetailId = null, calDate = new Date(), isMobileMode = window.innerWidth < 768, pendingRegTemp = null, revealedCredIds = {}, contactProfileFilter = "ALL", isSavingNow = false;
+
+    window.onerror = function(msg) { console.warn("Protección UI:", msg); return true; };
 
     function escapeHtml(str) { return str ? String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
     function formatWhatsappPhone(raw) { let p = (raw || "").replace(/\D/g, ""); return p.startsWith("0") ? "595" + p.substring(1) : p; }
 
-    // AVATAR CIRCULAR TIPO LINKEDIN
+    function showToast(msg, type = "info") {
+      const box = document.getElementById("toastBox"); if (!box) return;
+      const el = document.createElement("div");
+      const colors = { success: "bg-emerald-600 text-white", warning: "bg-amber-600 text-white", info: "bg-slate-900 text-white" };
+      el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold ${colors[type] || colors.info}`;
+      el.textContent = msg;
+      box.appendChild(el);
+      setTimeout(() => { if (el.parentNode) el.remove(); }, 3500);
+    }
+
+    // =========================================================================
+    // PESTAÑAS DE LOGIN (ENCARGADO / ADMINISTRADOR / REGISTRARSE)
+    // =========================================================================
+    function switchAuthTab(tab) {
+      document.getElementById("formLoginUser").classList.toggle("hidden", tab !== "user");
+      document.getElementById("formLoginAdmin").classList.toggle("hidden", tab !== "admin");
+      document.getElementById("formRegisterBox").classList.toggle("hidden", tab !== "register");
+
+      const map = { user: "authTabUser", admin: "authTabAdmin", register: "authTabRegister" };
+      Object.entries(map).forEach(([k, id]) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.className = k === tab
+          ? "py-2 rounded-lg bg-white text-[#004B93] shadow-sm transition font-extrabold"
+          : "py-2 rounded-lg text-slate-600 hover:text-slate-900 transition font-bold";
+      });
+    }
+
+    async function handleUserLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginUserEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("loginUserPass").value;
+      const btn = document.getElementById("btnLoginUserSubmit");
+      btn.disabled = true;
+      await syncFirebaseRealtime();
+      btn.disabled = false;
+
+      if ((state.pendingUsers || []).some(u => u.email.toLowerCase() === email)) {
+        showToast("Tu solicitud está pendiente de aprobación por el Administrador.", "warning");
+        return;
+      }
+      const found = (state.users || []).find(u => u.email.toLowerCase() === email && u.password === pass);
+      if (!found) {
+        showToast("Correo o contraseña incorrectos.", "warning");
+        return;
+      }
+      startAuthenticatedSession({ id: found.id, name: found.name, email: found.email, role: found.role || "Encargado", avatarUrl: found.avatarUrl || "" });
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const idInput = document.getElementById("loginAdminId").value.trim();
+      const passInput = document.getElementById("loginAdminPass").value;
+      const btn = document.getElementById("btnLoginAdminSubmit");
+      btn.disabled = true;
+      await syncFirebaseRealtime();
+      btn.disabled = false;
+
+      if (idInput === state.adminConfig.id && passInput === state.adminConfig.pass) {
+        startAuthenticatedSession({ id: "admin_master", name: state.adminConfig.name, email: state.adminConfig.email, role: "Administrador", avatarUrl: state.adminConfig.avatarUrl || "" });
+      } else {
+        showToast("ID o contraseña de Administrador incorrectos.", "warning");
+      }
+    }
+
+    async function sendRegistrationCode(e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("regPass").value;
+      const pinCode = String(Math.floor(100000 + Math.random() * 900000));
+      pendingRegTemp = { name, email, pass, pinCode };
+
+      const btn = document.getElementById("btnSendRegCode");
+      btn.disabled = true; btn.textContent = "Enviando código PIN...";
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "sendEmail", to: email, subject: `[Soporte Técnico Automotor] Código PIN: ${pinCode}`, body: `Hola ${name},\n\nTu código de verificación es: ${pinCode}` })
+        });
+        document.getElementById("regConfirmEmailLabel").textContent = email;
+        document.getElementById("regStep1Form").classList.add("hidden");
+        document.getElementById("regStep2Form").classList.remove("hidden");
+        showToast("Código enviado a tu correo", "success");
+      } catch (err) {
+        showToast("Error al enviar el correo de verificación", "warning");
+      } finally {
+        btn.disabled = false; btn.textContent = "Enviar Código de Verificación al Correo";
+      }
+    }
+
+    function resetRegSteps() {
+      pendingRegTemp = null;
+      document.getElementById("regStep2Form").classList.add("hidden");
+      document.getElementById("regStep1Form").classList.remove("hidden");
+    }
+
+    async function completeRegistration(e) {
+      e.preventDefault();
+      if (!pendingRegTemp || document.getElementById("regPinInput").value.trim() !== pendingRegTemp.pinCode) {
+        showToast("Código PIN incorrecto", "warning");
+        return;
+      }
+      const u = { id: "u_" + Date.now(), name: pendingRegTemp.name, email: pendingRegTemp.email, password: pendingRegTemp.pass, role: "Encargado", avatarUrl: "", requestedAt: new Date().toLocaleString() };
+      state.pendingUsers.push(u);
+      await fetch(`${FIREBASE_DB_URL}/pendingUsers/${u.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(u) }).catch(() => {});
+      resetRegSteps(); switchAuthTab("user");
+      showToast("Solicitud enviada al Administrador", "success");
+    }
+
+    // =========================================================================
+    // AVATAR CIRCULAR LINKEDIN
+    // =========================================================================
     function getUserInitials(name) { const parts = (name || "U").trim().split(/\s+/); return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : (parts[0][0] || "U").toUpperCase(); }
     function getUserAvatarUrlById(userId) { if (!userId) return ""; if (userId === "admin_master") return (state.adminConfig && state.adminConfig.avatarUrl) || ""; const u = (state.users || []).find(x => x.id === userId); return (u && u.avatarUrl) || ""; }
     function renderCircularAvatarHtml(userId, userName, sizePx = 32) {
@@ -1098,7 +1326,187 @@
     }
     function removeCurrentProfilePhoto() { applyAvatarToCurrentUser(""); }
 
+    // =========================================================================
+    // PORTAL DEL CLIENTE (COMPLETO Y FUNCIONAL)
+    // =========================================================================
+    function togglePortalSection() {
+      const panel = document.getElementById("clientPortalPanel");
+      const formal = document.getElementById("formalEmailPanel");
+      if (formal) formal.classList.add("hidden");
+      if (panel) panel.classList.toggle("hidden");
+    }
+
+    function getClientTrackingUrl(t) {
+      const base = (state.clientPortalBaseUrl || "").trim() || "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html";
+      const sep = base.includes("?") ? "&" : "?";
+      return `${base}${sep}caso=${encodeURIComponent(t.caseId)}&token=${encodeURIComponent((t.clientPortal && t.clientPortal.token) || "1234")}`;
+    }
+
+    function copyClientPortalLink() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      navigator.clipboard.writeText(getClientTrackingUrl(t));
+      showToast("Enlace del Portal Cliente copiado", "success");
+    }
+
+    async function saveClientPortalConfig(sendEmailNow = false) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      if (!t.clientPortal) t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)) };
+      t.clientPortal.enabled = document.getElementById("cpEnabled").checked;
+      t.clientPortal.clientName = document.getElementById("cpClientName").value.trim();
+      t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim();
+      t.clientPortal.advisorName = document.getElementById("cpAdvisorName").value.trim();
+      t.clientPortal.advisorWhatsapp = document.getElementById("cpAdvisorWhatsapp").value.trim();
+      t.clientName = t.clientPortal.clientName;
+      t.clientWhatsapp = document.getElementById("cpClientWhatsapp").value.trim();
+      t.advisorName = t.clientPortal.advisorName;
+      t.advisorWhatsapp = t.clientPortal.advisorWhatsapp;
+
+      saveLocalAndCloud();
+      renderBoard();
+      if (sendEmailNow && t.clientPortal.enabled && t.clientPortal.clientEmail) {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendEmail",
+            to: t.clientPortal.clientEmail,
+            subject: `Seguimiento de tu vehículo - Caso ${t.caseId}`,
+            body: `Estimado/a ${t.clientPortal.clientName || "Cliente"},\n\nPuedes ver el avance en tiempo real de tu vehículo aquí:\n${getClientTrackingUrl(t)}`
+          })
+        }).catch(() => {});
+        showToast("Configuración guardada y correo enviado al cliente", "success");
+      } else {
+        showToast("Configuración del Portal Cliente guardada", "success");
+      }
+    }
+
+    async function addClientNote(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const txt = document.getElementById("newClientNoteText").value.trim();
+      if (!t || !txt) return;
+      if (!Array.isArray(t.clientNotes)) t.clientNotes = [];
+      t.clientNotes.push({ date: new Date().toLocaleString(), text: txt });
+      document.getElementById("newClientNoteText").value = "";
+      saveLocalAndCloud();
+      renderClientNotes(t);
+      showToast("Reporte publicado en el Portal del Cliente", "success");
+
+      if (document.getElementById("notifyClientOnAdd").checked && t.clientPortal && t.clientPortal.enabled && t.clientPortal.clientEmail) {
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "sendEmail",
+            to: t.clientPortal.clientEmail,
+            subject: `Actualización de tu vehículo - Caso ${t.caseId}`,
+            body: `Estimado/a ${t.clientPortal.clientName || "Cliente"},\n\nNovedad registrada: ${txt}\n\nVer seguimiento: ${getClientTrackingUrl(t)}`
+          })
+        }).catch(() => {});
+      }
+    }
+
+    function renderClientNotes(t) {
+      const box = document.getElementById("dClientNotesList");
+      if (!box) return;
+      const list = Array.isArray(t.clientNotes) ? t.clientNotes : [];
+      box.innerHTML = list.length === 0
+        ? `<p class="text-slate-400">Sin mensajes publicados al cliente aún.</p>`
+        : list.slice().reverse().map(n => `<div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl"><span class="text-[10px] font-bold text-emerald-800">${escapeHtml(n.date)}</span><p class="text-slate-900 mt-0.5">${escapeHtml(n.text)}</p></div>`).join("");
+    }
+
+    // =========================================================================
+    // FORMALIZAR CORREO, CHAT Y EXPORTACIONES
+    // =========================================================================
+    function toggleFormalEmailSection() {
+      const panel = document.getElementById("formalEmailPanel");
+      const portal = document.getElementById("clientPortalPanel");
+      if (portal) portal.classList.add("hidden");
+      if (!panel) return;
+      const willOpen = panel.classList.contains("hidden");
+      panel.classList.toggle("hidden");
+      if (willOpen) {
+        const members = getAllAssignableMembers();
+        document.getElementById("feUsersChecklist").innerHTML = members.map(u => `<label class="flex items-center gap-2 p-1"><input type="checkbox" value="${escapeHtml(u.email)}" class="fe-user-chk" checked /><span>${escapeHtml(u.name)} (${escapeHtml(u.email)})</span></label>`).join("");
+        regenerateFormalEmailBody();
+      }
+    }
+
+    function regenerateFormalEmailBody() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      document.getElementById("feSubject").value = `[Soporte Técnico Automotor] ${t.caseId} - ${t.title} (${t.status})`;
+      document.getElementById("feBody").value = `Caso: ${t.caseId}\nTítulo: ${t.title}\nEstado: ${t.status} (${t.progress || 0}%)\nTaller: ${t.workshop || "-"}\nUnidad: ${t.brand || "-"} ${t.vehicleModel || ""} | VIN: ${t.vehicleVin || "-"}\n\nHistorial:\n` + (t.notes || []).map(n => `- [${n.date}] ${n.text}`).join("\n");
+    }
+
+    function copyFormalEmailText() {
+      navigator.clipboard.writeText(`Asunto: ${document.getElementById("feSubject").value}\n\n${document.getElementById("feBody").value}`);
+      showToast("Texto copiado al portapapeles", "success");
+    }
+
+    async function sendFormalTeamEmail() {
+      const checked = Array.from(document.querySelectorAll(".fe-user-chk:checked")).map(cb => cb.value.trim()).filter(Boolean);
+      const extras = (document.getElementById("feExtraEmails").value || "").split(",").map(s => s.trim()).filter(s => s.includes("@"));
+      const all = Array.from(new Set([...checked, ...extras]));
+      if (all.length === 0) { showToast("Selecciona al menos un destinatario", "warning"); return; }
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "sendEmail", to: all[0], cc: all.slice(1).join(","), subject: document.getElementById("feSubject").value, body: document.getElementById("feBody").value })
+      }).catch(() => {});
+      showToast("Informe enviado por correo electrónico", "success");
+    }
+
+    function focusCaseChat() {
+      const sec = document.getElementById("caseChatSection");
+      if (sec) sec.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function renderCaseChatMessages(t) {
+      const box = document.getElementById("dChatMessagesList");
+      if (!box) return;
+      const msgs = Array.isArray(t.chatMessages) ? t.chatMessages : [];
+      box.innerHTML = msgs.length === 0
+        ? `<p class="text-slate-400 text-center py-2">Sin mensajes internos aún.</p>`
+        : msgs.map(m => `<div class="p-2 rounded-lg bg-slate-100"><strong>${escapeHtml(m.senderName)}</strong> <span class="text-[10px] text-slate-400">(${escapeHtml(m.date)})</span>: ${escapeHtml(m.text)}</div>`).join("");
+    }
+
+    function sendCaseChatMessage(e) {
+      e.preventDefault();
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      const inp = document.getElementById("newChatMsgInput");
+      if (!t || !inp.value.trim()) return;
+      if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
+      t.chatMessages.push({ senderId: currentSession.id, senderName: currentSession.name, date: new Date().toLocaleString(), text: inp.value.trim() });
+      inp.value = "";
+      saveLocalAndCloud();
+      renderCaseChatMessages(t);
+    }
+
+    function exportSingleCaseWord() {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const html = `<html><head><meta charset="UTF-8"></head><body><h1>${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</h1><p><strong>Estado:</strong> ${escapeHtml(t.status)} | <strong>Taller:</strong> ${escapeHtml(t.workshop || "-")}</p><p><strong>Unidad:</strong> ${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")} | <strong>VIN:</strong> ${escapeHtml(t.vehicleVin || "-")}</p><h3>Historial</h3><ul>${(t.notes || []).map(n => `<li>[${escapeHtml(n.date)}] ${escapeHtml(n.text)}</li>`).join("")}</ul></body></html>`;
+      const blob = new Blob(["\uFEFF" + html], { type: "application/msword;charset=utf-8;" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${t.caseId}.doc`; a.click();
+    }
+
+    function exportExcelHistory() {
+      const list = getFilteredModeTasks();
+      const rows = list.map(t => `<tr><td>${escapeHtml(t.caseId)}</td><td>${escapeHtml(t.status)}</td><td>${escapeHtml(t.date)}</td><td>${escapeHtml(t.brand || "-")}</td><td>${escapeHtml(t.title)}</td><td>${escapeHtml(t.workshop || "-")}</td></tr>`).join("");
+      const blob = new Blob(["\uFEFF<table><thead><tr><th>Código</th><th>Estado</th><th>Fecha</th><th>Marca</th><th>Título</th><th>Taller</th></tr></thead><tbody>" + rows + "</tbody></table>"], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Historial_${appMode}.xls`; a.click();
+    }
+
+    function exportWordHistory() {
+      const list = getFilteredModeTasks();
+      const html = list.map(t => `<h3>${escapeHtml(t.caseId)} - ${escapeHtml(t.title)} (${escapeHtml(t.status)})</h3>`).join("");
+      const blob = new Blob(["\uFEFF<html><head><meta charset='UTF-8'></head><body>" + html + "</body></html>"], { type: "application/msword;charset=utf-8;" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Historial_${appMode}.doc`; a.click();
+    }
+
+    // =========================================================================
     // PAPELERA GENERAL
+    // =========================================================================
     function moveToTrash({ itemType, itemLabel, moduleName, payload, parentTaskId = "" }) {
       if (!Array.isArray(state.trash)) state.trash = [];
       state.trash.unshift({ trashId: "trsh_" + Date.now(), itemType, itemLabel, moduleName, parentTaskId, deletedBy: currentSession ? currentSession.name : "Usuario", deletedAt: new Date().toLocaleString(), payload: JSON.parse(JSON.stringify(payload)) });
@@ -1122,7 +1530,9 @@
     }
     function emptyTrashPermanently() { if (isCurrentAdmin() && confirm("¿Vaciar toda la papelera?")) { state.trash = []; saveLocalAndCloud(); updateTrashBadge(); renderTrashList(); } }
 
+    // =========================================================================
     // CONTACTOS POR PERFIL
+    // =========================================================================
     function findDuplicateContact(name, phone, ignoreId = "") {
       const cleanName = (name || "").trim().toLowerCase(), cleanPhone = (phone || "").replace(/\D/g, "");
       return (state.contacts || []).find(c => (!ignoreId || c.id !== ignoreId) && ((cleanName && (c.name || "").trim().toLowerCase() === cleanName) || (cleanPhone.length >= 6 && (c.phone || "").replace(/\D/g, "") === cleanPhone)));
@@ -1141,7 +1551,7 @@
     function editContactRecord(id) { const c = state.contacts.find(x => x.id === id); if (c) { document.getElementById("editContactId").value = c.id; document.getElementById("ctProfile").value = c.profile; document.getElementById("ctName").value = c.name; document.getElementById("ctPhone").value = c.phone; document.getElementById("ctReference").value = c.reference || ""; } }
     function deleteContactRecord(id) { const t = state.contacts.find(x => x.id === id); if (!t) return; moveToTrash({ itemType: "contact", itemLabel: `${t.name} (${t.profile})`, moduleName: "Contactos", payload: t }); state.contacts = state.contacts.filter(x => x.id !== id); saveLocalAndCloud(); populateTaskContactSelectors(); renderContactsTable(); }
     function setContactProfileFilter(p) { contactProfileFilter = p; renderContactsTable(); }
-    function renderContactsTable() { const tbody = document.getElementById("contactsTableBody"), q = (document.getElementById("contactSearchInput").value || "").toLowerCase(); const list = (state.contacts || []).filter(c => (contactProfileFilter === "ALL" || c.profile === contactProfileFilter) && (!q || `${c.name} ${c.phone} ${c.reference || ""}`.toLowerCase().includes(q))); tbody.innerHTML = list.map(c => `<tr><td class="p-3 font-bold">${escapeHtml(c.profile)}</td><td class="p-3 font-bold">${escapeHtml(c.name)}</td><td class="p-3 font-mono">${escapeHtml(c.phone)}</td><td class="p-3">${escapeHtml(c.reference || "-")}</td><td class="p-3 text-right"><button onclick="editContactRecord('${c.id}')" class="text-blue-700 font-bold mr-2">Editar</button><button onclick="deleteContactRecord('${c.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
+    function renderContactsTable() { const tbody = document.getElementById("contactsTableBody"), q = (document.getElementById("contactSearchInput").value || "").toLowerCase(); const list = (state.contacts || []).filter(c => (contactProfileFilter === "ALL" || c.profile === contactProfileFilter) && (!q || `${c.name} ${c.phone} ${c.reference || ""}`.toLowerCase().includes(q))); tbody.innerHTML = list.map(c => `<tr><td class="p-3 font-bold">${escapeHtml(c.profile)}</td><td class="p-3 font-bold">${escapeHtml(c.name)}</td><td class="p-3 font-mono">${escapeHtml(c.phone)}</td><td class="p-3">${escapeHtml(c.reference || "-")}</td><td class="p-3 text-right"><button type="button" onclick="editContactRecord('${c.id}')" class="text-blue-700 font-bold mr-2">Editar</button><button type="button" onclick="deleteContactRecord('${c.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
     function populateTaskContactSelectors() {
       const chiefs = (state.contacts || []).filter(c => c.profile === "Jefe de Taller / Gerente"), mechs = (state.contacts || []).filter(c => c.profile === "Mecánico"), clients = (state.contacts || []).filter(c => c.profile === "Cliente");
       const sC = document.getElementById("selSavedChiefs"); if (sC) sC.innerHTML = `<option value="">-- Elegir Jefe/Gerente (${chiefs.length}) --</option>` + chiefs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
@@ -1161,7 +1571,9 @@
       saveLocalAndCloud(); populateTaskContactSelectors(); showToast(`Contacto "${name}" guardado`, "success");
     }
 
+    // =========================================================================
     // CONFIGURACIÓN GENERAL
+    // =========================================================================
     function openPlatformSettingsModal() {
       const cfg = state.platformConfig || { maxCompletedInBoard: 10, slaWarningDays: 5 };
       document.getElementById("cfgMaxCompleted").value = cfg.maxCompletedInBoard || 10;
@@ -1183,7 +1595,9 @@
       saveLocalAndCloud(); syncSelectors(); renderAll(); closeModal("platformSettingsModal"); showToast("Configuración guardada", "success");
     }
 
+    // =========================================================================
     // RECLAMOS Y COMPLETADOS
+    // =========================================================================
     function reopenCaseAsClaim(taskId) {
       const t = state.tasks.find(x => x.id === taskId); if (!t) return;
       const reason = prompt(`Reabrir ${t.caseId} como RECLAMO en URGENTE.\nMotivo:`, "Reingreso con el mismo síntoma / reclamo");
@@ -1198,22 +1612,23 @@
       const allCompleted = getFilteredModeTasks().filter(t => t.status === "Completado").sort((a, b) => ((b.closedDate || b.date || "") > (a.closedDate || a.date || "") ? 1 : -1));
       const filtered = allCompleted.filter(t => (!bFilter || t.brand === bFilter) && (!wFilter || t.workshop === wFilter) && (!q || `${t.caseId} ${t.brand || ""} ${t.vehicleVin || ""} ${t.orNumber || ""} ${t.workshop || ""} ${t.title || ""}`.toLowerCase().includes(q)));
       badge.textContent = `${filtered.length} de ${allCompleted.length} completados`;
-      tbody.innerHTML = filtered.map(t => { const a = members.find(u => u.id === t.assigneeId); return `<tr><td class="p-3 font-bold">${escapeHtml(t.caseId)}</td><td class="p-3">${escapeHtml(t.brand || "-")} · VIN: ${escapeHtml(t.vehicleVin || "-")}</td><td class="p-3">${escapeHtml(t.workshop || "-")} (${escapeHtml(a ? a.name : "-")})</td><td class="p-3 font-bold">${escapeHtml(t.title)}</td><td class="p-3 text-right space-x-1"><button onclick="openDetailModal('${t.id}')" class="px-2 py-1 bg-slate-100 rounded font-bold">Ver</button><button onclick="reopenCaseAsClaim('${t.id}')" class="px-2.5 py-1 bg-red-600 text-white rounded font-bold">Reabrir Reclamo</button></td></tr>`; }).join("");
+      tbody.innerHTML = filtered.map(t => { const a = members.find(u => u.id === t.assigneeId); return `<tr><td class="p-3 font-bold">${escapeHtml(t.caseId)}</td><td class="p-3">${escapeHtml(t.brand || "-")} · VIN: ${escapeHtml(t.vehicleVin || "-")}</td><td class="p-3">${escapeHtml(t.workshop || "-")} (${escapeHtml(a ? a.name : "-")})</td><td class="p-3 font-bold">${escapeHtml(t.title)}</td><td class="p-3 text-right space-x-1"><button type="button" onclick="openDetailModal('${t.id}')" class="px-2 py-1 bg-slate-100 rounded font-bold">Ver</button><button type="button" onclick="reopenCaseAsClaim('${t.id}')" class="px-2.5 py-1 bg-red-600 text-white rounded font-bold">Reabrir Reclamo</button></td></tr>`; }).join("");
     }
 
-    // ACCESOS, PLAN, NOTIFICACIONES, SESIÓN Y TABLERO
+    // =========================================================================
+    // ACCESOS, PLAN, NOTIFICACIONES, SESIÓN Y TABLERO (BLINDADO)
+    // =========================================================================
     function openCredentialsModal() { renderCredentialsTable(); document.getElementById("credentialsModal").classList.remove("hidden"); }
     function saveCredentialRecord(e) { e.preventDefault(); state.credentialsDb.unshift({ id: "cred_" + Date.now(), brand: document.getElementById("crBrand").value.trim(), platform: document.getElementById("crPlatform").value.trim(), link: document.getElementById("crLink").value.trim(), userId: document.getElementById("crUserId").value.trim(), password: document.getElementById("crPassword").value.trim(), location: document.getElementById("crLocation").value.trim(), note: document.getElementById("crNote").value.trim() }); saveLocalAndCloud(); renderCredentialsTable(); }
     function deleteCredentialRecord(id) { const t = state.credentialsDb.find(x => x.id === id); if (t) { moveToTrash({ itemType: "credential", itemLabel: `${t.brand} - ${t.userId}`, moduleName: "Accesos", payload: t }); state.credentialsDb = state.credentialsDb.filter(x => x.id !== id); saveLocalAndCloud(); renderCredentialsTable(); } }
     function toggleCredentialReveal(id) { revealedCredIds[id] = !revealedCredIds[id]; renderCredentialsTable(); }
-    function renderCredentialsTable() { const tbody = document.getElementById("credentialsTableBody"), q = (document.getElementById("credSearchInput").value || "").toLowerCase(); const list = (state.credentialsDb || []).filter(r => !q || `${r.brand} ${r.platform} ${r.userId} ${r.location} ${r.note}`.toLowerCase().includes(q)); document.getElementById("credCountBadge").textContent = `${list.length} registros`; tbody.innerHTML = list.map(r => `<tr><td class="p-3 font-bold">${escapeHtml(r.brand)}</td><td class="p-3"><a href="${escapeHtml(r.link)}" target="_blank" class="text-blue-700 underline">${escapeHtml(r.link)}</a></td><td class="p-3 font-mono">${escapeHtml(r.userId)}</td><td class="p-3 font-mono">${revealedCredIds[r.id] ? escapeHtml(r.password) : "••••••"} <button onclick="toggleCredentialReveal('${r.id}')">👁</button></td><td class="p-3">${escapeHtml(r.location)}</td><td class="p-3">${escapeHtml(r.note)}</td><td class="p-3 text-right"><button onclick="deleteCredentialRecord('${r.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
-    function exportCredentialsExcel() {}
+    function renderCredentialsTable() { const tbody = document.getElementById("credentialsTableBody"), q = (document.getElementById("credSearchInput").value || "").toLowerCase(); const list = (state.credentialsDb || []).filter(r => !q || `${r.brand} ${r.platform} ${r.userId} ${r.location} ${r.note}`.toLowerCase().includes(q)); document.getElementById("credCountBadge").textContent = `${list.length} registros`; tbody.innerHTML = list.map(r => `<tr><td class="p-3 font-bold">${escapeHtml(r.brand)}</td><td class="p-3"><a href="${escapeHtml(r.link)}" target="_blank" class="text-blue-700 underline">${escapeHtml(r.link)}</a></td><td class="p-3 font-mono">${escapeHtml(r.userId)}</td><td class="p-3 font-mono">${revealedCredIds[r.id] ? escapeHtml(r.password) : "••••••"} <button type="button" onclick="toggleCredentialReveal('${r.id}')">👁</button></td><td class="p-3">${escapeHtml(r.location)}</td><td class="p-3">${escapeHtml(r.note)}</td><td class="p-3 text-right"><button type="button" onclick="deleteCredentialRecord('${r.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
+    function exportCredentialsExcel() { const rows = (state.credentialsDb || []).map(r => `<tr><td>${escapeHtml(r.brand)}</td><td>${escapeHtml(r.platform)}</td><td>${escapeHtml(r.link)}</td><td>${escapeHtml(r.userId)}</td><td>${escapeHtml(r.password)}</td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.note)}</td></tr>`).join(""); const blob = new Blob(["\uFEFF<table><thead><tr><th>Marca</th><th>Plataforma</th><th>Link</th><th>ID</th><th>Credencial</th><th>Ubicación</th><th>Nota</th></tr></thead><tbody>" + rows + "</tbody></table>"], { type: "application/vnd.ms-excel;charset=utf-8;" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Base_Datos_Accesos.xls"; a.click(); }
 
-    function openTrainingPlanModal() { const opts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join(""); document.getElementById("tpBrandInput").innerHTML = opts; document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas</option>` + opts; renderTrainingPlanModal(); document.getElementById("trainingPlanModal").classList.remove("hidden"); }
+    function openTrainingPlanModal() { const opts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join(""); document.getElementById("tpBrandInput").innerHTML = opts; renderTrainingPlanModal(); document.getElementById("trainingPlanModal").classList.remove("hidden"); }
     function addTrainingPlanEntry(e) { e.preventDefault(); state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand: document.getElementById("tpBrandInput").value, date: document.getElementById("tpDateInput").value, topic: document.getElementById("tpTopicInput").value.trim() }); saveLocalAndCloud(); renderTrainingPlanModal(); }
     function deleteTrainingPlanEntry(id) { const t = state.trainingPlanEntries.find(x => x.id === id); if (t) { moveToTrash({ itemType: "trainingPlan", itemLabel: `${t.brand}: ${t.topic}`, moduleName: "Plan Entrenamiento", payload: t }); state.trainingPlanEntries = state.trainingPlanEntries.filter(x => x.id !== id); saveLocalAndCloud(); renderTrainingPlanModal(); } }
-    function renderTrainingPlanModal() { document.getElementById("tpEntriesList").innerHTML = (state.trainingPlanEntries || []).map(it => `<div class="p-2 border rounded flex justify-between"><span><strong>${escapeHtml(it.brand)}</strong> · ${escapeHtml(it.date)} — ${escapeHtml(it.topic)}</span><button onclick="deleteTrainingPlanEntry('${it.id}')" class="text-red-600">Borrar</button></div>`).join(""); }
-    function exportTrainingPlanCalendarExcel() {}
+    function renderTrainingPlanModal() { document.getElementById("tpEntriesList").innerHTML = (state.trainingPlanEntries || []).map(it => `<div class="p-2 border rounded flex justify-between"><span><strong>${escapeHtml(it.brand)}</strong> · ${escapeHtml(it.date)} — ${escapeHtml(it.topic)}</span><button type="button" onclick="deleteTrainingPlanEntry('${it.id}')" class="text-red-600">Borrar</button></div>`).join(""); }
 
     function refreshNotificationsUI() {}
     function toggleNotifDropdown() {}
@@ -1223,6 +1638,7 @@
 
     function normalizeStateData() {
       if (!state.adminConfig) state.adminConfig = { id: "esteban388", pass: "esteban388", name: "Esteban (Administrador)", email: "soporte.automotortaller@gmail.com", avatarUrl: "" };
+      if (!Array.isArray(state.tasks)) state.tasks = [];
       if (!Array.isArray(state.users)) state.users = [];
       if (!Array.isArray(state.pendingUsers)) state.pendingUsers = [];
       if (!Array.isArray(state.contacts)) state.contacts = [];
@@ -1232,19 +1648,23 @@
       if (!state.platformConfig) state.platformConfig = { maxCompletedInBoard: 10, slaWarningDays: 5, customBrands: null };
       if (Array.isArray(state.platformConfig.customBrands) && state.platformConfig.customBrands.length > 0) AUTOMOTOR_BRANDS = state.platformConfig.customBrands;
       state.users = state.users.filter(u => u && u.email && u.id !== "u1" && u.id !== "u2" && u.id !== "u3");
+      state.tasks.forEach(t => {
+        if (!t.mode) t.mode = "soporte";
+        if (!t.status) t.status = "Pendiente";
+      });
     }
 
     function toggleDarkMode() { document.body.classList.toggle("dark-theme"); }
-    function showToast(msg, type = "info") { const box = document.getElementById("toastBox"), el = document.createElement("div"); el.className = "px-4 py-3 rounded-xl shadow-lg text-xs font-bold bg-slate-900 text-white"; el.textContent = msg; box.appendChild(el); setTimeout(() => el.remove(), 3500); }
 
     async function syncFirebaseRealtime() {
+      if (isSavingNow) return;
       try {
         const [resUsers, resAdmin, resApp] = await Promise.all([fetch(`${FIREBASE_DB_URL}/approvedUsers.json`), fetch(`${FIREBASE_DB_URL}/adminConfig.json`), fetch(`${FIREBASE_DB_URL}/appState.json`)]);
         const [objUsers, objAdmin, objApp] = await Promise.all([resUsers.json(), resAdmin.json(), resApp.json()]);
         if (objUsers && typeof objUsers === "object") state.users = Object.values(objUsers);
         if (objAdmin && typeof objAdmin === "object" && objAdmin.id) state.adminConfig = { ...state.adminConfig, ...objAdmin };
         if (objApp && typeof objApp === "object") {
-          if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0 && state.tasks.length === 0) state.tasks = objApp.tasks;
+          if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0) state.tasks = objApp.tasks;
           if (Array.isArray(objApp.contacts)) state.contacts = objApp.contacts;
           if (Array.isArray(objApp.trash)) state.trash = objApp.trash;
           if (Array.isArray(objApp.credentialsDb)) state.credentialsDb = objApp.credentialsDb;
@@ -1257,12 +1677,7 @@
       } catch (e) {}
     }
 
-    function switchAuthTab(tab) { document.getElementById("formLoginUser").classList.toggle("hidden", tab !== "user"); document.getElementById("formLoginAdmin").classList.toggle("hidden", tab !== "admin"); document.getElementById("formRegisterBox").classList.toggle("hidden", tab !== "register"); }
-    async function handleUserLogin(e) { e.preventDefault(); const email = document.getElementById("loginUserEmail").value.trim().toLowerCase(), pass = document.getElementById("loginUserPass").value; await syncFirebaseRealtime(); const found = (state.users || []).find(u => u.email.toLowerCase() === email && u.password === pass); if (!found) { showToast("Credenciales incorrectas", "warning"); return; } startAuthenticatedSession({ id: found.id, name: found.name, email: found.email, role: found.role || "Encargado", avatarUrl: found.avatarUrl || "" }); }
-    async function handleAdminLogin(e) { e.preventDefault(); const idInput = document.getElementById("loginAdminId").value.trim(), passInput = document.getElementById("loginAdminPass").value; await syncFirebaseRealtime(); if (idInput === state.adminConfig.id && passInput === state.adminConfig.pass) startAuthenticatedSession({ id: "admin_master", name: state.adminConfig.name, email: state.adminConfig.email, role: "Administrador", avatarUrl: state.adminConfig.avatarUrl || "" }); else showToast("Credenciales incorrectas", "warning"); }
-    async function sendRegistrationCode(e) {}
-    function resetRegSteps() {}
-    async function completeRegistration(e) {}
+    setInterval(() => { if (currentSession && !isSavingNow) syncFirebaseRealtime(); }, 10000);
 
     function startAuthenticatedSession(sessionObj) {
       currentSession = sessionObj;
@@ -1275,7 +1690,7 @@
       document.getElementById("btnAdminUsers").classList.toggle("hidden", !isAdmin);
       refreshHeaderUserAvatar();
       updateTrashBadge(); updateCompletedTabBadge();
-      syncFirebaseRealtime(); renderPlatformsQuickList(); syncSelectors(); populateTaskContactSelectors(); switchTab("board");
+      renderPlatformsQuickList(); syncSelectors(); populateTaskContactSelectors(); switchTab("board");
     }
 
     function logoutSession() { currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
@@ -1291,29 +1706,76 @@
     });
 
     function saveLocalAndCloud() {
+      isSavingNow = true;
       try { localStorage.setItem("autotech_state_v5", JSON.stringify({ ...state, hotlineRequests: [] })); } catch (e) {}
-      fetch(`${FIREBASE_DB_URL}/appState.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) }).catch(() => {});
+      fetch(`${FIREBASE_DB_URL}/appState.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) })
+        .finally(() => { setTimeout(() => { isSavingNow = false; }, 1500); });
       fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveState", state: state }) }).catch(() => {});
     }
 
     async function syncFromCloud(manual = false) {
       await syncFirebaseRealtime();
       if (currentSession) { refreshHeaderUserAvatar(); syncSelectors(); populateTaskContactSelectors(); renderAll(); }
-      if (manual) showToast("Sincronizado", "success");
+      if (manual) showToast("Sincronizado con la nube", "success");
     }
 
     function openMasterSheet() { if (state.masterSheetUrl) window.open(state.masterSheetUrl, "_blank"); }
     function toggleDevicePreview() {}
-    function switchAppMode(mode) { appMode = mode; document.body.classList.toggle("mode-training", mode !== "soporte"); document.getElementById("btnNewActionText").textContent = mode === "soporte" ? "Nuevo Soporte" : "Nuevo Entrenamiento"; renderAll(); }
-    function switchTab(tab) { activeTab = tab; ["board", "completed", "tasks", "dashboard", "calendar"].forEach(t => { const el = document.getElementById("view-" + t); if (el) el.classList.toggle("hidden", t !== tab); }); renderAll(); }
-    function getFilteredModeTasks() { return state.tasks.filter(t => (t.mode || "soporte") === appMode); }
+
+    function switchAppMode(mode) {
+      appMode = mode;
+      const isSoporte = mode === "soporte";
+      document.body.classList.toggle("mode-training", !isSoporte);
+
+      const btnS = document.getElementById("btnModeSoporte");
+      const btnE = document.getElementById("btnModeEntrenamiento");
+      if (btnS && btnE) {
+        btnS.className = isSoporte
+          ? "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition"
+          : "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
+        btnE.className = !isSoporte
+          ? "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#B45309] shadow-sm transition"
+          : "flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
+      }
+
+      document.getElementById("btnNewActionText").textContent = isSoporte ? "Nuevo Soporte" : "Nuevo Entrenamiento";
+      document.getElementById("btnWorkshops").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnVinHistory").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnHotlineGroup").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnTrainingPlan").classList.toggle("hidden", isSoporte);
+      document.getElementById("btnHtcBank").classList.toggle("hidden", isSoporte);
+      document.getElementById("filterVor").classList.toggle("hidden", !isSoporte);
+      document.getElementById("filterBrand").classList.toggle("hidden", !isSoporte);
+      document.getElementById("filterWorkshop").classList.toggle("hidden", !isSoporte);
+
+      // Limpiar filtros que no aplican al cambiar de modo para evitar ocultar tarjetas
+      document.getElementById("filterVor").value = "";
+      document.getElementById("filterBrand").value = "";
+      document.getElementById("filterWorkshop").value = "";
+      document.getElementById("filterUser").value = "";
+      document.getElementById("searchInput").value = "";
+
+      renderAll();
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      ["board", "completed", "tasks", "dashboard", "calendar"].forEach(t => {
+        const el = document.getElementById("view-" + t); if (el) el.classList.toggle("hidden", t !== tab);
+        const btn = document.getElementById("tab-" + t); if (btn) { btn.classList.toggle("active", t === tab); btn.classList.toggle("text-slate-900", t === tab); btn.classList.toggle("text-slate-600", t !== tab); }
+      });
+      renderAll();
+    }
+
+    function getFilteredModeTasks() { return (state.tasks || []).filter(t => (t.mode || "soporte") === appMode); }
     function getAllAssignableMembers() { return [{ id: "admin_master", name: state.adminConfig.name || "Esteban (Administrador)", email: state.adminConfig.email, role: "Administrador", avatarUrl: state.adminConfig.avatarUrl || "" }, ...(state.users || [])]; }
     function updateCompletedTabBadge() { const el = document.getElementById("completedTabCount"); if (el) el.textContent = getFilteredModeTasks().filter(t => t.status === "Completado").length; }
 
     function syncSelectors() {
       const members = getAllAssignableMembers(), memberOpts = members.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
-      document.getElementById("filterUser").innerHTML = `<option value="">Todos</option>` + memberOpts;
+      document.getElementById("filterUser").innerHTML = `<option value="">Todos los Encargados</option>` + memberOpts;
       document.getElementById("tAssignee").innerHTML = memberOpts;
+      if (document.getElementById("quickTodoAssignee")) document.getElementById("quickTodoAssignee").innerHTML = memberOpts;
       const brandOpts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("");
       document.getElementById("tBrand").innerHTML = brandOpts;
       document.getElementById("filterBrand").innerHTML = `<option value="">Todas las Marcas</option>` + brandOpts;
@@ -1325,16 +1787,46 @@
     }
 
     function toggleCustomBrandField() {}
-    function renderAll() { renderBoard(); renderCompletedTab(); renderTodos(); updateCompletedTabBadge(); }
-    function changeMonth() {}
-    function goToday() {}
+    function renderAll() { renderBoard(); renderCompletedTab(); renderTodos(); renderDashboard(); renderCalendar(); updateCompletedTabBadge(); }
+
+    function renderDashboard() {
+      const list = getFilteredModeTasks();
+      const kpiBox = document.getElementById("kpiGrid");
+      if (!kpiBox) return;
+      const urgent = list.filter(t => t.status === "Urgente").length;
+      const inProg = list.filter(t => t.status === "En Proceso" || t.status === "En Prueba").length;
+      const done = list.filter(t => t.status === "Completado").length;
+      kpiBox.innerHTML = `
+        <div class="win-mica rounded-2xl p-4"><span class="text-xs text-slate-500">Total</span><div class="text-2xl font-extrabold">${list.length}</div></div>
+        <div class="win-mica rounded-2xl p-4"><span class="text-xs text-red-600 font-bold">Urgentes</span><div class="text-2xl font-extrabold text-red-600">${urgent}</div></div>
+        <div class="win-mica rounded-2xl p-4"><span class="text-xs text-blue-600 font-bold">En Proceso / Prueba</span><div class="text-2xl font-extrabold text-blue-600">${inProg}</div></div>
+        <div class="win-mica rounded-2xl p-4"><span class="text-xs text-emerald-600 font-bold">Completados</span><div class="text-2xl font-extrabold text-emerald-600">${done}</div></div>
+      `;
+    }
+
+    function changeMonth(d) { calDate.setMonth(calDate.getMonth() + d); renderCalendar(); }
+    function goToday() { calDate = new Date(); renderCalendar(); }
+    function renderCalendar() {
+      const grid = document.getElementById("calendarGrid"); if (!grid) return;
+      const y = calDate.getFullYear(), m = calDate.getMonth();
+      document.getElementById("calMonthTitle").textContent = calDate.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+      const firstDay = new Date(y, m, 1).getDay(), offset = firstDay === 0 ? 6 : firstDay - 1, days = new Date(y, m + 1, 0).getDate(), list = getFilteredModeTasks();
+      let html = "";
+      for (let i = 0; i < offset; i++) html += `<div class="min-h-[64px] rounded-xl bg-slate-100/40"></div>`;
+      for (let d = 1; d <= days; d++) {
+        const dateStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`, dayTasks = list.filter(t => t.date === dateStr);
+        html += `<div onclick="openTaskModal('${dateStr}')" class="min-h-[64px] p-1.5 rounded-xl bg-white/80 border cursor-pointer space-y-1"><span class="text-xs font-bold">${d}</span>${dayTasks.slice(0, 2).map(t => `<div onclick="event.stopPropagation(); openDetailModal('${t.id}')" class="text-[10px] font-bold px-1 rounded truncate text-white ${t.status === 'Urgente' ? 'bg-red-600' : 'btn-accent'}">${escapeHtml(t.caseId)}</div>`).join("")}</div>`;
+      }
+      grid.innerHTML = html;
+    }
 
     function renderBoard() {
-      const q = (document.getElementById("searchInput").value || "").toLowerCase(), bFilter = document.getElementById("filterBrand").value, uFilter = document.getElementById("filterUser").value, wFilter = document.getElementById("filterWorkshop").value, members = getAllAssignableMembers();
+      const q = (document.getElementById("searchInput").value || "").toLowerCase(), vorFilter = document.getElementById("filterVor").value, bFilter = document.getElementById("filterBrand").value, uFilter = document.getElementById("filterUser").value, wFilter = document.getElementById("filterWorkshop").value, members = getAllAssignableMembers();
       const maxCompleted = (state.platformConfig && state.platformConfig.maxCompletedInBoard) || 10;
 
       const list = getFilteredModeTasks().filter(t => {
         if (uFilter && t.assigneeId !== uFilter) return false;
+        if (appMode === "soporte" && vorFilter === "vor_only" && !t.isVor) return false;
         if (appMode === "soporte" && wFilter && t.workshop !== wFilter) return false;
         if (appMode === "soporte" && bFilter && t.brand !== bFilter) return false;
         if (q && !`${t.caseId} ${t.brand || ""} ${t.title} ${t.workshop || ""} ${t.vehicleVin || ""}`.toLowerCase().includes(q)) return false;
@@ -1356,7 +1848,7 @@
               ${colTasks.map(t => {
                 const assignee = members.find(u => u.id === t.assigneeId);
                 const avatarMini = renderCircularAvatarHtml(t.assigneeId, assignee ? assignee.name : "U", 22);
-                return `<div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3 border ${col.cardBorder} shadow-sm hover:shadow-md cursor-pointer transition space-y-2"><div class="flex items-center justify-between gap-1"><span class="text-[11px] font-extrabold text-accent">${escapeHtml(t.caseId)}</span><span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(t.date)}</span></div>${t.isClaimReopened ? `<div><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-red-600 text-white">🚨 RECLAMO #${t.claimCount || 1}</span></div>` : ""}<div class="flex flex-wrap items-center gap-1">${t.brand ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}${t.hotlineStatus || t.factoryTicketCode ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-900">${escapeHtml(t.factoryTicketCode || t.hotlineStatus)}</span>` : ""}</div><h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4><div class="flex items-center justify-between pt-1"><div class="flex items-center gap-1.5">${avatarMini}<span class="text-[10px] font-bold text-slate-600 truncate max-w-[110px]">${escapeHtml(assignee ? assignee.name : "")}</span></div><span class="text-[10px] font-extrabold text-slate-500">${t.progress || 0}%</span></div></div>`;
+                return `<div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3 border ${col.cardBorder} shadow-sm hover:shadow-md cursor-pointer transition space-y-2"><div class="flex items-center justify-between gap-1"><span class="text-[11px] font-extrabold text-accent">${escapeHtml(t.caseId)}</span><span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(t.date)}</span></div>${t.isClaimReopened ? `<div><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-red-600 text-white">🚨 RECLAMO #${t.claimCount || 1}</span></div>` : ""}<div class="flex flex-wrap items-center gap-1">${t.brand ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}${t.isVor ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-600 text-white">🚨 VOR</span>` : ""}${t.hotlineStatus || t.factoryTicketCode ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-900">${escapeHtml(t.factoryTicketCode || t.hotlineStatus)}</span>` : ""}</div><h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4><div class="flex items-center justify-between pt-1"><div class="flex items-center gap-1.5">${avatarMini}<span class="text-[10px] font-bold text-slate-600 truncate max-w-[110px]">${escapeHtml(assignee ? assignee.name : "")}</span></div><span class="text-[10px] font-extrabold text-slate-500">${t.progress || 0}%</span></div></div>`;
               }).join("")}
               ${col.id === "Completado" && totalInColumn > 0 ? `<button type="button" onclick="switchTab('completed')" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm"><i class="ph-bold ph-magnifying-glass"></i> Ver todos los completados (${totalInColumn})</button>` : ""}
             </div>
@@ -1375,8 +1867,10 @@
       const isSoporte = appMode === "soporte";
       document.getElementById("workshopFieldBox").classList.toggle("hidden", !isSoporte);
       document.getElementById("vehicleFieldsBox").classList.toggle("hidden", !isSoporte);
+      document.getElementById("trainingFieldsBox").classList.toggle("hidden", isSoporte);
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
+        document.getElementById("taskModalTitle").textContent = `Editar ${t.caseId}`;
         document.getElementById("tTitle").value = t.title; subSel.value = t.subcategory; document.getElementById("tAssignee").value = t.assigneeId;
         if (t.workshop) document.getElementById("tWorkshop").value = t.workshop;
         document.getElementById("tDate").value = t.date; document.getElementById("tStatus").value = t.status; document.getElementById("tDesc").value = t.description || "";
@@ -1384,11 +1878,15 @@
           document.getElementById("tHotlineStatus").value = t.hotlineStatus || ""; document.getElementById("tFactoryTicketCode").value = t.factoryTicketCode || "";
           document.getElementById("tBrand").value = AUTOMOTOR_BRANDS.includes(t.brand) ? t.brand : "Otras Marcas"; document.getElementById("tModel").value = t.vehicleModel || "";
           document.getElementById("tOrNumber").value = t.orNumber || ""; document.getElementById("tVin").value = t.vehicleVin || ""; document.getElementById("tKm").value = t.vehicleKm || "";
+          document.getElementById("tIsVor").checked = !!t.isVor; document.getElementById("tPartOrderNumber").value = t.partOrderNumber || "";
+          document.getElementById("tPartDescription").value = t.partDescription || ""; document.getElementById("tPartEta").value = t.partEta || "";
+          toggleVorFields();
           document.getElementById("tMechanicName").value = t.mechanicName || ""; document.getElementById("tMechanicWhatsapp").value = t.mechanicWhatsapp || "";
           document.getElementById("tAdvisorName").value = t.advisorName || ""; document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || "";
           document.getElementById("tClientName").value = t.clientName || ""; document.getElementById("tClientWhatsapp").value = t.clientWhatsapp || "";
         }
       } else {
+        document.getElementById("taskModalTitle").textContent = isSoporte ? "Nuevo Caso de Soporte Técnico" : "Nuevo Entrenamiento";
         document.getElementById("tTitle").value = ""; document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
         document.getElementById("tStatus").value = "Pendiente"; document.getElementById("tHotlineStatus").value = ""; document.getElementById("tFactoryTicketCode").value = "";
         document.getElementById("tMechanicName").value = ""; document.getElementById("tMechanicWhatsapp").value = "";
@@ -1409,6 +1907,8 @@
         if (isSoporte) {
           t.hotlineStatus = hotlineStatusVal; t.factoryTicketCode = factoryTicketVal; t.workshop = document.getElementById("tWorkshop").value; t.brand = document.getElementById("tBrand").value;
           t.vehicleModel = document.getElementById("tModel").value.trim(); t.orNumber = document.getElementById("tOrNumber").value.trim(); t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase(); t.vehicleKm = document.getElementById("tKm").value.trim();
+          t.isVor = document.getElementById("tIsVor").checked; t.partOrderNumber = document.getElementById("tPartOrderNumber").value.trim().toUpperCase();
+          t.partDescription = document.getElementById("tPartDescription").value.trim(); t.partEta = document.getElementById("tPartEta").value;
           t.mechanicName = document.getElementById("tMechanicName").value.trim(); t.mechanicWhatsapp = document.getElementById("tMechanicWhatsapp").value.trim();
           t.advisorName = document.getElementById("tAdvisorName").value.trim(); t.advisorWhatsapp = document.getElementById("tAdvisorWhatsapp").value.trim();
           t.clientName = document.getElementById("tClientName").value.trim(); t.clientWhatsapp = document.getElementById("tClientWhatsapp").value.trim();
@@ -1427,11 +1927,14 @@
         hotlineStatus: hotlineStatusVal, factoryTicketCode: factoryTicketVal, brand: isSoporte ? document.getElementById("tBrand").value : "",
         vehicleModel: isSoporte ? document.getElementById("tModel").value.trim() : "", orNumber: isSoporte ? document.getElementById("tOrNumber").value.trim() : "",
         vehicleVin: isSoporte ? document.getElementById("tVin").value.trim().toUpperCase() : "", vehicleKm: isSoporte ? document.getElementById("tKm").value.trim() : "",
+        isVor: isSoporte ? document.getElementById("tIsVor").checked : false, partOrderNumber: isSoporte ? document.getElementById("tPartOrderNumber").value.trim().toUpperCase() : "",
+        partDescription: isSoporte ? document.getElementById("tPartDescription").value.trim() : "", partEta: isSoporte ? document.getElementById("tPartEta").value : "",
         mechanicName: isSoporte ? document.getElementById("tMechanicName").value.trim() : "", mechanicWhatsapp: isSoporte ? document.getElementById("tMechanicWhatsapp").value.trim() : "",
         advisorName: isSoporte ? document.getElementById("tAdvisorName").value.trim() : "", advisorWhatsapp: isSoporte ? document.getElementById("tAdvisorWhatsapp").value.trim() : "",
         clientName: isSoporte ? document.getElementById("tClientName").value.trim() : "", clientWhatsapp: isSoporte ? document.getElementById("tClientWhatsapp").value.trim() : "",
         description: document.getElementById("tDesc").value.trim(), notes: [{ date: new Date().toLocaleString(), text: `Creado por ${currentSession ? currentSession.name : "Usuario"}.` }],
-        clientNotes: [], chatMessages: [], coordinatorMessages: [], media: []
+        clientNotes: [], chatMessages: [], coordinatorMessages: [], media: [],
+        clientPortal: { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: document.getElementById("tClientName").value.trim(), clientEmail: "", advisorName: document.getElementById("tAdvisorName").value.trim(), advisorWhatsapp: document.getElementById("tAdvisorWhatsapp").value.trim() }
       });
       saveLocalAndCloud(); closeModal("taskModal"); renderAll(); showToast(`${caseId} creado`, "success");
     }
@@ -1439,18 +1942,52 @@
     function openDetailModal(id) {
       currentDetailId = id;
       const t = state.tasks.find(x => x.id === id); if (!t) return;
-      const members = getAllAssignableMembers(), assignee = members.find(u => u.id === t.assigneeId);
-      document.getElementById("dCaseBadge").textContent = t.caseId; document.getElementById("dTitle").textContent = t.title;
+      const isSoporte = (t.mode || "soporte") === "soporte", members = getAllAssignableMembers(), assignee = members.find(u => u.id === t.assigneeId);
+
+      document.getElementById("dCaseBadge").textContent = t.caseId;
+      document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnReopenClaimHeader").classList.toggle("hidden", t.status !== "Completado");
       document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
+      document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
+      document.getElementById("dVorControlBar").classList.toggle("hidden", !isSoporte);
+      document.getElementById("dHotlineControlBar").classList.toggle("hidden", !isSoporte);
+      document.getElementById("clientPortalPanel").classList.add("hidden");
+      document.getElementById("formalEmailPanel").classList.add("hidden");
+
+      const brandBadge = document.getElementById("dBrandBadge");
+      if (isSoporte && t.brand) { brandBadge.textContent = t.brand; brandBadge.classList.remove("hidden"); } else brandBadge.classList.add("hidden");
+
       const hotlineBadge = document.getElementById("dHotlineBadge");
-      if (t.hotlineStatus || t.factoryTicketCode) { hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`.trim(); hotlineBadge.classList.remove("hidden"); } else hotlineBadge.classList.add("hidden");
-      document.getElementById("dHotlineStatusSelect").value = t.hotlineStatus || ""; document.getElementById("dFactoryTicketInput").value = t.factoryTicketCode || "";
+      if (isSoporte && (t.hotlineStatus || t.factoryTicketCode)) { hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`.trim(); hotlineBadge.classList.remove("hidden"); } else hotlineBadge.classList.add("hidden");
+
+      document.getElementById("dHotlineStatusSelect").value = t.hotlineStatus || "";
+      document.getElementById("dFactoryTicketInput").value = t.factoryTicketCode || "";
+      document.getElementById("dIsVorCheck").checked = !!t.isVor;
+      document.getElementById("dPartOrderInput").value = t.partOrderNumber || "";
+      document.getElementById("dPartDescInput").value = t.partDescription || "";
+      document.getElementById("dPartEtaInput").value = t.partEta || "";
+
       document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"}`;
-      document.getElementById("dMetaLine2").textContent = `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · VIN: ${t.vehicleVin || "-"}`;
-      document.getElementById("dAdvisorLine").textContent = `Jefe / Asesor: ${t.advisorName || "-"} (${t.advisorWhatsapp || "-"}) | Mecánico: ${t.mechanicName || "-"} (${t.mechanicWhatsapp || "-"})`;
-      document.getElementById("dStatusSelect").value = t.status; document.getElementById("dProgressRange").value = t.progress || 0; document.getElementById("dProgressVal").textContent = (t.progress || 0) + "%";
-      renderInternalNotes(t); document.getElementById("detailModal").classList.remove("hidden");
+      document.getElementById("dMetaLine2").textContent = isSoporte ? `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}` : `Fecha: ${t.date}`;
+      document.getElementById("dAdvisorLine").textContent = isSoporte ? `Jefe / Asesor: ${t.advisorName || "-"} (${t.advisorWhatsapp || "-"}) | Mecánico: ${t.mechanicName || "-"} (${t.mechanicWhatsapp || "-"})` : "";
+
+      if (!t.clientPortal) t.clientPortal = { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)) };
+      document.getElementById("cpEnabled").checked = !!t.clientPortal.enabled;
+      document.getElementById("cpClientName").value = t.clientName || t.clientPortal.clientName || "";
+      document.getElementById("cpClientEmail").value = t.clientPortal.clientEmail || "";
+      document.getElementById("cpClientWhatsapp").value = t.clientWhatsapp || "";
+      document.getElementById("cpAdvisorName").value = t.advisorName || t.clientPortal.advisorName || "";
+      document.getElementById("cpAdvisorWhatsapp").value = t.advisorWhatsapp || t.clientPortal.advisorWhatsapp || "";
+      document.getElementById("cpTokenDisplay").textContent = t.clientPortal.token;
+
+      document.getElementById("dStatusSelect").value = t.status;
+      document.getElementById("dProgressRange").value = t.progress || 0;
+      document.getElementById("dProgressVal").textContent = (t.progress || 0) + "%";
+
+      renderClientNotes(t);
+      renderCaseChatMessages(t);
+      renderInternalNotes(t);
+      document.getElementById("detailModal").classList.remove("hidden");
     }
 
     function quickSaveHotlineInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.hotlineStatus = document.getElementById("dHotlineStatusSelect").value; t.factoryTicketCode = document.getElementById("dFactoryTicketInput").value.trim().toUpperCase(); saveLocalAndCloud(); renderBoard(); if (showMsg) showToast("Ticket guardado", "success"); }
@@ -1464,32 +2001,43 @@
     }
     function editInternalNote(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || !t.notes[idx]) return; const u = prompt("Editar nota:", t.notes[idx].text); if (u && u.trim()) { t.notes[idx].text = u.trim(); saveLocalAndCloud(); renderInternalNotes(t); } }
     function deleteInternalNote(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || !t.notes[idx]) return; const rem = t.notes.splice(idx, 1)[0]; moveToTrash({ itemType: "note", itemLabel: `Nota en ${t.caseId}`, moduleName: "Notas", parentTaskId: t.id, payload: rem }); saveLocalAndCloud(); renderInternalNotes(t); }
-    function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.status = val; saveLocalAndCloud(); openDetailModal(t.id); renderAll(); } }
+    function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.status = val; if (val === "Completado") t.progress = 100; saveLocalAndCloud(); openDetailModal(t.id); renderAll(); } }
     function updateTaskProgressQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.progress = Number(val); document.getElementById("dProgressVal").textContent = val + "%"; saveLocalAndCloud(); renderAll(); } }
     function editCurrentTask() { closeModal("detailModal"); openTaskModal("", currentDetailId); }
     function deleteCurrentTask() { if (!isCurrentAdmin()) return; const target = state.tasks.find(x => x.id === currentDetailId); if (!target) return; moveToTrash({ itemType: "task", itemLabel: `${target.caseId} — ${target.title}`, moduleName: "Soporte", payload: target }); state.tasks = state.tasks.filter(x => x.id !== currentDetailId); saveLocalAndCloud(); closeModal("detailModal"); renderAll(); }
 
+    function toggleVorFields() { document.getElementById("vorDetailsBox").classList.toggle("hidden", !document.getElementById("tIsVor").checked); }
+    function quickSaveVorInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.isVor = document.getElementById("dIsVorCheck").checked; t.partOrderNumber = document.getElementById("dPartOrderInput").value.trim(); t.partDescription = document.getElementById("dPartDescInput").value.trim(); t.partEta = document.getElementById("dPartEtaInput").value; saveLocalAndCloud(); if (showMsg) showToast("VOR guardado", "success"); } }
+    function openVinHistoryModal() { document.getElementById("vinHistoryModal").classList.remove("hidden"); }
+    function renderVinHistoryResults() { const box = document.getElementById("vinHistoryResults"), q = (document.getElementById("vinSearchInput").value || "").toUpperCase(); box.innerHTML = (state.tasks || []).filter(t => t.vehicleVin && t.vehicleVin.includes(q)).map(t => `<div class="p-2 border rounded text-xs flex justify-between"><span><strong>${escapeHtml(t.caseId)}</strong> · ${escapeHtml(t.vehicleVin)}</span><button type="button" onclick="closeModal('vinHistoryModal'); openDetailModal('${t.id}')" class="text-blue-700 font-bold">Abrir</button></div>`).join(""); }
+    function quickAddTodo(e) { e.preventDefault(); const title = document.getElementById("quickTodoTitle").value.trim(); if (!title || !currentSession) return; state.todos.unshift({ id: "td_" + Date.now(), area: appMode, title, assigneeId: document.getElementById("quickTodoAssignee").value || currentSession.id, completed: false }); document.getElementById("quickTodoTitle").value = ""; saveLocalAndCloud(); renderTodos(); }
+    function openTodoModal() { document.getElementById("todoModal").classList.remove("hidden"); }
+    function saveTodoItem(e) { e.preventDefault(); state.todos.unshift({ id: "td_" + Date.now(), area: appMode, title: document.getElementById("tdTitle").value.trim(), assigneeId: document.getElementById("tdAssignee").value, completed: false }); saveLocalAndCloud(); closeModal("todoModal"); renderTodos(); }
+    function toggleTodoComplete(id) { const td = state.todos.find(x => x.id === id); if (td) { td.completed = !td.completed; saveLocalAndCloud(); renderTodos(); } }
+    function deleteTodoItem(id) { const target = state.todos.find(x => x.id === id); if (!target) return; moveToTrash({ itemType: "todo", itemLabel: target.title, moduleName: "Tareas", payload: target }); state.todos = state.todos.filter(x => x.id !== id); saveLocalAndCloud(); renderTodos(); }
+    function renderTodos() { const box = document.getElementById("todoListContainer"); if (!box) return; box.innerHTML = (state.todos || []).map(td => `<div class="p-3 bg-white border rounded-xl flex justify-between text-xs"><div><input type="checkbox" ${td.completed ? "checked" : ""} onchange="toggleTodoComplete('${td.id}')" /> <strong>${escapeHtml(td.title)}</strong></div><button type="button" onclick="deleteTodoItem('${td.id}')" class="text-red-500 font-bold">Borrar</button></div>`).join(""); }
+    function openHotlineRequestsModal() { document.getElementById("hotlineRequestsModal").classList.remove("hidden"); }
+    function copyHotlineRequestLink() { navigator.clipboard.writeText(HOTLINE_REQUEST_PAGE_URL); showToast("Link copiado", "success"); }
     function togglePlatformsDropdown(e) { e.stopPropagation(); const m = document.getElementById("platformsDropdown"); if (m.classList.contains("hidden")) renderPlatformsQuickList(); m.classList.toggle("hidden"); }
+    document.addEventListener("click", (e) => { const wrap = document.getElementById("platformsWrapper"), m = document.getElementById("platformsDropdown"); if (m && !m.classList.contains("hidden") && wrap && !wrap.contains(e.target)) m.classList.add("hidden"); });
     function renderPlatformsQuickList() { document.getElementById("platformsQuickList").innerHTML = (state.platforms || []).map(p => `<a href="${escapeHtml(p.url)}" target="_blank" class="block px-4 py-2.5 hover:bg-blue-50 text-xs font-bold">${escapeHtml(p.name)}</a>`).join(""); }
     function openManagePlatformsModal() { document.getElementById("platformsModal").classList.remove("hidden"); }
-    function savePlatformBookmark(e) { e.preventDefault(); }
+    function savePlatformBookmark(e) { e.preventDefault(); state.platforms.push({ id: "plat_" + Date.now(), name: document.getElementById("pNameInput").value, url: document.getElementById("pUrlInput").value }); saveLocalAndCloud(); renderPlatformsQuickList(); }
     function openUsersModal() { renderUsersModalLists(); document.getElementById("usersModal").classList.remove("hidden"); }
     function renderUsersModalLists() {
-      document.getElementById("pendingUsersList").innerHTML = (state.pendingUsers || []).map(u => `<div class="p-2 bg-amber-50 rounded flex justify-between text-xs"><span>${escapeHtml(u.name)}</span><button onclick="approvePendingUser('${u.id}', 'Encargado')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold">Aceptar</button></div>`).join("");
-      document.getElementById("usersList").innerHTML = (state.users || []).map(u => `<div class="p-2 bg-slate-50 rounded flex items-center justify-between text-xs"><div class="flex items-center gap-2">${renderCircularAvatarHtml(u.id, u.name, 26)}<span>${escapeHtml(u.name)} (${escapeHtml(u.role)})</span></div><button onclick="removeUser('${u.id}')" class="text-red-600 font-bold">Eliminar</button></div>`).join("");
+      document.getElementById("pendingUsersList").innerHTML = (state.pendingUsers || []).map(u => `<div class="p-2 bg-amber-50 rounded flex justify-between text-xs"><span>${escapeHtml(u.name)}</span><button type="button" onclick="approvePendingUser('${u.id}', 'Encargado')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold">Aceptar</button></div>`).join("");
+      document.getElementById("usersList").innerHTML = (state.users || []).map(u => `<div class="p-2 bg-slate-50 rounded flex items-center justify-between text-xs"><div class="flex items-center gap-2">${renderCircularAvatarHtml(u.id, u.name, 26)}<span>${escapeHtml(u.name)} (${escapeHtml(u.role)})</span></div><button type="button" onclick="removeUser('${u.id}')" class="text-red-600 font-bold">Eliminar</button></div>`).join("");
     }
     async function approvePendingUser(id, role) { const idx = state.pendingUsers.findIndex(u => u.id === id); if (idx === -1) return; const u = state.pendingUsers.splice(idx, 1)[0]; u.role = role; state.users.push(u); await fetch(`${FIREBASE_DB_URL}/pendingUsers/${id}.json`, { method: "DELETE" }); await fetch(`${FIREBASE_DB_URL}/approvedUsers/${u.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(u) }); saveLocalAndCloud(); syncSelectors(); renderUsersModalLists(); }
     async function adminAddUserDirect(e) { e.preventDefault(); const u = { id: "u_" + Date.now(), name: document.getElementById("uName").value.trim(), email: document.getElementById("uEmail").value.trim().toLowerCase(), password: document.getElementById("uPass").value.trim(), role: document.getElementById("uRole").value, avatarUrl: "" }; state.users.push(u); await fetch(`${FIREBASE_DB_URL}/approvedUsers/${u.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(u) }); saveLocalAndCloud(); syncSelectors(); renderUsersModalLists(); }
     async function removeUser(id) { state.users = state.users.filter(u => u.id !== id); await fetch(`${FIREBASE_DB_URL}/approvedUsers/${id}.json`, { method: "DELETE" }); saveLocalAndCloud(); syncSelectors(); renderUsersModalLists(); }
-    async function saveNewAdminPassword() { const p = document.getElementById("newAdminPassInput").value.trim(); if (p.length >= 4) { state.adminConfig.pass = p; await fetch(`${FIREBASE_DB_URL}/adminConfig.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state.adminConfig) }); showToast("Clave actualizada", "success"); } }
     function openWorkshopsModal() { document.getElementById("workshopsList").innerHTML = state.workshops.map(w => `<div class="p-2 bg-slate-50 rounded text-xs font-bold">${escapeHtml(w.name)} (${escapeHtml(w.city)})</div>`).join(""); document.getElementById("workshopsModal").classList.remove("hidden"); }
-    function addWorkshop(e) { e.preventDefault(); state.workshops.push({ id: "w_" + Date.now(), name: document.getElementById("wName").value.trim(), city: document.getElementById("wCity").value.trim(), type: document.getElementById("wType").value }); saveLocalAndCloud(); syncSelectors(); openWorkshopsModal(); }
+    function addWorkshop(e) { e.preventDefault(); state.workshops.push({ id: "w_" + Date.now(), name: document.getElementById("wName").value, city: document.getElementById("wCity").value, type: document.getElementById("wType").value }); saveLocalAndCloud(); syncSelectors(); openWorkshopsModal(); }
     function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+    function openHtcBankModal() { document.getElementById("htcBankModal").classList.remove("hidden"); }
     function notifyAdvisorWhatsapp() { const t = state.tasks.find(x => x.id === currentDetailId); if (t && t.advisorWhatsapp) window.open(`https://web.whatsapp.com/send?phone=${formatWhatsappPhone(t.advisorWhatsapp)}&text=${encodeURIComponent(t.caseId + " - " + t.title)}`, "_blank"); }
     function notifyMechanicWhatsapp() { const t = state.tasks.find(x => x.id === currentDetailId); if (t && t.mechanicWhatsapp) window.open(`https://web.whatsapp.com/send?phone=${formatWhatsappPhone(t.mechanicWhatsapp)}&text=${encodeURIComponent(t.caseId + " - " + t.title)}`, "_blank"); }
     function notifyClientWhatsapp() { const t = state.tasks.find(x => x.id === currentDetailId); if (t && t.clientWhatsapp) window.open(`https://web.whatsapp.com/send?phone=${formatWhatsappPhone(t.clientWhatsapp)}&text=${encodeURIComponent(t.caseId + " - " + t.title)}`, "_blank"); }
-    function exportExcelHistory() {}
-    function exportWordHistory() {}
   </script>
 </body>
 </html>

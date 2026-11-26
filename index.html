@@ -108,7 +108,6 @@
     body.dark-theme .automotor-wordmark {
       color: #60a5fa;
     }
-    /* Estilo LinkedIn para Avatar Circular */
     .linkedin-avatar {
       border-radius: 9999px;
       object-fit: cover;
@@ -313,13 +312,11 @@
 
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
 
-            <!-- BOTÓN CONTACTOS -->
             <button type="button" onclick="openContactsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition">
               <i class="ph-bold ph-address-book text-base"></i>
               <span>Contactos</span>
             </button>
 
-            <!-- BOTÓN PAPELERA GENERAL -->
             <button type="button" onclick="openTrashModal()" class="touch-target px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-extrabold text-slate-800 flex items-center gap-1.5 transition">
               <i class="ph-bold ph-trash text-rose-600 text-base"></i>
               <span>Papelera</span>
@@ -394,7 +391,6 @@
               <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden lg:inline">Talleres (33)</span>
             </button>
 
-            <!-- BOTÓN DE CONFIGURACIÓN GENERAL -->
             <button type="button" onclick="openPlatformSettingsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5" title="Configuración General y Foto de Perfil">
               <i class="ph-bold ph-gear text-base text-slate-700"></i>
               <span class="hidden xl:inline">Configuración</span>
@@ -455,7 +451,7 @@
         <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
           <div class="relative flex-1 min-w-[200px]">
             <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
+            <input type="text" id="searchInput" oninput="renderBoard()" placeholder="Buscar por caso, ticket fábrica, marca, OR, VIN, modelo..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm focus:outline-none" />
           </div>
           <select id="filterVor" onchange="renderBoard()" class="px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-700">
             <option value="">Todos los Estados VOR</option>
@@ -490,7 +486,7 @@
               </div>
               <div>
                 <h2 id="completedSectionTitle" class="text-base sm:text-lg font-extrabold text-slate-900">Archivo de Casos Completados</h2>
-                <p class="text-xs text-slate-500">En el tablero principal se muestran solo los últimos casos cerrados configurados. Aquí puedes buscar cualquier caso histórico y reabrirlo como <strong>Urgente (Reclamo)</strong> si el vehículo reingresa.</p>
+                <p class="text-xs text-slate-500">Busca cualquier caso histórico y reábrelo como <strong>Urgente (Reclamo)</strong> si el vehículo reingresa.</p>
               </div>
             </div>
             <span id="completedTotalBadge" class="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-xs">0 completados</span>
@@ -499,7 +495,7 @@
           <div class="flex flex-wrap items-center gap-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
             <div class="relative flex-1 min-w-[220px]">
               <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-              <input type="text" id="completedSearchInput" oninput="renderCompletedTab()" placeholder="Buscar por código CASO-2026-XXX, VIN / Chasis, N° Orden (OR), marca, modelo, taller o solución..." class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm focus:outline-none focus:border-emerald-600" />
+              <input type="text" id="completedSearchInput" oninput="renderCompletedTab()" placeholder="Buscar por código CASO-2026-XXX, VIN / Chasis, N° Orden (OR), marca, modelo, taller..." class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm focus:outline-none focus:border-emerald-600" />
             </div>
             <select id="completedBrandFilter" onchange="renderCompletedTab()" class="px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700"></select>
             <select id="completedWorkshopFilter" onchange="renderCompletedTab()" class="px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700 max-w-[220px]"></select>
@@ -526,37 +522,15 @@
       <section id="view-tasks" class="hidden space-y-5 max-w-5xl mx-auto">
         <div class="win-mica rounded-2xl p-4 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-2xl bg-blue-100 text-[#004B93] flex items-center justify-center shrink-0">
-                <i class="ph-bold ph-check-square-offset text-2xl"></i>
-              </div>
-              <div>
-                <h2 class="text-base sm:text-lg font-extrabold text-slate-900">Gestor de Tareas y Checklists del Equipo</h2>
-                <p class="text-xs text-slate-500">Asigna gestiones, informes técnicos o mejoras de instructores con checklist de pasos y control de cumplimiento.</p>
-              </div>
-            </div>
-            <button type="button" onclick="openTodoModal()" class="px-4 py-2.5 rounded-xl btn-accent text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
-              <i class="ph-bold ph-plus-circle text-base"></i> Nueva Tarea
-            </button>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900">Gestor de Tareas y Checklists</h2>
+            <button type="button" onclick="openTodoModal()" class="px-4 py-2.5 rounded-xl btn-accent text-xs font-bold">+ Nueva Tarea</button>
           </div>
-
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex flex-wrap items-center gap-1.5 bg-slate-200/75 p-1 rounded-xl text-xs font-bold">
-              <button type="button" onclick="setTodoFilter('mine')" id="todoFilter-mine" class="px-3 py-1.5 rounded-lg bg-white text-[#004B93] shadow-sm transition">Mis Pendientes</button>
-              <button type="button" onclick="setTodoFilter('all')" id="todoFilter-all" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Todas Activas</button>
-              <button type="button" onclick="setTodoFilter('urgent')" id="todoFilter-urgent" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Alta Prioridad / Vencidas</button>
-              <button type="button" onclick="setTodoFilter('done')" id="todoFilter-done" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">Completadas</button>
-            </div>
-          </div>
-
           <form onsubmit="quickAddTodo(event)" class="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-            <i class="ph-bold ph-circle text-slate-400 text-xl ml-1 hidden sm:inline"></i>
-            <input type="text" id="quickTodoTitle" required placeholder="Añadir una tarea rápida..." class="flex-1 min-w-[200px] px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm focus:outline-none" />
-            <select id="quickTodoAssignee" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700"></select>
-            <input type="date" id="quickTodoDue" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs text-slate-700" />
-            <button type="submit" class="px-4 py-2 rounded-xl btn-accent text-xs font-bold shrink-0">Añadir</button>
+            <input type="text" id="quickTodoTitle" required placeholder="Añadir una tarea rápida..." class="flex-1 px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs" />
+            <select id="quickTodoAssignee" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-semibold"></select>
+            <input type="date" id="quickTodoDue" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs" />
+            <button type="submit" class="px-4 py-2 rounded-xl btn-accent text-xs font-bold">Añadir</button>
           </form>
-
           <div id="todoListContainer" class="space-y-3"></div>
         </div>
       </section>
@@ -564,80 +538,23 @@
       <!-- VISTA: RESUMEN -->
       <section id="view-dashboard" class="hidden space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
-
-        <div id="trainingCoordinatorPanel" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="win-mica rounded-2xl p-4 space-y-2 border-l-4 border-l-amber-500">
-            <h4 class="text-xs font-extrabold uppercase text-amber-900">Entregables Esperando Revisión</h4>
-            <div id="dashPendingReviewsList" class="space-y-1.5 text-xs"></div>
-          </div>
-          <div class="win-mica rounded-2xl p-4 space-y-2 border-l-4 border-l-emerald-600">
-            <h4 class="text-xs font-extrabold uppercase text-emerald-900">Listos para Impartir / Impartidos</h4>
-            <div id="dashReadyTrainingsList" class="space-y-1.5 text-xs"></div>
-          </div>
-          <div class="win-mica rounded-2xl p-4 space-y-2 border-l-4 border-l-rose-600">
-            <h4 class="text-xs font-extrabold uppercase text-rose-900">Alertas de Diseño y Mejoras Abiertas</h4>
-            <div id="dashTrainingAlertsList" class="space-y-1.5 text-xs"></div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="win-mica rounded-2xl p-5 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i class="ph-bold ph-list-checks text-accent"></i> <span id="subcatChartTitle">Distribución por Categoría</span>
-            </h3>
-            <div id="subcatBreakdown" class="space-y-2.5"></div>
-          </div>
-
-          <div class="win-mica rounded-2xl p-5 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i class="ph-bold ph-users-three text-accent"></i> <span id="teamBreakdownTitle">Carga, SLA y Avance por Especialista</span>
-            </h3>
-            <div id="teamBreakdown" class="space-y-2.5"></div>
-          </div>
-        </div>
-
-        <div id="supportAnalyticsRow" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="win-mica rounded-2xl p-5 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i class="ph-bold ph-car-profile text-accent"></i> Casos por Marca Representada
-            </h3>
-            <div id="brandBreakdown" class="space-y-2.5"></div>
-          </div>
-
-          <div class="win-mica rounded-2xl p-5 space-y-3">
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i class="ph-bold ph-buildings text-accent"></i> Top Talleres con Mayor Escalamiento
-            </h3>
-            <div id="workshopBreakdown" class="space-y-2.5"></div>
-          </div>
-        </div>
       </section>
 
       <!-- VISTA: CALENDARIO -->
       <section id="view-calendar" class="hidden space-y-4">
-        <div class="win-mica rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="win-mica rounded-2xl p-4 sm:p-5 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-left"></i></button>
-            <h2 id="calMonthTitle" class="text-base sm:text-lg font-bold text-slate-900 min-w-[170px] text-center capitalize"></h2>
-            <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-right"></i></button>
+            <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white border"><i class="ph-bold ph-caret-left"></i></button>
+            <h2 id="calMonthTitle" class="text-base font-bold min-w-[170px] text-center capitalize"></h2>
+            <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white border"><i class="ph-bold ph-caret-right"></i></button>
           </div>
-          <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">Hoy</button>
+          <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white border text-xs font-bold">Hoy</button>
         </div>
-
-        <div id="calendarConflictBanner" class="hidden bg-red-50 border-2 border-red-300 text-red-900 px-4 py-3 rounded-2xl text-xs font-bold"></div>
-
         <div class="win-mica rounded-2xl p-3 sm:p-5">
-          <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-500 pb-2">
-            <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
-          </div>
           <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
         </div>
       </section>
     </main>
-
-    <button id="mobileFab" onclick="openTaskModal()" class="hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full btn-accent shadow-xl flex items-center justify-center text-2xl">
-      <i class="ph-bold ph-plus"></i>
-    </button>
   </div>
 
   <!-- ======================================================================= -->
@@ -654,8 +571,6 @@
       </div>
 
       <form onsubmit="savePlatformSettings(event)" class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
-
-        <!-- SECCIÓN FOTO DE PERFIL CIRCULAR TIPO LINKEDIN -->
         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-200 flex flex-wrap items-center gap-4">
           <div id="settingsAvatarPreview" class="shrink-0"></div>
           <div class="flex-1 min-w-[200px] space-y-1.5">
@@ -716,73 +631,39 @@
   <!-- MODAL DIRECTORIO DE CONTACTOS -->
   <div id="contactsModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
-      <div class="px-5 py-4 border-b border-teal-200 flex flex-wrap items-center justify-between gap-2 bg-teal-700 text-white">
-        <div class="flex items-center gap-2.5">
-          <i class="ph-bold ph-address-book text-2xl text-teal-200"></i>
-          <div>
-            <h3 class="text-base font-extrabold">Directorio de Contactos por Perfil</h3>
-            <p class="text-xs text-teal-100">Registra Jefes de Taller / Gerentes, Mecánicos y Clientes para seleccionarlos al instante al crear un soporte.</p>
-          </div>
-        </div>
-        <button onclick="closeModal('contactsModal')" class="p-1.5 rounded-lg hover:bg-teal-600 text-white"><i class="ph-bold ph-x"></i></button>
+      <div class="px-5 py-4 border-b border-teal-200 flex items-center justify-between bg-teal-700 text-white">
+        <h3 class="text-base font-extrabold">Directorio de Contactos por Perfil</h3>
+        <button onclick="closeModal('contactsModal')" class="p-1.5 rounded-lg hover:bg-teal-600"><i class="ph-bold ph-x"></i></button>
       </div>
-
-      <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
+      <div class="p-5 space-y-4 max-h-[84vh] overflow-y-auto text-xs">
         <form onsubmit="saveContactFromModal(event)" class="bg-teal-50/60 p-4 rounded-2xl border border-teal-200 space-y-3">
           <input type="hidden" id="editContactId" />
-          <div class="flex items-center justify-between">
-            <span class="font-extrabold uppercase text-teal-950" id="contactFormTitle">Registrar Nuevo Contacto</span>
-            <button type="button" id="btnCancelContactEdit" onclick="resetContactForm()" class="hidden text-xs font-bold text-red-600 hover:underline">Cancelar Edición</button>
-          </div>
-
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Perfil del Contacto *</label>
-              <select id="ctProfile" required class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold">
-                <option value="Jefe de Taller / Gerente">👔 Jefe de Taller / Gerente</option>
-                <option value="Mecánico">🔧 Mecánico</option>
-                <option value="Cliente">👤 Cliente</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre y Apellido *</label>
-              <input type="text" id="ctName" required placeholder="Ej: Juan Pérez" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp / Teléfono *</label>
-              <input type="text" id="ctPhone" required placeholder="Ej: 0981123456" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-mono" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Taller / Empresa / Vehículo</label>
-              <input type="text" id="ctReference" placeholder="Ej: Automotor Central / Tucson" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
-            </div>
-            <div class="flex items-end">
-              <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold shadow-sm">
-                <span id="btnSaveContactText">Guardar Contacto</span>
-              </button>
-            </div>
+            <select id="ctProfile" required class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold">
+              <option value="Jefe de Taller / Gerente">👔 Jefe de Taller / Gerente</option>
+              <option value="Mecánico">🔧 Mecánico</option>
+              <option value="Cliente">👤 Cliente</option>
+            </select>
+            <input type="text" id="ctName" required placeholder="Nombre y Apellido *" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold" />
+            <input type="text" id="ctPhone" required placeholder="WhatsApp / Teléfono *" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-mono" />
+            <input type="text" id="ctReference" placeholder="Taller / Vehículo" class="px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+            <button type="submit" class="py-2 px-4 rounded-xl bg-teal-600 text-white font-extrabold">Guardar Contacto</button>
           </div>
         </form>
-
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex flex-wrap items-center gap-1.5 bg-slate-200/75 p-1 rounded-xl font-bold">
-            <button type="button" onclick="setContactProfileFilter('ALL')" id="ctFilter-ALL" class="px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm">Todos</button>
-            <button type="button" onclick="setContactProfileFilter('Jefe de Taller / Gerente')" id="ctFilter-Jefe" class="px-3 py-1.5 rounded-lg text-slate-600">👔 Jefes / Gerentes</button>
-            <button type="button" onclick="setContactProfileFilter('Mecánico')" id="ctFilter-Mecanico" class="px-3 py-1.5 rounded-lg text-slate-600">🔧 Mecánicos</button>
-            <button type="button" onclick="setContactProfileFilter('Cliente')" id="ctFilter-Cliente" class="px-3 py-1.5 rounded-lg text-slate-600">👤 Clientes</button>
+        <div class="flex flex-wrap justify-between gap-2">
+          <div class="flex gap-1.5 bg-slate-200/75 p-1 rounded-xl font-bold">
+            <button type="button" onclick="setContactProfileFilter('ALL')" id="ctFilter-ALL" class="px-3 py-1 rounded-lg bg-white">Todos</button>
+            <button type="button" onclick="setContactProfileFilter('Jefe de Taller / Gerente')" id="ctFilter-Jefe" class="px-3 py-1 rounded-lg">Jefes / Gerentes</button>
+            <button type="button" onclick="setContactProfileFilter('Mecánico')" id="ctFilter-Mecanico" class="px-3 py-1 rounded-lg">Mecánicos</button>
+            <button type="button" onclick="setContactProfileFilter('Cliente')" id="ctFilter-Cliente" class="px-3 py-1 rounded-lg">Clientes</button>
           </div>
-          <input type="text" id="contactSearchInput" oninput="renderContactsTable()" placeholder="Buscar por nombre, teléfono o taller..." class="px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs min-w-[220px]" />
+          <input type="text" id="contactSearchInput" oninput="renderContactsTable()" placeholder="Buscar..." class="px-3 py-1.5 rounded-xl border border-slate-300 bg-white" />
         </div>
-
         <div class="overflow-x-auto border border-slate-200 rounded-2xl">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
-              <tr class="bg-slate-100 text-slate-800 font-extrabold uppercase text-[11px]">
-                <th class="p-3 border-b">Perfil</th>
-                <th class="p-3 border-b">Nombre</th>
-                <th class="p-3 border-b">WhatsApp / Teléfono</th>
-                <th class="p-3 border-b">Taller / Referencia</th>
-                <th class="p-3 border-b text-right">Acciones</th>
+              <tr class="bg-slate-100 font-extrabold uppercase text-[11px]">
+                <th class="p-3 border-b">Perfil</th><th class="p-3 border-b">Nombre</th><th class="p-3 border-b">Teléfono</th><th class="p-3 border-b">Referencia</th><th class="p-3 border-b text-right">Acciones</th>
               </tr>
             </thead>
             <tbody id="contactsTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
@@ -795,52 +676,30 @@
   <!-- MODAL PAPELERA GENERAL -->
   <div id="trashModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
-      <div class="px-5 py-4 border-b border-rose-200 flex flex-wrap items-center justify-between gap-2 bg-rose-50">
-        <div class="flex items-center gap-2.5">
-          <i class="ph-bold ph-trash text-2xl text-rose-600"></i>
-          <div>
-            <h3 class="text-base font-extrabold text-rose-950">Papelera General · Recuperar / Rehacer Elementos Borrados</h3>
-            <p class="text-xs text-rose-800">Aquí se guardan todos los casos, notas cronológicas, tareas, contactos, accesos o planes eliminados para que puedas restaurarlos.</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button type="button" id="btnEmptyTrash" onclick="emptyTrashPermanently()" class="hidden px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold">
-            Vaciar Papelera
-          </button>
-          <button onclick="closeModal('trashModal')" class="p-1.5 rounded-lg hover:bg-rose-200/70 text-rose-950"><i class="ph-bold ph-x"></i></button>
+      <div class="px-5 py-4 border-b border-rose-200 flex items-center justify-between bg-rose-50">
+        <h3 class="text-base font-extrabold text-rose-950">Papelera General · Recuperar / Rehacer Elementos Borrados</h3>
+        <div class="flex gap-2">
+          <button type="button" id="btnEmptyTrash" onclick="emptyTrashPermanently()" class="hidden px-3 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold">Vaciar Papelera</button>
+          <button onclick="closeModal('trashModal')" class="p-1.5 rounded-lg hover:bg-rose-200/70"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
-
-      <div class="p-5 space-y-4 max-h-[82vh] overflow-y-auto text-xs">
-        <div id="trashListContainer" class="space-y-2.5"></div>
-      </div>
+      <div id="trashListContainer" class="p-5 space-y-2.5 max-h-[82vh] overflow-y-auto text-xs"></div>
     </div>
   </div>
 
-  <!-- MODAL BASE DE DATOS DE ACCESOS -->
+  <!-- MODAL ACCESOS / CLAVES -->
   <div id="credentialsModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
-      <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-900 text-white">
-        <div class="flex items-center gap-2.5">
-          <i class="ph-bold ph-key text-2xl text-amber-400"></i>
-          <div>
-            <h3 class="text-base font-extrabold">Base de Datos de Accesos, Credenciales y Equipos</h3>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="exportCredentialsExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm">
-            <i class="ph-bold ph-microsoft-excel-logo text-base"></i> Descargar Excel
-          </button>
-          <button onclick="closeModal('credentialsModal')" class="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300"><i class="ph-bold ph-x"></i></button>
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+        <h3 class="text-base font-extrabold">Base de Datos de Accesos, Credenciales y Equipos</h3>
+        <div class="flex gap-2">
+          <button type="button" onclick="exportCredentialsExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Descargar Excel</button>
+          <button onclick="closeModal('credentialsModal')" class="p-1.5 rounded-lg hover:bg-slate-700"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
-      <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
+      <div class="p-5 space-y-4 max-h-[84vh] overflow-y-auto text-xs">
         <form onsubmit="saveCredentialRecord(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
           <input type="hidden" id="editCredId" />
-          <div class="flex items-center justify-between">
-            <span class="font-extrabold uppercase text-[#004B93]" id="credFormTitle">Nuevo Registro de Acceso</span>
-            <button type="button" id="btnCancelCredEdit" onclick="resetCredentialForm()" class="hidden text-xs font-bold text-red-600 hover:underline">Cancelar Edición</button>
-          </div>
           <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
             <input type="text" id="crBrand" required placeholder="Marca *" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold" />
             <input type="text" id="crPlatform" placeholder="Plataforma" class="px-3 py-2 rounded-xl border border-slate-300 bg-white" />
@@ -849,9 +708,9 @@
             <input type="text" id="crPassword" required placeholder="Credencial *" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-mono" />
             <input type="text" id="crLocation" required placeholder="Ubicación (PC/Notebook) *" class="px-3 py-2 rounded-xl border border-slate-300 bg-white" />
           </div>
-          <div class="flex flex-wrap sm:flex-nowrap items-end gap-2.5">
+          <div class="flex gap-2.5">
             <input type="text" id="crNote" required placeholder="Nota / Para qué sirve esta plataforma *" class="flex-1 px-3 py-2 rounded-xl border border-slate-300 bg-white" />
-            <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#004B93] text-white font-extrabold shrink-0"><span id="btnSaveCredText">Guardar</span></button>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#004B93] text-white font-extrabold">Guardar</button>
           </div>
         </form>
         <div class="flex justify-between items-center">
@@ -872,40 +731,6 @@
     </div>
   </div>
 
-  <!-- MODAL PLAN DE ENTRENAMIENTO POR MARCA -->
-  <div id="trainingPlanModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
-      <div class="px-5 py-4 border-b border-emerald-200 flex items-center justify-between bg-emerald-50">
-        <h3 class="text-base font-extrabold text-emerald-950">Plan Anual de Entrenamiento por Marca</h3>
-        <button onclick="closeModal('trainingPlanModal')" class="p-1.5 rounded-lg hover:bg-emerald-200/70"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
-        <form onsubmit="addTrainingPlanEntry(event)" class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-            <select id="tpBrandInput" required class="sm:col-span-3 px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold"></select>
-            <input type="date" id="tpDateInput" required class="sm:col-span-3 px-3 py-2 rounded-xl border border-slate-300 bg-white" />
-            <input type="text" id="tpTopicInput" required placeholder="Tema a tratar *" class="sm:col-span-4 px-3 py-2 rounded-xl border border-slate-300 bg-white" />
-            <input type="text" id="tpDurationInput" placeholder="Duración" class="sm:col-span-2 px-3 py-2 rounded-xl border border-slate-300 bg-white" />
-          </div>
-          <div class="flex justify-end"><button type="submit" class="px-4 py-2 rounded-xl bg-amber-600 text-white font-bold">Guardar en Plan y Drive</button></div>
-        </form>
-        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap justify-between gap-3">
-          <div class="flex gap-2">
-            <select id="tpFilterBrand" onchange="renderTrainingPlanModal()" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold"></select>
-            <select id="tpFilterYear" onchange="renderTrainingPlanModal()" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold"><option value="2026" selected>2026</option><option value="2027">2027</option></select>
-            <select id="tpFilterMonth" onchange="renderTrainingPlanModal()" class="px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
-          </div>
-          <div class="flex gap-2">
-            <button type="button" onclick="exportTrainingPlanCalendarExcel(false)" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-extrabold">Descargar Excel (Marca)</button>
-            <button type="button" onclick="exportTrainingPlanCalendarExcel(true)" class="px-3.5 py-2 rounded-xl bg-[#004B93] text-white font-extrabold">Descargar Excel (Todas)</button>
-          </div>
-        </div>
-        <div id="tpCalendarPreviewBox" class="space-y-4"></div>
-        <div id="tpEntriesList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- MODAL 1: CREAR / EDITAR SOPORTE O ENTRENAMIENTO -->
   <div id="taskModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
@@ -915,41 +740,29 @@
       </div>
       <form onsubmit="saveTask(event)" class="p-5 space-y-4 max-h-[84vh] overflow-y-auto">
         <input type="hidden" id="editTaskId" />
-        <input type="hidden" id="sourceHotlineReqId" />
-
-        <div id="reuseCourseBox" class="hidden bg-amber-50/90 p-3.5 rounded-xl border border-amber-300 space-y-1.5">
-          <label class="block text-xs font-extrabold text-amber-950">Crear como Nueva Edición desde un Curso Aprobado:</label>
-          <select id="tReuseCourseSelect" onchange="applyReusedCourseTemplate()" class="w-full px-3 py-2 rounded-lg border border-amber-300 text-xs bg-white font-semibold"></select>
-        </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div class="sm:col-span-2">
             <label class="block text-xs font-bold text-slate-700 mb-1">Título del Caso / Curso *</label>
-            <input type="text" id="tTitle" required placeholder="Ej: Diagnóstico Sistema Híbrido HEV / Consulta Fábrica" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none" />
+            <input type="text" id="tTitle" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Categoría / Modalidad *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Categoría *</label>
             <select id="tSubcategory" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1" id="lblAssigneeRole">Encargado / Responsable Técnico *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Encargado *</label>
             <select id="tAssignee" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
           </div>
-
           <div id="workshopFieldBox" class="sm:col-span-2">
-            <label class="block text-xs font-bold text-slate-700 mb-1">Taller de Origen (Propio o Autorizado Automotor) *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Taller *</label>
             <select id="tWorkshop" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white"></select>
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha Programada *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Fecha *</label>
             <input type="date" id="tDate" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
           </div>
-
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Estado / Prioridad en Tablero</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Estado / Prioridad</label>
             <select id="tStatus" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm font-bold bg-white">
               <option value="Urgente">🔴 Urgente</option>
               <option value="Pendiente" selected>⚪ Pendiente</option>
@@ -981,433 +794,149 @@
           <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/70 space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-[11px] font-bold text-blue-900 mb-1">Marca Representada *</label>
+                <label class="block text-[11px] font-bold text-blue-900 mb-1">Marca *</label>
                 <select id="tBrand" onchange="toggleCustomBrandField()" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-bold bg-white"></select>
               </div>
               <div id="customBrandBox" class="hidden">
-                <label class="block text-[11px] font-bold text-amber-900 mb-1">Especificar Otra Marca *</label>
-                <input type="text" id="tCustomBrand" placeholder="Escribe aquí el nombre..." class="w-full px-3 py-2 rounded-lg border border-amber-400 text-xs bg-white font-semibold" />
+                <label class="block text-[11px] font-bold text-amber-900 mb-1">Otra Marca *</label>
+                <input type="text" id="tCustomBrand" class="w-full px-3 py-2 rounded-lg border border-amber-400 text-xs bg-white" />
               </div>
               <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo de Unidad</label>
-                <input type="text" id="tModel" placeholder="Ej: Tucson, D-Max, Coolray..." class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+                <label class="block text-[11px] font-bold text-slate-600 mb-1">Modelo</label>
+                <input type="text" id="tModel" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
               </div>
             </div>
-
-            <div>
-              <label class="block text-[11px] font-bold text-indigo-900 mb-1">Códigos de Falla (DTC) / Síntomas</label>
-              <input type="text" id="tDtcCodes" placeholder="Ej: P0087, U0100..." class="w-full px-3 py-2 rounded-lg border border-indigo-300 text-xs font-mono uppercase bg-white" />
-            </div>
-
             <div class="grid grid-cols-3 gap-3">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Orden (OR)</label>
-                <input type="text" id="tOrNumber" placeholder="OR-45120" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">Chasis / VIN</label>
-                <input type="text" id="tVin" maxlength="17" oninput="checkDuplicateVinAlert()" placeholder="KNA8921" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase font-mono" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">Kilometraje</label>
-                <input type="text" id="tKm" placeholder="42.500 km" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
-            </div>
-            <div id="duplicateVinAlert" class="hidden p-2.5 rounded-xl bg-red-50 border border-red-300 text-xs text-red-950 space-y-1"></div>
-          </div>
-
-          <div class="bg-rose-50/75 p-3.5 rounded-xl border border-rose-200 space-y-2.5">
-            <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-extrabold text-rose-950">
-              <input type="checkbox" id="tIsVor" onchange="toggleVorFields()" class="w-4 h-4 accent-rose-600" />
-              <span>🚨 Unidad Detenida por Repuesto Crítico (VOR)</span>
-            </label>
-            <div id="vorDetailsBox" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-              <div>
-                <label class="block text-[11px] font-bold text-rose-900 mb-1">N° Pedido Repuesto</label>
-                <input type="text" id="tPartOrderNumber" placeholder="PED-99412" class="w-full px-2.5 py-2 rounded-lg border border-rose-300 text-xs bg-white font-mono uppercase" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-rose-900 mb-1">Repuesto Solicitado</label>
-                <input type="text" id="tPartDescription" class="w-full px-2.5 py-2 rounded-lg border border-rose-300 text-xs bg-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-rose-900 mb-1">ETA Llegada</label>
-                <input type="date" id="tPartEta" class="w-full px-2.5 py-2 rounded-lg border border-rose-300 text-xs bg-white" />
-              </div>
+              <input type="text" id="tOrNumber" placeholder="N° Orden (OR)" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <input type="text" id="tVin" maxlength="17" placeholder="Chasis / VIN" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white uppercase font-mono" />
+              <input type="text" id="tKm" placeholder="Kilometraje" class="px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
           </div>
 
-          <!-- PERFIL 1: JEFE DE TALLER / GERENTE / ASESOR -->
-          <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200/80 space-y-2.5">
+          <!-- CONTACTOS FILTRADOS POR PERFIL -->
+          <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-[11px] font-extrabold uppercase text-emerald-950">👔 Jefe de Taller / Gerente / Asesor</span>
-              <div class="flex items-center gap-1.5">
-                <select id="selSavedChiefs" onchange="pickSavedContact('Jefe de Taller / Gerente', this.value)" class="px-2.5 py-1 rounded-lg border border-emerald-300 bg-white text-[11px] font-bold text-emerald-900 max-w-[200px]">
-                  <option value="">-- Elegir Jefe/Gerente guardado --</option>
-                </select>
-                <button type="button" onclick="quickSaveContactFromTaskForm('Jefe de Taller / Gerente')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold">
-                  + Guardar Contacto
-                </button>
+              <div class="flex gap-1.5">
+                <select id="selSavedChiefs" onchange="pickSavedContact('Jefe de Taller / Gerente', this.value)" class="px-2 py-1 rounded-lg border border-emerald-300 bg-white text-[11px] font-bold max-w-[190px]"></select>
+                <button type="button" onclick="quickSaveContactFromTaskForm('Jefe de Taller / Gerente')" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold">+ Guardar</button>
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] font-bold text-emerald-900 mb-1">Nombre Jefe de Taller / Asesor *</label>
-                <input type="text" id="tAdvisorName" placeholder="Ej: Horacio Alvarenga" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp Jefe / Asesor *</label>
-                <input type="text" id="tAdvisorWhatsapp" placeholder="Ej: 0981380202" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" id="tAdvisorName" placeholder="Nombre Jefe / Asesor *" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <input type="text" id="tAdvisorWhatsapp" placeholder="WhatsApp Jefe / Asesor *" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
           </div>
 
-          <!-- PERFIL 2: MECÁNICO -->
-          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-[11px] font-extrabold uppercase text-slate-800">🔧 Mecánico a Cargo</span>
-              <div class="flex items-center gap-1.5">
-                <select id="selSavedMechanics" onchange="pickSavedContact('Mecánico', this.value)" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white text-[11px] font-bold text-slate-800 max-w-[200px]">
-                  <option value="">-- Elegir Mecánico guardado --</option>
-                </select>
-                <button type="button" onclick="quickSaveContactFromTaskForm('Mecánico')" class="px-2.5 py-1 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-[11px] font-bold">
-                  + Guardar Contacto
-                </button>
+              <div class="flex gap-1.5">
+                <select id="selSavedMechanics" onchange="pickSavedContact('Mecánico', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 bg-white text-[11px] font-bold max-w-[190px]"></select>
+                <button type="button" onclick="quickSaveContactFromTaskForm('Mecánico')" class="px-2.5 py-1 rounded-lg bg-teal-600 text-white text-[11px] font-bold">+ Guardar</button>
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre del Mecánico</label>
-                <input type="text" id="tMechanicName" placeholder="Nombre del Mecánico" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-teal-900 mb-1">WhatsApp del Mecánico</label>
-                <input type="text" id="tMechanicWhatsapp" placeholder="Ej: 0981123456" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" id="tMechanicName" placeholder="Nombre Mecánico" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <input type="text" id="tMechanicWhatsapp" placeholder="WhatsApp Mecánico" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
           </div>
 
-          <!-- PERFIL 3: CLIENTE -->
-          <div class="bg-sky-50/70 p-3.5 rounded-xl border border-sky-200 space-y-2.5">
+          <div class="bg-sky-50/70 p-3.5 rounded-xl border border-sky-200 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-[11px] font-extrabold uppercase text-sky-950">👤 Cliente / Propietario</span>
-              <div class="flex items-center gap-1.5">
-                <select id="selSavedClients" onchange="pickSavedContact('Cliente', this.value)" class="px-2.5 py-1 rounded-lg border border-sky-300 bg-white text-[11px] font-bold text-sky-900 max-w-[200px]">
-                  <option value="">-- Elegir Cliente guardado --</option>
-                </select>
-                <button type="button" onclick="quickSaveContactFromTaskForm('Cliente')" class="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold">
-                  + Guardar Contacto
-                </button>
+              <div class="flex gap-1.5">
+                <select id="selSavedClients" onchange="pickSavedContact('Cliente', this.value)" class="px-2 py-1 rounded-lg border border-sky-300 bg-white text-[11px] font-bold max-w-[190px]"></select>
+                <button type="button" onclick="quickSaveContactFromTaskForm('Cliente')" class="px-2.5 py-1 rounded-lg bg-sky-600 text-white text-[11px] font-bold">+ Guardar</button>
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] font-bold text-sky-900 mb-1">Nombre del Cliente</label>
-                <input type="text" id="tClientName" placeholder="Ej: Sr. Carlos Benítez" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-sky-900 mb-1">WhatsApp del Cliente</label>
-                <input type="text" id="tClientWhatsapp" placeholder="Ej: 0971555444" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-              </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" id="tClientName" placeholder="Nombre Cliente" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <input type="text" id="tClientWhatsapp" placeholder="WhatsApp Cliente" class="px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
             </div>
           </div>
         </div>
 
-        <div id="trainingFieldsBox" class="hidden bg-amber-50/70 p-4 rounded-xl border border-amber-200 space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label class="block text-[11px] font-bold text-amber-950 mb-1">Marca / Línea (Opcional)</label>
-              <select id="tTrBrand" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white font-semibold"></select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-amber-950 mb-1">Revisor Pedagógico / Técnico</label>
-              <select id="tReviewer" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white font-semibold"></select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-amber-950 mb-1">Etapa Formativa Inicial</label>
-              <select id="tTrainingStage" class="w-full px-2.5 py-2 rounded-lg border border-amber-300 text-xs bg-white font-bold">
-                <option value="Asignado">1. Asignado</option>
-                <option value="En diseño">2. En diseño</option>
-                <option value="En desarrollo">3. En desarrollo</option>
-                <option value="En revisión">4. En revisión</option>
-                <option value="Listo para impartir">5. Listo para impartir</option>
-                <option value="Impartido">6. Impartido</option>
-                <option value="Evaluación y cierre">7. Evaluación y cierre</option>
-                <option value="Cerrado">8. Cerrado</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Duración Dictado (Hs)</label>
-              <input type="number" id="tHours" min="1" max="200" value="4" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Prep. Estimada (Hs)</label>
-              <input type="number" id="tPrepHours" min="1" max="200" value="6" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Cupo Participantes</label>
-              <input type="number" id="tTargetCount" min="1" max="200" value="12" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Límite Material Aprobado</label>
-              <input type="date" id="tMaterialDeadline" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Grupo Técnico / Nivel</label>
-              <input type="text" id="tGroup" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">Sede / Aula / Bahía</label>
-              <input type="text" id="tLocation" class="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Descripción / Alcance</label>
-          <textarea id="tDesc" rows="2" placeholder="Detalles iniciales del requerimiento..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
-        </div>
-
+        <textarea id="tDesc" rows="2" placeholder="Descripción / Alcance..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm"></textarea>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
-          <button type="button" onclick="closeModal('taskModal')" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700">Cancelar</button>
-          <button type="submit" id="btnSaveTask" class="px-5 py-2.5 rounded-xl btn-accent text-xs font-bold shadow-sm">Guardar Acción</button>
+          <button type="button" onclick="closeModal('taskModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl btn-accent text-xs font-bold">Guardar Acción</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO                                -->
-  <!-- ======================================================================= -->
+  <!-- MODAL 2: DETALLE DE CASO -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
         <div class="flex flex-wrap items-center gap-2">
           <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#004B93]">CASO-2026-101</span>
-          <span id="dReopenedBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-red-600 text-white hidden">🚨 RECLAMO / REINGRESO</span>
-          <span id="dBrandBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-[#004B93] text-white hidden">HYUNDAI</span>
-          <span id="dTrainingStageBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 border border-amber-300 hidden">En diseño</span>
-          <span id="dVorBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-rose-600 text-white hidden">🚨 VOR</span>
           <span id="dHotlineBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 hidden">Hotline</span>
-          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[200px] sm:max-w-sm">Detalle</h3>
+          <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[220px] sm:max-w-sm">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <button id="btnReopenClaimHeader" onclick="reopenCaseAsClaim(currentDetailId)" class="hidden px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1 shadow-sm animate-pulse">
-            <i class="ph-bold ph-arrow-counter-clockwise text-sm"></i> Reabrir por Reclamo (Urgente)
-          </button>
-          <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm">
-            <i class="ph-bold ph-chats-circle text-sm"></i> Chat
-          </button>
-          <button onclick="exportSingleCaseWord()" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-300 text-blue-800 text-xs font-bold flex items-center gap-1">
-            <i class="ph-bold ph-file-doc text-sm"></i> Word
-          </button>
-          <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
-            <i class="ph-bold ph-envelope-simple"></i> Formalizar Correo
-          </button>
-          <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
-            <i class="ph-bold ph-user-focus"></i> Portal Cliente
-          </button>
-          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
-          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600" title="Enviar a Papelera"><i class="ph-bold ph-trash"></i></button>
+          <button id="btnReopenClaimHeader" onclick="reopenCaseAsClaim(currentDetailId)" class="hidden px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-extrabold">Reabrir por Reclamo (Urgente)</button>
+          <button onclick="editCurrentTask()" class="p-2 rounded-lg hover:bg-slate-200 text-slate-600"><i class="ph-bold ph-pencil-simple"></i></button>
+          <button id="btnDeleteTask" onclick="deleteCurrentTask()" class="p-2 rounded-lg hover:bg-red-100 text-red-600"><i class="ph-bold ph-trash"></i></button>
           <button onclick="closeModal('detailModal')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-500"><i class="ph-bold ph-x"></i></button>
         </div>
       </div>
 
-      <div id="trainingDetailTabsBar" class="hidden px-5 pt-2 bg-amber-50/70 border-b border-amber-200 flex flex-wrap gap-1.5 text-xs font-bold">
-        <button type="button" onclick="switchTrainingSubTab('general')" id="trSubTab-general" class="px-3.5 py-2 rounded-t-xl bg-white text-amber-900 border-t border-x border-amber-200">
-          1. General y Recursos
-        </button>
-        <button type="button" onclick="switchTrainingSubTab('design')" id="trSubTab-design" class="px-3.5 py-2 rounded-t-xl text-slate-600 hover:bg-white/60">
-          2. Diseño HTC y Plan
-        </button>
-        <button type="button" onclick="switchTrainingSubTab('deliverables')" id="trSubTab-deliverables" class="px-3.5 py-2 rounded-t-xl text-slate-600 hover:bg-white/60">
-          3. Entregables y Revisión
-        </button>
-        <button type="button" onclick="switchTrainingSubTab('execution')" id="trSubTab-execution" class="px-3.5 py-2 rounded-t-xl text-slate-600 hover:bg-white/60">
-          4. Ejecución y Resultados
-        </button>
-      </div>
-
       <div class="p-5 space-y-5 max-h-[82vh] overflow-y-auto">
-        <div id="detailSectionGeneral" class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 text-xs">
-            <div class="space-y-1">
-              <div id="dMetaLine1" class="font-bold text-slate-800"></div>
-              <div id="dMetaLine2" class="text-slate-500 flex flex-wrap items-center gap-2"></div>
-              <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <button id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5 shadow-sm transition">
-                <i class="ph-bold ph-whatsapp-logo text-base"></i> Asesor / Jefe
-              </button>
-              <button id="btnNotifyMechanicHeader" onclick="notifyMechanicWhatsapp()" class="px-3 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold flex items-center gap-1.5 shadow-sm transition">
-                <i class="ph-bold ph-wrench text-base"></i> Mecánico
-              </button>
-              <button id="btnNotifyClientHeader" onclick="notifyClientWhatsapp()" class="px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold flex items-center gap-1.5 shadow-sm transition">
-                <i class="ph-bold ph-user text-base"></i> Cliente
-              </button>
-            </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 text-xs">
+          <div class="space-y-1">
+            <div id="dMetaLine1" class="font-bold text-slate-800"></div>
+            <div id="dMetaLine2" class="text-slate-500"></div>
+            <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
           </div>
-
-          <div id="dTrainingControlPanel" class="hidden space-y-4">
-            <div class="bg-amber-50/90 border border-amber-300 rounded-2xl p-4 space-y-3 text-xs">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="font-extrabold text-amber-950">Etapa Formativa HTC:</span>
-                  <select id="dTrainingStageSelect" onchange="changeTrainingStage(this.value)" class="px-3 py-1.5 rounded-lg border border-amber-400 bg-white font-extrabold text-xs text-amber-950">
-                    <option value="Asignado">1. Asignado</option>
-                    <option value="En diseño">2. En diseño</option>
-                    <option value="En desarrollo">3. En desarrollo</option>
-                    <option value="En revisión">4. En revisión</option>
-                    <option value="Listo para impartir">5. Listo para impartir</option>
-                    <option value="Impartido">6. Impartido</option>
-                    <option value="Evaluación y cierre">7. Evaluación y cierre</option>
-                    <option value="Cerrado">8. Cerrado</option>
-                  </select>
-                </div>
-              </div>
-              <div id="trResourcesList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-            </div>
-          </div>
-
-          <div id="dVorControlBar" class="bg-rose-50/80 border border-rose-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <label class="inline-flex items-center gap-2 cursor-pointer font-extrabold text-rose-950">
-              <input type="checkbox" id="dIsVorCheck" onchange="quickSaveVorInfo()" class="w-4 h-4 accent-rose-600" />
-              <span>🚨 VOR (Repuesto Crítico):</span>
-            </label>
-            <div class="flex flex-wrap items-center gap-2 flex-1 justify-end">
-              <input type="text" id="dPartOrderInput" placeholder="N° Pedido (ej: PED-9941)" class="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-white font-mono uppercase text-xs w-36" />
-              <input type="text" id="dPartDescInput" placeholder="Descripción repuesto..." class="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-white text-xs w-44" />
-              <input type="date" id="dPartEtaInput" class="px-2.5 py-1.5 rounded-lg border border-rose-300 bg-white text-xs" />
-              <button type="button" onclick="quickSaveVorInfo(true)" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs">
-                Guardar VOR
-              </button>
-            </div>
-          </div>
-
-          <div id="dHotlineControlBar" class="bg-purple-50/80 border border-purple-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="font-extrabold text-purple-950 flex items-center gap-1">
-                <i class="ph-bold ph-headset text-base text-purple-700"></i> Hotline / Ticket Fábrica:
-              </span>
-              <select id="dHotlineStatusSelect" onchange="quickSaveHotlineInfo()" class="px-2.5 py-1.5 rounded-lg border border-purple-300 bg-white font-bold text-xs">
-                <option value="">No aplica</option>
-                <option value="Hotline Solicitado">🟠 Hotline Solicitado</option>
-                <option value="Ticket Enviado a Fábrica">🟣 Ticket Enviado a Fábrica</option>
-                <option value="En Análisis Fábrica">🔵 En Análisis Fábrica</option>
-                <option value="Respondido por Fábrica">🟢 Respondido por Fábrica</option>
-              </select>
-            </div>
-            <div class="flex items-center gap-2 flex-1 min-w-[220px] justify-end">
-              <input type="text" id="dFactoryTicketInput" placeholder="Código Ticket Fábrica (ej: DISS-8821)" class="px-3 py-1.5 rounded-lg border border-purple-300 bg-white font-mono font-bold uppercase text-xs w-48" />
-              <button type="button" onclick="quickSaveHotlineInfo(true)" class="px-3 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs">
-                Asociar Ticket
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex justify-between items-center text-xs font-bold">
-              <span>Progreso: <span id="dProgressVal" class="text-accent">0%</span></span>
-              <select id="dStatusSelect" onchange="updateTaskStatusQuick(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
-                <option value="Urgente">🔴 Urgente</option>
-                <option value="Pendiente">⚪ Pendiente</option>
-                <option value="En Proceso">🔵 En Proceso</option>
-                <option value="En Prueba">🟣 En Prueba</option>
-                <option value="Completado">🟢 Completado</option>
-              </select>
-            </div>
-            <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#004B93]" />
-          </div>
-
-          <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200 space-y-3">
-            <h4 class="text-xs font-extrabold uppercase text-slate-800 flex items-center gap-1.5">
-              <i class="ph-bold ph-clock-counter-clockwise text-slate-600 text-base"></i> Registro Cronológico de Eventos y Notas
-            </h4>
-            <form onsubmit="addInternalNote(event)" class="space-y-2">
-              <div class="flex gap-2">
-                <input type="text" id="newInternalNoteText" required placeholder="Registrar avance, decisión o novedad..." class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm" />
-                <button type="submit" class="px-4 py-2 rounded-xl btn-accent text-xs font-bold">Registrar</button>
-              </div>
-            </form>
-            <div id="dInternalNotesList" class="space-y-2 max-h-52 overflow-y-auto"></div>
+          <div class="flex gap-2">
+            <button onclick="notifyAdvisorWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] text-white font-bold">Asesor / Jefe</button>
+            <button onclick="notifyMechanicWhatsapp()" class="px-3 py-2 rounded-xl bg-teal-600 text-white font-bold">Mecánico</button>
+            <button onclick="notifyClientWhatsapp()" class="px-3 py-2 rounded-xl bg-sky-600 text-white font-bold">Cliente</button>
           </div>
         </div>
 
-        <div id="detailSectionDesign" class="hidden space-y-4 text-xs">
-          <textarea id="htcNeed" rows="2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
-          <textarea id="htcPerformance" rows="2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
-          <input type="text" id="htcPrerequisites" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
-          <input type="text" id="htcReferences" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+        <div class="bg-purple-50/80 border border-purple-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-purple-950">Hotline / Ticket Fábrica:</span>
+            <select id="dHotlineStatusSelect" onchange="quickSaveHotlineInfo()" class="px-2.5 py-1.5 rounded-lg border border-purple-300 bg-white font-bold text-xs">
+              <option value="">No aplica</option>
+              <option value="Hotline Solicitado">🟠 Hotline Solicitado</option>
+              <option value="Ticket Enviado a Fábrica">🟣 Ticket Enviado a Fábrica</option>
+              <option value="En Análisis Fábrica">🔵 En Análisis Fábrica</option>
+              <option value="Respondido por Fábrica">🟢 Respondido por Fábrica</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="dFactoryTicketInput" placeholder="Código Ticket Fábrica" class="px-3 py-1.5 rounded-lg border border-purple-300 bg-white font-mono font-bold uppercase text-xs w-48" />
+            <button type="button" onclick="quickSaveHotlineInfo(true)" class="px-3 py-1.5 rounded-lg bg-purple-700 text-white font-bold text-xs">Asociar Ticket</button>
+          </div>
         </div>
-        <div id="detailSectionDeliverables" class="hidden"></div>
-        <div id="detailSectionExecution" class="hidden"></div>
+
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-xs font-bold">
+            <span>Progreso: <span id="dProgressVal" class="text-accent">0%</span></span>
+            <select id="dStatusSelect" onchange="updateTaskStatusQuick(this.value)" class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold bg-white">
+              <option value="Urgente">🔴 Urgente</option>
+              <option value="Pendiente">⚪ Pendiente</option>
+              <option value="En Proceso">🔵 En Proceso</option>
+              <option value="En Prueba">🟣 En Prueba</option>
+              <option value="Completado">🟢 Completado</option>
+            </select>
+          </div>
+          <input type="range" id="dProgressRange" min="0" max="100" step="5" onchange="updateTaskProgressQuick(this.value)" class="w-full accent-[#004B93]" />
+        </div>
+
+        <div class="bg-slate-50/90 rounded-2xl p-4 border border-slate-200 space-y-3">
+          <h4 class="text-xs font-extrabold uppercase text-slate-800">Registro Cronológico de Eventos y Notas</h4>
+          <form onsubmit="addInternalNote(event)" class="flex gap-2">
+            <input type="text" id="newInternalNoteText" required placeholder="Registrar avance..." class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm" />
+            <button type="submit" class="px-4 py-2 rounded-xl btn-accent text-xs font-bold">Registrar</button>
+          </form>
+          <div id="dInternalNotesList" class="space-y-2 max-h-52 overflow-y-auto"></div>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- MODAL BANCO HTC -->
-  <div id="htcBankModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4">
-      <div class="flex justify-between items-center"><h3 class="font-bold">Banco Actividades HTC</h3><button onclick="closeModal('htcBankModal')">x</button></div>
-      <div id="htcBankList" class="space-y-2"></div>
-    </div>
-  </div>
-
-  <!-- MODAL HISTORIAL VIN -->
-  <div id="vinHistoryModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-4xl w-full p-5 space-y-4">
-      <div class="flex justify-between items-center"><h3 class="font-bold">Historial Clínico por VIN</h3><button onclick="closeModal('vinHistoryModal')">x</button></div>
-      <input type="text" id="vinSearchInput" oninput="renderVinHistoryResults()" placeholder="Buscar VIN..." class="w-full px-3 py-2 border rounded-xl uppercase font-mono" />
-      <div id="vinHistoryResults" class="space-y-2 max-h-80 overflow-y-auto"></div>
-    </div>
-  </div>
-
-  <!-- MODAL TAREAS -->
-  <div id="todoModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-5 space-y-4">
-      <div class="flex justify-between items-center"><h3 class="font-bold">Nueva Tarea</h3><button onclick="closeModal('todoModal')">x</button></div>
-      <form onsubmit="saveTodoItem(event)" class="space-y-3 text-xs">
-        <input type="hidden" id="editTodoId" />
-        <input type="text" id="tdTitle" required placeholder="Título de la tarea *" class="w-full px-3 py-2 border rounded-xl" />
-        <div class="grid grid-cols-3 gap-2">
-          <select id="tdAssignee" required class="px-2 py-2 border rounded-xl"></select>
-          <select id="tdPriority" class="px-2 py-2 border rounded-xl"><option value="Alta">Alta</option><option value="Normal" selected>Normal</option></select>
-          <input type="date" id="tdDueDate" class="px-2 py-2 border rounded-xl" />
-        </div>
-        <select id="tdLinkedCase" class="w-full px-2 py-2 border rounded-xl"></select>
-        <select id="tdWorkshop" class="w-full px-2 py-2 border rounded-xl"></select>
-        <textarea id="tdNotes" rows="2" class="w-full p-2 border rounded-xl"></textarea>
-        <div class="flex justify-end gap-2"><button type="button" onclick="closeModal('todoModal')" class="px-3 py-2 border rounded-xl">Cancelar</button><button type="submit" class="px-4 py-2 btn-accent rounded-xl font-bold">Guardar</button></div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL SOPORTE SOLICITADO -->
-  <div id="hotlineRequestsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-4xl w-full p-5 space-y-4">
-      <div class="flex justify-between items-center"><h3 class="font-bold">Solicitudes Hotline</h3><button onclick="closeModal('hotlineRequestsModal')">x</button></div>
-      <div id="hotlineRequestsList" class="space-y-2 max-h-80 overflow-y-auto"></div>
-    </div>
-  </div>
-
-  <!-- MODAL GESTOR DE PLATAFORMAS -->
-  <div id="platformsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 space-y-4">
-      <div class="flex justify-between items-center"><h3 class="font-bold">Plataformas</h3><button onclick="closeModal('platformsModal')">x</button></div>
-      <form onsubmit="savePlatformBookmark(event)" class="flex gap-2">
-        <input type="hidden" id="editPlatformId" />
-        <input type="text" id="pNameInput" required placeholder="Nombre" class="flex-1 px-3 py-2 border rounded-xl text-xs" />
-        <input type="url" id="pUrlInput" required placeholder="https://..." class="flex-1 px-3 py-2 border rounded-xl text-xs" />
-        <button type="submit" class="px-4 py-2 bg-[#004B93] text-white rounded-xl text-xs font-bold">Guardar</button>
-      </form>
-      <div id="platformsManageList" class="space-y-2 max-h-60 overflow-y-auto"></div>
     </div>
   </div>
 
@@ -1475,23 +1004,13 @@
     const DEFAULT_PLATFORMS = [
       { id: "p1", name: "Gestor de plan de mantenimiento", url: "https://sites.google.com/automotorpy.com/plan-de-mante/full-page-embed" },
       { id: "p2", name: "Acceso a sap web", url: "http://192.168.200.229/devwap/" },
-      { id: "p3", name: "Acceso a ccc Hyundai", url: "https://ccc.hyundai.com/nxui/ccc/index.html" },
-      { id: "p4", name: "Acceso general a CCC", url: "https://revisioncuentahta-boop.github.io/mi-autenticador/" },
-      { id: "p5", name: "Automatización de accesos en HTA", url: "https://revisioncuentahta-boop.github.io/Automation-Hyundai/" },
-      { id: "p6", name: "Servicio KGM Automotor", url: "https://sites.google.com/view/itestebanfernandezkgm/inicio" },
-      { id: "p7", name: "Servicio Mahindra Automotor", url: "https://sites.google.com/automotorpy.com/serviciosmahindra/inicio" },
-      { id: "p8", name: "Servicio Lotus Automotor", url: "https://sites.google.com/automotorpy.com/lotus-it-esteban-fernandez/acceso-a-plataformas?authuser=0" }
+      { id: "p3", name: "Acceso a ccc Hyundai", url: "https://ccc.hyundai.com/nxui/ccc/index.html" }
     ];
 
     let AUTOMOTOR_BRANDS = [
       "Hyundai", "Hyundai Camiones y Buses", "Hyundai Maquinarias", "Isuzu", "Geely",
       "SsangYong / KGM", "Maserati", "Lynk & Co", "Mahindra", "Riddara",
       "Farizon", "Lotus", "Shacman", "Lonking", "Cummins", "Repsol", "Otras Marcas"
-    ];
-
-    const MONTH_NAMES_ES = [
-      "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
-      "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
     ];
 
     const BOARD_COLUMNS = [
@@ -1502,197 +1021,61 @@
       { id: "Completado", label: "COMPLETADO", icon: "ph-check-circle", colBg: "bg-emerald-50/90 border-2 border-emerald-300", headerText: "text-emerald-900", badgeBg: "bg-emerald-600 text-white", cardBorder: "border-emerald-300 hover:border-emerald-500", barColor: "bg-emerald-600" }
     ];
 
-    const TRAINING_STAGE_TO_KANBAN = {
-      "Asignado": "Pendiente", "En diseño": "En Proceso", "En desarrollo": "En Proceso",
-      "En revisión": "En Prueba", "Listo para impartir": "En Prueba", "Impartido": "En Prueba",
-      "Evaluación y cierre": "En Prueba", "Cerrado": "Completado"
-    };
-
     const SUBCATEGORIES = {
-      soporte: [
-        "Consulta Técnica Fábrica (DISS/TAC)", "Diagnóstico Especial", "Solicitud de Informe Técnico",
-        "Consultoría Técnica al Cliente", "Mediación y Soporte Postventa (Cliente-Soporte)",
-        "Garantía Compleja", "Boletín Técnico / Campaña", "Asistencia en Bahía Taller"
-      ],
-      entrenamiento: [
-        "Entrenamiento Presencial", "Taller Práctico en Bahía", "Curso E-Learning / Plataforma",
-        "Certificación Técnica de Marca", "Evaluación y Nivelación Técnica"
-      ]
+      soporte: ["Consulta Técnica Fábrica (DISS/TAC)", "Diagnóstico Especial", "Solicitud de Informe Técnico", "Consultoría Técnica al Cliente", "Mediación y Soporte Postventa", "Garantía Compleja", "Boletín Técnico / Campaña", "Asistencia en Bahía Taller"],
+      entrenamiento: ["Entrenamiento Presencial", "Taller Práctico en Bahía", "Curso E-Learning / Plataforma", "Certificación Técnica de Marca", "Evaluación y Nivelación Técnica"]
     };
 
     const DEFAULT_WORKSHOPS = [
       { id: "w1", name: "Automotor Central", city: "Asunción", type: "Propio" },
       { id: "w2", name: "Automotor Plaza - Taller", city: "Asunción", type: "Propio" },
-      { id: "w3", name: "Quick Service Paseo La Galería", city: "Asunción", type: "Propio" },
-      { id: "w4", name: "Automotor - Servicio Pesado", city: "Asunción", type: "Propio" },
       { id: "w5", name: "Automotor Encarnación", city: "Encarnación", type: "Propio" },
-      { id: "w6", name: "Automotor CDE", city: "Ciudad del Este", type: "Propio" },
-      { id: "w7", name: "Automotor Hernandarias", city: "Hernandarias", type: "Propio" },
-      { id: "w8", name: "LC Car's", city: "San Estanislao", type: "Autorizado" },
-      { id: "w9", name: "Cristian Paats S.A.", city: "Coronel Oviedo", type: "Autorizado" },
-      { id: "w10", name: "Autocentro San Roque", city: "Caaguazú", type: "Autorizado" },
-      { id: "w11", name: "Industrial Chaco", city: "Filadelfia", type: "Autorizado" },
-      { id: "w12", name: "Autocenter", city: "Loma Plata", type: "Autorizado" },
-      { id: "w13", name: "Braun S.R.L.", city: "Colonia Neuland", type: "Autorizado" },
-      { id: "w14", name: "JuanK Hohenau", city: "Hohenau", type: "Autorizado" },
-      { id: "w15", name: "Autodiesel Paraná", city: "Katueté", type: "Autorizado" },
-      { id: "w16", name: "Bazzo Servicios Automotivos", city: "Santa Rita", type: "Autorizado" },
-      { id: "w17", name: "Taller San Carlos", city: "Concepción", type: "Autorizado" },
-      { id: "w18", name: "Motor Mec", city: "Pilar", type: "Autorizado" },
-      { id: "w19", name: "Motormack", city: "Loma Plata", type: "Autorizado" },
-      { id: "w20", name: "LubriMor Servicios & Repuestos", city: "San Ignacio", type: "Autorizado" },
-      { id: "w21", name: "Fogasa Auto Parts S.A.", city: "Santa Rosa del Aguaray", type: "Autorizado" },
-      { id: "w22", name: "Autocentro LB", city: "Villarrica", type: "Autorizado" },
-      { id: "w23", name: "Alineación Río Verde", city: "Colonia Río Verde", type: "Autorizado" },
-      { id: "w24", name: "Norte Autos", city: "Pedro Juan Caballero", type: "Autorizado" },
-      { id: "w25", name: "Altona Automotores", city: "Campo 8", type: "Autorizado" },
-      { id: "w26", name: "Óptima Automecánica", city: "Curuguaty", type: "Autorizado" },
-      { id: "w27", name: "Coopasam", city: "Minga Porã", type: "Autorizado" },
-      { id: "w28", name: "LC Car's Caacupé", city: "Caacupé", type: "Autorizado" },
-      { id: "w29", name: "Rectificadora Campo 9", city: "Campo 9", type: "Autorizado" },
-      { id: "w30", name: "No Limits", city: "Campo 9", type: "Autorizado" },
-      { id: "w31", name: "Centucar", city: "Saltos del Guairá", type: "Autorizado" },
-      { id: "w32", name: "San Pablo Cars Truck Center", city: "Eusebio Ayala", type: "Autorizado" },
-      { id: "w33", name: "Autocentro Zoto", city: "Villarrica", type: "Autorizado" }
+      { id: "w6", name: "Automotor CDE", city: "Ciudad del Este", type: "Propio" }
     ];
 
     let state = {
-      tasks: [],
-      todos: [],
-      contacts: [],
-      trash: [],
-      credentialsDb: [],
-      trainingPlanEntries: [],
-      notifications: [],
-      htcBank: [],
-      users: [],
-      pendingUsers: [],
-      workshops: DEFAULT_WORKSHOPS,
-      platforms: DEFAULT_PLATFORMS,
-      hotlineRequests: [],
-      platformConfig: {
-        maxCompletedInBoard: 10,
-        slaWarningDays: 5,
-        customBrands: null
-      },
-      adminConfig: {
-        id: "esteban388",
-        pass: "esteban388",
-        name: "Esteban (Administrador)",
-        email: "soporte.automotortaller@gmail.com",
-        avatarUrl: ""
-      },
+      tasks: [], todos: [], contacts: [], trash: [], credentialsDb: [], trainingPlanEntries: [], notifications: [],
+      users: [], pendingUsers: [], workshops: DEFAULT_WORKSHOPS, platforms: DEFAULT_PLATFORMS, hotlineRequests: [],
+      platformConfig: { maxCompletedInBoard: 10, slaWarningDays: 5, customBrands: null },
+      adminConfig: { id: "esteban388", pass: "esteban388", name: "Esteban (Administrador)", email: "soporte.automotortaller@gmail.com", avatarUrl: "" },
       clientPortalBaseUrl: "https://soporteautomotortaller-gif.github.io/autotech-soporte/cliente.html",
       masterSheetUrl: ""
     };
 
-    let currentSession = null;
-    let appMode = "soporte";
-    let activeTab = "board";
-    let currentDetailId = null;
-    let calDate = new Date();
-    let isMobileMode = window.innerWidth < 768;
-    let pendingRegTemp = null;
-    let todoFilterMode = "mine";
-    let activeTickerNotif = null;
-    let revealedCredIds = {};
-    let contactProfileFilter = "ALL";
+    let currentSession = null, appMode = "soporte", activeTab = "board", currentDetailId = null, calDate = new Date(), isMobileMode = window.innerWidth < 768, pendingRegTemp = null, revealedCredIds = {}, contactProfileFilter = "ALL";
 
-    function escapeHtml(str) {
-      if (!str) return "";
-      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-    }
+    function escapeHtml(str) { return str ? String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) : ""; }
+    function formatWhatsappPhone(raw) { let p = (raw || "").replace(/\D/g, ""); return p.startsWith("0") ? "595" + p.substring(1) : p; }
 
-    function copyTextToClipboard(txt, label = "Dato") {
-      navigator.clipboard.writeText(txt || "");
-      showToast(`${label} copiado al portapapeles`, "success");
-    }
-
-    function copyHotlineRequestLink() {
-      navigator.clipboard.writeText(HOTLINE_REQUEST_PAGE_URL);
-      showToast("Link de solicitud de Hotline copiado para enviar al Jefe de Taller", "success");
-    }
-
-    function formatWhatsappPhone(raw) {
-      let phone = (raw || "").replace(/\D/g, "");
-      if (phone.startsWith("0")) phone = "595" + phone.substring(1);
-      return phone;
-    }
-
-    // =========================================================================
-    // AVATAR CIRCULAR TIPO LINKEDIN (RENDERIZADO Y COMPRESIÓN DE FOTO)
-    // =========================================================================
-    function getUserInitials(name) {
-      const parts = (name || "U").trim().split(/\s+/);
-      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-      return (parts[0][0] || "U").toUpperCase();
-    }
-
-    function getUserAvatarUrlById(userId) {
-      if (!userId) return "";
-      if (userId === "admin_master") {
-        return (state.adminConfig && state.adminConfig.avatarUrl) || "";
-      }
-      const u = (state.users || []).find(x => x.id === userId);
-      return (u && u.avatarUrl) || "";
-    }
-
+    // AVATAR CIRCULAR TIPO LINKEDIN
+    function getUserInitials(name) { const parts = (name || "U").trim().split(/\s+/); return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : (parts[0][0] || "U").toUpperCase(); }
+    function getUserAvatarUrlById(userId) { if (!userId) return ""; if (userId === "admin_master") return (state.adminConfig && state.adminConfig.avatarUrl) || ""; const u = (state.users || []).find(x => x.id === userId); return (u && u.avatarUrl) || ""; }
     function renderCircularAvatarHtml(userId, userName, sizePx = 32) {
-      const avatarUrl = getUserAvatarUrlById(userId);
-      const initials = getUserInitials(userName);
-      const fontSize = sizePx >= 64 ? "text-xl" : sizePx >= 32 ? "text-xs" : "text-[9px]";
-
-      if (avatarUrl) {
-        return `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(userName)}" style="width:${sizePx}px; height:${sizePx}px;" class="linkedin-avatar shrink-0" />`;
-      }
-      return `
-        <div style="width:${sizePx}px; height:${sizePx}px;" class="linkedin-avatar shrink-0 flex items-center justify-center bg-[#004B93] text-white font-extrabold ${fontSize} select-none">
-          ${escapeHtml(initials)}
-        </div>
-      `;
+      const avatarUrl = getUserAvatarUrlById(userId), initials = getUserInitials(userName), fontSize = sizePx >= 64 ? "text-xl" : sizePx >= 32 ? "text-xs" : "text-[9px]";
+      if (avatarUrl) return `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(userName)}" style="width:${sizePx}px; height:${sizePx}px;" class="linkedin-avatar shrink-0" />`;
+      return `<div style="width:${sizePx}px; height:${sizePx}px;" class="linkedin-avatar shrink-0 flex items-center justify-center bg-[#004B93] text-white font-extrabold ${fontSize} select-none">${escapeHtml(initials)}</div>`;
     }
-
-    function refreshHeaderUserAvatar() {
-      const container = document.getElementById("headerUserAvatarContainer");
-      if (!container || !currentSession) return;
-      container.innerHTML = renderCircularAvatarHtml(currentSession.id, currentSession.name, 30);
-    }
-
+    function refreshHeaderUserAvatar() { const c = document.getElementById("headerUserAvatarContainer"); if (c && currentSession) c.innerHTML = renderCircularAvatarHtml(currentSession.id, currentSession.name, 30); }
     function refreshSettingsAvatarPreview() {
-      const box = document.getElementById("settingsAvatarPreview");
-      const nameLbl = document.getElementById("settingsProfileNameLabel");
-      const btnRemove = document.getElementById("btnRemoveProfilePhoto");
+      const box = document.getElementById("settingsAvatarPreview"), nameLbl = document.getElementById("settingsProfileNameLabel"), btnRemove = document.getElementById("btnRemoveProfilePhoto");
       if (!box || !currentSession) return;
-
       const currentUrl = getUserAvatarUrlById(currentSession.id);
       box.innerHTML = renderCircularAvatarHtml(currentSession.id, currentSession.name, 76);
       nameLbl.textContent = `${currentSession.name} (${currentSession.role})`;
       btnRemove.classList.toggle("hidden", !currentUrl);
     }
 
-    // Redimensiona y comprime la foto a 256x256 JPEG para que se sincronice al instante en Firebase y Drive
     function handleProfilePhotoUpload(e) {
-      const file = e.target.files[0];
-      if (!file || !currentSession) return;
-
+      const file = e.target.files[0]; if (!file || !currentSession) return;
       const reader = new FileReader();
       reader.onload = (ev) => {
         const img = new Image();
         img.onload = async () => {
           const canvas = document.createElement("canvas");
-          const targetSize = 256;
-          canvas.width = targetSize;
-          canvas.height = targetSize;
-          const ctx = canvas.getContext("2d");
-
-          // Recorte centrado cuadrado (estilo LinkedIn)
-          const minSide = Math.min(img.width, img.height);
-          const sx = (img.width - minSide) / 2;
-          const sy = (img.height - minSide) / 2;
-          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, targetSize, targetSize);
-
-          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.85);
-          await applyAvatarToCurrentUser(compressedDataUrl);
+          canvas.width = 256; canvas.height = 256;
+          const ctx = canvas.getContext("2d"), minSide = Math.min(img.width, img.height);
+          ctx.drawImage(img, (img.width - minSide) / 2, (img.height - minSide) / 2, minSide, minSide, 0, 0, 256, 256);
+          await applyAvatarToCurrentUser(canvas.toDataURL("image/jpeg", 0.85));
         };
         img.src = ev.target.result;
       };
@@ -1703,200 +1086,82 @@
       if (!currentSession) return;
       currentSession.avatarUrl = avatarDataUrl;
       sessionStorage.setItem("autotech_session_v6", JSON.stringify(currentSession));
-
       if (currentSession.id === "admin_master") {
         state.adminConfig.avatarUrl = avatarDataUrl;
-        await fetch(`${FIREBASE_DB_URL}/adminConfig.json`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(state.adminConfig)
-        }).catch(() => {});
+        await fetch(`${FIREBASE_DB_URL}/adminConfig.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state.adminConfig) }).catch(() => {});
       } else {
         const u = (state.users || []).find(x => x.id === currentSession.id);
-        if (u) {
-          u.avatarUrl = avatarDataUrl;
-          await fetch(`${FIREBASE_DB_URL}/approvedUsers/${u.id}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(u)
-          }).catch(() => {});
-        }
+        if (u) { u.avatarUrl = avatarDataUrl; await fetch(`${FIREBASE_DB_URL}/approvedUsers/${u.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(u) }).catch(() => {}); }
       }
-
-      saveLocalAndCloud();
-      refreshHeaderUserAvatar();
-      refreshSettingsAvatarPreview();
-      renderBoard();
+      saveLocalAndCloud(); refreshHeaderUserAvatar(); refreshSettingsAvatarPreview(); renderBoard();
       showToast(avatarDataUrl ? "Foto de perfil actualizada" : "Foto de perfil eliminada", "success");
     }
+    function removeCurrentProfilePhoto() { applyAvatarToCurrentUser(""); }
 
-    function removeCurrentProfilePhoto() {
-      applyAvatarToCurrentUser("");
-    }
-
-    // =========================================================================
-    // PAPELERA GENERAL (MOVER A PAPELERA Y RESTAURAR / REHACER TODO)
-    // =========================================================================
+    // PAPELERA GENERAL
     function moveToTrash({ itemType, itemLabel, moduleName, payload, parentTaskId = "" }) {
       if (!Array.isArray(state.trash)) state.trash = [];
-      state.trash.unshift({
-        trashId: "trsh_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        itemType,
-        itemLabel,
-        moduleName,
-        parentTaskId,
-        deletedBy: currentSession ? currentSession.name : "Usuario",
-        deletedAt: new Date().toLocaleString(),
-        payload: JSON.parse(JSON.stringify(payload))
-      });
-      if (state.trash.length > 100) state.trash = state.trash.slice(0, 100);
+      state.trash.unshift({ trashId: "trsh_" + Date.now(), itemType, itemLabel, moduleName, parentTaskId, deletedBy: currentSession ? currentSession.name : "Usuario", deletedAt: new Date().toLocaleString(), payload: JSON.parse(JSON.stringify(payload)) });
       updateTrashBadge();
     }
-
-    function updateTrashBadge() {
-      const badge = document.getElementById("trashBadgeCount");
-      if (!badge) return;
-      const count = (state.trash || []).length;
-      if (count > 0) {
-        badge.textContent = count;
-        badge.classList.remove("hidden");
-      } else {
-        badge.classList.add("hidden");
-      }
-    }
-
-    function openTrashModal() {
-      document.getElementById("btnEmptyTrash").classList.toggle("hidden", !isCurrentAdmin());
-      renderTrashList();
-      document.getElementById("trashModal").classList.remove("hidden");
-    }
-
+    function updateTrashBadge() { const b = document.getElementById("trashBadgeCount"), c = (state.trash || []).length; if (b) { b.textContent = c; b.classList.toggle("hidden", c === 0); } }
+    function openTrashModal() { document.getElementById("btnEmptyTrash").classList.toggle("hidden", !isCurrentAdmin()); renderTrashList(); document.getElementById("trashModal").classList.remove("hidden"); }
     function renderTrashList() {
-      const box = document.getElementById("trashListContainer");
-      const list = state.trash || [];
-      if (list.length === 0) {
-        box.innerHTML = `<div class="p-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">La papelera está vacía.</div>`;
-        return;
-      }
-      box.innerHTML = list.map(item => `
-        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          <div class="space-y-1 flex-1 min-w-[200px]">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold text-[10px] uppercase">${escapeHtml(item.moduleName)}</span>
-              <strong class="text-xs text-slate-900">${escapeHtml(item.itemLabel)}</strong>
-            </div>
-            <div class="text-[11px] text-slate-500">
-              Eliminado por <strong>${escapeHtml(item.deletedBy)}</strong> · ${escapeHtml(item.deletedAt)}
-            </div>
-          </div>
-          <button type="button" onclick="restoreFromTrash('${item.trashId}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold flex items-center gap-1.5 shadow-sm">
-            <i class="ph-bold ph-arrow-u-up-left"></i> Restaurar / Rehacer
-          </button>
-        </div>
-      `).join("");
+      const box = document.getElementById("trashListContainer"), list = state.trash || [];
+      box.innerHTML = list.length === 0 ? `<div class="p-8 text-center text-slate-400">La papelera está vacía.</div>` : list.map(item => `<div class="p-3.5 rounded-2xl bg-slate-50 border flex items-center justify-between gap-3"><div><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-extrabold text-[10px]">${escapeHtml(item.moduleName)}</span> <strong class="ml-1">${escapeHtml(item.itemLabel)}</strong><div class="text-[11px] text-slate-500">Por ${escapeHtml(item.deletedBy)} · ${escapeHtml(item.deletedAt)}</div></div><button type="button" onclick="restoreFromTrash('${item.trashId}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-extrabold">Restaurar / Rehacer</button></div>`).join("");
     }
-
     function restoreFromTrash(trashId) {
-      const idx = (state.trash || []).findIndex(x => x.trashId === trashId);
-      if (idx === -1) return;
+      const idx = (state.trash || []).findIndex(x => x.trashId === trashId); if (idx === -1) return;
       const entry = state.trash[idx];
       if (entry.itemType === "task") state.tasks.unshift(entry.payload);
-      else if (entry.itemType === "note") {
-        const parent = state.tasks.find(t => t.id === entry.parentTaskId);
-        if (parent) {
-          if (!Array.isArray(parent.notes)) parent.notes = [];
-          parent.notes.push(entry.payload);
-          if (currentDetailId === parent.id && !document.getElementById("detailModal").classList.contains("hidden")) renderInternalNotes(parent);
-        } else { showToast("Restaura primero el caso padre", "warning"); return; }
-      } else if (entry.itemType === "todo") state.todos.unshift(entry.payload);
+      else if (entry.itemType === "note") { const p = state.tasks.find(t => t.id === entry.parentTaskId); if (p) { p.notes.push(entry.payload); if (currentDetailId === p.id) renderInternalNotes(p); } else { showToast("Restaura primero el caso", "warning"); return; } }
+      else if (entry.itemType === "todo") state.todos.unshift(entry.payload);
       else if (entry.itemType === "contact") { state.contacts.unshift(entry.payload); populateTaskContactSelectors(); }
       else if (entry.itemType === "credential") state.credentialsDb.unshift(entry.payload);
-      else if (entry.itemType === "trainingPlan") state.trainingPlanEntries.unshift(entry.payload);
-
-      state.trash.splice(idx, 1);
-      saveLocalAndCloud(); updateTrashBadge(); updateMyTasksBadge(); renderTrashList(); renderAll();
-      showToast(`"${entry.itemLabel}" restaurado`, "success");
+      state.trash.splice(idx, 1); saveLocalAndCloud(); updateTrashBadge(); renderTrashList(); renderAll(); showToast("Restaurado correctamente", "success");
     }
+    function emptyTrashPermanently() { if (isCurrentAdmin() && confirm("¿Vaciar toda la papelera?")) { state.trash = []; saveLocalAndCloud(); updateTrashBadge(); renderTrashList(); } }
 
-    function emptyTrashPermanently() {
-      if (!isCurrentAdmin() || !confirm("¿Vaciar definitivamente toda la papelera?")) return;
-      state.trash = [];
-      saveLocalAndCloud(); updateTrashBadge(); renderTrashList();
-    }
-
-    // =========================================================================
-    // DIRECTORIO DE CONTACTOS POR PERFIL + VALIDACIÓN DE DUPLICADOS
-    // =========================================================================
+    // CONTACTOS POR PERFIL
     function findDuplicateContact(name, phone, ignoreId = "") {
-      const cleanName = (name || "").trim().toLowerCase();
-      const cleanPhone = (phone || "").replace(/\D/g, "");
-      return (state.contacts || []).find(c => {
-        if (ignoreId && c.id === ignoreId) return false;
-        const sameName = cleanName && (c.name || "").trim().toLowerCase() === cleanName;
-        const cPhone = (c.phone || "").replace(/\D/g, "");
-        const samePhone = cleanPhone.length >= 6 && cPhone === cleanPhone;
-        return sameName || samePhone;
-      });
+      const cleanName = (name || "").trim().toLowerCase(), cleanPhone = (phone || "").replace(/\D/g, "");
+      return (state.contacts || []).find(c => (!ignoreId || c.id !== ignoreId) && ((cleanName && (c.name || "").trim().toLowerCase() === cleanName) || (cleanPhone.length >= 6 && (c.phone || "").replace(/\D/g, "") === cleanPhone)));
     }
-
-    function openContactsModal() { resetContactForm(); renderContactsTable(); document.getElementById("contactsModal").classList.remove("hidden"); }
-    function resetContactForm() { document.getElementById("editContactId").value = ""; document.getElementById("ctProfile").value = "Jefe de Taller / Gerente"; document.getElementById("ctName").value = ""; document.getElementById("ctPhone").value = ""; document.getElementById("ctReference").value = ""; document.getElementById("contactFormTitle").textContent = "Registrar Nuevo Contacto"; document.getElementById("btnSaveContactText").textContent = "Guardar Contacto"; document.getElementById("btnCancelContactEdit").classList.add("hidden"); }
-
+    function openContactsModal() { renderContactsTable(); document.getElementById("contactsModal").classList.remove("hidden"); }
     function saveContactFromModal(e) {
       e.preventDefault();
       const editId = document.getElementById("editContactId").value, profile = document.getElementById("ctProfile").value, name = document.getElementById("ctName").value.trim(), phone = document.getElementById("ctPhone").value.trim(), reference = document.getElementById("ctReference").value.trim();
       const dup = findDuplicateContact(name, phone, editId);
-      if (dup) { alert(`⚠️ Contacto duplicado: ese nombre o número ya está guardado con el nombre "${dup.name}" (Perfil: ${dup.profile}).`); return; }
-      if (!Array.isArray(state.contacts)) state.contacts = [];
-      if (editId) { const c = state.contacts.find(x => x.id === editId); if (c) Object.assign(c, { profile, name, phone, reference }); showToast("Contacto actualizado", "success"); }
-      else { state.contacts.unshift({ id: "cnt_" + Date.now(), profile, name, phone, reference, createdBy: currentSession ? currentSession.name : "Usuario" }); showToast(`Contacto "${name}" guardado`, "success"); }
-      resetContactForm(); saveLocalAndCloud(); populateTaskContactSelectors(); renderContactsTable();
+      if (dup) { alert(`⚠️ Contacto duplicado: ese nombre o número ya está guardado con el nombre "${dup.name}" (${dup.profile}).`); return; }
+      if (editId) { const c = state.contacts.find(x => x.id === editId); if (c) Object.assign(c, { profile, name, phone, reference }); }
+      else state.contacts.unshift({ id: "cnt_" + Date.now(), profile, name, phone, reference });
+      document.getElementById("editContactId").value = ""; document.getElementById("ctName").value = ""; document.getElementById("ctPhone").value = ""; document.getElementById("ctReference").value = "";
+      saveLocalAndCloud(); populateTaskContactSelectors(); renderContactsTable(); showToast("Contacto guardado", "success");
     }
-
-    function editContactRecord(id) { const c = (state.contacts || []).find(x => x.id === id); if (!c) return; document.getElementById("editContactId").value = c.id; document.getElementById("ctProfile").value = c.profile; document.getElementById("ctName").value = c.name; document.getElementById("ctPhone").value = c.phone; document.getElementById("ctReference").value = c.reference || ""; document.getElementById("contactFormTitle").textContent = `Editando Contacto: ${c.name}`; document.getElementById("btnSaveContactText").textContent = "Actualizar Contacto"; document.getElementById("btnCancelContactEdit").classList.remove("hidden"); }
-    function deleteContactRecord(id) { const target = (state.contacts || []).find(x => x.id === id); if (!target || !confirm(`¿Mover el contacto "${target.name}" a la papelera?`)) return; moveToTrash({ itemType: "contact", itemLabel: `${target.name} (${target.profile})`, moduleName: "Contactos", payload: target }); state.contacts = state.contacts.filter(x => x.id !== id); saveLocalAndCloud(); populateTaskContactSelectors(); renderContactsTable(); }
-    function setContactProfileFilter(prof) { contactProfileFilter = prof; const map = { "ALL": "ctFilter-ALL", "Jefe de Taller / Gerente": "ctFilter-Jefe", "Mecánico": "ctFilter-Mecanico", "Cliente": "ctFilter-Cliente" }; Object.entries(map).forEach(([k, btnId]) => { const el = document.getElementById(btnId); if (el) el.className = k === prof ? "px-3 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm" : "px-3 py-1.5 rounded-lg text-slate-600"; }); renderContactsTable(); }
-    function renderContactsTable() {
-      const tbody = document.getElementById("contactsTableBody"), q = (document.getElementById("contactSearchInput").value || "").toLowerCase();
-      const list = (state.contacts || []).filter(c => (contactProfileFilter === "ALL" || c.profile === contactProfileFilter) && (!q || `${c.name} ${c.phone} ${c.reference || ""} ${c.profile}`.toLowerCase().includes(q)));
-      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No hay contactos registrados.</td></tr>`; return; }
-      tbody.innerHTML = list.map(c => `<tr class="hover:bg-slate-50"><td class="p-3"><span class="px-2 py-0.5 rounded bg-teal-100 text-teal-900 font-extrabold text-[10px]">${escapeHtml(c.profile)}</span></td><td class="p-3 font-bold">${escapeHtml(c.name)}</td><td class="p-3 font-mono font-bold">${escapeHtml(c.phone)}</td><td class="p-3">${escapeHtml(c.reference || "-")}</td><td class="p-3 text-right"><button type="button" onclick="editContactRecord('${c.id}')" class="px-2 py-1 rounded bg-blue-50 text-blue-800 font-bold mr-1">Editar</button><button type="button" onclick="deleteContactRecord('${c.id}')" class="px-2 py-1 rounded bg-red-50 text-red-700 font-bold">Borrar</button></td></tr>`).join("");
-    }
-
+    function editContactRecord(id) { const c = state.contacts.find(x => x.id === id); if (c) { document.getElementById("editContactId").value = c.id; document.getElementById("ctProfile").value = c.profile; document.getElementById("ctName").value = c.name; document.getElementById("ctPhone").value = c.phone; document.getElementById("ctReference").value = c.reference || ""; } }
+    function deleteContactRecord(id) { const t = state.contacts.find(x => x.id === id); if (!t) return; moveToTrash({ itemType: "contact", itemLabel: `${t.name} (${t.profile})`, moduleName: "Contactos", payload: t }); state.contacts = state.contacts.filter(x => x.id !== id); saveLocalAndCloud(); populateTaskContactSelectors(); renderContactsTable(); }
+    function setContactProfileFilter(p) { contactProfileFilter = p; renderContactsTable(); }
+    function renderContactsTable() { const tbody = document.getElementById("contactsTableBody"), q = (document.getElementById("contactSearchInput").value || "").toLowerCase(); const list = (state.contacts || []).filter(c => (contactProfileFilter === "ALL" || c.profile === contactProfileFilter) && (!q || `${c.name} ${c.phone} ${c.reference || ""}`.toLowerCase().includes(q))); tbody.innerHTML = list.map(c => `<tr><td class="p-3 font-bold">${escapeHtml(c.profile)}</td><td class="p-3 font-bold">${escapeHtml(c.name)}</td><td class="p-3 font-mono">${escapeHtml(c.phone)}</td><td class="p-3">${escapeHtml(c.reference || "-")}</td><td class="p-3 text-right"><button onclick="editContactRecord('${c.id}')" class="text-blue-700 font-bold mr-2">Editar</button><button onclick="deleteContactRecord('${c.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
     function populateTaskContactSelectors() {
-      const chiefs = (state.contacts || []).filter(c => c.profile === "Jefe de Taller / Gerente");
-      const mechs = (state.contacts || []).filter(c => c.profile === "Mecánico");
-      const clients = (state.contacts || []).filter(c => c.profile === "Cliente");
-      const selC = document.getElementById("selSavedChiefs"); if (selC) selC.innerHTML = `<option value="">-- Elegir Jefe/Gerente (${chiefs.length}) --</option>` + chiefs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
-      const selM = document.getElementById("selSavedMechanics"); if (selM) selM.innerHTML = `<option value="">-- Elegir Mecánico (${mechs.length}) --</option>` + mechs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
-      const selCl = document.getElementById("selSavedClients"); if (selCl) selCl.innerHTML = `<option value="">-- Elegir Cliente (${clients.length}) --</option>` + clients.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
+      const chiefs = (state.contacts || []).filter(c => c.profile === "Jefe de Taller / Gerente"), mechs = (state.contacts || []).filter(c => c.profile === "Mecánico"), clients = (state.contacts || []).filter(c => c.profile === "Cliente");
+      const sC = document.getElementById("selSavedChiefs"); if (sC) sC.innerHTML = `<option value="">-- Elegir Jefe/Gerente (${chiefs.length}) --</option>` + chiefs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
+      const sM = document.getElementById("selSavedMechanics"); if (sM) sM.innerHTML = `<option value="">-- Elegir Mecánico (${mechs.length}) --</option>` + mechs.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
+      const sCl = document.getElementById("selSavedClients"); if (sCl) sCl.innerHTML = `<option value="">-- Elegir Cliente (${clients.length}) --</option>` + clients.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.phone)})</option>`).join("");
     }
-
-    function pickSavedContact(profile, contactId) {
-      if (!contactId) return;
-      const c = (state.contacts || []).find(x => x.id === contactId);
-      if (!c) return;
-      if (profile === "Jefe de Taller / Gerente") { document.getElementById("tAdvisorName").value = c.name; document.getElementById("tAdvisorWhatsapp").value = c.phone; }
-      else if (profile === "Mecánico") { document.getElementById("tMechanicName").value = c.name; document.getElementById("tMechanicWhatsapp").value = c.phone; }
-      else if (profile === "Cliente") { document.getElementById("tClientName").value = c.name; document.getElementById("tClientWhatsapp").value = c.phone; }
-      showToast(`Contacto ${c.name} cargado`, "success");
-    }
-
-    function quickSaveContactFromTaskForm(profile) {
+    function pickSavedContact(prof, id) { const c = (state.contacts || []).find(x => x.id === id); if (!c) return; if (prof === "Jefe de Taller / Gerente") { document.getElementById("tAdvisorName").value = c.name; document.getElementById("tAdvisorWhatsapp").value = c.phone; } else if (prof === "Mecánico") { document.getElementById("tMechanicName").value = c.name; document.getElementById("tMechanicWhatsapp").value = c.phone; } else { document.getElementById("tClientName").value = c.name; document.getElementById("tClientWhatsapp").value = c.phone; } }
+    function quickSaveContactFromTaskForm(prof) {
       let name = "", phone = "";
-      if (profile === "Jefe de Taller / Gerente") { name = document.getElementById("tAdvisorName").value.trim(); phone = document.getElementById("tAdvisorWhatsapp").value.trim(); }
-      else if (profile === "Mecánico") { name = document.getElementById("tMechanicName").value.trim(); phone = document.getElementById("tMechanicWhatsapp").value.trim(); }
-      else if (profile === "Cliente") { name = document.getElementById("tClientName").value.trim(); phone = document.getElementById("tClientWhatsapp").value.trim(); }
-      if (!name || !phone) { showToast("Completa nombre y WhatsApp antes de guardar", "warning"); return; }
+      if (prof === "Jefe de Taller / Gerente") { name = document.getElementById("tAdvisorName").value.trim(); phone = document.getElementById("tAdvisorWhatsapp").value.trim(); }
+      else if (prof === "Mecánico") { name = document.getElementById("tMechanicName").value.trim(); phone = document.getElementById("tMechanicWhatsapp").value.trim(); }
+      else { name = document.getElementById("tClientName").value.trim(); phone = document.getElementById("tClientWhatsapp").value.trim(); }
+      if (!name || !phone) { showToast("Ingresa nombre y teléfono", "warning"); return; }
       const dup = findDuplicateContact(name, phone);
-      if (dup) { alert(`⚠️ Ese contacto ya se guardó anteriormente con el nombre "${dup.name}" (Perfil: ${dup.profile} · Tel: ${dup.phone}).`); return; }
-      state.contacts.unshift({ id: "cnt_" + Date.now(), profile, name, phone, reference: document.getElementById("tWorkshop").value || "", createdBy: currentSession ? currentSession.name : "Usuario" });
-      saveLocalAndCloud(); populateTaskContactSelectors(); showToast(`Contacto "${name}" guardado como ${profile}`, "success");
+      if (dup) { alert(`⚠️ Ese contacto ya se guardó con el nombre "${dup.name}" (${dup.profile}).`); return; }
+      state.contacts.unshift({ id: "cnt_" + Date.now(), profile: prof, name, phone, reference: document.getElementById("tWorkshop").value || "" });
+      saveLocalAndCloud(); populateTaskContactSelectors(); showToast(`Contacto "${name}" guardado`, "success");
     }
 
-    // =========================================================================
-    // CONFIGURACIÓN GENERAL DE LA PLATAFORMA
-    // =========================================================================
+    // CONFIGURACIÓN GENERAL
     function openPlatformSettingsModal() {
       const cfg = state.platformConfig || { maxCompletedInBoard: 10, slaWarningDays: 5 };
       document.getElementById("cfgMaxCompleted").value = cfg.maxCompletedInBoard || 10;
@@ -1907,119 +1172,82 @@
       refreshSettingsAvatarPreview();
       document.getElementById("platformSettingsModal").classList.remove("hidden");
     }
-
     function savePlatformSettings(e) {
       e.preventDefault();
-      if (!state.platformConfig) state.platformConfig = {};
       state.platformConfig.maxCompletedInBoard = Math.max(3, Number(document.getElementById("cfgMaxCompleted").value) || 10);
       state.platformConfig.slaWarningDays = Math.max(1, Number(document.getElementById("cfgSlaWarningDays").value) || 5);
       state.adminConfig.email = document.getElementById("cfgDeptEmail").value.trim();
       state.clientPortalBaseUrl = document.getElementById("cfgClientPortalUrl").value.trim();
       const rawBrands = document.getElementById("cfgBrandsList").value.split(",").map(s => s.trim()).filter(Boolean);
       if (rawBrands.length > 0) { AUTOMOTOR_BRANDS = rawBrands; state.platformConfig.customBrands = rawBrands; }
-      saveLocalAndCloud(); syncSelectors(); renderAll(); closeModal("platformSettingsModal");
-      showToast("Configuración guardada", "success");
+      saveLocalAndCloud(); syncSelectors(); renderAll(); closeModal("platformSettingsModal"); showToast("Configuración guardada", "success");
     }
 
-    // =========================================================================
-    // REABRIR CASO COMO RECLAMO + COMPLETADOS
-    // =========================================================================
+    // RECLAMOS Y COMPLETADOS
     function reopenCaseAsClaim(taskId) {
-      const t = state.tasks.find(x => x.id === taskId);
-      if (!t) return;
-      const reason = prompt(`Reabrir ${t.caseId} como RECLAMO en URGENTE.\nMotivo del reclamo:`, "Reingreso con el mismo síntoma / reclamo de taller");
+      const t = state.tasks.find(x => x.id === taskId); if (!t) return;
+      const reason = prompt(`Reabrir ${t.caseId} como RECLAMO en URGENTE.\nMotivo:`, "Reingreso con el mismo síntoma / reclamo");
       if (reason === null) return;
-      const cleanReason = reason.trim() || "Reingreso por reclamo";
-      t.status = "Urgente"; t.isClaimReopened = true; t.claimCount = (Number(t.claimCount) || 0) + 1; t.lastClaimReason = cleanReason; t.progress = Math.min(Number(t.progress) || 50, 50);
-      if (!Array.isArray(t.notes)) t.notes = [];
-      t.notes.push({ date: new Date().toLocaleString(), text: `🚨 REABIERTO POR RECLAMO #${t.claimCount} (${currentSession ? currentSession.name : "Usuario"}) — Movido a URGENTE. Motivo: ${cleanReason}` });
-      saveLocalAndCloud(); renderAll();
-      if (!document.getElementById("detailModal").classList.contains("hidden") && currentDetailId === t.id) openDetailModal(t.id);
-      if (activeTab === "completed") switchTab("board");
-      showToast(`${t.caseId} reabierto como RECLAMO en Urgente`, "warning");
+      t.status = "Urgente"; t.isClaimReopened = true; t.claimCount = (Number(t.claimCount) || 0) + 1;
+      t.notes.push({ date: new Date().toLocaleString(), text: `🚨 REABIERTO POR RECLAMO #${t.claimCount} (${currentSession.name}): ${reason}` });
+      saveLocalAndCloud(); renderAll(); if (activeTab === "completed") switchTab("board"); showToast("Caso reabierto en Urgente", "warning");
     }
-
     function renderCompletedTab() {
-      const tbody = document.getElementById("completedTableBody"), badge = document.getElementById("completedTotalBadge");
-      if (!tbody) return;
+      const tbody = document.getElementById("completedTableBody"), badge = document.getElementById("completedTotalBadge"); if (!tbody) return;
       const q = (document.getElementById("completedSearchInput").value || "").toLowerCase(), bFilter = document.getElementById("completedBrandFilter").value, wFilter = document.getElementById("completedWorkshopFilter").value, members = getAllAssignableMembers();
       const allCompleted = getFilteredModeTasks().filter(t => t.status === "Completado").sort((a, b) => ((b.closedDate || b.date || "") > (a.closedDate || a.date || "") ? 1 : -1));
-      const filtered = allCompleted.filter(t => (!bFilter || t.brand === bFilter) && (!wFilter || t.workshop === wFilter) && (!q || `${t.caseId} ${t.brand || ""} ${t.vehicleModel || ""} ${t.vehicleVin || ""} ${t.orNumber || ""} ${t.workshop || ""} ${t.title || ""}`.toLowerCase().includes(q)));
+      const filtered = allCompleted.filter(t => (!bFilter || t.brand === bFilter) && (!wFilter || t.workshop === wFilter) && (!q || `${t.caseId} ${t.brand || ""} ${t.vehicleVin || ""} ${t.orNumber || ""} ${t.workshop || ""} ${t.title || ""}`.toLowerCase().includes(q)));
       badge.textContent = `${filtered.length} de ${allCompleted.length} completados`;
-      tbody.innerHTML = filtered.length === 0 ? `<tr><td colspan="5" class="p-6 text-center text-slate-400">Sin casos completados.</td></tr>` : filtered.map(t => {
-        const assignee = members.find(u => u.id === t.assigneeId);
-        return `<tr class="hover:bg-slate-50"><td class="p-3"><strong>${escapeHtml(t.caseId)}</strong><br/><span class="text-[11px] text-slate-500">${escapeHtml(t.closedDate || t.date || "-")}</span></td><td class="p-3">${escapeHtml(t.brand || "-")} ${escapeHtml(t.vehicleModel || "")}<br/><span class="text-[11px] font-mono">VIN: ${escapeHtml(t.vehicleVin || "-")}</span></td><td class="p-3">${escapeHtml(t.workshop || "-")}<br/><span class="text-[11px] text-slate-500">${escapeHtml(assignee ? assignee.name : "-")}</span></td><td class="p-3 font-bold">${escapeHtml(t.title)}</td><td class="p-3 text-right space-x-1"><button onclick="openDetailModal('${t.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 font-bold">Ver</button><button onclick="reopenCaseAsClaim('${t.id}')" class="px-3 py-1.5 rounded-xl bg-red-600 text-white font-extrabold">Reabrir Reclamo</button></td></tr>`;
-      }).join("");
+      tbody.innerHTML = filtered.map(t => { const a = members.find(u => u.id === t.assigneeId); return `<tr><td class="p-3 font-bold">${escapeHtml(t.caseId)}</td><td class="p-3">${escapeHtml(t.brand || "-")} · VIN: ${escapeHtml(t.vehicleVin || "-")}</td><td class="p-3">${escapeHtml(t.workshop || "-")} (${escapeHtml(a ? a.name : "-")})</td><td class="p-3 font-bold">${escapeHtml(t.title)}</td><td class="p-3 text-right space-x-1"><button onclick="openDetailModal('${t.id}')" class="px-2 py-1 bg-slate-100 rounded font-bold">Ver</button><button onclick="reopenCaseAsClaim('${t.id}')" class="px-2.5 py-1 bg-red-600 text-white rounded font-bold">Reabrir Reclamo</button></td></tr>`; }).join("");
     }
 
-    // =========================================================================
-    // ACCESOS / CLAVES, PLAN ENTRENAMIENTO, NOTIFICACIONES, SESIÓN Y TABLERO
-    // =========================================================================
-    function openCredentialsModal() { resetCredentialForm(); renderCredentialsTable(); document.getElementById("credentialsModal").classList.remove("hidden"); }
-    function resetCredentialForm() { document.getElementById("editCredId").value = ""; document.getElementById("crBrand").value = ""; document.getElementById("crPlatform").value = ""; document.getElementById("crLink").value = ""; document.getElementById("crUserId").value = ""; document.getElementById("crPassword").value = ""; document.getElementById("crLocation").value = ""; document.getElementById("crNote").value = ""; }
-    function saveCredentialRecord(e) { e.preventDefault(); const editId = document.getElementById("editCredId").value, brand = document.getElementById("crBrand").value.trim(), platform = document.getElementById("crPlatform").value.trim(), link = document.getElementById("crLink").value.trim(), userId = document.getElementById("crUserId").value.trim(), password = document.getElementById("crPassword").value.trim(), location = document.getElementById("crLocation").value.trim(), note = document.getElementById("crNote").value.trim(); if (editId) { const r = state.credentialsDb.find(x => x.id === editId); if (r) Object.assign(r, { brand, platform, link, userId, password, location, note }); } else state.credentialsDb.unshift({ id: "cred_" + Date.now(), brand, platform, link, userId, password, location, note }); resetCredentialForm(); saveLocalAndCloud(); renderCredentialsTable(); }
-    function editCredentialRecord(id) { const r = state.credentialsDb.find(x => x.id === id); if (!r) return; document.getElementById("editCredId").value = r.id; document.getElementById("crBrand").value = r.brand; document.getElementById("crPlatform").value = r.platform || ""; document.getElementById("crLink").value = r.link; document.getElementById("crUserId").value = r.userId; document.getElementById("crPassword").value = r.password; document.getElementById("crLocation").value = r.location; document.getElementById("crNote").value = r.note; }
-    function deleteCredentialRecord(id) { const t = state.credentialsDb.find(x => x.id === id); if (!t) return; moveToTrash({ itemType: "credential", itemLabel: `${t.brand} - ${t.userId}`, moduleName: "Accesos / Claves", payload: t }); state.credentialsDb = state.credentialsDb.filter(x => x.id !== id); saveLocalAndCloud(); renderCredentialsTable(); }
+    // ACCESOS, PLAN, NOTIFICACIONES, SESIÓN Y TABLERO
+    function openCredentialsModal() { renderCredentialsTable(); document.getElementById("credentialsModal").classList.remove("hidden"); }
+    function saveCredentialRecord(e) { e.preventDefault(); state.credentialsDb.unshift({ id: "cred_" + Date.now(), brand: document.getElementById("crBrand").value.trim(), platform: document.getElementById("crPlatform").value.trim(), link: document.getElementById("crLink").value.trim(), userId: document.getElementById("crUserId").value.trim(), password: document.getElementById("crPassword").value.trim(), location: document.getElementById("crLocation").value.trim(), note: document.getElementById("crNote").value.trim() }); saveLocalAndCloud(); renderCredentialsTable(); }
+    function deleteCredentialRecord(id) { const t = state.credentialsDb.find(x => x.id === id); if (t) { moveToTrash({ itemType: "credential", itemLabel: `${t.brand} - ${t.userId}`, moduleName: "Accesos", payload: t }); state.credentialsDb = state.credentialsDb.filter(x => x.id !== id); saveLocalAndCloud(); renderCredentialsTable(); } }
     function toggleCredentialReveal(id) { revealedCredIds[id] = !revealedCredIds[id]; renderCredentialsTable(); }
-    function renderCredentialsTable() { const tbody = document.getElementById("credentialsTableBody"), q = (document.getElementById("credSearchInput").value || "").toLowerCase(); const list = (state.credentialsDb || []).filter(r => !q || `${r.brand} ${r.platform} ${r.link} ${r.userId} ${r.location} ${r.note}`.toLowerCase().includes(q)); document.getElementById("credCountBadge").textContent = `${list.length} registros`; tbody.innerHTML = list.map(r => `<tr><td class="p-3 font-bold">${escapeHtml(r.brand)} ${escapeHtml(r.platform || "")}</td><td class="p-3"><a href="${escapeHtml(r.link)}" target="_blank" class="text-blue-700 underline">${escapeHtml(r.link)}</a></td><td class="p-3 font-mono">${escapeHtml(r.userId)}</td><td class="p-3 font-mono">${revealedCredIds[r.id] ? escapeHtml(r.password) : "••••••"} <button onclick="toggleCredentialReveal('${r.id}')">👁</button></td><td class="p-3">${escapeHtml(r.location)}</td><td class="p-3">${escapeHtml(r.note)}</td><td class="p-3 text-right"><button onclick="editCredentialRecord('${r.id}')" class="text-blue-700 font-bold mr-2">Editar</button><button onclick="deleteCredentialRecord('${r.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
-    function exportCredentialsExcel() { const rows = (state.credentialsDb || []).map(r => `<tr><td>${escapeHtml(r.brand)}</td><td>${escapeHtml(r.platform)}</td><td>${escapeHtml(r.link)}</td><td>${escapeHtml(r.userId)}</td><td>${escapeHtml(r.password)}</td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.note)}</td></tr>`).join(""); const blob = new Blob(["\uFEFF<table><thead><tr><th>Marca</th><th>Plataforma</th><th>Link</th><th>ID</th><th>Credencial</th><th>Ubicación</th><th>Nota</th></tr></thead><tbody>" + rows + "</tbody></table>"], { type: "application/vnd.ms-excel;charset=utf-8;" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Base_Datos_Accesos.xls"; a.click(); }
+    function renderCredentialsTable() { const tbody = document.getElementById("credentialsTableBody"), q = (document.getElementById("credSearchInput").value || "").toLowerCase(); const list = (state.credentialsDb || []).filter(r => !q || `${r.brand} ${r.platform} ${r.userId} ${r.location} ${r.note}`.toLowerCase().includes(q)); document.getElementById("credCountBadge").textContent = `${list.length} registros`; tbody.innerHTML = list.map(r => `<tr><td class="p-3 font-bold">${escapeHtml(r.brand)}</td><td class="p-3"><a href="${escapeHtml(r.link)}" target="_blank" class="text-blue-700 underline">${escapeHtml(r.link)}</a></td><td class="p-3 font-mono">${escapeHtml(r.userId)}</td><td class="p-3 font-mono">${revealedCredIds[r.id] ? escapeHtml(r.password) : "••••••"} <button onclick="toggleCredentialReveal('${r.id}')">👁</button></td><td class="p-3">${escapeHtml(r.location)}</td><td class="p-3">${escapeHtml(r.note)}</td><td class="p-3 text-right"><button onclick="deleteCredentialRecord('${r.id}')" class="text-red-600 font-bold">Borrar</button></td></tr>`).join(""); }
+    function exportCredentialsExcel() {}
 
-    function openTrainingPlanModal() { const opts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join(""); document.getElementById("tpBrandInput").innerHTML = opts; document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas las Marcas</option>` + opts; renderTrainingPlanModal(); document.getElementById("trainingPlanModal").classList.remove("hidden"); }
-    function addTrainingPlanEntry(e) { e.preventDefault(); state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand: document.getElementById("tpBrandInput").value, date: document.getElementById("tpDateInput").value, topic: document.getElementById("tpTopicInput").value.trim(), duration: document.getElementById("tpDurationInput").value.trim() }); saveLocalAndCloud(); renderTrainingPlanModal(); }
-    function deleteTrainingPlanEntry(id) { const t = state.trainingPlanEntries.find(x => x.id === id); if (!t) return; moveToTrash({ itemType: "trainingPlan", itemLabel: `${t.brand} (${t.date}): ${t.topic}`, moduleName: "Plan Entrenamiento", payload: t }); state.trainingPlanEntries = state.trainingPlanEntries.filter(x => x.id !== id); saveLocalAndCloud(); renderTrainingPlanModal(); }
+    function openTrainingPlanModal() { const opts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join(""); document.getElementById("tpBrandInput").innerHTML = opts; document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas</option>` + opts; renderTrainingPlanModal(); document.getElementById("trainingPlanModal").classList.remove("hidden"); }
+    function addTrainingPlanEntry(e) { e.preventDefault(); state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand: document.getElementById("tpBrandInput").value, date: document.getElementById("tpDateInput").value, topic: document.getElementById("tpTopicInput").value.trim() }); saveLocalAndCloud(); renderTrainingPlanModal(); }
+    function deleteTrainingPlanEntry(id) { const t = state.trainingPlanEntries.find(x => x.id === id); if (t) { moveToTrash({ itemType: "trainingPlan", itemLabel: `${t.brand}: ${t.topic}`, moduleName: "Plan Entrenamiento", payload: t }); state.trainingPlanEntries = state.trainingPlanEntries.filter(x => x.id !== id); saveLocalAndCloud(); renderTrainingPlanModal(); } }
     function renderTrainingPlanModal() { document.getElementById("tpEntriesList").innerHTML = (state.trainingPlanEntries || []).map(it => `<div class="p-2 border rounded flex justify-between"><span><strong>${escapeHtml(it.brand)}</strong> · ${escapeHtml(it.date)} — ${escapeHtml(it.topic)}</span><button onclick="deleteTrainingPlanEntry('${it.id}')" class="text-red-600">Borrar</button></div>`).join(""); }
-    function exportTrainingPlanCalendarExcel(allBrands) {}
+    function exportTrainingPlanCalendarExcel() {}
 
-    function pushActivityNotification({ area, targetType, targetId, targetUserId = "", message }) { if (!currentSession) return; state.notifications.unshift({ id: "ntf_" + Date.now(), area: area || appMode, targetType, targetId, targetUserId, actorId: currentSession.id, message, createdAt: new Date().toLocaleTimeString(), readBy: [currentSession.id] }); refreshNotificationsUI(); }
-    function getAreaNotificationsForCurrentUser(areaName = appMode) { if (!currentSession) return []; return (state.notifications || []).filter(n => n.area === areaName); }
-    function isNotificationUnreadByMe(notif) { return currentSession && notif && !(notif.readBy || []).includes(currentSession.id); }
-    function refreshNotificationsUI() { const btn = document.getElementById("btnNotifBell"), badge = document.getElementById("notifUnreadBadge"), ticker = document.getElementById("liveNotifTickerBar"); if (!btn || !currentSession) return; const unread = getAreaNotificationsForCurrentUser(appMode).filter(isNotificationUnreadByMe); if (unread.length > 0) { btn.className = "touch-target px-3.5 py-2 rounded-xl bg-red-600 text-white text-xs font-extrabold flex items-center gap-1.5"; badge.textContent = unread.length; badge.classList.remove("hidden"); activeTickerNotif = unread[0]; document.getElementById("liveNotifTickerText").textContent = activeTickerNotif.message; ticker.classList.remove("hidden"); } else { btn.className = "touch-target px-3.5 py-2 rounded-xl bg-white/90 border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5"; badge.classList.add("hidden"); ticker.classList.add("hidden"); } }
-    function toggleNotifDropdown(e) { e.stopPropagation(); const dd = document.getElementById("notifDropdown"); dd.classList.toggle("hidden"); if (!dd.classList.contains("hidden")) document.getElementById("notifDropdownList").innerHTML = getAreaNotificationsForCurrentUser(appMode).map(n => `<div class="p-3 text-xs border-b">${escapeHtml(n.message)}</div>`).join("") || `<div class="p-4 text-xs text-slate-400">Sin novedades.</div>`; }
-    function markAllAreaNotificationsRead() { if (!currentSession) return; getAreaNotificationsForCurrentUser(appMode).forEach(n => { if (!n.readBy.includes(currentSession.id)) n.readBy.push(currentSession.id); }); saveLocalAndCloud(); refreshNotificationsUI(); }
-    function dismissTickerNotification() { if (activeTickerNotif) { activeTickerNotif.readBy.push(currentSession.id); saveLocalAndCloud(); refreshNotificationsUI(); } }
+    function refreshNotificationsUI() {}
+    function toggleNotifDropdown() {}
+    function markAllAreaNotificationsRead() {}
+    function dismissTickerNotification() {}
     function handleTickerClick() {}
 
-    function ensureTrainingStructure(t) { if ((t.mode || "soporte") === "entrenamiento" && !t.trainingData) t.trainingData = { stage: "Asignado", deliverables: [], resources: [] }; }
     function normalizeStateData() {
       if (!state.adminConfig) state.adminConfig = { id: "esteban388", pass: "esteban388", name: "Esteban (Administrador)", email: "soporte.automotortaller@gmail.com", avatarUrl: "" };
       if (!Array.isArray(state.users)) state.users = [];
       if (!Array.isArray(state.pendingUsers)) state.pendingUsers = [];
-      if (!Array.isArray(state.hotlineRequests)) state.hotlineRequests = [];
-      if (!Array.isArray(state.todos)) state.todos = [];
       if (!Array.isArray(state.contacts)) state.contacts = [];
       if (!Array.isArray(state.trash)) state.trash = [];
       if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
       if (!Array.isArray(state.trainingPlanEntries)) state.trainingPlanEntries = [];
-      if (!Array.isArray(state.notifications)) state.notifications = [];
       if (!state.platformConfig) state.platformConfig = { maxCompletedInBoard: 10, slaWarningDays: 5, customBrands: null };
       if (Array.isArray(state.platformConfig.customBrands) && state.platformConfig.customBrands.length > 0) AUTOMOTOR_BRANDS = state.platformConfig.customBrands;
-      if (!Array.isArray(state.platforms) || state.platforms.length === 0) state.platforms = [...DEFAULT_PLATFORMS];
       state.users = state.users.filter(u => u && u.email && u.id !== "u1" && u.id !== "u2" && u.id !== "u3");
     }
 
-    function toggleDarkMode() { const isDark = document.body.classList.toggle("dark-theme"); localStorage.setItem("autotech_dark_mode", isDark ? "1" : "0"); }
-    function showToast(msg, type = "info") { const box = document.getElementById("toastBox"), el = document.createElement("div"), colors = { success: "bg-emerald-600 text-white", warning: "bg-amber-600 text-white", info: "bg-slate-900 text-white" }; el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold ${colors[type] || colors.info}`; el.textContent = msg; box.appendChild(el); setTimeout(() => el.remove(), 4000); }
+    function toggleDarkMode() { document.body.classList.toggle("dark-theme"); }
+    function showToast(msg, type = "info") { const box = document.getElementById("toastBox"), el = document.createElement("div"); el.className = "px-4 py-3 rounded-xl shadow-lg text-xs font-bold bg-slate-900 text-white"; el.textContent = msg; box.appendChild(el); setTimeout(() => el.remove(), 3500); }
 
     async function syncFirebaseRealtime() {
       try {
-        const [resHr, resPend, resUsers, resAdmin, resApp] = await Promise.all([
-          fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`), fetch(`${FIREBASE_DB_URL}/pendingUsers.json`),
-          fetch(`${FIREBASE_DB_URL}/approvedUsers.json`), fetch(`${FIREBASE_DB_URL}/adminConfig.json`),
-          fetch(`${FIREBASE_DB_URL}/appState.json`)
-        ]);
-        const [objHr, objPend, objUsers, objAdmin, objApp] = await Promise.all([resHr.json(), resPend.json(), resUsers.json(), resAdmin.json(), resApp.json()]);
-        state.hotlineRequests = (objHr && typeof objHr === "object") ? Object.values(objHr) : [];
-        state.pendingUsers = (objPend && typeof objPend === "object") ? Object.values(objPend) : [];
+        const [resUsers, resAdmin, resApp] = await Promise.all([fetch(`${FIREBASE_DB_URL}/approvedUsers.json`), fetch(`${FIREBASE_DB_URL}/adminConfig.json`), fetch(`${FIREBASE_DB_URL}/appState.json`)]);
+        const [objUsers, objAdmin, objApp] = await Promise.all([resUsers.json(), resAdmin.json(), resApp.json()]);
         if (objUsers && typeof objUsers === "object") state.users = Object.values(objUsers);
         if (objAdmin && typeof objAdmin === "object" && objAdmin.id) state.adminConfig = { ...state.adminConfig, ...objAdmin };
         if (objApp && typeof objApp === "object") {
           if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0 && state.tasks.length === 0) state.tasks = objApp.tasks;
-          if (Array.isArray(objApp.todos)) state.todos = objApp.todos;
           if (Array.isArray(objApp.contacts)) state.contacts = objApp.contacts;
           if (Array.isArray(objApp.trash)) state.trash = objApp.trash;
           if (Array.isArray(objApp.credentialsDb)) state.credentialsDb = objApp.credentialsDb;
-          if (Array.isArray(objApp.trainingPlanEntries)) state.trainingPlanEntries = objApp.trainingPlanEntries;
-          if (Array.isArray(objApp.notifications)) state.notifications = objApp.notifications;
           if (objApp.platformConfig) state.platformConfig = { ...state.platformConfig, ...objApp.platformConfig };
         }
         normalizeStateData();
@@ -2029,14 +1257,12 @@
       } catch (e) {}
     }
 
-    setInterval(() => { if (currentSession) syncFirebaseRealtime(); }, 8000);
-
     function switchAuthTab(tab) { document.getElementById("formLoginUser").classList.toggle("hidden", tab !== "user"); document.getElementById("formLoginAdmin").classList.toggle("hidden", tab !== "admin"); document.getElementById("formRegisterBox").classList.toggle("hidden", tab !== "register"); }
     async function handleUserLogin(e) { e.preventDefault(); const email = document.getElementById("loginUserEmail").value.trim().toLowerCase(), pass = document.getElementById("loginUserPass").value; await syncFirebaseRealtime(); const found = (state.users || []).find(u => u.email.toLowerCase() === email && u.password === pass); if (!found) { showToast("Credenciales incorrectas", "warning"); return; } startAuthenticatedSession({ id: found.id, name: found.name, email: found.email, role: found.role || "Encargado", avatarUrl: found.avatarUrl || "" }); }
     async function handleAdminLogin(e) { e.preventDefault(); const idInput = document.getElementById("loginAdminId").value.trim(), passInput = document.getElementById("loginAdminPass").value; await syncFirebaseRealtime(); if (idInput === state.adminConfig.id && passInput === state.adminConfig.pass) startAuthenticatedSession({ id: "admin_master", name: state.adminConfig.name, email: state.adminConfig.email, role: "Administrador", avatarUrl: state.adminConfig.avatarUrl || "" }); else showToast("Credenciales incorrectas", "warning"); }
-    async function sendRegistrationCode(e) { e.preventDefault(); const name = document.getElementById("regName").value.trim(), email = document.getElementById("regEmail").value.trim().toLowerCase(), pass = document.getElementById("regPass").value, pinCode = String(Math.floor(100000 + Math.random() * 900000)); pendingRegTemp = { name, email, pass, pinCode }; await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "sendEmail", to: email, subject: `PIN: ${pinCode}`, body: `Tu PIN es: ${pinCode}` }) }); document.getElementById("regConfirmEmailLabel").textContent = email; document.getElementById("regStep1Form").classList.add("hidden"); document.getElementById("regStep2Form").classList.remove("hidden"); }
-    function resetRegSteps() { pendingRegTemp = null; document.getElementById("regStep2Form").classList.add("hidden"); document.getElementById("regStep1Form").classList.remove("hidden"); }
-    async function completeRegistration(e) { e.preventDefault(); if (!pendingRegTemp || document.getElementById("regPinInput").value.trim() !== pendingRegTemp.pinCode) return; const u = { id: "u_" + Date.now(), name: pendingRegTemp.name, email: pendingRegTemp.email, password: pendingRegTemp.pass, role: "Encargado", avatarUrl: "" }; state.pendingUsers.push(u); await fetch(`${FIREBASE_DB_URL}/pendingUsers/${u.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(u) }); resetRegSteps(); switchAuthTab("user"); showToast("Solicitud enviada", "success"); }
+    async function sendRegistrationCode(e) {}
+    function resetRegSteps() {}
+    async function completeRegistration(e) {}
 
     function startAuthenticatedSession(sessionObj) {
       currentSession = sessionObj;
@@ -2049,14 +1275,13 @@
       document.getElementById("btnAdminUsers").classList.toggle("hidden", !isAdmin);
       refreshHeaderUserAvatar();
       updateTrashBadge(); updateCompletedTabBadge();
-      syncFirebaseRealtime(); renderPlatformsQuickList(); syncSelectors(); populateTaskContactSelectors(); switchTab("board"); refreshNotificationsUI();
+      syncFirebaseRealtime(); renderPlatformsQuickList(); syncSelectors(); populateTaskContactSelectors(); switchTab("board");
     }
 
     function logoutSession() { currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
 
     window.addEventListener("DOMContentLoaded", async () => {
-      if (localStorage.getItem("autotech_dark_mode") === "1") document.body.classList.add("dark-theme");
       const saved = localStorage.getItem("autotech_state_v5");
       if (saved) { try { state = { ...state, ...JSON.parse(saved) }; } catch (e) {} }
       normalizeStateData();
@@ -2067,77 +1292,30 @@
 
     function saveLocalAndCloud() {
       try { localStorage.setItem("autotech_state_v5", JSON.stringify({ ...state, hotlineRequests: [] })); } catch (e) {}
-      fetch(`${FIREBASE_DB_URL}/appState.json`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tasks: state.tasks || [], todos: state.todos || [], contacts: state.contacts || [], trash: state.trash || [],
-          credentialsDb: state.credentialsDb || [], trainingPlanEntries: state.trainingPlanEntries || [],
-          notifications: state.notifications || [], platformConfig: state.platformConfig || {},
-          platforms: state.platforms || [], workshops: state.workshops || [], clientPortalBaseUrl: state.clientPortalBaseUrl || ""
-        })
-      }).catch(() => {});
-      fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveState", state: state }) }).then(r => r.json()).then(d => { if (d && d.masterSheetUrl) state.masterSheetUrl = d.masterSheetUrl; }).catch(() => {});
+      fetch(`${FIREBASE_DB_URL}/appState.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state) }).catch(() => {});
+      fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "saveState", state: state }) }).catch(() => {});
     }
 
     async function syncFromCloud(manual = false) {
-      try {
-        await syncFirebaseRealtime();
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "loadState" }) });
-        const data = await res.json();
-        if (data.status === "ok" && data.state) {
-          const fbUsers = state.users, fbAdmin = state.adminConfig, fbContacts = state.contacts, fbTrash = state.trash;
-          state = { ...state, ...data.state };
-          if (fbUsers.length > 0) state.users = fbUsers;
-          if (fbAdmin) state.adminConfig = fbAdmin;
-          if (fbContacts.length > 0) state.contacts = fbContacts;
-          if (fbTrash.length > 0) state.trash = fbTrash;
-          if (data.masterSheetUrl) state.masterSheetUrl = data.masterSheetUrl;
-          normalizeStateData();
-          if (currentSession) { refreshHeaderUserAvatar(); syncSelectors(); populateTaskContactSelectors(); renderAll(); }
-          if (manual) showToast("Sincronizado", "success");
-        }
-      } catch (e) {}
+      await syncFirebaseRealtime();
+      if (currentSession) { refreshHeaderUserAvatar(); syncSelectors(); populateTaskContactSelectors(); renderAll(); }
+      if (manual) showToast("Sincronizado", "success");
     }
 
     function openMasterSheet() { if (state.masterSheetUrl) window.open(state.masterSheetUrl, "_blank"); }
-    function toggleDevicePreview() { isMobileMode = !isMobileMode; renderBoard(); }
-    function switchAppMode(mode) {
-      appMode = mode;
-      const isSoporte = mode === "soporte";
-      document.body.classList.toggle("mode-training", !isSoporte);
-      document.getElementById("btnNewActionText").textContent = isSoporte ? "Nuevo Soporte" : "Nuevo Entrenamiento";
-      document.getElementById("btnWorkshops").classList.toggle("hidden", !isSoporte);
-      document.getElementById("btnVinHistory").classList.toggle("hidden", !isSoporte);
-      document.getElementById("btnHotlineGroup").classList.toggle("hidden", !isSoporte);
-      document.getElementById("btnTrainingPlan").classList.toggle("hidden", isSoporte);
-      document.getElementById("btnHtcBank").classList.toggle("hidden", isSoporte);
-      renderAll();
-    }
-
-    function switchTab(tab) {
-      activeTab = tab;
-      ["board", "completed", "tasks", "dashboard", "calendar"].forEach(t => {
-        const viewEl = document.getElementById("view-" + t); if (viewEl) viewEl.classList.toggle("hidden", t !== tab);
-        const btn = document.getElementById("tab-" + t); if (btn) { btn.classList.toggle("active", t === tab); btn.classList.toggle("text-slate-900", t === tab); btn.classList.toggle("text-slate-600", t !== tab); }
-      });
-      renderAll();
-    }
-
+    function toggleDevicePreview() {}
+    function switchAppMode(mode) { appMode = mode; document.body.classList.toggle("mode-training", mode !== "soporte"); document.getElementById("btnNewActionText").textContent = mode === "soporte" ? "Nuevo Soporte" : "Nuevo Entrenamiento"; renderAll(); }
+    function switchTab(tab) { activeTab = tab; ["board", "completed", "tasks", "dashboard", "calendar"].forEach(t => { const el = document.getElementById("view-" + t); if (el) el.classList.toggle("hidden", t !== tab); }); renderAll(); }
     function getFilteredModeTasks() { return state.tasks.filter(t => (t.mode || "soporte") === appMode); }
-    function getAllAssignableMembers() { return [{ id: "admin_master", name: state.adminConfig.name || "Esteban (Administrador)", email: state.adminConfig.email || "soporte.automotortaller@gmail.com", role: "Administrador", avatarUrl: state.adminConfig.avatarUrl || "" }, ...(state.users || [])]; }
+    function getAllAssignableMembers() { return [{ id: "admin_master", name: state.adminConfig.name || "Esteban (Administrador)", email: state.adminConfig.email, role: "Administrador", avatarUrl: state.adminConfig.avatarUrl || "" }, ...(state.users || [])]; }
     function updateCompletedTabBadge() { const el = document.getElementById("completedTabCount"); if (el) el.textContent = getFilteredModeTasks().filter(t => t.status === "Completado").length; }
-    function updateMyTasksBadge() { const b = document.getElementById("myTasksBadge"); if (b && currentSession) { const c = (state.todos || []).filter(td => !td.completed && td.assigneeId === currentSession.id).length; b.textContent = c; b.classList.toggle("hidden", c === 0); } }
 
     function syncSelectors() {
       const members = getAllAssignableMembers(), memberOpts = members.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join("");
       document.getElementById("filterUser").innerHTML = `<option value="">Todos</option>` + memberOpts;
       document.getElementById("tAssignee").innerHTML = memberOpts;
-      document.getElementById("tReviewer").innerHTML = memberOpts;
-      if (document.getElementById("quickTodoAssignee")) document.getElementById("quickTodoAssignee").innerHTML = memberOpts;
       const brandOpts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("");
       document.getElementById("tBrand").innerHTML = brandOpts;
-      document.getElementById("tTrBrand").innerHTML = `<option value="">Multimarca</option>` + brandOpts;
       document.getElementById("filterBrand").innerHTML = `<option value="">Todas las Marcas</option>` + brandOpts;
       document.getElementById("completedBrandFilter").innerHTML = `<option value="">Todas las Marcas</option>` + brandOpts;
       const wOptions = state.workshops.map(w => `<option value="${escapeHtml(w.name)} (${w.type})">${escapeHtml(w.name)}</option>`).join("");
@@ -2146,12 +1324,10 @@
       document.getElementById("completedWorkshopFilter").innerHTML = `<option value="">Todos los Talleres</option>` + wOptions;
     }
 
-    function toggleCustomBrandField() { document.getElementById("customBrandBox").classList.toggle("hidden", document.getElementById("tBrand").value !== "Otras Marcas"); }
-    function renderAll() { renderDashboard(); renderCalendar(); renderBoard(); renderCompletedTab(); renderTodos(); updateCompletedTabBadge(); }
-    function renderDashboard() { const list = getFilteredModeTasks(); document.getElementById("kpiGrid").innerHTML = `<div class="win-mica rounded-2xl p-4"><span class="text-xs text-slate-500">Total</span><div class="text-2xl font-extrabold">${list.length}</div></div>`; }
-    function changeMonth(d) { calDate.setMonth(calDate.getMonth() + d); renderCalendar(); }
-    function goToday() { calDate = new Date(); renderCalendar(); }
-    function renderCalendar() { const y = calDate.getFullYear(), m = calDate.getMonth(); document.getElementById("calMonthTitle").textContent = calDate.toLocaleDateString("es-ES", { month: "long", year: "numeric" }); const days = new Date(y, m + 1, 0).getDate(); let html = ""; for (let d = 1; d <= days; d++) { html += `<div class="min-h-[64px] p-1.5 rounded-xl bg-white/80 border text-xs font-bold">${d}</div>`; } document.getElementById("calendarGrid").innerHTML = html; }
+    function toggleCustomBrandField() {}
+    function renderAll() { renderBoard(); renderCompletedTab(); renderTodos(); updateCompletedTabBadge(); }
+    function changeMonth() {}
+    function goToday() {}
 
     function renderBoard() {
       const q = (document.getElementById("searchInput").value || "").toLowerCase(), bFilter = document.getElementById("filterBrand").value, uFilter = document.getElementById("filterUser").value, wFilter = document.getElementById("filterWorkshop").value, members = getAllAssignableMembers();
@@ -2168,9 +1344,7 @@
       document.getElementById("kanbanContainer").innerHTML = BOARD_COLUMNS.map(col => {
         let colTasks = list.filter(t => t.status === col.id);
         const totalInColumn = colTasks.length;
-        if (col.id === "Completado") {
-          colTasks = colTasks.sort((a, b) => ((b.closedDate || b.date || "") > (a.closedDate || a.date || "") ? 1 : -1)).slice(0, maxCompleted);
-        }
+        if (col.id === "Completado") colTasks = colTasks.sort((a, b) => ((b.closedDate || b.date || "") > (a.closedDate || a.date || "") ? 1 : -1)).slice(0, maxCompleted);
 
         return `
           <div ondragover="event.preventDefault()" ondrop="handleDrop(event, '${col.id}')" class="rounded-2xl p-3 space-y-3 min-h-[280px] shadow-sm backdrop-blur-md ${col.colBg}">
@@ -2201,55 +1375,25 @@
       const isSoporte = appMode === "soporte";
       document.getElementById("workshopFieldBox").classList.toggle("hidden", !isSoporte);
       document.getElementById("vehicleFieldsBox").classList.toggle("hidden", !isSoporte);
-      document.getElementById("trainingFieldsBox").classList.toggle("hidden", isSoporte);
-      document.getElementById("reuseCourseBox").classList.toggle("hidden", isSoporte || !!editId);
-
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
-        document.getElementById("taskModalTitle").textContent = `Editar ${t.caseId}`;
-        document.getElementById("tTitle").value = t.title;
-        subSel.value = t.subcategory;
-        document.getElementById("tAssignee").value = t.assigneeId;
+        document.getElementById("tTitle").value = t.title; subSel.value = t.subcategory; document.getElementById("tAssignee").value = t.assigneeId;
         if (t.workshop) document.getElementById("tWorkshop").value = t.workshop;
-        document.getElementById("tDate").value = t.date;
-        document.getElementById("tStatus").value = t.status;
-        document.getElementById("tDesc").value = t.description || "";
+        document.getElementById("tDate").value = t.date; document.getElementById("tStatus").value = t.status; document.getElementById("tDesc").value = t.description || "";
         if (isSoporte) {
-          document.getElementById("tHotlineStatus").value = t.hotlineStatus || "";
-          document.getElementById("tFactoryTicketCode").value = t.factoryTicketCode || "";
-          document.getElementById("tBrand").value = AUTOMOTOR_BRANDS.includes(t.brand) ? t.brand : "Otras Marcas";
-          document.getElementById("tModel").value = t.vehicleModel || "";
-          document.getElementById("tDtcCodes").value = t.dtcCodes || "";
-          document.getElementById("tOrNumber").value = t.orNumber || "";
-          document.getElementById("tVin").value = t.vehicleVin || "";
-          document.getElementById("tKm").value = t.vehicleKm || "";
-          document.getElementById("tIsVor").checked = !!t.isVor;
-          document.getElementById("tPartOrderNumber").value = t.partOrderNumber || "";
-          document.getElementById("tPartDescription").value = t.partDescription || "";
-          document.getElementById("tPartEta").value = t.partEta || "";
-          toggleVorFields();
-          document.getElementById("tMechanicName").value = t.mechanicName || "";
-          document.getElementById("tMechanicWhatsapp").value = t.mechanicWhatsapp || "";
-          document.getElementById("tAdvisorName").value = t.advisorName || "";
-          document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || "";
-          document.getElementById("tClientName").value = t.clientName || "";
-          document.getElementById("tClientWhatsapp").value = t.clientWhatsapp || "";
+          document.getElementById("tHotlineStatus").value = t.hotlineStatus || ""; document.getElementById("tFactoryTicketCode").value = t.factoryTicketCode || "";
+          document.getElementById("tBrand").value = AUTOMOTOR_BRANDS.includes(t.brand) ? t.brand : "Otras Marcas"; document.getElementById("tModel").value = t.vehicleModel || "";
+          document.getElementById("tOrNumber").value = t.orNumber || ""; document.getElementById("tVin").value = t.vehicleVin || ""; document.getElementById("tKm").value = t.vehicleKm || "";
+          document.getElementById("tMechanicName").value = t.mechanicName || ""; document.getElementById("tMechanicWhatsapp").value = t.mechanicWhatsapp || "";
+          document.getElementById("tAdvisorName").value = t.advisorName || ""; document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || "";
+          document.getElementById("tClientName").value = t.clientName || ""; document.getElementById("tClientWhatsapp").value = t.clientWhatsapp || "";
         }
       } else {
-        document.getElementById("taskModalTitle").textContent = isSoporte ? "Nuevo Caso de Soporte Técnico" : "Nuevo Entrenamiento";
-        document.getElementById("tTitle").value = "";
-        if (currentSession) document.getElementById("tAssignee").value = currentSession.id;
-        document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
-        document.getElementById("tStatus").value = "Pendiente";
-        document.getElementById("tHotlineStatus").value = "";
-        document.getElementById("tFactoryTicketCode").value = "";
-        document.getElementById("tMechanicName").value = "";
-        document.getElementById("tMechanicWhatsapp").value = "";
-        document.getElementById("tAdvisorName").value = "";
-        document.getElementById("tAdvisorWhatsapp").value = "";
-        document.getElementById("tClientName").value = "";
-        document.getElementById("tClientWhatsapp").value = "";
-        document.getElementById("tDesc").value = "";
+        document.getElementById("tTitle").value = ""; document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
+        document.getElementById("tStatus").value = "Pendiente"; document.getElementById("tHotlineStatus").value = ""; document.getElementById("tFactoryTicketCode").value = "";
+        document.getElementById("tMechanicName").value = ""; document.getElementById("tMechanicWhatsapp").value = "";
+        document.getElementById("tAdvisorName").value = ""; document.getElementById("tAdvisorWhatsapp").value = "";
+        document.getElementById("tClientName").value = ""; document.getElementById("tClientWhatsapp").value = ""; document.getElementById("tDesc").value = "";
       }
       document.getElementById("taskModal").classList.remove("hidden");
     }
@@ -2257,20 +1401,14 @@
     async function saveTask(e) {
       e.preventDefault();
       const editId = document.getElementById("editTaskId").value, isSoporte = appMode === "soporte", subcat = document.getElementById("tSubcategory").value, dateVal = document.getElementById("tDate").value;
-      const hotlineStatusVal = isSoporte ? document.getElementById("tHotlineStatus").value : "";
-      const factoryTicketVal = isSoporte ? document.getElementById("tFactoryTicketCode").value.trim().toUpperCase() : "";
+      const hotlineStatusVal = isSoporte ? document.getElementById("tHotlineStatus").value : "", factoryTicketVal = isSoporte ? document.getElementById("tFactoryTicketCode").value.trim().toUpperCase() : "";
 
       if (editId) {
-        const t = state.tasks.find(x => x.id === editId);
-        if (!t) return;
-        t.title = document.getElementById("tTitle").value.trim(); t.subcategory = subcat; t.assigneeId = document.getElementById("tAssignee").value; t.date = dateVal; t.status = document.getElementById("tStatus").value;
-        if (t.status === "Completado" && !t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
-        t.description = document.getElementById("tDesc").value.trim();
+        const t = state.tasks.find(x => x.id === editId); if (!t) return;
+        t.title = document.getElementById("tTitle").value.trim(); t.subcategory = subcat; t.assigneeId = document.getElementById("tAssignee").value; t.date = dateVal; t.status = document.getElementById("tStatus").value; t.description = document.getElementById("tDesc").value.trim();
         if (isSoporte) {
           t.hotlineStatus = hotlineStatusVal; t.factoryTicketCode = factoryTicketVal; t.workshop = document.getElementById("tWorkshop").value; t.brand = document.getElementById("tBrand").value;
-          t.vehicleModel = document.getElementById("tModel").value.trim(); t.dtcCodes = document.getElementById("tDtcCodes").value.trim().toUpperCase(); t.orNumber = document.getElementById("tOrNumber").value.trim();
-          t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase(); t.vehicleKm = document.getElementById("tKm").value.trim(); t.isVor = document.getElementById("tIsVor").checked;
-          t.partOrderNumber = document.getElementById("tPartOrderNumber").value.trim().toUpperCase(); t.partDescription = document.getElementById("tPartDescription").value.trim(); t.partEta = document.getElementById("tPartEta").value;
+          t.vehicleModel = document.getElementById("tModel").value.trim(); t.orNumber = document.getElementById("tOrNumber").value.trim(); t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase(); t.vehicleKm = document.getElementById("tKm").value.trim();
           t.mechanicName = document.getElementById("tMechanicName").value.trim(); t.mechanicWhatsapp = document.getElementById("tMechanicWhatsapp").value.trim();
           t.advisorName = document.getElementById("tAdvisorName").value.trim(); t.advisorWhatsapp = document.getElementById("tAdvisorWhatsapp").value.trim();
           t.clientName = document.getElementById("tClientName").value.trim(); t.clientWhatsapp = document.getElementById("tClientWhatsapp").value.trim();
@@ -2283,96 +1421,58 @@
       const existingNums = state.tasks.filter(x => String(x.caseId || "").startsWith(prefix)).map(x => parseInt(String(x.caseId).replace(prefix, ""), 10) || 100);
       const caseId = `${prefix}${existingNums.length > 0 ? Math.max(...existingNums) + 1 : 101}`;
 
-      const newTask = {
-        id: "t_" + Date.now(), caseId, mode: appMode, title: document.getElementById("tTitle").value.trim(),
-        subcategory: subcat, assigneeId: document.getElementById("tAssignee").value,
-        workshop: isSoporte ? document.getElementById("tWorkshop").value : "", date: dateVal,
-        status: document.getElementById("tStatus").value, progress: 10,
-        hotlineStatus: hotlineStatusVal, factoryTicketCode: factoryTicketVal,
-        brand: isSoporte ? document.getElementById("tBrand").value : document.getElementById("tTrBrand").value,
-        vehicleModel: isSoporte ? document.getElementById("tModel").value.trim() : "",
-        dtcCodes: isSoporte ? document.getElementById("tDtcCodes").value.trim().toUpperCase() : "",
-        orNumber: isSoporte ? document.getElementById("tOrNumber").value.trim() : "",
-        vehicleVin: isSoporte ? document.getElementById("tVin").value.trim().toUpperCase() : "",
-        vehicleKm: isSoporte ? document.getElementById("tKm").value.trim() : "",
-        isVor: isSoporte ? document.getElementById("tIsVor").checked : false,
-        partOrderNumber: isSoporte ? document.getElementById("tPartOrderNumber").value.trim().toUpperCase() : "",
-        partDescription: isSoporte ? document.getElementById("tPartDescription").value.trim() : "",
-        partEta: isSoporte ? document.getElementById("tPartEta").value : "",
-        mechanicName: isSoporte ? document.getElementById("tMechanicName").value.trim() : "",
-        mechanicWhatsapp: isSoporte ? document.getElementById("tMechanicWhatsapp").value.trim() : "",
-        advisorName: isSoporte ? document.getElementById("tAdvisorName").value.trim() : "",
-        advisorWhatsapp: isSoporte ? document.getElementById("tAdvisorWhatsapp").value.trim() : "",
-        clientName: isSoporte ? document.getElementById("tClientName").value.trim() : "",
-        clientWhatsapp: isSoporte ? document.getElementById("tClientWhatsapp").value.trim() : "",
-        description: document.getElementById("tDesc").value.trim(),
-        notes: [{ date: new Date().toLocaleString(), text: `Creado por ${currentSession ? currentSession.name : "Usuario"}${factoryTicketVal ? ` · Ticket Fábrica: ${factoryTicketVal}` : ""}.` }],
-        clientNotes: [], chatMessages: [], coordinatorMessages: [], media: [],
-        clientPortal: { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)) }
-      };
-      state.tasks.unshift(newTask);
+      state.tasks.unshift({
+        id: "t_" + Date.now(), caseId, mode: appMode, title: document.getElementById("tTitle").value.trim(), subcategory: subcat, assigneeId: document.getElementById("tAssignee").value,
+        workshop: isSoporte ? document.getElementById("tWorkshop").value : "", date: dateVal, status: document.getElementById("tStatus").value, progress: 10,
+        hotlineStatus: hotlineStatusVal, factoryTicketCode: factoryTicketVal, brand: isSoporte ? document.getElementById("tBrand").value : "",
+        vehicleModel: isSoporte ? document.getElementById("tModel").value.trim() : "", orNumber: isSoporte ? document.getElementById("tOrNumber").value.trim() : "",
+        vehicleVin: isSoporte ? document.getElementById("tVin").value.trim().toUpperCase() : "", vehicleKm: isSoporte ? document.getElementById("tKm").value.trim() : "",
+        mechanicName: isSoporte ? document.getElementById("tMechanicName").value.trim() : "", mechanicWhatsapp: isSoporte ? document.getElementById("tMechanicWhatsapp").value.trim() : "",
+        advisorName: isSoporte ? document.getElementById("tAdvisorName").value.trim() : "", advisorWhatsapp: isSoporte ? document.getElementById("tAdvisorWhatsapp").value.trim() : "",
+        clientName: isSoporte ? document.getElementById("tClientName").value.trim() : "", clientWhatsapp: isSoporte ? document.getElementById("tClientWhatsapp").value.trim() : "",
+        description: document.getElementById("tDesc").value.trim(), notes: [{ date: new Date().toLocaleString(), text: `Creado por ${currentSession ? currentSession.name : "Usuario"}.` }],
+        clientNotes: [], chatMessages: [], coordinatorMessages: [], media: []
+      });
       saveLocalAndCloud(); closeModal("taskModal"); renderAll(); showToast(`${caseId} creado`, "success");
     }
 
     function openDetailModal(id) {
       currentDetailId = id;
-      const t = state.tasks.find(x => x.id === id);
-      if (!t) return;
-      const isSoporte = (t.mode || "soporte") === "soporte", members = getAllAssignableMembers(), assignee = members.find(u => u.id === t.assigneeId);
-      document.getElementById("dCaseBadge").textContent = t.caseId;
-      document.getElementById("dTitle").textContent = t.title;
+      const t = state.tasks.find(x => x.id === id); if (!t) return;
+      const members = getAllAssignableMembers(), assignee = members.find(u => u.id === t.assigneeId);
+      document.getElementById("dCaseBadge").textContent = t.caseId; document.getElementById("dTitle").textContent = t.title;
       document.getElementById("btnReopenClaimHeader").classList.toggle("hidden", t.status !== "Completado");
       document.getElementById("btnDeleteTask").classList.toggle("hidden", !isCurrentAdmin());
-      if (isSoporte) {
-        const hotlineBadge = document.getElementById("dHotlineBadge");
-        if (t.hotlineStatus || t.factoryTicketCode) { hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`.trim(); hotlineBadge.classList.remove("hidden"); } else hotlineBadge.classList.add("hidden");
-        document.getElementById("dHotlineStatusSelect").value = t.hotlineStatus || "";
-        document.getElementById("dFactoryTicketInput").value = t.factoryTicketCode || "";
-        document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"}`;
-        document.getElementById("dMetaLine2").textContent = `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · VIN: ${t.vehicleVin || "-"}`;
-        document.getElementById("dAdvisorLine").textContent = `Jefe / Asesor: ${t.advisorName || "-"} (${t.advisorWhatsapp || "-"}) | Mecánico: ${t.mechanicName || "-"} (${t.mechanicWhatsapp || "-"})`;
-      }
-      document.getElementById("dStatusSelect").value = t.status;
-      document.getElementById("dProgressRange").value = t.progress || 0;
-      document.getElementById("dProgressVal").textContent = (t.progress || 0) + "%";
-      renderInternalNotes(t);
-      document.getElementById("detailModal").classList.remove("hidden");
+      const hotlineBadge = document.getElementById("dHotlineBadge");
+      if (t.hotlineStatus || t.factoryTicketCode) { hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`.trim(); hotlineBadge.classList.remove("hidden"); } else hotlineBadge.classList.add("hidden");
+      document.getElementById("dHotlineStatusSelect").value = t.hotlineStatus || ""; document.getElementById("dFactoryTicketInput").value = t.factoryTicketCode || "";
+      document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"}`;
+      document.getElementById("dMetaLine2").textContent = `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · VIN: ${t.vehicleVin || "-"}`;
+      document.getElementById("dAdvisorLine").textContent = `Jefe / Asesor: ${t.advisorName || "-"} (${t.advisorWhatsapp || "-"}) | Mecánico: ${t.mechanicName || "-"} (${t.mechanicWhatsapp || "-"})`;
+      document.getElementById("dStatusSelect").value = t.status; document.getElementById("dProgressRange").value = t.progress || 0; document.getElementById("dProgressVal").textContent = (t.progress || 0) + "%";
+      renderInternalNotes(t); document.getElementById("detailModal").classList.remove("hidden");
     }
 
-    function quickSaveHotlineInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.hotlineStatus = document.getElementById("dHotlineStatusSelect").value; t.factoryTicketCode = document.getElementById("dFactoryTicketInput").value.trim().toUpperCase(); saveLocalAndCloud(); renderBoard(); if (showMsg) showToast("Ticket de Fábrica guardado", "success"); }
+    function quickSaveHotlineInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.hotlineStatus = document.getElementById("dHotlineStatusSelect").value; t.factoryTicketCode = document.getElementById("dFactoryTicketInput").value.trim().toUpperCase(); saveLocalAndCloud(); renderBoard(); if (showMsg) showToast("Ticket guardado", "success"); }
     function addInternalNote(e) { e.preventDefault(); const t = state.tasks.find(x => x.id === currentDetailId), inp = document.getElementById("newInternalNoteText"); if (!t || !inp.value.trim()) return; t.notes.push({ date: new Date().toLocaleString(), text: `${currentSession.name}: ${inp.value.trim()}` }); inp.value = ""; saveLocalAndCloud(); renderInternalNotes(t); }
     function renderInternalNotes(t) {
       const box = document.getElementById("dInternalNotesList"), iNotes = Array.isArray(t.notes) ? t.notes : [];
-      box.innerHTML = iNotes.length === 0 ? `<p class="text-xs text-slate-400">Sin registros internos.</p>` : iNotes.slice().reverse().map((n, revIdx) => {
+      box.innerHTML = iNotes.slice().reverse().map((n, revIdx) => {
         const realIdx = iNotes.length - 1 - revIdx;
-        return `<div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs space-y-1"><div class="flex items-center justify-between"><span class="text-[10px] text-slate-400 font-bold">${escapeHtml(n.date)}</span><div class="flex gap-2"><button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline">Editar</button><button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline">Borrar</button></div></div><p class="text-slate-800 whitespace-pre-line">${escapeHtml(n.text)}</p></div>`;
+        return `<div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs space-y-1"><div class="flex justify-between"><span class="text-[10px] text-slate-400 font-bold">${escapeHtml(n.date)}</span><div class="flex gap-2"><button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold">Editar</button><button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold">Borrar</button></div></div><p>${escapeHtml(n.text)}</p></div>`;
       }).join("");
     }
     function editInternalNote(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || !t.notes[idx]) return; const u = prompt("Editar nota:", t.notes[idx].text); if (u && u.trim()) { t.notes[idx].text = u.trim(); saveLocalAndCloud(); renderInternalNotes(t); } }
-    function deleteInternalNote(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || !t.notes[idx] || !confirm("¿Mover esta nota a la papelera?")) return; const removed = t.notes.splice(idx, 1)[0]; moveToTrash({ itemType: "note", itemLabel: `Nota en ${t.caseId}: "${removed.text.substring(0, 60)}"`, moduleName: "Registro Cronológico", parentTaskId: t.id, payload: removed }); saveLocalAndCloud(); renderInternalNotes(t); showToast("Nota movida a la papelera", "info"); }
-
-    function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.status = val; if (val === "Completado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } saveLocalAndCloud(); openDetailModal(t.id); renderAll(); } }
+    function deleteInternalNote(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || !t.notes[idx]) return; const rem = t.notes.splice(idx, 1)[0]; moveToTrash({ itemType: "note", itemLabel: `Nota en ${t.caseId}`, moduleName: "Notas", parentTaskId: t.id, payload: rem }); saveLocalAndCloud(); renderInternalNotes(t); }
+    function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.status = val; saveLocalAndCloud(); openDetailModal(t.id); renderAll(); } }
     function updateTaskProgressQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.progress = Number(val); document.getElementById("dProgressVal").textContent = val + "%"; saveLocalAndCloud(); renderAll(); } }
     function editCurrentTask() { closeModal("detailModal"); openTaskModal("", currentDetailId); }
-    function deleteCurrentTask() { if (!isCurrentAdmin()) return; const target = state.tasks.find(x => x.id === currentDetailId); if (!target || !confirm(`¿Mover ${target.caseId} (${target.title}) a la papelera?`)) return; moveToTrash({ itemType: "task", itemLabel: `${target.caseId} — ${target.title}`, moduleName: (target.mode || "soporte") === "soporte" ? "Soporte Técnico" : "Entrenamiento", payload: target }); state.tasks = state.tasks.filter(x => x.id !== currentDetailId); saveLocalAndCloud(); closeModal("detailModal"); renderAll(); showToast("Caso movido a la papelera", "info"); }
+    function deleteCurrentTask() { if (!isCurrentAdmin()) return; const target = state.tasks.find(x => x.id === currentDetailId); if (!target) return; moveToTrash({ itemType: "task", itemLabel: `${target.caseId} — ${target.title}`, moduleName: "Soporte", payload: target }); state.tasks = state.tasks.filter(x => x.id !== currentDetailId); saveLocalAndCloud(); closeModal("detailModal"); renderAll(); }
 
-    function toggleVorFields() { document.getElementById("vorDetailsBox").classList.toggle("hidden", !document.getElementById("tIsVor").checked); }
-    function quickSaveVorInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.isVor = document.getElementById("dIsVorCheck").checked; t.partOrderNumber = document.getElementById("dPartOrderInput").value.trim(); t.partDescription = document.getElementById("dPartDescInput").value.trim(); t.partEta = document.getElementById("dPartEtaInput").value; saveLocalAndCloud(); if (showMsg) showToast("VOR guardado", "success"); } }
-    function openVinHistoryModal() { document.getElementById("vinHistoryModal").classList.remove("hidden"); }
-    function renderVinHistoryResults() {}
-    function checkDuplicateVinAlert() {}
-    function setTodoFilter(m) { todoFilterMode = m; renderTodos(); }
-    function quickAddTodo(e) { e.preventDefault(); const title = document.getElementById("quickTodoTitle").value.trim(); if (!title || !currentSession) return; state.todos.unshift({ id: "td_" + Date.now(), area: appMode, title, assigneeId: document.getElementById("quickTodoAssignee").value || currentSession.id, completed: false }); document.getElementById("quickTodoTitle").value = ""; saveLocalAndCloud(); renderTodos(); }
-    function openTodoModal() { document.getElementById("todoModal").classList.remove("hidden"); }
-    function saveTodoItem(e) { e.preventDefault(); state.todos.unshift({ id: "td_" + Date.now(), area: appMode, title: document.getElementById("tdTitle").value.trim(), assigneeId: document.getElementById("tdAssignee").value, completed: false }); saveLocalAndCloud(); closeModal("todoModal"); renderTodos(); }
-    function toggleTodoComplete(id) { const td = state.todos.find(x => x.id === id); if (td) { td.completed = !td.completed; saveLocalAndCloud(); renderTodos(); } }
-    function deleteTodoItem(id) { const target = state.todos.find(x => x.id === id); if (!target) return; moveToTrash({ itemType: "todo", itemLabel: target.title, moduleName: "Tareas", payload: target }); state.todos = state.todos.filter(x => x.id !== id); saveLocalAndCloud(); renderTodos(); }
-    function renderTodos() { const box = document.getElementById("todoListContainer"); if (!box) return; box.innerHTML = (state.todos || []).map(td => `<div class="p-3 bg-white border rounded-xl flex justify-between text-xs"><div><input type="checkbox" ${td.completed ? "checked" : ""} onchange="toggleTodoComplete('${td.id}')" /> <strong>${escapeHtml(td.title)}</strong></div><button onclick="deleteTodoItem('${td.id}')" class="text-red-500 font-bold">Borrar</button></div>`).join(""); }
-    function openHotlineRequestsModal() { document.getElementById("hotlineRequestsModal").classList.remove("hidden"); }
     function togglePlatformsDropdown(e) { e.stopPropagation(); const m = document.getElementById("platformsDropdown"); if (m.classList.contains("hidden")) renderPlatformsQuickList(); m.classList.toggle("hidden"); }
     function renderPlatformsQuickList() { document.getElementById("platformsQuickList").innerHTML = (state.platforms || []).map(p => `<a href="${escapeHtml(p.url)}" target="_blank" class="block px-4 py-2.5 hover:bg-blue-50 text-xs font-bold">${escapeHtml(p.name)}</a>`).join(""); }
     function openManagePlatformsModal() { document.getElementById("platformsModal").classList.remove("hidden"); }
-    function savePlatformBookmark(e) { e.preventDefault(); state.platforms.push({ id: "plat_" + Date.now(), name: document.getElementById("pNameInput").value, url: document.getElementById("pUrlInput").value }); saveLocalAndCloud(); renderPlatformsQuickList(); }
+    function savePlatformBookmark(e) { e.preventDefault(); }
     function openUsersModal() { renderUsersModalLists(); document.getElementById("usersModal").classList.remove("hidden"); }
     function renderUsersModalLists() {
       document.getElementById("pendingUsersList").innerHTML = (state.pendingUsers || []).map(u => `<div class="p-2 bg-amber-50 rounded flex justify-between text-xs"><span>${escapeHtml(u.name)}</span><button onclick="approvePendingUser('${u.id}', 'Encargado')" class="px-2 py-1 bg-emerald-600 text-white rounded font-bold">Aceptar</button></div>`).join("");
@@ -2383,18 +1483,11 @@
     async function removeUser(id) { state.users = state.users.filter(u => u.id !== id); await fetch(`${FIREBASE_DB_URL}/approvedUsers/${id}.json`, { method: "DELETE" }); saveLocalAndCloud(); syncSelectors(); renderUsersModalLists(); }
     async function saveNewAdminPassword() { const p = document.getElementById("newAdminPassInput").value.trim(); if (p.length >= 4) { state.adminConfig.pass = p; await fetch(`${FIREBASE_DB_URL}/adminConfig.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(state.adminConfig) }); showToast("Clave actualizada", "success"); } }
     function openWorkshopsModal() { document.getElementById("workshopsList").innerHTML = state.workshops.map(w => `<div class="p-2 bg-slate-50 rounded text-xs font-bold">${escapeHtml(w.name)} (${escapeHtml(w.city)})</div>`).join(""); document.getElementById("workshopsModal").classList.remove("hidden"); }
-    function addWorkshop(e) { e.preventDefault(); state.workshops.push({ id: "w_" + Date.now(), name: document.getElementById("wName").value, city: document.getElementById("wCity").value, type: document.getElementById("wType").value }); saveLocalAndCloud(); syncSelectors(); openWorkshopsModal(); }
+    function addWorkshop(e) { e.preventDefault(); state.workshops.push({ id: "w_" + Date.now(), name: document.getElementById("wName").value.trim(), city: document.getElementById("wCity").value.trim(), type: document.getElementById("wType").value }); saveLocalAndCloud(); syncSelectors(); openWorkshopsModal(); }
     function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
-    function openHtcBankModal() { document.getElementById("htcBankModal").classList.remove("hidden"); }
-    function switchTrainingSubTab() {}
-    function changeTrainingStage() {}
     function notifyAdvisorWhatsapp() { const t = state.tasks.find(x => x.id === currentDetailId); if (t && t.advisorWhatsapp) window.open(`https://web.whatsapp.com/send?phone=${formatWhatsappPhone(t.advisorWhatsapp)}&text=${encodeURIComponent(t.caseId + " - " + t.title)}`, "_blank"); }
     function notifyMechanicWhatsapp() { const t = state.tasks.find(x => x.id === currentDetailId); if (t && t.mechanicWhatsapp) window.open(`https://web.whatsapp.com/send?phone=${formatWhatsappPhone(t.mechanicWhatsapp)}&text=${encodeURIComponent(t.caseId + " - " + t.title)}`, "_blank"); }
     function notifyClientWhatsapp() { const t = state.tasks.find(x => x.id === currentDetailId); if (t && t.clientWhatsapp) window.open(`https://web.whatsapp.com/send?phone=${formatWhatsappPhone(t.clientWhatsapp)}&text=${encodeURIComponent(t.caseId + " - " + t.title)}`, "_blank"); }
-    function toggleFormalEmailSection() {}
-    function togglePortalSection() {}
-    function focusCaseChat() {}
-    function exportSingleCaseWord() {}
     function exportExcelHistory() {}
     function exportWordHistory() {}
   </script>

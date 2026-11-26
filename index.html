@@ -282,38 +282,39 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
-          <!-- BARRA DE PESTAÑAS -->
-          <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start">
-            <button onclick="switchTab('board')" id="tab-board" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5">
+          <!-- BARRA DE PESTAÑAS CON PESTAÑA COMPLETADOS -->
+          <nav class="flex items-center gap-1 w-full sm:w-auto justify-between sm:justify-start overflow-x-auto">
+            <button onclick="switchTab('board')" id="tab-board" class="win-tab active flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-kanban text-accent"></i> Tablero
             </button>
-            <button onclick="switchTab('tasks')" id="tab-tasks" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+            <button onclick="switchTab('completed')" id="tab-completed" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
+              <i class="ph-bold ph-check-circle text-emerald-600"></i> Completados
+              <span id="completedTabCount" class="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">0</span>
+            </button>
+            <button onclick="switchTab('tasks')" id="tab-tasks" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-check-square-offset text-accent"></i> Tareas
               <span id="myTasksBadge" class="hidden px-1.5 py-0.2 rounded-full bg-[#004B93] text-white text-[10px] font-extrabold">0</span>
             </button>
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-chart-pie-slice text-accent"></i> Resumen
             </button>
-            <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5">
+            <button onclick="switchTab('calendar')" id="tab-calendar" class="win-tab flex-1 sm:flex-none px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-white/60 flex items-center justify-center gap-1.5 whitespace-nowrap">
               <i class="ph-bold ph-calendar-blank text-accent"></i> Calendario
             </button>
           </nav>
 
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
 
-            <!-- BOTÓN BASE DE DATOS DE ACCESOS Y CREDENCIALES -->
             <button type="button" onclick="openCredentialsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition" title="Base de datos de accesos, links, IDs, credenciales, equipos y notas">
               <i class="ph-bold ph-key text-amber-400 text-base"></i>
               <span>Accesos / Claves</span>
             </button>
 
-            <!-- BOTÓN HISTORIAL CLÍNICO POR VIN (SOLO SOPORTE) -->
             <button type="button" id="btnVinHistory" onclick="openVinHistoryModal()" class="touch-target px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 text-xs font-extrabold text-indigo-900 flex items-center gap-1.5 transition">
               <i class="ph-bold ph-car-profile text-indigo-600 text-base"></i>
               <span>Historial VIN</span>
             </button>
 
-            <!-- BOTÓN SOPORTE SOLICITADO (SOLO SOPORTE) -->
             <div id="btnHotlineGroup" class="inline-flex items-center rounded-xl shadow-sm overflow-hidden border border-red-300 bg-white">
               <button type="button" onclick="openHotlineRequestsModal()" class="touch-target px-3 py-1.5 bg-red-50 hover:bg-red-100 text-xs font-extrabold text-red-800 flex items-center gap-1.5 transition">
                 <i class="ph-bold ph-bell-ringing text-red-600 text-base"></i>
@@ -325,19 +326,16 @@
               </button>
             </div>
 
-            <!-- BOTÓN PLAN DE ENTRENAMIENTO (SOLO MODO ENTRENAMIENTO) -->
             <button type="button" id="btnTrainingPlan" onclick="openTrainingPlanModal()" class="hidden touch-target px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition">
               <i class="ph-bold ph-calendar-check text-base"></i>
               <span>Plan de Entrenamiento</span>
             </button>
 
-            <!-- BOTÓN BANCO DE ACTIVIDADES HTC (SOLO ENTRENAMIENTO) -->
             <button type="button" id="btnHtcBank" onclick="openHtcBankModal()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-extrabold text-amber-900 flex items-center gap-1.5 transition">
               <i class="ph-bold ph-books text-amber-600 text-base"></i>
               <span>Banco Actividades HTC</span>
             </button>
 
-            <!-- BOTÓN PLATAFORMAS -->
             <div class="relative">
               <button type="button" onclick="togglePlatformsDropdown(event)" class="touch-target px-3.5 py-1.5 rounded-xl bg-[#004B93] hover:bg-[#003870] text-xs font-bold text-white flex items-center gap-1.5 shadow-sm transition">
                 <i class="ph-bold ph-bookmarks text-base text-amber-300"></i>
@@ -428,7 +426,7 @@
 
     <main class="max-w-[1600px] mx-auto px-3 sm:px-6 pt-6 space-y-6">
 
-      <!-- VISTA 1: TABLERO KANBAN -->
+      <!-- VISTA 1: TABLERO KANBAN (MÁXIMO 10 CASOS RECIENTES EN COMPLETADO) -->
       <section id="view-board" class="space-y-4">
         <div class="win-mica rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center gap-2.5">
           <div class="relative flex-1 min-w-[200px]">
@@ -458,7 +456,51 @@
         <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
       </section>
 
-      <!-- VISTA 2: TAREAS Y CHECKLISTS -->
+      <!-- VISTA NUEVA: ARCHIVO DE CASOS COMPLETADOS CON BUSCADOR Y REAPERTURA POR RECLAMO -->
+      <section id="view-completed" class="hidden space-y-4">
+        <div class="win-mica rounded-2xl p-4 sm:p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                <i class="ph-bold ph-check-circle text-2xl"></i>
+              </div>
+              <div>
+                <h2 id="completedSectionTitle" class="text-base sm:text-lg font-extrabold text-slate-900">Archivo de Casos Completados</h2>
+                <p class="text-xs text-slate-500">En el tablero principal se muestran solo los últimos 10 casos cerrados. Aquí puedes buscar cualquier caso histórico y reabrirlo como <strong>Urgente (Reclamo)</strong> si el vehículo reingresa.</p>
+              </div>
+            </div>
+            <span id="completedTotalBadge" class="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-xs">0 completados</span>
+          </div>
+
+          <!-- Buscador y Filtros del Archivo Completado -->
+          <div class="flex flex-wrap items-center gap-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+            <div class="relative flex-1 min-w-[220px]">
+              <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="completedSearchInput" oninput="renderCompletedTab()" placeholder="Buscar por código CASO-2026-XXX, VIN / Chasis, N° Orden (OR), marca, modelo, taller o solución..." class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm focus:outline-none focus:border-emerald-600" />
+            </div>
+            <select id="completedBrandFilter" onchange="renderCompletedTab()" class="px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700"></select>
+            <select id="completedWorkshopFilter" onchange="renderCompletedTab()" class="px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700 max-w-[220px]"></select>
+          </div>
+
+          <!-- Tabla / Listado de Referencia de Completados -->
+          <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-800 font-extrabold uppercase text-[11px]">
+                  <th class="p-3 border-b">Código / Fecha Cierre</th>
+                  <th class="p-3 border-b">Marca / Unidad / VIN / OR</th>
+                  <th class="p-3 border-b">Taller / Responsable</th>
+                  <th class="p-3 border-b">Caso y Solución Aplicada</th>
+                  <th class="p-3 border-b text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="completedTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA: TAREAS Y CHECKLISTS -->
       <section id="view-tasks" class="hidden space-y-5 max-w-5xl mx-auto">
         <div class="win-mica rounded-2xl p-4 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
@@ -497,7 +539,7 @@
         </div>
       </section>
 
-      <!-- VISTA 3: RESUMEN -->
+      <!-- VISTA: RESUMEN -->
       <section id="view-dashboard" class="hidden space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4" id="kpiGrid"></div>
 
@@ -549,7 +591,7 @@
         </div>
       </section>
 
-      <!-- VISTA 4: CALENDARIO -->
+      <!-- VISTA: CALENDARIO -->
       <section id="view-calendar" class="hidden space-y-4">
         <div class="win-mica rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
@@ -576,9 +618,7 @@
     </button>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL BASE DE DATOS DE ACCESOS, LINKS, IDs, CREDENCIALES Y UBICACIÓN    -->
-  <!-- ======================================================================= -->
+  <!-- MODAL BASE DE DATOS DE ACCESOS, LINKS, IDs, CREDENCIALES Y UBICACIÓN -->
   <div id="credentialsModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-900 text-white">
@@ -598,7 +638,6 @@
       </div>
 
       <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
-        <!-- Formulario Manual de Registro / Edición -->
         <form onsubmit="saveCredentialRecord(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
           <input type="hidden" id="editCredId" />
           <div class="flex items-center justify-between">
@@ -636,7 +675,7 @@
           <div class="flex flex-wrap sm:flex-nowrap items-end gap-2.5">
             <div class="flex-1 min-w-[240px]">
               <label class="block text-[11px] font-bold text-slate-700 mb-1">Nota / Comentario (Para qué sirve esta plataforma o detalle del equipo) *</label>
-              <input type="text" id="crNote" required placeholder="Ej: Sirve para descarga de manuales, boletines y garantías. Instalado en Notebook Dell de Esteban." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+              <input type="text" id="crNote" required placeholder="Ej: Sirve para descarga de manuales, boletines y garantías. Instalado en Notebook Dell." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
             </div>
             <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white font-extrabold flex items-center gap-1.5 shadow-sm shrink-0">
               <i class="ph-bold ph-floppy-disk text-base"></i> <span id="btnSaveCredText">Guardar en Base de Datos y Drive</span>
@@ -644,7 +683,6 @@
           </div>
         </form>
 
-        <!-- Buscador de la Base de Datos -->
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="relative flex-1 min-w-[240px]">
             <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -653,7 +691,6 @@
           <span id="credCountBadge" class="text-xs font-bold text-slate-500">0 registros</span>
         </div>
 
-        <!-- Tabla de Base de Datos -->
         <div class="overflow-x-auto border border-slate-200 rounded-2xl">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
@@ -1015,12 +1052,15 @@
     </div>
   </div>
 
-  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO -->
+  <!-- ======================================================================= -->
+  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO                                -->
+  <!-- ======================================================================= -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
         <div class="flex flex-wrap items-center gap-2">
           <span id="dCaseBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-100 text-[#004B93]">CASO-2026-101</span>
+          <span id="dReopenedBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-red-600 text-white hidden">🚨 RECLAMO / REINGRESO</span>
           <span id="dBrandBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-[#004B93] text-white hidden">HYUNDAI</span>
           <span id="dTrainingStageBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-amber-100 text-amber-950 border border-amber-300 hidden">En diseño</span>
           <span id="dVorBadge" class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-rose-600 text-white hidden">🚨 VOR</span>
@@ -1028,6 +1068,10 @@
           <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[200px] sm:max-w-sm">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
+          <!-- BOTÓN REABRIR POR RECLAMO (VISIBLE CUANDO EL CASO ESTÁ COMPLETADO) -->
+          <button id="btnReopenClaimHeader" onclick="reopenCaseAsClaim(currentDetailId)" class="hidden px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1 shadow-sm animate-pulse">
+            <i class="ph-bold ph-arrow-counter-clockwise text-sm"></i> Reabrir por Reclamo (Urgente)
+          </button>
           <button onclick="focusCaseChat()" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-1 shadow-sm">
             <i class="ph-bold ph-chats-circle text-sm"></i> Chat
           </button>
@@ -1407,29 +1451,26 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block font-bold text-slate-700 mb-1">Necesidad / Brecha Identificada en Taller</label>
-                <textarea id="htcNeed" rows="2" placeholder="Ej: Errores en diagnóstico de aislamiento de alta tensión..." class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
+                <textarea id="htcNeed" rows="2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-1">Desempeño Esperado en el Puesto</label>
-                <textarea id="htcPerformance" rows="2" placeholder="Ej: Ejecutar protocolo de desconexión segura sin fallas..." class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
+                <textarea id="htcPerformance" rows="2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-1">Conocimientos Previos y Requisitos</label>
-                <input type="text" id="htcPrerequisites" placeholder="Ej: Electricidad automotriz básica y uso de multímetro" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+                <input type="text" id="htcPrerequisites" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
               </div>
               <div>
                 <label class="block font-bold text-slate-700 mb-1">Referencias Técnicas y Versión</label>
-                <input type="text" id="htcReferences" placeholder="Ej: Manual Servicio NX4 HEV 2026 / Boletín HMC-26-04" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+                <input type="text" id="htcReferences" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
               </div>
             </div>
           </div>
 
           <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 text-xs">
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h4 class="font-extrabold uppercase text-slate-800">2. Objetivos Observables (Acción + Condición + Criterio)</h4>
-                <p class="text-[11px] text-slate-500">Cada objetivo debe vincularse con un bloque del plan y una evidencia de evaluación.</p>
-              </div>
+              <h4 class="font-extrabold uppercase text-slate-800">2. Objetivos Observables (Acción + Condición + Criterio)</h4>
               <button type="button" onclick="addHtcObjective()" class="px-3 py-1.5 rounded-xl bg-[#004B93] text-white font-bold">+ Añadir Objetivo</button>
             </div>
             <div id="htcObjectivesList" class="space-y-2.5"></div>
@@ -1438,7 +1479,7 @@
           <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 text-xs">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h4 class="font-extrabold uppercase text-slate-800">3. Plan de Sesión Editable (Introducción → Desarrollo → Consolidación)</h4>
+                <h4 class="font-extrabold uppercase text-slate-800">3. Plan de Sesión Editable</h4>
                 <div id="sessionTimeSummary" class="text-[11px] font-bold text-amber-800 mt-0.5">Tiempo planificado: 0 min</div>
               </div>
               <div class="flex gap-2">
@@ -1470,11 +1511,9 @@
           <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h4 class="font-extrabold uppercase text-amber-950">Entregables del Instructor y Aprobación del Revisor</h4>
-              <p class="text-[11px] text-amber-800">Subir un archivo no aprueba automáticamente el material; el Revisor debe validar la exactitud técnica y coherencia HTC.</p>
             </div>
             <button type="button" onclick="addTrainingDeliverable()" class="px-3 py-1.5 rounded-xl bg-amber-600 text-white font-bold">+ Añadir Entregable</button>
           </div>
-
           <div id="trDeliverablesList" class="space-y-3"></div>
         </div>
 
@@ -1482,32 +1521,25 @@
         <div id="detailSectionExecution" class="hidden space-y-5 text-xs">
           <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h4 class="font-extrabold uppercase text-slate-900">1. Observación del Desempeño del Instructor (Ensayo o Sesión Real)</h4>
-                <p class="text-[11px] text-slate-500">Evalúa hechos observables y convierte oportunidades de mejora en tareas asignadas al instructor.</p>
-              </div>
+              <h4 class="font-extrabold uppercase text-slate-900">1. Observación del Desempeño del Instructor</h4>
               <button type="button" onclick="saveInstructorObservation()" class="px-3.5 py-1.5 rounded-xl bg-[#004B93] text-white font-bold">Guardar Observación</button>
             </div>
-
             <div id="instructorCriteriaGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
-
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div>
                 <label class="block font-bold text-emerald-900 mb-1">Fortalezas Observadas</label>
                 <textarea id="obsStrengths" rows="2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
               </div>
               <div>
-                <label class="block font-bold text-amber-900 mb-1">Oportunidades de Mejora (Hechos y Acción)</label>
+                <label class="block font-bold text-amber-900 mb-1">Oportunidades de Mejora</label>
                 <div class="flex gap-2">
                   <textarea id="obsImprovements" rows="2" class="flex-1 p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
-                  <button type="button" onclick="convertObservationToTask()" class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold shrink-0">
-                    + Tarea Mejora
-                  </button>
+                  <button type="button" onclick="convertObservationToTask()" class="px-3 py-2 rounded-xl bg-amber-100 text-amber-950 font-bold shrink-0">+ Tarea Mejora</button>
                 </div>
               </div>
               <div class="sm:col-span-2">
-                <label class="block font-bold text-slate-700 mb-1">Autoevaluación del Instructor Post-Sesión</label>
-                <textarea id="obsSelfEval" rows="2" placeholder="Reflexión del instructor sobre el grupo, tiempos y ajustes para la próxima edición..." class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
+                <label class="block font-bold text-slate-700 mb-1">Autoevaluación del Instructor</label>
+                <textarea id="obsSelfEval" rows="2" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white"></textarea>
               </div>
             </div>
           </div>
@@ -1515,12 +1547,11 @@
           <div class="bg-white p-4 rounded-2xl border border-slate-200 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h4 class="font-extrabold uppercase text-slate-900">2. Participantes, Asistencia y Resultados de Evaluación</h4>
+                <h4 class="font-extrabold uppercase text-slate-900">2. Participantes, Asistencia y Resultados</h4>
                 <div id="participantsSummaryLine" class="text-[11px] font-bold text-emerald-800 mt-0.5"></div>
               </div>
               <button type="button" onclick="addTrainingParticipant()" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold">+ Añadir Participante</button>
             </div>
-
             <div class="overflow-x-auto border border-slate-200 rounded-xl">
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
@@ -1543,19 +1574,15 @@
     </div>
   </div>
 
-  <!-- MODAL BANCO REUTILIZABLE DE ACTIVIDADES HTC -->
+  <!-- MODAL BANCO HTC -->
   <div id="htcBankModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-amber-200 flex items-center justify-between bg-amber-50">
-        <div class="flex items-center gap-2">
-          <i class="ph-bold ph-books text-xl text-amber-700"></i>
-          <h3 class="text-base font-bold text-amber-950">Banco Reutilizable de Actividades y Dinámicas HTC</h3>
-        </div>
+        <h3 class="text-base font-bold text-amber-950">Banco Reutilizable de Actividades HTC</h3>
         <button onclick="closeModal('htcBankModal')" class="p-1.5 rounded-lg hover:bg-amber-200/70"><i class="ph-bold ph-x"></i></button>
       </div>
       <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
         <form onsubmit="addCustomHtcBankItem(event)" class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
-          <div class="font-bold text-slate-800">Guardar Nueva Actividad en el Banco</div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <input type="text" id="hbTitle" required placeholder="Nombre actividad" class="px-3 py-2 rounded-lg border border-slate-300 bg-white" />
             <select id="hbPhase" class="px-3 py-2 rounded-lg border border-slate-300 bg-white font-semibold">
@@ -1564,10 +1591,10 @@
               <option value="Práctica Supervisada">Práctica Supervisada</option>
               <option value="Consolidación">Consolidación</option>
             </select>
-            <input type="number" id="hbMinutes" min="5" max="240" value="20" placeholder="Minutos" class="px-3 py-2 rounded-lg border border-slate-300 bg-white" />
+            <input type="number" id="hbMinutes" min="5" max="240" value="20" class="px-3 py-2 rounded-lg border border-slate-300 bg-white" />
           </div>
           <div class="flex gap-2">
-            <input type="text" id="hbDesc" required placeholder="Descripción de la actividad y preguntas clave..." class="flex-1 px-3 py-2 rounded-lg border border-slate-300 bg-white" />
+            <input type="text" id="hbDesc" required placeholder="Descripción..." class="flex-1 px-3 py-2 rounded-lg border border-slate-300 bg-white" />
             <button type="submit" class="px-4 py-2 rounded-lg bg-amber-600 text-white font-bold">Guardar</button>
           </div>
         </form>
@@ -1576,14 +1603,11 @@
     </div>
   </div>
 
-  <!-- MODAL HISTORIAL CLÍNICO POR CHASIS (VIN) -->
+  <!-- MODAL HISTORIAL VIN -->
   <div id="vinHistoryModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-indigo-200 flex items-center justify-between bg-indigo-50">
-        <div class="flex items-center gap-2">
-          <i class="ph-bold ph-car-profile text-2xl text-indigo-700"></i>
-          <h3 class="text-base font-extrabold text-indigo-950">Historial Clínico por Chasis (VIN) y Repetibilidad</h3>
-        </div>
+        <h3 class="text-base font-extrabold text-indigo-950">Historial Clínico por Chasis (VIN) y Repetibilidad</h3>
         <button onclick="closeModal('vinHistoryModal')" class="p-1.5 rounded-lg hover:bg-indigo-200/70"><i class="ph-bold ph-x"></i></button>
       </div>
       <div class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
@@ -1596,7 +1620,7 @@
     </div>
   </div>
 
-  <!-- MODAL CREAR / EDITAR TAREA CON CHECKLIST -->
+  <!-- MODAL TAREAS -->
   <div id="todoModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -1649,9 +1673,6 @@
           </div>
           <div id="tdSubtasksDraftList" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
         </div>
-        <label class="inline-flex items-center gap-2 text-xs text-slate-700 font-semibold">
-          <input type="checkbox" id="tdNotifyEmail" checked class="w-4 h-4 accent-[#004B93]" /> Notificar por correo electrónico
-        </label>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
           <button type="button" onclick="closeModal('todoModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Cancelar</button>
           <button type="submit" class="px-5 py-2 rounded-xl btn-accent text-xs font-bold">Guardar Tarea</button>
@@ -1985,6 +2006,140 @@
     }
 
     // =========================================================================
+    // REABRIR CASO COMPLETADO COMO RECLAMO (URGENTE)
+    // =========================================================================
+    function reopenCaseAsClaim(taskId) {
+      const t = state.tasks.find(x => x.id === taskId);
+      if (!t) return;
+
+      const reason = prompt(
+        `Vas a reabrir ${t.caseId} (${t.brand || ""} ${t.vehicleModel || t.title}) como RECLAMO / REINGRESO en estado URGENTE.\n\nEscribe el motivo o síntoma del reclamo:`,
+        "Reingreso con el mismo síntoma / reclamo de taller"
+      );
+      if (reason === null) return;
+      const cleanReason = reason.trim() || "Reingreso por reclamo del mismo problema";
+
+      t.status = "Urgente";
+      t.isClaimReopened = true;
+      t.claimCount = (Number(t.claimCount) || 0) + 1;
+      t.lastClaimReason = cleanReason;
+      t.progress = Math.min(Number(t.progress) || 50, 50);
+
+      if ((t.mode || "soporte") === "entrenamiento") {
+        ensureTrainingStructure(t);
+        t.trainingData.stage = "En desarrollo";
+      }
+
+      if (!Array.isArray(t.notes)) t.notes = [];
+      t.notes.push({
+        date: new Date().toLocaleString(),
+        text: `🚨 REABIERTO POR RECLAMO #${t.claimCount} (${currentSession ? currentSession.name : "Usuario"}) — Movido a URGENTE. Motivo: ${cleanReason}`
+      });
+
+      pushActivityNotification({
+        area: t.mode || "soporte",
+        targetType: "case",
+        targetId: t.id,
+        targetUserId: t.assigneeId,
+        message: `🚨 ${currentSession ? currentSession.name : "Usuario"} reabrió ${t.caseId} (${t.title}) como RECLAMO URGENTE: "${cleanReason}"`
+      });
+
+      saveLocalAndCloud();
+      renderAll();
+
+      if (!document.getElementById("detailModal").classList.contains("hidden") && currentDetailId === t.id) {
+        openDetailModal(t.id);
+      }
+      if (activeTab === "completed") {
+        switchTab("board");
+      }
+      showToast(`${t.caseId} reabierto como RECLAMO en Urgente`, "warning");
+    }
+
+    // =========================================================================
+    // PESTAÑA COMPLETADOS (ARCHIVO HISTÓRICO CON BUSCADOR Y REAPERTURA)
+    // =========================================================================
+    function renderCompletedTab() {
+      const tbody = document.getElementById("completedTableBody");
+      const badge = document.getElementById("completedTotalBadge");
+      const titleEl = document.getElementById("completedSectionTitle");
+      if (!tbody) return;
+
+      const isSoporte = appMode === "soporte";
+      titleEl.textContent = isSoporte
+        ? "Archivo de Casos de Soporte Completados"
+        : "Archivo de Entrenamientos Cerrados";
+
+      const q = (document.getElementById("completedSearchInput").value || "").toLowerCase();
+      const bFilter = document.getElementById("completedBrandFilter").value;
+      const wFilter = document.getElementById("completedWorkshopFilter").value;
+      const members = getAllAssignableMembers();
+
+      const allCompleted = getFilteredModeTasks()
+        .filter(t => t.status === "Completado")
+        .sort((a, b) => {
+          const da = a.closedDate || a.date || "";
+          const db = b.closedDate || b.date || "";
+          return db > da ? 1 : -1;
+        });
+
+      const filtered = allCompleted.filter(t => {
+        if (isSoporte && bFilter && t.brand !== bFilter) return false;
+        if (isSoporte && wFilter && t.workshop !== wFilter) return false;
+        if (q) {
+          const hay = `${t.caseId} ${t.brand || ""} ${t.vehicleModel || ""} ${t.vehicleVin || ""} ${t.orNumber || ""} ${t.workshop || ""} ${t.title || ""} ${t.rootCause || ""} ${t.finalSolution || ""}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      badge.textContent = `${filtered.length} de ${allCompleted.length} completados`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No se encontraron casos completados con ese criterio de búsqueda.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => {
+        const assignee = members.find(u => u.id === t.assigneeId);
+        const lastNote = (t.notes && t.notes.length > 0) ? t.notes[t.notes.length - 1].text : "";
+        return `
+          <tr class="hover:bg-slate-50/90 transition">
+            <td class="p-3 align-top whitespace-nowrap">
+              <span class="font-extrabold text-emerald-800 block">${escapeHtml(t.caseId)}</span>
+              <span class="text-[11px] text-slate-500">Cierre: ${escapeHtml(t.closedDate || t.date || "-")}</span>
+              ${t.claimCount ? `<span class="mt-1 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">Tuvo ${t.claimCount} reclamo(s)</span>` : ""}
+            </td>
+            <td class="p-3 align-top">
+              ${t.brand ? `<span class="inline-block px-2 py-0.5 rounded bg-[#004B93] text-white font-extrabold text-[10px] mb-1">${escapeHtml(t.brand)}</span>` : ""}
+              <div class="font-bold text-slate-900">${escapeHtml(t.vehicleModel || "-")}</div>
+              <div class="text-[11px] font-mono text-slate-600">VIN: ${escapeHtml(t.vehicleVin || "-")} · OR: ${escapeHtml(t.orNumber || "-")}</div>
+            </td>
+            <td class="p-3 align-top">
+              <div class="font-bold text-slate-800">${escapeHtml(t.workshop || t.location || "-")}</div>
+              <div class="text-[11px] text-slate-500">Resp: ${escapeHtml(assignee ? assignee.name : "-")}</div>
+            </td>
+            <td class="p-3 align-top max-w-[320px]">
+              <div class="font-bold text-slate-900">${escapeHtml(t.title)}</div>
+              ${t.finalSolution
+                ? `<div class="text-[11px] text-emerald-800 mt-0.5"><strong>Solución:</strong> ${escapeHtml(t.finalSolution)}</div>`
+                : `<div class="text-[11px] text-slate-500 truncate mt-0.5">${escapeHtml(lastNote)}</div>`
+              }
+            </td>
+            <td class="p-3 align-top text-right whitespace-nowrap space-x-1.5">
+              <button type="button" onclick="openDetailModal('${t.id}')" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold">
+                Ver Ficha
+              </button>
+              <button type="button" onclick="reopenCaseAsClaim('${t.id}')" class="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold inline-flex items-center gap-1 shadow-sm" title="Reabrir este caso y enviarlo a Urgente por reclamo">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i> Reabrir Reclamo
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
     // BASE DE DATOS DE ACCESOS, CREDENCIALES, UBICACIÓN (PC/NOTEBOOK) Y NOTAS
     // =========================================================================
     function openCredentialsModal() {
@@ -2023,29 +2178,13 @@
       if (editId) {
         const rec = state.credentialsDb.find(x => x.id === editId);
         if (rec) {
-          rec.brand = brand;
-          rec.platform = platform;
-          rec.link = link;
-          rec.userId = userId;
-          rec.password = password;
-          rec.location = location;
-          rec.note = note;
-          rec.updatedAt = new Date().toLocaleString();
-          rec.updatedBy = currentSession ? currentSession.name : "Usuario";
+          Object.assign(rec, { brand, platform, link, userId, password, location, note, updatedAt: new Date().toLocaleString(), updatedBy: currentSession ? currentSession.name : "Usuario" });
         }
-        showToast("Registro de acceso actualizado y respaldado en Drive", "success");
+        showToast("Registro actualizado y respaldado en Drive", "success");
       } else {
         state.credentialsDb.unshift({
-          id: "cred_" + Date.now(),
-          brand,
-          platform,
-          link,
-          userId,
-          password,
-          location,
-          note,
-          createdAt: new Date().toLocaleString(),
-          createdBy: currentSession ? currentSession.name : "Usuario"
+          id: "cred_" + Date.now(), brand, platform, link, userId, password, location, note,
+          createdAt: new Date().toLocaleString(), createdBy: currentSession ? currentSession.name : "Usuario"
         });
         showToast("Acceso guardado en Base de Datos y Google Drive", "success");
       }
@@ -2066,85 +2205,40 @@
       document.getElementById("crPassword").value = rec.password || "";
       document.getElementById("crLocation").value = rec.location || "";
       document.getElementById("crNote").value = rec.note || "";
-      document.getElementById("credFormTitle").textContent = `Editando Acceso: ${rec.brand} ${rec.platform ? "- " + rec.platform : ""}`;
+      document.getElementById("credFormTitle").textContent = `Editando Acceso: ${rec.brand}`;
       document.getElementById("btnSaveCredText").textContent = "Actualizar Registro";
       document.getElementById("btnCancelCredEdit").classList.remove("hidden");
-      document.getElementById("crBrand").focus();
     }
 
     function deleteCredentialRecord(id) {
-      if (!confirm("¿Eliminar este registro de acceso de la base de datos?")) return;
+      if (!confirm("¿Eliminar este registro de acceso?")) return;
       state.credentialsDb = (state.credentialsDb || []).filter(x => x.id !== id);
       saveLocalAndCloud();
       renderCredentialsTable();
-      showToast("Registro eliminado", "info");
     }
 
-    function toggleCredentialReveal(id) {
-      revealedCredIds[id] = !revealedCredIds[id];
-      renderCredentialsTable();
-    }
+    function toggleCredentialReveal(id) { revealedCredIds[id] = !revealedCredIds[id]; renderCredentialsTable(); }
 
     function renderCredentialsTable() {
       const tbody = document.getElementById("credentialsTableBody");
       const badge = document.getElementById("credCountBadge");
       const q = (document.getElementById("credSearchInput").value || "").toLowerCase();
-
-      const list = (state.credentialsDb || []).filter(r => {
-        if (!q) return true;
-        const hay = `${r.brand || ""} ${r.platform || ""} ${r.link || ""} ${r.userId || ""} ${r.location || ""} ${r.note || ""}`.toLowerCase();
-        return hay.includes(q);
-      });
-
+      const list = (state.credentialsDb || []).filter(r => !q || `${r.brand} ${r.platform} ${r.link} ${r.userId} ${r.location} ${r.note}`.toLowerCase().includes(q));
       badge.textContent = `${list.length} registro(s)`;
-
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No hay registros de accesos cargados aún. Completa el formulario superior para agregar el primero.</td></tr>`;
-        return;
-      }
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No hay registros de accesos cargados aún.</td></tr>`; return; }
 
       tbody.innerHTML = list.map(r => {
         const isShown = !!revealedCredIds[r.id];
         const safeUrl = r.link && !/^https?:\/\//i.test(r.link) ? "https://" + r.link : r.link;
         return `
           <tr class="hover:bg-slate-50/80 transition">
-            <td class="p-3 align-top">
-              <span class="inline-block px-2 py-0.5 rounded bg-[#004B93] text-white font-extrabold text-[11px]">${escapeHtml(r.brand)}</span>
-              ${r.platform ? `<div class="font-bold text-slate-800 mt-1">${escapeHtml(r.platform)}</div>` : ""}
-            </td>
-            <td class="p-3 align-top max-w-[180px]">
-              <div class="flex items-center gap-1.5">
-                <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="text-[#004B93] font-bold hover:underline truncate block" title="${escapeHtml(r.link)}">${escapeHtml(r.link)}</a>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.link)}', 'Link')" class="text-slate-400 hover:text-[#004B93] shrink-0" title="Copiar Link"><i class="ph-bold ph-copy"></i></button>
-              </div>
-            </td>
-            <td class="p-3 align-top">
-              <div class="flex items-center gap-1.5 font-mono font-bold text-slate-900">
-                <span>${escapeHtml(r.userId)}</span>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.userId)}', 'ID / Usuario')" class="text-slate-400 hover:text-[#004B93]" title="Copiar ID"><i class="ph-bold ph-copy"></i></button>
-              </div>
-            </td>
-            <td class="p-3 align-top">
-              <div class="flex items-center gap-1.5 font-mono font-bold text-slate-900">
-                <span>${isShown ? escapeHtml(r.password) : "••••••••"}</span>
-                <button type="button" onclick="toggleCredentialReveal('${r.id}')" class="text-slate-500 hover:text-slate-900" title="${isShown ? 'Ocultar' : 'Ver'}">
-                  <i class="ph-bold ${isShown ? 'ph-eye-slash' : 'ph-eye'}"></i>
-                </button>
-                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.password)}', 'Credencial')" class="text-slate-400 hover:text-emerald-600" title="Copiar Credencial"><i class="ph-bold ph-copy"></i></button>
-              </div>
-            </td>
-            <td class="p-3 align-top">
-              <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-bold">
-                <i class="ph-bold ph-laptop text-amber-600"></i> ${escapeHtml(r.location || "-")}
-              </span>
-            </td>
-            <td class="p-3 align-top max-w-[260px]">
-              <p class="text-slate-700 whitespace-pre-line leading-snug">${escapeHtml(r.note || "-")}</p>
-            </td>
-            <td class="p-3 align-top text-right whitespace-nowrap">
-              <button type="button" onclick="editCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold mr-1">Editar</button>
-              <button type="button" onclick="deleteCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold">Borrar</button>
-            </td>
+            <td class="p-3 align-top"><span class="inline-block px-2 py-0.5 rounded bg-[#004B93] text-white font-extrabold text-[11px]">${escapeHtml(r.brand)}</span>${r.platform ? `<div class="font-bold text-slate-800 mt-1">${escapeHtml(r.platform)}</div>` : ""}</td>
+            <td class="p-3 align-top max-w-[180px]"><div class="flex items-center gap-1.5"><a href="${escapeHtml(safeUrl)}" target="_blank" class="text-[#004B93] font-bold hover:underline truncate block">${escapeHtml(r.link)}</a><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.link)}', 'Link')" class="text-slate-400 hover:text-[#004B93]"><i class="ph-bold ph-copy"></i></button></div></td>
+            <td class="p-3 align-top font-mono font-bold"><div class="flex items-center gap-1.5"><span>${escapeHtml(r.userId)}</span><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.userId)}', 'ID')" class="text-slate-400 hover:text-[#004B93]"><i class="ph-bold ph-copy"></i></button></div></td>
+            <td class="p-3 align-top font-mono font-bold"><div class="flex items-center gap-1.5"><span>${isShown ? escapeHtml(r.password) : "••••••••"}</span><button type="button" onclick="toggleCredentialReveal('${r.id}')" class="text-slate-500"><i class="ph-bold ${isShown ? 'ph-eye-slash' : 'ph-eye'}"></i></button><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.password)}', 'Credencial')" class="text-slate-400 hover:text-emerald-600"><i class="ph-bold ph-copy"></i></button></div></td>
+            <td class="p-3 align-top"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-bold"><i class="ph-bold ph-laptop text-amber-600"></i> ${escapeHtml(r.location || "-")}</span></td>
+            <td class="p-3 align-top max-w-[260px]"><p class="text-slate-700 whitespace-pre-line leading-snug">${escapeHtml(r.note || "-")}</p></td>
+            <td class="p-3 align-top text-right whitespace-nowrap"><button type="button" onclick="editCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold mr-1">Editar</button><button type="button" onclick="deleteCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-red-50 text-red-700 font-bold">Borrar</button></td>
           </tr>
         `;
       }).join("");
@@ -2152,83 +2246,21 @@
 
     function exportCredentialsExcel() {
       const list = state.credentialsDb || [];
-      if (list.length === 0) {
-        showToast("No hay registros en la base de datos para descargar", "warning");
-        return;
-      }
-
-      const rowsHtml = list.map(r => `
-        <tr>
-          <td>${escapeHtml(r.brand || "")}</td>
-          <td>${escapeHtml(r.platform || "")}</td>
-          <td>${escapeHtml(r.link || "")}</td>
-          <td>${escapeHtml(r.userId || "")}</td>
-          <td>${escapeHtml(r.password || "")}</td>
-          <td>${escapeHtml(r.location || "")}</td>
-          <td>${escapeHtml(r.note || "")}</td>
-          <td>${escapeHtml(r.createdBy || "")}</td>
-          <td>${escapeHtml(r.createdAt || "")}</td>
-        </tr>
-      `).join("");
-
-      const excelDoc = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office"
-              xmlns:x="urn:schemas-microsoft-com:office:excel"
-              xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-          <meta charset="UTF-8">
-          <!--[if gte mso 9]>
-          <xml>
-            <x:ExcelWorkbook>
-              <x:ExcelWorksheets>
-                <x:ExcelWorksheet>
-                  <x:Name>Base_Datos_Accesos</x:Name>
-                  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
-                </x:ExcelWorksheet>
-              </x:ExcelWorksheets>
-            </x:ExcelWorkbook>
-          </xml>
-          <![endif]-->
-        </head>
-        <body>
-          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif;">
-            <thead>
-              <tr style="background-color:#004B93; color:#FFFFFF; font-weight:bold;">
-                <th>Marca</th>
-                <th>Plataforma</th>
-                <th>Link / URL</th>
-                <th>ID / Usuario</th>
-                <th>Credencial / Clave</th>
-                <th>Ubicación (Notebook / PC)</th>
-                <th>Nota / Para qué sirve</th>
-                <th>Registrado por</th>
-                <th>Fecha</th>
-              </tr>
-            </thead>
-            <tbody>${rowsHtml}</tbody>
-          </table>
-        </body>
-        </html>
-      `;
-
+      if (list.length === 0) { showToast("No hay registros para descargar", "warning"); return; }
+      const rowsHtml = list.map(r => `<tr><td>${escapeHtml(r.brand)}</td><td>${escapeHtml(r.platform)}</td><td>${escapeHtml(r.link)}</td><td>${escapeHtml(r.userId)}</td><td>${escapeHtml(r.password)}</td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.note)}</td><td>${escapeHtml(r.createdBy)}</td><td>${escapeHtml(r.createdAt)}</td></tr>`).join("");
+      const excelDoc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr style="background-color:#004B93;color:#FFF;"><th>Marca</th><th>Plataforma</th><th>Link</th><th>ID</th><th>Credencial</th><th>Ubicación</th><th>Nota</th><th>Registrado por</th><th>Fecha</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
       const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `Base_Datos_Accesos_Automotor_${new Date().toISOString().split("T")[0]}.xls`;
-      a.click();
-      showToast("Excel de Base de Datos de Accesos descargado", "success");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Base_Datos_Accesos_${new Date().toISOString().split("T")[0]}.xls`; a.click();
     }
 
     // =========================================================================
-    // MÓDULO PLAN DE ENTRENAMIENTO POR MARCA + EXCEL CALENDARIO (HOJA 1 ÚNICA)
+    // PLAN DE ENTRENAMIENTO POR MARCA + EXCEL CALENDARIO
     // =========================================================================
     function openTrainingPlanModal() {
       const brandOpts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("");
       document.getElementById("tpBrandInput").innerHTML = brandOpts;
       document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas las Marcas</option>` + brandOpts;
-      if (!document.getElementById("tpDateInput").value) {
-        document.getElementById("tpDateInput").value = new Date().toISOString().split("T")[0];
-      }
+      if (!document.getElementById("tpDateInput").value) document.getElementById("tpDateInput").value = new Date().toISOString().split("T")[0];
       renderTrainingPlanModal();
       document.getElementById("trainingPlanModal").classList.remove("hidden");
     }
@@ -2240,60 +2272,20 @@
       const topic = document.getElementById("tpTopicInput").value.trim();
       const duration = document.getElementById("tpDurationInput").value.trim();
       if (!brand || !date || !topic) return;
-
-      if (!Array.isArray(state.trainingPlanEntries)) state.trainingPlanEntries = [];
-      const newEntry = {
-        id: "tp_" + Date.now(),
-        brand,
-        date,
-        topic,
-        duration,
-        createdBy: currentSession ? currentSession.name : "Usuario"
-      };
-      state.trainingPlanEntries.push(newEntry);
-
-      pushActivityNotification({
-        area: "entrenamiento",
-        targetType: "plan",
-        targetId: newEntry.id,
-        message: `${currentSession.name} agregó al Plan de Entrenamiento (${brand} · ${date}): "${topic}"`
-      });
-
+      state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand, date, topic, duration, createdBy: currentSession ? currentSession.name : "Usuario" });
+      pushActivityNotification({ area: "entrenamiento", targetType: "plan", targetId: "tp", message: `${currentSession.name} agregó al Plan de Entrenamiento (${brand} · ${date}): "${topic}"` });
       document.getElementById("tpTopicInput").value = "";
       document.getElementById("tpDurationInput").value = "";
-
       saveLocalAndCloud();
       renderTrainingPlanModal();
-      showToast("Tema guardado en Plan de Entrenamiento y respaldado en Drive", "success");
+      showToast("Tema guardado en Plan de Entrenamiento", "success");
     }
 
-    function deleteTrainingPlanEntry(entryId) {
-      if (!confirm("¿Eliminar esta actividad del Plan de Entrenamiento?")) return;
-      state.trainingPlanEntries = (state.trainingPlanEntries || []).filter(x => x.id !== entryId);
-      saveLocalAndCloud();
-      renderTrainingPlanModal();
-      showToast("Registro eliminado del plan", "info");
-    }
+    function deleteTrainingPlanEntry(entryId) { state.trainingPlanEntries = (state.trainingPlanEntries || []).filter(x => x.id !== entryId); saveLocalAndCloud(); renderTrainingPlanModal(); }
 
     function getUnifiedTrainingPlanItems(brandFilter, yearStr) {
-      const manualEntries = (state.trainingPlanEntries || []).filter(item => {
-        if (!item.date || !item.date.startsWith(yearStr)) return false;
-        if (brandFilter !== "ALL" && item.brand !== brandFilter) return false;
-        return true;
-      });
-
-      const boardCourses = (state.tasks || [])
-        .filter(t => (t.mode || "soporte") === "entrenamiento" && t.date && t.date.startsWith(yearStr))
-        .filter(t => brandFilter === "ALL" || (t.brand || "Otras Marcas") === brandFilter)
-        .map(t => ({
-          id: "course_" + t.id,
-          brand: t.brand || "Multimarca",
-          date: t.date,
-          topic: `${t.title} (${t.subcategory})`,
-          duration: t.hours ? `${t.hours} hs` : "",
-          fromBoard: true
-        }));
-
+      const manualEntries = (state.trainingPlanEntries || []).filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter));
+      const boardCourses = (state.tasks || []).filter(t => (t.mode || "soporte") === "entrenamiento" && t.date && t.date.startsWith(yearStr) && (brandFilter === "ALL" || (t.brand || "Otras Marcas") === brandFilter)).map(t => ({ id: "course_" + t.id, brand: t.brand || "Multimarca", date: t.date, topic: `${t.title} (${t.subcategory})`, duration: t.hours ? `${t.hours} hs` : "" }));
       return [...manualEntries, ...boardCourses].sort((a, b) => (a.date > b.date ? 1 : -1));
     }
 
@@ -2302,78 +2294,27 @@
       const yearStr = document.getElementById("tpFilterYear").value;
       const monthFilter = document.getElementById("tpFilterMonth").value;
       const items = getUnifiedTrainingPlanItems(brandFilter, yearStr);
-
-      const manualList = (state.trainingPlanEntries || [])
-        .filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter))
-        .sort((a, b) => (a.date > b.date ? 1 : -1));
-
-      const listBox = document.getElementById("tpEntriesList");
-      listBox.innerHTML = manualList.length === 0
-        ? `<p class="text-slate-400 text-center py-3">Sin registros manuales para este filtro. Agrega uno arriba.</p>`
-        : manualList.map(it => `
-          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
-            <div>
-              <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-extrabold text-[10px]">${escapeHtml(it.brand)}</span>
-              <strong class="ml-1.5 text-slate-800">${escapeHtml(it.date)}</strong> —
-              <span class="font-semibold text-slate-900">${escapeHtml(it.topic)}</span>
-              ${it.duration ? `<span class="text-slate-500">(${escapeHtml(it.duration)})</span>` : ""}
-            </div>
-            <button type="button" onclick="deleteTrainingPlanEntry('${it.id}')" class="text-red-500 hover:text-red-700 p-1"><i class="ph-bold ph-trash"></i></button>
-          </div>
-        `).join("");
+      const manualList = (state.trainingPlanEntries || []).filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter));
+      document.getElementById("tpEntriesList").innerHTML = manualList.length === 0 ? `<p class="text-slate-400 text-center py-3">Sin registros manuales.</p>` : manualList.map(it => `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2"><div><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-extrabold text-[10px]">${escapeHtml(it.brand)}</span> <strong class="ml-1.5">${escapeHtml(it.date)}</strong> — ${escapeHtml(it.topic)}</div><button type="button" onclick="deleteTrainingPlanEntry('${it.id}')" class="text-red-500 p-1"><i class="ph-bold ph-trash"></i></button></div>`).join("");
 
       const previewBox = document.getElementById("tpCalendarPreviewBox");
       const monthsToRender = monthFilter === "ALL" ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : [Number(monthFilter)];
       const yearNum = Number(yearStr);
-
       previewBox.innerHTML = monthsToRender.map(mIdx => {
         const monthItems = items.filter(it => Number(it.date.split("-")[1]) - 1 === mIdx);
         if (monthFilter === "ALL" && monthItems.length === 0) return "";
-
         const firstDay = new Date(yearNum, mIdx, 1).getDay();
         const offset = firstDay === 0 ? 6 : firstDay - 1;
         const daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
-
         let cellsHtml = "";
         for (let i = 0; i < offset; i++) cellsHtml += `<div class="min-h-[68px] bg-slate-100/60 border border-slate-200"></div>`;
         for (let d = 1; d <= daysInMonth; d++) {
           const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
           const dayEvents = monthItems.filter(it => it.date === dStr);
-          cellsHtml += `
-            <div class="min-h-[68px] p-1.5 bg-white border border-slate-200 flex flex-col justify-between">
-              <span class="text-[11px] font-extrabold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded w-fit">${d}</span>
-              <div class="space-y-1 mt-1">
-                ${dayEvents.map(ev => `
-                  <div class="text-[10px] leading-tight p-1 rounded bg-amber-50 border border-amber-200 text-slate-900">
-                    ${brandFilter === "ALL" ? `<strong class="text-[#004B93]">[${escapeHtml(ev.brand)}]</strong> ` : ""}
-                    <span class="font-semibold">${escapeHtml(ev.topic)}</span>
-                    ${ev.duration ? `<span class="block text-[9px] text-slate-500">${escapeHtml(ev.duration)}</span>` : ""}
-                  </div>
-                `).join("")}
-              </div>
-            </div>
-          `;
+          cellsHtml += `<div class="min-h-[68px] p-1.5 bg-white border border-slate-200 flex flex-col justify-between"><span class="text-[11px] font-extrabold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded w-fit">${d}</span><div class="space-y-1 mt-1">${dayEvents.map(ev => `<div class="text-[10px] leading-tight p-1 rounded bg-amber-50 border border-amber-200 text-slate-900">${brandFilter === "ALL" ? `<strong class="text-[#004B93]">[${escapeHtml(ev.brand)}]</strong> ` : ""}<span class="font-semibold">${escapeHtml(ev.topic)}</span></div>`).join("")}</div></div>`;
         }
-
-        return `
-          <div class="border border-slate-300 rounded-2xl overflow-hidden shadow-sm">
-            <div class="bg-[#004B93] text-white px-4 py-2 font-extrabold text-xs tracking-wider flex justify-between">
-              <span>${MONTH_NAMES_ES[mIdx]} ${yearStr}</span>
-              <span>${brandFilter === "ALL" ? "TODAS LAS MARCAS" : brandFilter.toUpperCase()}</span>
-            </div>
-            <div class="grid grid-cols-7 text-center text-[10px] font-extrabold text-white">
-              <div class="py-1.5 bg-rose-500">LUNES</div>
-              <div class="py-1.5 bg-orange-500">MARTES</div>
-              <div class="py-1.5 bg-amber-500">MIÉRCOLES</div>
-              <div class="py-1.5 bg-lime-600">JUEVES</div>
-              <div class="py-1.5 bg-emerald-600">VIERNES</div>
-              <div class="py-1.5 bg-teal-600">SÁBADO</div>
-              <div class="py-1.5 bg-purple-700">DOMINGO</div>
-            </div>
-            <div class="grid grid-cols-7">${cellsHtml}</div>
-          </div>
-        `;
-      }).join("") || `<p class="text-center text-slate-400 py-4">No hay actividades cargadas en el año ${yearStr} para mostrar en el calendario.</p>`;
+        return `<div class="border border-slate-300 rounded-2xl overflow-hidden shadow-sm"><div class="bg-[#004B93] text-white px-4 py-2 font-extrabold text-xs flex justify-between"><span>${MONTH_NAMES_ES[mIdx]} ${yearStr}</span><span>${brandFilter === "ALL" ? "TODAS LAS MARCAS" : brandFilter.toUpperCase()}</span></div><div class="grid grid-cols-7 text-center text-[10px] font-extrabold text-white"><div class="py-1.5 bg-rose-500">LUNES</div><div class="py-1.5 bg-orange-500">MARTES</div><div class="py-1.5 bg-amber-500">MIÉRCOLES</div><div class="py-1.5 bg-lime-600">JUEVES</div><div class="py-1.5 bg-emerald-600">VIERNES</div><div class="py-1.5 bg-teal-600">SÁBADO</div><div class="py-1.5 bg-purple-700">DOMINGO</div></div><div class="grid grid-cols-7">${cellsHtml}</div></div>`;
+      }).join("") || `<p class="text-center text-slate-400 py-4">Sin actividades en el año ${yearStr}.</p>`;
     }
 
     function exportTrainingPlanCalendarExcel(allBrands = false) {
@@ -2381,107 +2322,37 @@
       const yearStr = document.getElementById("tpFilterYear").value;
       const yearNum = Number(yearStr);
       const items = getUnifiedTrainingPlanItems(selectedBrand, yearStr);
-
-      const mainTitle = selectedBrand === "ALL"
-        ? `PLAN DE ENTRENAMIENTO ${yearStr} - TODAS LAS MARCAS`
-        : `PLAN DE ENTRENAMIENTO ${yearStr} - ${selectedBrand.toUpperCase()}`;
-
+      const mainTitle = selectedBrand === "ALL" ? `PLAN DE ENTRENAMIENTO ${yearStr} - TODAS LAS MARCAS` : `PLAN DE ENTRENAMIENTO ${yearStr} - ${selectedBrand.toUpperCase()}`;
       const dayHeadersColors = ["#F472B6", "#FB923C", "#FBBF24", "#A3E635", "#34D399", "#2DD4BF", "#A855F7"];
       const dayNames = ["LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"];
 
-      let tablesHtml = `
-        <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; width:100%;">
-          <tr>
-            <td colspan="7" style="background-color:#004B93; color:#FFFFFF; font-size:16pt; font-weight:bold; text-align:center; padding:12px;">
-              ${escapeHtml(mainTitle)}
-            </td>
-          </tr>
-      `;
-
+      let tablesHtml = `<table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; width:100%;"><tr><td colspan="7" style="background-color:#004B93; color:#FFFFFF; font-size:16pt; font-weight:bold; text-align:center; padding:12px;">${escapeHtml(mainTitle)}</td></tr>`;
       for (let mIdx = 0; mIdx < 12; mIdx++) {
         const monthItems = items.filter(it => Number(it.date.split("-")[1]) - 1 === mIdx);
         const firstDay = new Date(yearNum, mIdx, 1).getDay();
         const offset = firstDay === 0 ? 6 : firstDay - 1;
         const daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
-
-        tablesHtml += `
-          <tr><td colspan="7" style="height:10px; border:none;"></td></tr>
-          <tr>
-            <td colspan="7" style="background-color:#1E293B; color:#FFFFFF; font-size:12pt; font-weight:bold; text-align:left; padding:8px;">
-              ${MONTH_NAMES_ES[mIdx]} ${yearStr}
-            </td>
-          </tr>
-          <tr>
-            ${dayNames.map((dn, idx) => `
-              <td style="background-color:${dayHeadersColors[idx]}; color:#1E293B; font-weight:bold; text-align:center; width:14.28%; border:1px solid #94A3B8;">
-                ${dn}
-              </td>
-            `).join("")}
-          </tr>
-        `;
-
+        tablesHtml += `<tr><td colspan="7" style="height:10px; border:none;"></td></tr><tr><td colspan="7" style="background-color:#1E293B; color:#FFFFFF; font-size:12pt; font-weight:bold; padding:8px;">${MONTH_NAMES_ES[mIdx]} ${yearStr}</td></tr><tr>${dayNames.map((dn, idx) => `<td style="background-color:${dayHeadersColors[idx]}; color:#1E293B; font-weight:bold; text-align:center; width:14.28%; border:1px solid #94A3B8;">${dn}</td>`).join("")}</tr>`;
         let dayCounter = 1;
         const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
-
         for (let cell = 0; cell < totalCells; cell++) {
           if (cell % 7 === 0) tablesHtml += `<tr>`;
-          if (cell < offset || dayCounter > daysInMonth) {
-            tablesHtml += `<td style="background-color:#F8FAFC; height:75px; border:1px solid #CBD5E1;"></td>`;
-          } else {
+          if (cell < offset || dayCounter > daysInMonth) { tablesHtml += `<td style="background-color:#F8FAFC; height:75px; border:1px solid #CBD5E1;"></td>`; }
+          else {
             const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(dayCounter).padStart(2, "0")}`;
             const dayEvents = monthItems.filter(it => it.date === dStr);
-            const contentHtml = dayEvents.map(ev => {
-              const prefix = selectedBrand === "ALL" ? `<b>[${escapeHtml(ev.brand)}]</b> ` : "";
-              const dur = ev.duration ? `<br/><span style="color:#64748B; font-size:8.5pt;">${escapeHtml(ev.duration)}</span>` : "";
-              return `<div style="margin-top:4px; color:#0F172A; font-size:9.5pt;">${prefix}${escapeHtml(ev.topic)}${dur}</div>`;
-            }).join("<hr style='border:0; border-top:1px dashed #CBD5E1; margin:3px 0;'/>");
-
-            tablesHtml += `
-              <td valign="top" style="background-color:${dayEvents.length > 0 ? '#FFFBEB' : '#FFFFFF'}; height:75px; border:1px solid #94A3B8; padding:5px;">
-                <div style="background-color:#E2E8F0; color:#1E293B; font-weight:bold; font-size:10pt; padding:2px 5px; margin-bottom:4px;">
-                  ${dayCounter}
-                </div>
-                ${contentHtml || `<span style="color:#94A3B8; font-size:8.5pt;">-</span>`}
-              </td>
-            `;
+            const contentHtml = dayEvents.map(ev => `<div style="margin-top:4px; color:#0F172A; font-size:9.5pt;">${selectedBrand === "ALL" ? `<b>[${escapeHtml(ev.brand)}]</b> ` : ""}${escapeHtml(ev.topic)}</div>`).join("<hr/>");
+            tablesHtml += `<td valign="top" style="background-color:${dayEvents.length > 0 ? '#FFFBEB' : '#FFFFFF'}; height:75px; border:1px solid #94A3B8; padding:5px;"><div style="background-color:#E2E8F0; font-weight:bold; padding:2px 5px; margin-bottom:4px;">${dayCounter}</div>${contentHtml || "-"}</td>`;
             dayCounter++;
           }
           if (cell % 7 === 6) tablesHtml += `</tr>`;
         }
       }
-
       tablesHtml += `</table>`;
-
-      const singleSheetExcel = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office"
-              xmlns:x="urn:schemas-microsoft-com:office:excel"
-              xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-          <meta charset="UTF-8">
-          <!--[if gte mso 9]>
-          <xml>
-            <x:ExcelWorkbook>
-              <x:ExcelWorksheets>
-                <x:ExcelWorksheet>
-                  <x:Name>Plan_Entrenamiento</x:Name>
-                  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
-                </x:ExcelWorksheet>
-              </x:ExcelWorksheets>
-            </x:ExcelWorkbook>
-          </xml>
-          <![endif]-->
-        </head>
-        <body>${tablesHtml}</body>
-        </html>
-      `;
-
+      const singleSheetExcel = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Plan_Entrenamiento</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>${tablesHtml}</body></html>`;
       const fileSlug = selectedBrand === "ALL" ? "Todas_Las_Marcas" : selectedBrand.replace(/[^a-zA-Z0-9]/g, "_");
       const blob = new Blob(["\uFEFF" + singleSheetExcel], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `Plan_de_Entrenamiento_${yearStr}_${fileSlug}.xls`;
-      a.click();
-      showToast(`Excel descargado: ${mainTitle}`, "success");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Plan_de_Entrenamiento_${yearStr}_${fileSlug}.xls`; a.click();
     }
 
     // =========================================================================
@@ -2490,39 +2361,23 @@
     function pushActivityNotification({ area, targetType, targetId, targetUserId = "", message }) {
       if (!currentSession) return;
       if (!Array.isArray(state.notifications)) state.notifications = [];
-
-      const notif = {
+      state.notifications.unshift({
         id: "ntf_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        area: area || appMode,
-        targetType: targetType || "case",
-        targetId: targetId || "",
-        targetUserId: targetUserId || "",
-        actorId: currentSession.id,
-        actorName: currentSession.name,
-        message: message,
-        createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + new Date().toLocaleDateString(),
+        area: area || appMode, targetType: targetType || "case", targetId: targetId || "",
+        targetUserId: targetUserId || "", actorId: currentSession.id, actorName: currentSession.name,
+        message, createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + new Date().toLocaleDateString(),
         readBy: [currentSession.id]
-      };
-
-      state.notifications.unshift(notif);
+      });
       if (state.notifications.length > 60) state.notifications = state.notifications.slice(0, 60);
       refreshNotificationsUI();
     }
 
     function getAreaNotificationsForCurrentUser(areaName = appMode) {
       if (!currentSession) return [];
-      return (state.notifications || []).filter(n => {
-        if (n.area !== areaName) return false;
-        if (n.targetUserId) return n.targetUserId === currentSession.id || isCoordinatorOrAdmin() || n.actorId === currentSession.id;
-        return true;
-      });
+      return (state.notifications || []).filter(n => n.area === areaName && (!n.targetUserId || n.targetUserId === currentSession.id || isCoordinatorOrAdmin() || n.actorId === currentSession.id));
     }
 
-    function isNotificationUnreadByMe(notif) {
-      if (!currentSession || !notif) return false;
-      const readers = Array.isArray(notif.readBy) ? notif.readBy : [];
-      return !readers.includes(currentSession.id);
-    }
+    function isNotificationUnreadByMe(notif) { return currentSession && notif && !(Array.isArray(notif.readBy) ? notif.readBy : []).includes(currentSession.id); }
 
     function refreshNotificationsUI() {
       const btn = document.getElementById("btnNotifBell");
@@ -2530,21 +2385,14 @@
       const badge = document.getElementById("notifUnreadBadge");
       const tickerBar = document.getElementById("liveNotifTickerBar");
       const titleEl = document.getElementById("notifDropdownTitle");
-
       if (!btn || !currentSession) return;
-
-      const areaName = appMode;
-      if (titleEl) titleEl.textContent = areaName === "soporte" ? "Notificaciones · Soporte Técnico" : "Notificaciones · Entrenamiento";
-
-      const areaNotifs = getAreaNotificationsForCurrentUser(areaName);
-      const unreadList = areaNotifs.filter(isNotificationUnreadByMe);
-
+      if (titleEl) titleEl.textContent = appMode === "soporte" ? "Notificaciones · Soporte Técnico" : "Notificaciones · Entrenamiento";
+      const unreadList = getAreaNotificationsForCurrentUser(appMode).filter(isNotificationUnreadByMe);
       if (unreadList.length > 0) {
         btn.className = "touch-target px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 border border-red-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md transition";
         icon.className = "ph-bold ph-bell-ringing text-base text-white animate-bounce";
         badge.textContent = unreadList.length;
         badge.classList.remove("hidden");
-
         activeTickerNotif = unreadList[0];
         document.getElementById("liveNotifTickerText").textContent = activeTickerNotif.message;
         document.getElementById("liveNotifTickerTime").textContent = activeTickerNotif.createdAt;
@@ -2556,7 +2404,6 @@
         activeTickerNotif = null;
         tickerBar.classList.add("hidden");
       }
-
       if (!document.getElementById("notifDropdown").classList.contains("hidden")) renderNotifDropdownList();
     }
 
@@ -2566,7 +2413,7 @@
     function renderNotifDropdownList() {
       const box = document.getElementById("notifDropdownList");
       const list = getAreaNotificationsForCurrentUser(appMode);
-      if (list.length === 0) { box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No hay notificaciones recientes en esta área.</div>`; return; }
+      if (list.length === 0) { box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No hay notificaciones recientes.</div>`; return; }
       box.innerHTML = list.slice(0, 20).map(n => {
         const unread = isNotificationUnreadByMe(n);
         return `<div onclick="openNotificationTarget('${n.id}')" class="px-4 py-3 cursor-pointer transition flex items-start gap-2.5 ${unread ? 'bg-red-50/75 hover:bg-red-100/70' : 'hover:bg-slate-50'}"><div class="flex-1 min-w-0"><p class="text-xs ${unread ? 'font-extrabold text-slate-900' : 'font-medium text-slate-700'} leading-snug">${escapeHtml(n.message)}</p><span class="text-[10px] text-slate-400 font-semibold block mt-0.5">${escapeHtml(n.createdAt)}</span></div>${unread ? `<span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>` : ""}</div>`;
@@ -2574,7 +2421,7 @@
     }
 
     function markSingleNotificationRead(notifId) { if (!currentSession) return; const n = (state.notifications || []).find(x => x.id === notifId); if (!n) return; if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) { n.readBy.push(currentSession.id); saveLocalAndCloud(); refreshNotificationsUI(); } }
-    function markAllAreaNotificationsRead() { if (!currentSession) return; const list = getAreaNotificationsForCurrentUser(appMode); let changed = false; list.forEach(n => { if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) { n.readBy.push(currentSession.id); changed = true; } }); if (changed) { saveLocalAndCloud(); refreshNotificationsUI(); } document.getElementById("notifDropdown").classList.add("hidden"); }
+    function markAllAreaNotificationsRead() { if (!currentSession) return; getAreaNotificationsForCurrentUser(appMode).forEach(n => { if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) n.readBy.push(currentSession.id); }); saveLocalAndCloud(); refreshNotificationsUI(); document.getElementById("notifDropdown").classList.add("hidden"); }
     function dismissTickerNotification() { if (activeTickerNotif) markSingleNotificationRead(activeTickerNotif.id); }
     function handleTickerClick() { if (activeTickerNotif) openNotificationTarget(activeTickerNotif.id); }
 
@@ -2612,9 +2459,7 @@
 
     function ensureTrainingStructure(t) {
       if ((t.mode || "soporte") !== "entrenamiento") return;
-      if (!t.trainingData) {
-        t.trainingData = { stage: t.status === "Completado" ? "Cerrado" : (t.stage || "Asignado"), version: "v1.0", sourceCourseId: "", reviewerId: "admin_master", prepHours: 6, targetCount: 12, materialDeadline: "", blocked: false, blockReason: "", need: "", expectedPerformance: "", prerequisites: "", technicalReferences: "", objectives: [], sessionBlocks: [], deliverables: buildDefaultDeliverablesForModality(t.subcategory, t.date), resources: buildDefaultResourcesForModality(t.subcategory), observation: { criteria: {}, strengths: "", improvements: "", selfEval: "" }, participants: [] };
-      }
+      if (!t.trainingData) t.trainingData = { stage: t.status === "Completado" ? "Cerrado" : (t.stage || "Asignado"), version: "v1.0", sourceCourseId: "", reviewerId: "admin_master", prepHours: 6, targetCount: 12, materialDeadline: "", blocked: false, blockReason: "", need: "", expectedPerformance: "", prerequisites: "", technicalReferences: "", objectives: [], sessionBlocks: [], deliverables: buildDefaultDeliverablesForModality(t.subcategory, t.date), resources: buildDefaultResourcesForModality(t.subcategory), observation: { criteria: {}, strengths: "", improvements: "", selfEval: "" }, participants: [] };
       const td = t.trainingData;
       if (!Array.isArray(td.objectives)) td.objectives = [];
       if (!Array.isArray(td.sessionBlocks)) td.sessionBlocks = [];
@@ -2631,14 +2476,11 @@
       const approvedCount = reqList.filter(d => d.status === "Aprobada").length;
       const inReviewCount = (td.deliverables || []).filter(d => d.status === "Entregada para revisión").length;
       const pct = reqList.length > 0 ? Math.round((approvedCount / reqList.length) * 100) : null;
-      const hasApprovedDeliverables = reqList.length > 0 && approvedCount === reqList.length;
-      const hasObjectivesWithEval = td.objectives.length > 0 && td.objectives.every(o => o.evalMethod && o.evalMethod.trim() !== "");
-      const hasResourcesConfirmed = td.resources.length === 0 || td.resources.every(r => r.confirmed);
-      const isReadyToTeach = hasApprovedDeliverables && hasObjectivesWithEval && hasResourcesConfirmed;
+      const isReadyToTeach = reqList.length > 0 && approvedCount === reqList.length && td.objectives.length > 0 && td.objectives.every(o => o.evalMethod && o.evalMethod.trim() !== "") && (td.resources.length === 0 || td.resources.every(r => r.confirmed));
       const missingReasons = [];
-      if (!hasApprovedDeliverables) missingReasons.push("Faltan entregables obligatorios aprobados");
-      if (!hasObjectivesWithEval) missingReasons.push("Faltan objetivos observables con evaluación");
-      if (!hasResourcesConfirmed) missingReasons.push("Faltan confirmar recursos/aula");
+      if (!(reqList.length > 0 && approvedCount === reqList.length)) missingReasons.push("Faltan entregables obligatorios aprobados");
+      if (!(td.objectives.length > 0 && td.objectives.every(o => o.evalMethod && o.evalMethod.trim() !== ""))) missingReasons.push("Faltan objetivos observables con evaluación");
+      if (!(td.resources.length === 0 || td.resources.every(r => r.confirmed))) missingReasons.push("Faltan confirmar recursos/aula");
       return { reqTotal: reqList.length, approvedCount, inReviewCount, pct, isReadyToTeach, missingReasons };
     }
 
@@ -2653,14 +2495,8 @@
       if (!Array.isArray(state.notifications)) state.notifications = [];
       if (!Array.isArray(state.htcBank) || state.htcBank.length === 0) state.htcBank = [...DEFAULT_HTC_BANK];
       if (!Array.isArray(state.platforms) || state.platforms.length === 0) state.platforms = [...DEFAULT_PLATFORMS];
-
       state.users = state.users.filter(u => u && u.email && u.id !== "u1" && u.id !== "u2" && u.id !== "u3");
-      (state.tasks || []).forEach(t => {
-        if (t.status === "En Revisión" || t.status === "En Revision") t.status = "En Prueba";
-        if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
-        if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
-        if ((t.mode || "soporte") === "entrenamiento") ensureTrainingStructure(t);
-      });
+      (state.tasks || []).forEach(t => { if (t.status === "En Revisión" || t.status === "En Revision") t.status = "En Prueba"; if (!Array.isArray(t.chatMessages)) t.chatMessages = []; if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = []; if ((t.mode || "soporte") === "entrenamiento") ensureTrainingStructure(t); });
       (state.todos || []).forEach(td => { if (!Array.isArray(td.subtasks)) td.subtasks = []; if (!td.area) td.area = "soporte"; });
     }
 
@@ -2670,19 +2506,15 @@
     async function syncFirebaseRealtime() {
       try {
         const [resHr, resPend, resUsers, resAdmin, resApp] = await Promise.all([
-          fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`),
-          fetch(`${FIREBASE_DB_URL}/pendingUsers.json`),
-          fetch(`${FIREBASE_DB_URL}/approvedUsers.json`),
-          fetch(`${FIREBASE_DB_URL}/adminConfig.json`),
+          fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`), fetch(`${FIREBASE_DB_URL}/pendingUsers.json`),
+          fetch(`${FIREBASE_DB_URL}/approvedUsers.json`), fetch(`${FIREBASE_DB_URL}/adminConfig.json`),
           fetch(`${FIREBASE_DB_URL}/appState.json`)
         ]);
         const [objHr, objPend, objUsers, objAdmin, objApp] = await Promise.all([resHr.json(), resPend.json(), resUsers.json(), resAdmin.json(), resApp.json()]);
-
         state.hotlineRequests = (objHr && typeof objHr === "object") ? Object.values(objHr).sort((a, b) => (b.id > a.id ? 1 : -1)) : [];
         state.pendingUsers = (objPend && typeof objPend === "object") ? Object.values(objPend) : [];
         if (objUsers && typeof objUsers === "object") state.users = Object.values(objUsers);
         if (objAdmin && typeof objAdmin === "object" && objAdmin.id) state.adminConfig = { ...state.adminConfig, ...objAdmin };
-
         if (objApp && typeof objApp === "object") {
           if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0 && state.tasks.length === 0) state.tasks = objApp.tasks;
           if (Array.isArray(objApp.todos)) state.todos = objApp.todos;
@@ -2694,18 +2526,18 @@
           if (Array.isArray(objApp.workshops) && objApp.workshops.length > 0) state.workshops = objApp.workshops;
           if (objApp.clientPortalBaseUrl) state.clientPortalBaseUrl = objApp.clientPortalBaseUrl;
         }
-
         normalizeStateData();
         updateHotlineBadge();
         updatePendingBadge();
         updateMyTasksBadge();
         refreshNotificationsUI();
-
+        updateCompletedTabBadge();
         if (!document.getElementById("hotlineRequestsModal").classList.contains("hidden")) renderHotlineRequestsList();
         if (!document.getElementById("usersModal").classList.contains("hidden")) renderUsersModalLists();
         if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
         if (!document.getElementById("credentialsModal").classList.contains("hidden")) renderCredentialsTable();
         if (activeTab === "tasks") renderTodos();
+        if (activeTab === "completed") renderCompletedTab();
       } catch (e) {}
     }
 
@@ -2713,6 +2545,7 @@
 
     function updateHotlineBadge() { const badge = document.getElementById("hotlineBadgeCount"); const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length; if (pendingCount > 0) { badge.textContent = pendingCount; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
     function updateMyTasksBadge() { const badge = document.getElementById("myTasksBadge"); if (!badge || !currentSession) return; const myPending = (state.todos || []).filter(td => !td.completed && td.assigneeId === currentSession.id).length; if (myPending > 0) { badge.textContent = myPending; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
+    function updateCompletedTabBadge() { const el = document.getElementById("completedTabCount"); if (el) el.textContent = getFilteredModeTasks().filter(t => t.status === "Completado").length; }
 
     function openHtcBankModal(fromSession = false) { insertBankIntoCurrentSession = !!fromSession; renderHtcBankList(); document.getElementById("htcBankModal").classList.remove("hidden"); }
     function renderHtcBankList() { document.getElementById("htcBankList").innerHTML = (state.htcBank || []).map((item, idx) => `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3"><div class="space-y-1"><div class="flex items-center gap-2"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-900">${escapeHtml(item.phase)}</span><span class="text-[10px] font-bold text-slate-500">${item.minutes} min</span><strong class="text-xs text-slate-900">${escapeHtml(item.title)}</strong></div><p class="text-xs text-slate-600">${escapeHtml(item.desc)}</p></div><div class="flex items-center gap-1.5 shrink-0">${insertBankIntoCurrentSession ? `<button type="button" onclick="insertHtcBankItemToSession(${idx})" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white font-bold">Usar en Plan</button>` : ""}<button type="button" onclick="deleteHtcBankItem(${idx})" class="text-red-500 hover:text-red-700 p-1"><i class="ph-bold ph-trash"></i></button></div></div>`).join(""); }
@@ -2721,7 +2554,7 @@
     function insertHtcBankItemToSession(idx) { const item = state.htcBank[idx]; const t = state.tasks.find(x => x.id === currentDetailId); if (!item || !t) return; ensureTrainingStructure(t); t.trainingData.sessionBlocks.push({ phase: `${item.phase}: ${item.title}`, minutes: item.minutes, activities: item.desc, questionsEval: "Preguntas de razonamiento y verificación práctica", materialRef: "Diapositiva / Guía HTC" }); saveLocalAndCloud(); closeModal("htcBankModal"); renderTrainingDesignTab(t); }
 
     function switchTrainingSubTab(sub) { currentTrainingSubTab = sub; const map = { general: "detailSectionGeneral", design: "detailSectionDesign", deliverables: "detailSectionDeliverables", execution: "detailSectionExecution" }; Object.entries(map).forEach(([k, secId]) => { document.getElementById(secId).classList.toggle("hidden", k !== sub); const btn = document.getElementById("trSubTab-" + k); if (btn) btn.className = k === sub ? "px-3.5 py-2 rounded-t-xl bg-white text-amber-900 border-t border-x border-amber-200 font-extrabold" : "px-3.5 py-2 rounded-t-xl text-slate-600 hover:bg-white/60"; }); }
-    function changeTrainingStage(newStage) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); const metrics = calculateTrainingPrepMetrics(t); if ((newStage === "Listo para impartir" || newStage === "Impartido") && !metrics.isReadyToTeach) { if (!confirm(`⚠️ Aún hay condiciones pendientes:\n- ${metrics.missingReasons.join("\n- ")}\n\n¿Deseas avanzar igualmente?`)) { document.getElementById("dTrainingStageSelect").value = t.trainingData.stage; return; } } t.trainingData.stage = newStage; t.status = TRAINING_STAGE_TO_KANBAN[newStage] || t.status; if (newStage === "Cerrado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } t.notes.push({ date: new Date().toLocaleString(), text: `${currentSession ? currentSession.name + ": " : ""}Etapa actualizada a "${newStage}".` }); pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, message: `${currentSession.name} movió ${t.caseId} (${t.title}) a etapa "${newStage}"` }); saveLocalAndCloud(); openDetailModal(t.id); renderBoard(); renderDashboard(); }
+    function changeTrainingStage(newStage) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); const metrics = calculateTrainingPrepMetrics(t); if ((newStage === "Listo para impartir" || newStage === "Impartido") && !metrics.isReadyToTeach) { if (!confirm(`⚠️ Aún hay condiciones pendientes:\n- ${metrics.missingReasons.join("\n- ")}\n\n¿Deseas avanzar igualmente?`)) { document.getElementById("dTrainingStageSelect").value = t.trainingData.stage; return; } } t.trainingData.stage = newStage; t.status = TRAINING_STAGE_TO_KANBAN[newStage] || t.status; if (newStage === "Cerrado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } t.notes.push({ date: new Date().toLocaleString(), text: `${currentSession ? currentSession.name + ": " : ""}Etapa actualizada a "${newStage}".` }); pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, message: `${currentSession.name} movió ${t.caseId} (${t.title}) a etapa "${newStage}"` }); saveLocalAndCloud(); openDetailModal(t.id); renderAll(); }
     function toggleTrainingBlocker() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); const reason = prompt("Describe el bloqueo actual:", t.trainingData.blockReason || ""); if (reason === null) return; t.trainingData.blocked = true; t.trainingData.blockReason = reason.trim() || "Bloqueo reportado"; saveLocalAndCloud(); openDetailModal(t.id); renderBoard(); }
     function clearTrainingBlocker() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); t.trainingData.blocked = false; t.trainingData.blockReason = ""; saveLocalAndCloud(); openDetailModal(t.id); renderBoard(); }
     function rescheduleTrainingSession() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; const newDate = prompt(`Nueva fecha del dictado (AAAA-MM-DD):`, t.date); if (!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate.trim())) return; t.date = newDate.trim(); saveLocalAndCloud(); openDetailModal(t.id); renderAll(); }
@@ -2832,6 +2665,7 @@
       document.getElementById("btnPortalConfig").classList.toggle("hidden", !isAdmin);
       updatePendingBadge();
       updateMyTasksBadge();
+      updateCompletedTabBadge();
       syncFirebaseRealtime();
       renderPlatformsQuickList();
       syncSelectors();
@@ -2948,16 +2782,19 @@
       document.getElementById("filterTrainingStage").classList.toggle("hidden", isSoporte);
       document.getElementById("filterWorkshop").classList.toggle("hidden", !isSoporte);
       document.getElementById("filterBrand").classList.toggle("hidden", !isSoporte);
+      document.getElementById("completedBrandFilter").classList.toggle("hidden", !isSoporte);
+      document.getElementById("completedWorkshopFilter").classList.toggle("hidden", !isSoporte);
       document.getElementById("supportAnalyticsRow").classList.toggle("hidden", !isSoporte);
       document.getElementById("trainingCoordinatorPanel").classList.toggle("hidden", isSoporte);
 
       refreshNotificationsUI();
+      updateCompletedTabBadge();
       renderAll();
     }
 
     function switchTab(tab) {
       activeTab = tab;
-      ["board", "tasks", "dashboard", "calendar"].forEach(t => {
+      ["board", "completed", "tasks", "dashboard", "calendar"].forEach(t => {
         const viewEl = document.getElementById("view-" + t);
         if (viewEl) viewEl.classList.toggle("hidden", t !== tab);
         const btn = document.getElementById("tab-" + t);
@@ -2981,15 +2818,17 @@
       document.getElementById("tBrand").innerHTML = brandOpts;
       document.getElementById("tTrBrand").innerHTML = `<option value="">Multimarca / General</option>` + brandOpts;
       document.getElementById("filterBrand").innerHTML = `<option value="">Todas las Marcas</option>` + brandOpts;
+      document.getElementById("completedBrandFilter").innerHTML = `<option value="">Todas las Marcas</option>` + brandOpts;
 
       const wOptions = state.workshops.map(w => `<option value="${escapeHtml(w.name)} (${w.type})">${escapeHtml(w.name)} - ${escapeHtml(w.city)}</option>`).join("");
       document.getElementById("tWorkshop").innerHTML = wOptions;
       document.getElementById("filterWorkshop").innerHTML = `<option value="">Todos los Talleres</option>` + wOptions;
+      document.getElementById("completedWorkshopFilter").innerHTML = `<option value="">Todos los Talleres</option>` + wOptions;
     }
 
     function toggleCustomBrandField() { document.getElementById("customBrandBox").classList.toggle("hidden", document.getElementById("tBrand").value !== "Otras Marcas"); }
     function checkSimilarDtcCases() {}
-    function renderAll() { renderDashboard(); renderCalendar(); renderBoard(); renderTodos(); }
+    function renderAll() { renderDashboard(); renderCalendar(); renderBoard(); renderCompletedTab(); renderTodos(); updateCompletedTabBadge(); }
 
     function renderDashboard() {
       const list = getFilteredModeTasks();
@@ -3089,12 +2928,31 @@
       });
 
       document.getElementById("kanbanContainer").innerHTML = BOARD_COLUMNS.map(col => {
-        const colTasks = list.filter(t => t.status === col.id);
+        let colTasks = list.filter(t => t.status === col.id);
+        const totalInColumn = colTasks.length;
+
+        // En la columna COMPLETADO, limitar a un máximo de 10 casos más recientes
+        let hasMoreCompleted = false;
+        if (col.id === "Completado") {
+          colTasks = colTasks.sort((a, b) => {
+            const da = a.closedDate || a.date || "";
+            const db = b.closedDate || b.date || "";
+            return db > da ? 1 : -1;
+          });
+          if (colTasks.length > 10) {
+            hasMoreCompleted = true;
+            colTasks = colTasks.slice(0, 10);
+          }
+        }
+
         return `
           <div ondragover="event.preventDefault()" ondrop="handleDrop(event, '${col.id}')" class="rounded-2xl p-3 space-y-3 min-h-[280px] shadow-sm backdrop-blur-md ${col.colBg}">
             <div class="flex items-center justify-between px-1 pb-1 border-b border-black/5">
-              <h3 class="text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 ${col.headerText}"><i class="ph-bold ${col.icon} text-base"></i> ${col.label}</h3>
-              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${col.badgeBg}">${colTasks.length}</span>
+              <h3 class="text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 ${col.headerText}">
+                <i class="ph-bold ${col.icon} text-base"></i> ${col.label}
+                ${col.id === "Completado" ? `<span class="text-[9px] font-semibold opacity-75">(Últimos 10)</span>` : ""}
+              </h3>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${col.badgeBg}">${col.id === "Completado" ? `${colTasks.length}/${totalInColumn}` : totalInColumn}</span>
             </div>
             <div class="space-y-2.5">
               ${colTasks.map(t => {
@@ -3104,7 +2962,15 @@
                 if (isEnt) { ensureTrainingStructure(t); trMetrics = calculateTrainingPrepMetrics(t); }
                 return `
                   <div draggable="true" ondragstart="event.dataTransfer.setData('text/plain', '${t.id}')" onclick="openDetailModal('${t.id}')" class="bg-white rounded-xl p-3 border ${col.cardBorder} shadow-sm hover:shadow-md cursor-pointer transition space-y-2">
-                    <div class="flex items-center justify-between gap-1"><span class="text-[11px] font-extrabold text-accent">${escapeHtml(t.caseId)}</span><span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(t.date)}</span></div>
+                    <div class="flex items-center justify-between gap-1">
+                      <span class="text-[11px] font-extrabold text-accent">${escapeHtml(t.caseId)}</span>
+                      <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">${escapeHtml(t.date)}</span>
+                    </div>
+                    ${t.isClaimReopened ? `
+                      <div>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-red-600 text-white">🚨 RECLAMO / REINGRESO #${t.claimCount || 1}</span>
+                      </div>
+                    ` : ""}
                     ${isEnt ? `<div class="flex flex-wrap items-center gap-1"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-amber-300">${escapeHtml(t.trainingData.stage)}</span>${t.brand ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-white">${escapeHtml(t.brand)}</span>` : ""}</div>` : `<div class="flex flex-wrap items-center gap-1">${t.brand ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}${t.isVor ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-600 text-white">🚨 VOR</span>` : ""}</div>`}
                     <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
                     <div class="text-[11px] font-semibold text-slate-500">${escapeHtml(t.subcategory)}</div>
@@ -3112,6 +2978,12 @@
                   </div>
                 `;
               }).join("")}
+
+              ${col.id === "Completado" && totalInColumn > 0 ? `
+                <button type="button" onclick="switchTab('completed')" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition">
+                  <i class="ph-bold ph-magnifying-glass"></i> Ver todos los completados (${totalInColumn})
+                </button>
+              ` : ""}
             </div>
           </div>
         `;
@@ -3124,7 +2996,11 @@
       const t = state.tasks.find(x => x.id === id);
       if (!t || t.status === newStatus) return;
       t.status = newStatus;
-      if (newStatus === "Completado") { t.progress = 100; if ((t.mode || "soporte") === "entrenamiento") { ensureTrainingStructure(t); t.trainingData.stage = "Cerrado"; } }
+      if (newStatus === "Completado") {
+        t.progress = 100;
+        if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
+        if ((t.mode || "soporte") === "entrenamiento") { ensureTrainingStructure(t); t.trainingData.stage = "Cerrado"; }
+      }
       pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} movió ${t.caseId} (${t.title}) a "${newStatus}"` });
       saveLocalAndCloud();
       renderAll();
@@ -3198,6 +3074,7 @@
         t.assigneeId = document.getElementById("tAssignee").value;
         t.date = dateVal;
         t.status = document.getElementById("tStatus").value;
+        if (t.status === "Completado" && !t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
         t.description = document.getElementById("tDesc").value.trim();
         if (isSoporte) {
           t.workshop = document.getElementById("tWorkshop").value;
@@ -3293,6 +3170,17 @@
 
       document.getElementById("dCaseBadge").textContent = t.caseId;
       document.getElementById("dTitle").textContent = t.title;
+
+      // Mostrar botón Reabrir por Reclamo si el caso está en estado Completado
+      document.getElementById("btnReopenClaimHeader").classList.toggle("hidden", t.status !== "Completado");
+      const reopenedBadge = document.getElementById("dReopenedBadge");
+      if (t.isClaimReopened && t.status !== "Completado") {
+        reopenedBadge.textContent = `🚨 RECLAMO / REINGRESO #${t.claimCount || 1}`;
+        reopenedBadge.classList.remove("hidden");
+      } else {
+        reopenedBadge.classList.add("hidden");
+      }
+
       document.getElementById("trainingDetailTabsBar").classList.toggle("hidden", isSoporte);
       document.getElementById("dTrainingControlPanel").classList.toggle("hidden", isSoporte);
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
@@ -3390,7 +3278,7 @@
     async function syncAllCaseMediaToDrive() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; for (const m of (t.media || [])) { if (m.url && m.url.startsWith("data:")) await uploadSingleMediaItemToDrive(t, m); } saveLocalAndCloud(); renderDetailMedia(t); showToast("Respaldado en Drive", "success"); }
     function uploadMediaToDrive(e) { const file = e.target.files[0]; const t = state.tasks.find(x => x.id === currentDetailId); if (!file || !t) return; const reader = new FileReader(); reader.onload = async () => { const item = { name: file.name, type: file.type.startsWith("image/") ? "image" : "file", url: reader.result, viewUrl: reader.result, syncedToDrive: false }; t.media.push(item); renderDetailMedia(t); await uploadSingleMediaItemToDrive(t, item); pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} subió archivo "${file.name}" en ${t.caseId}` }); saveLocalAndCloud(); renderDetailMedia(t); }; reader.readAsDataURL(file); }
 
-    function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || t.status === val) return; t.status = val; if (val === "Completado") t.progress = 100; pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} cambió ${t.caseId} (${t.title}) a estado "${val}"` }); saveLocalAndCloud(); renderAll(); }
+    function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || t.status === val) return; t.status = val; if (val === "Completado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} cambió ${t.caseId} (${t.title}) a estado "${val}"` }); saveLocalAndCloud(); openDetailModal(t.id); renderAll(); }
     function updateTaskProgressQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.progress = Number(val); document.getElementById("dProgressVal").textContent = val + "%"; pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} actualizó el avance de ${t.caseId} (${t.title}) al ${val}%` }); saveLocalAndCloud(); renderAll(); }
     function editCurrentTask() { closeModal("detailModal"); openTaskModal("", currentDetailId); }
     function deleteCurrentTask() { if (isCurrentAdmin() && confirm("¿Eliminar?")) { state.tasks = state.tasks.filter(x => x.id !== currentDetailId); saveLocalAndCloud(); closeModal("detailModal"); renderAll(); } }

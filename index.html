@@ -532,11 +532,12 @@
             </div>
           </div>
 
-          <form onsubmit="quickAddTodo(event)" class="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+          <form onsubmit="quickAddTodo(event)" class="flex flex-wrap items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
             <i class="ph-bold ph-circle text-slate-400 text-xl ml-1 hidden sm:inline"></i>
             <input type="text" id="quickTodoTitle" required placeholder="Añadir una tarea rápida..." class="flex-1 min-w-[200px] px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm focus:outline-none" />
             <select id="quickTodoAssignee" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700"></select>
-            <input type="date" id="quickTodoDue" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs text-slate-700" />
+            <input type="date" id="quickTodoDue" aria-label="Fecha límite de la tarea" class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs text-slate-700" />
+            <label class="flex items-center gap-1.5 text-xs"><input type="checkbox" id="quickTodoNotify" checked /> Avisar por correo</label>
             <button type="submit" class="px-4 py-2 rounded-xl btn-accent text-xs font-bold shrink-0">Añadir</button>
           </form>
 
@@ -1649,8 +1650,10 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Asignado a *</label>
-            <select id="tdAssignee" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-semibold"></select>
+            <fieldset>
+              <legend class="text-xs font-bold text-slate-700 mb-1">Responsables de la tarea</legend>
+              <div id="tdAssignees" class="max-h-28 overflow-y-auto rounded-xl border border-slate-300 p-2 space-y-1 text-xs"></div>
+            </fieldset>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Prioridad</label>
@@ -1679,13 +1682,17 @@
           <label class="block text-xs font-bold text-slate-700 mb-1">Notas</label>
           <textarea id="tdNotes" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white"></textarea>
         </div>
+        <label class="flex items-center gap-2 text-xs font-semibold">
+          <input type="checkbox" id="tdNotify" /> Avisar por correo a los responsables seleccionados arriba
+        </label>
         <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-200 space-y-2.5">
-          <label class="text-xs font-extrabold uppercase text-[#004B93]">Checklist de Sub-pasos</label>
+          <h4 class="text-xs font-extrabold uppercase text-[#004B93]">Subtareas</h4>
+          <p class="text-xs text-slate-600">Los encargados de las subtareas aparecen también en la tarea principal.</p>
           <div class="flex gap-2">
             <input type="text" id="tdNewSubtaskInput" onkeydown="if(event.key==='Enter'){event.preventDefault(); addDraftSubtask();}" placeholder="Nuevo paso..." class="flex-1 px-3 py-2 rounded-xl border border-blue-300 text-xs bg-white" />
             <button type="button" onclick="addDraftSubtask()" class="px-3 py-2 rounded-xl bg-[#004B93] text-white text-xs font-bold">Agregar</button>
           </div>
-          <div id="tdSubtasksDraftList" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
+          <div id="tdSubtasksDraftList" class="space-y-2"></div>
         </div>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
           <button type="button" onclick="closeModal('todoModal')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Cancelar</button>
@@ -1845,6 +1852,18 @@
       </div>
     </div>
   </div>
+
+  <dialog id="deleteTodoDialog" aria-labelledby="deleteTodoTitle" class="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white text-slate-900 p-5 shadow-xl backdrop:bg-slate-900/50">
+    <h2 id="deleteTodoTitle" class="font-bold mb-2">Mover tarea a la Papelera</h2>
+    <p id="deleteTodoLabel" class="text-sm mb-3"></p>
+    <form onsubmit="confirmDeleteTodo(event)" class="space-y-4">
+      <label class="flex items-center gap-2 text-sm"><input id="notifyDeletedTodo" type="checkbox" /> Enviar los avisos por correo marcados en la tarea y sus subtareas</label>
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="document.getElementById('deleteTodoDialog').close()" class="px-3 py-2 rounded-lg border border-slate-300 text-sm">Cancelar</button>
+        <button type="submit" class="px-3 py-2 rounded-lg bg-red-700 text-white text-sm font-semibold">Mover a Papelera</button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog id="contactsModal" aria-labelledby="contactsTitle" class="m-auto w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] rounded-2xl bg-white text-slate-900 p-5 shadow-xl backdrop:bg-slate-900/50">
     <div class="flex items-center justify-between gap-3 mb-4">
@@ -2033,6 +2052,8 @@
     let pendingRegTemp = null;
     let todoFilterMode = "mine";
     let draftSubtasks = [];
+    let removedDraftSubtasks = new Map();
+    let todoIdToDelete = "";
     let insertBankIntoCurrentSession = false;
     let activeTickerNotif = null;
     let revealedCredIds = {};
@@ -2472,7 +2493,7 @@
     setInterval(() => { if (currentSession) syncFirebaseRealtime(); }, 8000);
 
     function updateHotlineBadge() { const badge = document.getElementById("hotlineBadgeCount"); const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length; if (pendingCount > 0) { badge.textContent = pendingCount; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
-    function updateMyTasksBadge() { const badge = document.getElementById("myTasksBadge"); if (!badge || !currentSession) return; const myPending = (state.todos || []).filter(td => !td.completed && td.assigneeId === currentSession.id).length; if (myPending > 0) { badge.textContent = myPending; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
+    function updateMyTasksBadge() { const badge = document.getElementById("myTasksBadge"); if (!badge || !currentSession) return; const myPending = (state.todos || []).filter(td => !td.completed && isTodoAssignedTo(td, currentSession.id)).length; if (myPending > 0) { badge.textContent = myPending; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
     function updateCompletedTabBadge() { const el = document.getElementById("completedTabCount"); if (el) el.textContent = getFilteredModeTasks().filter(t => t.status === "Completado").length; }
 
     function openHtcBankModal(fromSession = false) { insertBankIntoCurrentSession = !!fromSession; renderHtcBankList(); document.getElementById("htcBankModal").classList.remove("hidden"); }
@@ -2538,30 +2559,292 @@
     function quickSaveVorInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.isVor = document.getElementById("dIsVorCheck").checked; t.partOrderNumber = document.getElementById("dPartOrderInput").value.trim().toUpperCase(); t.partDescription = document.getElementById("dPartDescInput").value.trim(); t.partEta = document.getElementById("dPartEtaInput").value; const vorBadge = document.getElementById("dVorBadge"); if (t.isVor) { vorBadge.textContent = `🚨 VOR ${t.partOrderNumber ? `· ${t.partOrderNumber}` : ""}`; vorBadge.classList.remove("hidden"); } else vorBadge.classList.add("hidden"); saveLocalAndCloud(); renderBoard(); if (showMsg) showToast("Control VOR guardado", "success"); }
 
     function setTodoFilter(mode) { todoFilterMode = mode; ["mine", "all", "urgent", "done"].forEach(k => { const btn = document.getElementById("todoFilter-" + k); if (btn) btn.className = k === mode ? "px-3 py-1.5 rounded-lg bg-white text-[#004B93] shadow-sm transition" : "px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition"; }); renderTodos(); }
-    function quickAddTodo(e) { e.preventDefault(); const titleInput = document.getElementById("quickTodoTitle"); const title = titleInput.value.trim(); if (!title || !currentSession) return; const assigneeId = document.getElementById("quickTodoAssignee").value || currentSession.id; const members = getAllAssignableMembers(); const assignee = members.find(u => u.id === assigneeId); const newTodo = { id: "td_" + Date.now(), area: appMode, title, assigneeId, createdBy: currentSession.name, createdAt: new Date().toLocaleString(), dueDate: document.getElementById("quickTodoDue").value || "", priority: "Normal", linkedCaseId: "", workshop: "", notes: "", subtasks: [], completed: false }; state.todos.unshift(newTodo); pushActivityNotification({ area: appMode, targetType: "todo", targetId: newTodo.id, targetUserId: assigneeId, message: `${currentSession.name} asignó la tarea "${title}" a ${assignee ? assignee.name : "Encargado"}` }); titleInput.value = ""; saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
-    function openTodoModal(editId = null) { document.getElementById("editTodoId").value = editId || ""; const members = getAllAssignableMembers(); document.getElementById("tdAssignee").innerHTML = members.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join(""); document.getElementById("tdLinkedCase").innerHTML = `<option value="">Ninguno</option>` + (state.tasks || []).map(t => `<option value="${escapeHtml(t.caseId)}">${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</option>`).join(""); document.getElementById("tdWorkshop").innerHTML = `<option value="">Ninguno</option>` + (state.workshops || []).map(w => `<option value="${escapeHtml(w.name)}">${escapeHtml(w.name)}</option>`).join(""); if (editId) { const td = state.todos.find(x => x.id === editId); document.getElementById("tdTitle").value = td.title; document.getElementById("tdAssignee").value = td.assigneeId; document.getElementById("tdPriority").value = td.priority || "Normal"; document.getElementById("tdDueDate").value = td.dueDate || ""; document.getElementById("tdLinkedCase").value = td.linkedCaseId || ""; document.getElementById("tdWorkshop").value = td.workshop || ""; document.getElementById("tdNotes").value = td.notes || ""; draftSubtasks = JSON.parse(JSON.stringify(td.subtasks || [])); } else { document.getElementById("tdTitle").value = ""; if (currentSession) document.getElementById("tdAssignee").value = currentSession.id; document.getElementById("tdPriority").value = "Normal"; document.getElementById("tdDueDate").value = ""; document.getElementById("tdLinkedCase").value = ""; document.getElementById("tdWorkshop").value = ""; document.getElementById("tdNotes").value = ""; draftSubtasks = []; } renderDraftSubtasks(); document.getElementById("todoModal").classList.remove("hidden"); }
-    function addDraftSubtask() { const inp = document.getElementById("tdNewSubtaskInput"); if (!inp.value.trim()) return; draftSubtasks.push({ id: "st_" + Date.now(), text: inp.value.trim(), done: false }); inp.value = ""; renderDraftSubtasks(); }
-    function removeDraftSubtask(idx) { draftSubtasks.splice(idx, 1); renderDraftSubtasks(); }
-    function renderDraftSubtasks() { document.getElementById("tdSubtasksDraftList").innerHTML = draftSubtasks.map((st, i) => `<div class="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-blue-200 text-xs"><span>${i + 1}. ${escapeHtml(st.text)}</span><button type="button" onclick="removeDraftSubtask(${i})" class="text-red-500 font-bold"><i class="ph-bold ph-x"></i></button></div>`).join(""); }
-    function saveTodoItem(e) { e.preventDefault(); const editId = document.getElementById("editTodoId").value; const title = document.getElementById("tdTitle").value.trim(); const assigneeId = document.getElementById("tdAssignee").value; const priority = document.getElementById("tdPriority").value; const dueDate = document.getElementById("tdDueDate").value; const linkedCaseId = document.getElementById("tdLinkedCase").value; const workshop = document.getElementById("tdWorkshop").value; const notes = document.getElementById("tdNotes").value.trim(); const members = getAllAssignableMembers(); const assignee = members.find(u => u.id === assigneeId); if (editId) { const td = state.todos.find(x => x.id === editId); if (td) Object.assign(td, { title, assigneeId, priority, dueDate, linkedCaseId, workshop, notes, subtasks: draftSubtasks }); } else { const newTodo = { id: "td_" + Date.now(), area: appMode, title, assigneeId, createdBy: currentSession.name, createdAt: new Date().toLocaleString(), dueDate, priority, linkedCaseId, workshop, notes, subtasks: draftSubtasks, completed: false }; state.todos.unshift(newTodo); pushActivityNotification({ area: appMode, targetType: "todo", targetId: newTodo.id, targetUserId: assigneeId, message: `${currentSession.name} asignó nueva tarea "${title}" a ${assignee ? assignee.name : "Encargado"}` }); } saveLocalAndCloud(); closeModal("todoModal"); updateMyTasksBadge(); renderTodos(); }
-    function toggleTodoComplete(todoId) { const td = state.todos.find(x => x.id === todoId); if (!td) return; td.completed = !td.completed; td.completedAt = td.completed ? new Date().toLocaleString() : ""; td.completedBy = td.completed && currentSession ? currentSession.name : ""; pushActivityNotification({ area: td.area || appMode, targetType: "todo", targetId: td.id, message: `${currentSession.name} ${td.completed ? "completó la tarea" : "reabrió la tarea"} "${td.title}"` }); saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
-    function toggleSubtaskDone(todoId, subIdx) { const td = state.todos.find(x => x.id === todoId); if (!td) return; td.subtasks[subIdx].done = !td.subtasks[subIdx].done; if (td.subtasks.length > 0 && td.subtasks.every(s => s.done)) td.completed = true; saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
-    function deleteTodoItem(todoId) {
-      if (!moveToTrash("todos", todoId)) return;
+    function directTodoAssignees(todo) {
+      if (!todo) return [];
+      // Firebase omits empty arrays. New records keep assigneeId only for direct assignments.
+      return Array.isArray(todo.assigneeIds) ? todo.assigneeIds : todo.assigneeId ? [todo.assigneeId] : [];
+    }
+
+    function allTodoAssignees(todo) {
+      return [...new Set([...directTodoAssignees(todo), ...(todo.subtasks || []).map(sub => sub.assigneeId)].filter(Boolean))];
+    }
+
+    function isTodoAssignedTo(todo, userId) {
+      return directTodoAssignees(todo).includes(userId) ||
+        (todo.subtasks || []).some(sub => !sub.done && sub.assigneeId === userId);
+    }
+
+    function todoEmailDate(date) {
+      return date ? date.split("-").reverse().join("/") : "Sin fecha definida";
+    }
+
+    function collectTodoEmails(before, after, removed = new Map(), notifyWholeDeletion = false) {
+      const todo = after || before;
+      const messages = [];
+      const add = (recipientId, kind, title, date, deleted = false) => {
+        if (!recipientId) return;
+        const event = deleted ? "eliminación" : "asignación";
+        const body = [
+          deleted ? `${kind === "Subtarea" ? "La subtarea" : "La tarea"} «${title}» fue eliminada.` : `Se te ha asignado: ${title}.`,
+          kind === "Subtarea" ? `Tarea principal: ${todo.title}.` : "",
+          `Fecha límite de entrega: ${todoEmailDate(date)}.`
+        ].filter(Boolean).join("\n");
+        messages.push({ recipientId, subject: `[Automotor] ${kind}: ${event} · ${title}`, body });
+      };
+
+      if (!after) {
+        if (notifyWholeDeletion) {
+          if (before.notifyEmail) directTodoAssignees(before).forEach(id => add(id, "Tarea", before.title, before.dueDate, true));
+          (before.subtasks || []).filter(sub => sub.notifyEmail).forEach(sub => add(sub.assigneeId, "Subtarea", sub.text, sub.dueDate, true));
+        }
+        return messages;
+      }
+
+      if (after.notifyEmail) {
+        const formerAssignees = directTodoAssignees(before);
+        directTodoAssignees(after).forEach(id => {
+          if (!before?.notifyEmail || !formerAssignees.includes(id) || before.dueDate !== after.dueDate) {
+            add(id, "Tarea", after.title, after.dueDate);
+          }
+        });
+      }
+      const priorSubtasks = new Map((before?.subtasks || []).map(sub => [sub.id, sub]));
+      const currentSubIds = new Set((after.subtasks || []).map(sub => sub.id));
+      (after.subtasks || []).forEach(sub => {
+        const prior = priorSubtasks.get(sub.id);
+        if (sub.notifyEmail && (!prior?.notifyEmail || prior.assigneeId !== sub.assigneeId || prior.dueDate !== sub.dueDate)) {
+          add(sub.assigneeId, "Subtarea", sub.text, sub.dueDate);
+        }
+      });
+      priorSubtasks.forEach(sub => {
+        if (!currentSubIds.has(sub.id) && (removed.get(sub.id) ?? sub.notifyEmail)) {
+          add(sub.assigneeId, "Subtarea", sub.text, sub.dueDate, true);
+        }
+      });
+      return messages;
+    }
+
+    async function sendTodoEmails(messages) {
+      if (!messages.length) return;
+      const members = new Map(getAllAssignableMembers().map(member => [member.id, member]));
+      const results = await Promise.allSettled(messages.map(async ({ recipientId, subject, body }) => {
+        const to = members.get(recipientId)?.email?.trim();
+        if (!to) throw new Error("Encargado sin correo registrado");
+        const reply = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "sendEmail", to, subject, body })
+        });
+        if (!reply.ok || (await reply.json()).status !== "ok") throw new Error("El servicio de correo no confirmó el envío");
+      }));
+      const failures = results.filter(result => result.status === "rejected").length;
+      if (failures) showToast(`Cambios guardados. Fallaron ${failures} de ${messages.length} avisos por correo.`, "warning");
+      else showToast(messages.length === 1 ? "Aviso enviado por correo" : `${messages.length} avisos enviados por correo`, "success");
+    }
+
+    function quickAddTodo(e) {
+      e.preventDefault();
+      const titleInput = document.getElementById("quickTodoTitle");
+      const title = titleInput.value.trim();
+      if (!title || !currentSession) return;
+      const assigneeId = document.getElementById("quickTodoAssignee").value || currentSession.id;
+      const newTodo = {
+        id: "td_" + crypto.randomUUID(), area: appMode, title, assigneeId, assigneeIds: [assigneeId],
+        notifyEmail: document.getElementById("quickTodoNotify").checked,
+        createdBy: currentSession.name, createdAt: new Date().toLocaleString(),
+        dueDate: document.getElementById("quickTodoDue").value, priority: "Normal",
+        linkedCaseId: "", workshop: "", notes: "", subtasks: [], completed: false
+      };
+      state.todos.unshift(newTodo);
+      notifyTodoParticipants(null, newTodo);
+      titleInput.value = "";
+      saveLocalAndCloud();
       updateMyTasksBadge();
       renderTodos();
+      void sendTodoEmails(collectTodoEmails(null, newTodo));
     }
+
+    function openTodoModal(editId = null) {
+      const todo = editId ? state.todos.find(item => item.id === editId) : null;
+      if (editId && !todo) return;
+      document.getElementById("todoModalTitle").textContent = todo ? "Editar tarea" : "Nueva tarea";
+      document.getElementById("editTodoId").value = editId || "";
+      const selected = todo ? directTodoAssignees(todo) : [currentSession?.id];
+      const members = getAllAssignableMembers();
+      const unavailable = selected.filter(id => id && !members.some(member => member.id === id));
+      document.getElementById("tdAssignees").innerHTML = [
+        ...members, ...unavailable.map(id => ({ id, name: "Usuario no disponible" }))
+      ].map(member => `<label class="flex items-center gap-2"><input type="checkbox" value="${escapeHtml(member.id)}" ${selected.includes(member.id) ? "checked" : ""} /> ${escapeHtml(member.name)}</label>`).join("");
+      document.getElementById("tdLinkedCase").innerHTML = '<option value="">Ninguno</option>' + (state.tasks || []).map(t => `<option value="${escapeHtml(t.caseId)}">${escapeHtml(t.caseId)} — ${escapeHtml(t.title)}</option>`).join("");
+      document.getElementById("tdWorkshop").innerHTML = '<option value="">Ninguno</option>' + (state.workshops || []).map(w => `<option value="${escapeHtml(w.name)}">${escapeHtml(w.name)}</option>`).join("");
+      const values = {
+        tdTitle: todo?.title || "", tdPriority: todo?.priority || "Normal", tdDueDate: todo?.dueDate || "",
+        tdLinkedCase: todo?.linkedCaseId || "", tdWorkshop: todo?.workshop || "", tdNotes: todo?.notes || "",
+        tdNewSubtaskInput: ""
+      };
+      Object.entries(values).forEach(([id, value]) => { document.getElementById(id).value = value; });
+      document.getElementById("tdNotify").checked = todo ? !!todo.notifyEmail : true;
+      draftSubtasks = (todo?.subtasks || []).map((sub, index) => ({ ...sub, id: sub.id || "legacy_" + index }));
+      removedDraftSubtasks = new Map();
+      renderDraftSubtasks();
+      document.getElementById("todoModal").classList.remove("hidden");
+    }
+
+    function addDraftSubtask() {
+      const input = document.getElementById("tdNewSubtaskInput");
+      if (!input.value.trim()) return;
+      draftSubtasks.push({ id: "st_" + crypto.randomUUID(), text: input.value.trim(), done: false, assigneeId: "", dueDate: "", notifyEmail: true });
+      input.value = "";
+      renderDraftSubtasks();
+    }
+
+    function removeDraftSubtask(index) {
+      const [sub] = draftSubtasks.splice(index, 1);
+      if (sub) removedDraftSubtasks.set(sub.id, !!sub.notifyEmail);
+      renderDraftSubtasks();
+    }
+
+    function renderDraftSubtasks() {
+      const members = getAllAssignableMembers();
+      document.getElementById("tdSubtasksDraftList").innerHTML = draftSubtasks.map((sub, i) => {
+        const options = members.map(member => `<option value="${escapeHtml(member.id)}" ${sub.assigneeId === member.id ? "selected" : ""}>${escapeHtml(member.name)}</option>`).join("");
+        const unavailable = sub.assigneeId && !members.some(member => member.id === sub.assigneeId);
+        return `<fieldset class="grid sm:grid-cols-2 gap-2 rounded-xl bg-white border border-blue-200 p-3 text-xs">
+          <legend class="font-semibold">Subtarea ${i + 1}</legend>
+          <label class="sm:col-span-2">Descripción<input required value="${escapeHtml(sub.text)}" oninput="draftSubtasks[${i}].text=this.value" class="block w-full rounded-lg border border-slate-300 px-2 py-1.5" /></label>
+          <label>Encargado<select onchange="draftSubtasks[${i}].assigneeId=this.value" class="block w-full rounded-lg border border-slate-300 px-2 py-1.5">
+            <option value="">Sin encargado</option>${options}${unavailable ? `<option selected value="${escapeHtml(sub.assigneeId)}">Usuario no disponible</option>` : ""}
+          </select></label>
+          <label>Fecha límite<input type="date" value="${escapeHtml(sub.dueDate)}" oninput="draftSubtasks[${i}].dueDate=this.value" class="block w-full rounded-lg border border-slate-300 px-2 py-1.5" /></label>
+          <label class="flex items-center gap-2"><input type="checkbox" ${sub.notifyEmail ? "checked" : ""} onchange="draftSubtasks[${i}].notifyEmail=this.checked" /> Avisar al encargado por correo</label>
+          <button type="button" onclick="removeDraftSubtask(${i})" class="text-red-600 text-left sm:text-right font-semibold">Eliminar subtarea</button>
+        </fieldset>`;
+      }).join("");
+    }
+
+    function notifyTodoParticipants(before, after) {
+      const priorIds = before ? allTodoAssignees(before) : [];
+      allTodoAssignees(after).filter(id => !priorIds.includes(id)).forEach(id => {
+        pushActivityNotification({ area: after.area, targetType: "todo", targetId: after.id, targetUserId: id,
+          message: `${currentSession.name} te asignó trabajo en la tarea "${after.title}"` });
+      });
+    }
+
+    function saveTodoItem(e) {
+      e.preventDefault();
+      if (!currentSession) return;
+      const editId = document.getElementById("editTodoId").value;
+      const index = state.todos.findIndex(item => item.id === editId);
+      if (editId && index < 0) {
+        showToast("La tarea ya no está disponible", "warning");
+        return;
+      }
+      if (document.getElementById("tdNewSubtaskInput").value.trim()) addDraftSubtask();
+      const before = index >= 0 ? state.todos[index] : null;
+      const assigneeIds = Array.from(document.querySelectorAll("#tdAssignees input:checked"), input => input.value);
+      const title = document.getElementById("tdTitle").value.trim();
+      if (!title || draftSubtasks.some(sub => !sub.text.trim())) {
+        showToast("Completa el título de la tarea y la descripción de cada subtarea", "warning");
+        return;
+      }
+      if (!assigneeIds.length && !draftSubtasks.some(sub => sub.assigneeId)) {
+        showToast("Selecciona un responsable en la tarea o en una subtarea", "warning");
+        return;
+      }
+      const after = {
+        ...(before || { id: "td_" + crypto.randomUUID(), area: appMode, createdBy: currentSession.name, createdAt: new Date().toLocaleString(), completed: false }),
+        title, assigneeIds, assigneeId: assigneeIds[0] || "",
+        notifyEmail: document.getElementById("tdNotify").checked,
+        priority: document.getElementById("tdPriority").value,
+        dueDate: document.getElementById("tdDueDate").value,
+        linkedCaseId: document.getElementById("tdLinkedCase").value,
+        workshop: document.getElementById("tdWorkshop").value,
+        notes: document.getElementById("tdNotes").value.trim(),
+        subtasks: draftSubtasks.map(sub => ({ ...sub, text: sub.text.trim() }))
+      };
+      const previous = before && { ...before, subtasks: (before.subtasks || []).map((sub, i) => ({ ...sub, id: sub.id || "legacy_" + i })) };
+      if (previous?.completed && after.subtasks.some(sub => !sub.done && !previous.subtasks.some(old => old.id === sub.id))) {
+        after.completed = false;
+        after.completedAt = "";
+        after.completedBy = "";
+      }
+      const emails = collectTodoEmails(previous, after, removedDraftSubtasks);
+      if (index < 0) state.todos.unshift(after);
+      else state.todos[index] = after;
+      notifyTodoParticipants(before, after);
+      saveLocalAndCloud();
+      closeModal("todoModal");
+      updateMyTasksBadge();
+      renderTodos();
+      void sendTodoEmails(emails);
+    }
+
+    function toggleTodoComplete(todoId) { const td = state.todos.find(x => x.id === todoId); if (!td) return; td.completed = !td.completed; td.completedAt = td.completed ? new Date().toLocaleString() : ""; td.completedBy = td.completed && currentSession ? currentSession.name : ""; pushActivityNotification({ area: td.area || appMode, targetType: "todo", targetId: td.id, message: `${currentSession.name} ${td.completed ? "completó la tarea" : "reabrió la tarea"} "${td.title}"` }); saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
+    function toggleSubtaskDone(todoId, subIdx) { const td = state.todos.find(x => x.id === todoId); if (!td?.subtasks?.[subIdx]) return; td.subtasks[subIdx].done = !td.subtasks[subIdx].done; if (td.subtasks.length > 0 && td.subtasks.every(s => s.done)) td.completed = true; saveLocalAndCloud(); updateMyTasksBadge(); renderTodos(); }
+    function deleteTodoItem(todoId) {
+      const todo = state.todos.find(item => item.id === todoId);
+      if (!todo) return;
+      todoIdToDelete = todoId;
+      document.getElementById("deleteTodoLabel").textContent = todo.title;
+      document.getElementById("notifyDeletedTodo").checked = !!todo.notifyEmail || (todo.subtasks || []).some(sub => sub.notifyEmail);
+      document.getElementById("deleteTodoDialog").showModal();
+    }
+
+    function confirmDeleteTodo(event) {
+      event.preventDefault();
+      const todo = state.todos.find(item => item.id === todoIdToDelete);
+      document.getElementById("deleteTodoDialog").close();
+      todoIdToDelete = "";
+      if (!todo) return;
+      const emails = collectTodoEmails(todo, null, new Map(), document.getElementById("notifyDeletedTodo").checked);
+      if (!moveToTrash("todos", todo.id)) return;
+      updateMyTasksBadge();
+      renderTodos();
+      void sendTodoEmails(emails);
+    }
+
     function renderTodos() {
       const box = document.getElementById("todoListContainer");
       if (!box) return;
-      const members = getAllAssignableMembers();
-      const todayStr = new Date().toISOString().split("T")[0];
-      const list = (state.todos || []).filter(td => { if (todoFilterMode === "done") return td.completed; if (td.completed) return false; if (todoFilterMode === "mine" && currentSession) return td.assigneeId === currentSession.id; if (todoFilterMode === "urgent") return td.priority === "Alta" || (td.dueDate && td.dueDate <= todayStr); return true; });
-      box.innerHTML = list.length === 0 ? `<p class="text-xs text-slate-400 text-center py-6">No hay tareas pendientes en esta vista.</p>` : list.map(td => {
-        const assignee = members.find(u => u.id === td.assigneeId);
-        const subs = td.subtasks || [];
-        return `<div id="todo-card-${td.id}" class="rounded-2xl p-4 border bg-white border-slate-200 space-y-2 shadow-sm"><div class="flex items-start justify-between gap-2"><div class="flex items-start gap-2.5"><button type="button" onclick="toggleTodoComplete('${td.id}')" class="mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${td.completed ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-400'}"><i class="ph-bold ph-check text-[10px]"></i></button><div><div class="text-sm font-bold ${td.completed ? 'line-through text-slate-400' : 'text-slate-900'}">${escapeHtml(td.title)}</div><div class="text-[11px] text-slate-500">Asignado a: <strong>${escapeHtml(assignee ? assignee.name : "-")}</strong> ${td.dueDate ? `· Límite: ${escapeHtml(td.dueDate)}` : ""}</div></div></div><div class="flex gap-1"><button type="button" onclick="openTodoModal('${td.id}')" class="p-1 text-slate-500"><i class="ph-bold ph-pencil-simple"></i></button><button type="button" onclick="deleteTodoItem('${td.id}')" class="p-1 text-red-500"><i class="ph-bold ph-trash"></i></button></div></div>${subs.length > 0 ? `<div class="pl-7 space-y-1">${subs.map((s, idx) => `<label class="flex items-center gap-2 text-xs"><input type="checkbox" ${s.done ? "checked" : ""} onchange="toggleSubtaskDone('${td.id}', ${idx})" /> <span class="${s.done ? 'line-through text-slate-400' : ''}">${escapeHtml(s.text)}</span></label>`).join("")}</div>` : ""}</div>`;
-      }).join("");
+      const members = new Map(getAllAssignableMembers().map(member => [member.id, member.name]));
+      const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Asuncion" }).format(new Date());
+      const isDue = date => !!date && date <= today;
+      const list = (state.todos || []).filter(todo => {
+        if (todoFilterMode === "done") return todo.completed;
+        if (todo.completed) return false;
+        if (todoFilterMode === "mine" && currentSession) return isTodoAssignedTo(todo, currentSession.id);
+        if (todoFilterMode === "urgent") return todo.priority === "Alta" || isDue(todo.dueDate) ||
+          (todo.subtasks || []).some(sub => !sub.done && isDue(sub.dueDate));
+        return true;
+      });
+      box.innerHTML = list.length ? list.map(todo => {
+        const id = escapeHtml(JSON.stringify(todo.id));
+        const responsible = allTodoAssignees(todo).map(userId => members.get(userId) || "Usuario no disponible").join(", ");
+        const subtasks = (todo.subtasks || []).map((sub, index) => {
+          const meta = [sub.assigneeId ? members.get(sub.assigneeId) || "Usuario no disponible" : "",
+            sub.dueDate ? "Límite: " + todoEmailDate(sub.dueDate) : ""].filter(Boolean).join(" · ");
+          return `<label class="flex items-start gap-2 text-xs">
+            <input type="checkbox" class="mt-0.5" ${sub.done ? "checked" : ""} onchange="toggleSubtaskDone(${id}, ${index})" />
+            <span><span class="${sub.done ? "line-through text-slate-400" : ""}">${escapeHtml(sub.text)}</span>
+            ${meta ? `<span class="block text-slate-500">${escapeHtml(meta)}</span>` : ""}</span>
+          </label>`;
+        }).join("");
+        return `<div id="todo-card-${escapeHtml(todo.id)}" class="rounded-2xl p-4 border bg-white border-slate-200 space-y-2 shadow-sm">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-start gap-2.5">
+              <button type="button" aria-label="${todo.completed ? "Reabrir tarea" : "Completar tarea"}" onclick="toggleTodoComplete(${id})" class="mt-0.5 w-5 h-5 shrink-0 rounded-full border-2 flex items-center justify-center ${todo.completed ? "bg-emerald-600 border-emerald-600 text-white" : "border-slate-400"}"><i class="ph-bold ph-check text-[10px]"></i></button>
+              <div>
+                <div class="text-sm font-bold ${todo.completed ? "line-through text-slate-400" : "text-slate-900"}">${escapeHtml(todo.title)}</div>
+                <div class="text-[11px] text-slate-500">Responsables: <strong>${escapeHtml(responsible || "Sin responsable")}</strong>${todo.dueDate ? ` · Límite: ${escapeHtml(todoEmailDate(todo.dueDate))}` : ""}</div>
+              </div>
+            </div>
+            <div class="flex gap-1">
+              <button type="button" aria-label="Editar tarea" onclick="openTodoModal(${id})" class="p-1 text-slate-500"><i class="ph-bold ph-pencil-simple"></i></button>
+              <button type="button" aria-label="Eliminar tarea" onclick="deleteTodoItem(${id})" class="p-1 text-red-500"><i class="ph-bold ph-trash"></i></button>
+            </div>
+          </div>
+          ${subtasks ? `<div class="pl-7 space-y-2">${subtasks}</div>` : ""}
+        </div>`;
+      }).join("") : '<p class="text-xs text-slate-400 text-center py-6">No hay tareas pendientes en esta vista.</p>';
     }
 
     function openHotlineRequestsModal() { syncFirebaseRealtime(); renderHotlineRequestsList(); document.getElementById("hotlineRequestsModal").classList.remove("hidden"); }
@@ -2606,7 +2889,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }

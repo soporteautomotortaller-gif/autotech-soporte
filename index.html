@@ -456,7 +456,7 @@
         <div id="kanbanContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5"></div>
       </section>
 
-      <!-- VISTA NUEVA: ARCHIVO DE CASOS COMPLETADOS CON BUSCADOR Y REAPERTURA POR RECLAMO -->
+      <!-- VISTA: ARCHIVO DE CASOS COMPLETADOS CON BUSCADOR Y REAPERTURA POR RECLAMO -->
       <section id="view-completed" class="hidden space-y-4">
         <div class="win-mica rounded-2xl p-4 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
@@ -472,7 +472,6 @@
             <span id="completedTotalBadge" class="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-xs">0 completados</span>
           </div>
 
-          <!-- Buscador y Filtros del Archivo Completado -->
           <div class="flex flex-wrap items-center gap-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
             <div class="relative flex-1 min-w-[220px]">
               <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -482,7 +481,6 @@
             <select id="completedWorkshopFilter" onchange="renderCompletedTab()" class="px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-700 max-w-[220px]"></select>
           </div>
 
-          <!-- Tabla / Listado de Referencia de Completados -->
           <div class="overflow-x-auto border border-slate-200 rounded-2xl">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
@@ -1052,9 +1050,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO                                -->
-  <!-- ======================================================================= -->
+  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
@@ -1068,7 +1064,6 @@
           <h3 id="dTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate max-w-[200px] sm:max-w-sm">Detalle</h3>
         </div>
         <div class="flex flex-wrap items-center gap-1.5">
-          <!-- BOTÓN REABRIR POR RECLAMO (VISIBLE CUANDO EL CASO ESTÁ COMPLETADO) -->
           <button id="btnReopenClaimHeader" onclick="reopenCaseAsClaim(currentDetailId)" class="hidden px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1 shadow-sm animate-pulse">
             <i class="ph-bold ph-arrow-counter-clockwise text-sm"></i> Reabrir por Reclamo (Urgente)
           </button>
@@ -2142,81 +2137,11 @@
     // =========================================================================
     // BASE DE DATOS DE ACCESOS, CREDENCIALES, UBICACIÓN (PC/NOTEBOOK) Y NOTAS
     // =========================================================================
-    function openCredentialsModal() {
-      resetCredentialForm();
-      renderCredentialsTable();
-      document.getElementById("credentialsModal").classList.remove("hidden");
-    }
-
-    function resetCredentialForm() {
-      document.getElementById("editCredId").value = "";
-      document.getElementById("crBrand").value = "";
-      document.getElementById("crPlatform").value = "";
-      document.getElementById("crLink").value = "";
-      document.getElementById("crUserId").value = "";
-      document.getElementById("crPassword").value = "";
-      document.getElementById("crLocation").value = "";
-      document.getElementById("crNote").value = "";
-      document.getElementById("credFormTitle").textContent = "Nuevo Registro de Acceso";
-      document.getElementById("btnSaveCredText").textContent = "Guardar en Base de Datos y Drive";
-      document.getElementById("btnCancelCredEdit").classList.add("hidden");
-    }
-
-    function saveCredentialRecord(e) {
-      e.preventDefault();
-      const editId = document.getElementById("editCredId").value;
-      const brand = document.getElementById("crBrand").value.trim();
-      const platform = document.getElementById("crPlatform").value.trim();
-      const link = document.getElementById("crLink").value.trim();
-      const userId = document.getElementById("crUserId").value.trim();
-      const password = document.getElementById("crPassword").value.trim();
-      const location = document.getElementById("crLocation").value.trim();
-      const note = document.getElementById("crNote").value.trim();
-
-      if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
-
-      if (editId) {
-        const rec = state.credentialsDb.find(x => x.id === editId);
-        if (rec) {
-          Object.assign(rec, { brand, platform, link, userId, password, location, note, updatedAt: new Date().toLocaleString(), updatedBy: currentSession ? currentSession.name : "Usuario" });
-        }
-        showToast("Registro actualizado y respaldado en Drive", "success");
-      } else {
-        state.credentialsDb.unshift({
-          id: "cred_" + Date.now(), brand, platform, link, userId, password, location, note,
-          createdAt: new Date().toLocaleString(), createdBy: currentSession ? currentSession.name : "Usuario"
-        });
-        showToast("Acceso guardado en Base de Datos y Google Drive", "success");
-      }
-
-      resetCredentialForm();
-      saveLocalAndCloud();
-      renderCredentialsTable();
-    }
-
-    function editCredentialRecord(id) {
-      const rec = (state.credentialsDb || []).find(x => x.id === id);
-      if (!rec) return;
-      document.getElementById("editCredId").value = rec.id;
-      document.getElementById("crBrand").value = rec.brand || "";
-      document.getElementById("crPlatform").value = rec.platform || "";
-      document.getElementById("crLink").value = rec.link || "";
-      document.getElementById("crUserId").value = rec.userId || "";
-      document.getElementById("crPassword").value = rec.password || "";
-      document.getElementById("crLocation").value = rec.location || "";
-      document.getElementById("crNote").value = rec.note || "";
-      document.getElementById("credFormTitle").textContent = `Editando Acceso: ${rec.brand}`;
-      document.getElementById("btnSaveCredText").textContent = "Actualizar Registro";
-      document.getElementById("btnCancelCredEdit").classList.remove("hidden");
-    }
-
-    function deleteCredentialRecord(id) {
-      if (!confirm("¿Eliminar este registro de acceso?")) return;
-      state.credentialsDb = (state.credentialsDb || []).filter(x => x.id !== id);
-      saveLocalAndCloud();
-      renderCredentialsTable();
-    }
-
+    function openCredentialsModal() { resetCredentialForm(); renderCredentialsTable(); document.getElementById("credentialsModal").classList.remove("hidden"); }
+    function resetCredentialForm() { document.getElementById("editCredId").value = ""; document.getElementById("crBrand").value = ""; document.getElementById("crPlatform").value = ""; document.getElementById("crLink").value = ""; document.getElementById("crUserId").value = ""; document.getElementById("crPassword").value = ""; document.getElementById("crLocation").value = ""; document.getElementById("crNote").value = ""; document.getElementById("credFormTitle").textContent = "Nuevo Registro de Acceso"; document.getElementById("btnSaveCredText").textContent = "Guardar en Base de Datos y Drive"; document.getElementById("btnCancelCredEdit").classList.add("hidden"); }
+    function saveCredentialRecord(e) { e.preventDefault(); const editId = document.getElementById("editCredId").value; const brand = document.getElementById("crBrand").value.trim(); const platform = document.getElementById("crPlatform").value.trim(); const link = document.getElementById("crLink").value.trim(); const userId = document.getElementById("crUserId").value.trim(); const password = document.getElementById("crPassword").value.trim(); const location = document.getElementById("crLocation").value.trim(); const note = document.getElementById("crNote").value.trim(); if (!Array.isArray(state.credentialsDb)) state.credentialsDb = []; if (editId) { const rec = state.credentialsDb.find(x => x.id === editId); if (rec) Object.assign(rec, { brand, platform, link, userId, password, location, note, updatedAt: new Date().toLocaleString(), updatedBy: currentSession ? currentSession.name : "Usuario" }); showToast("Registro actualizado", "success"); } else { state.credentialsDb.unshift({ id: "cred_" + Date.now(), brand, platform, link, userId, password, location, note, createdAt: new Date().toLocaleString(), createdBy: currentSession ? currentSession.name : "Usuario" }); showToast("Acceso guardado en Base de Datos y Drive", "success"); } resetCredentialForm(); saveLocalAndCloud(); renderCredentialsTable(); }
+    function editCredentialRecord(id) { const rec = (state.credentialsDb || []).find(x => x.id === id); if (!rec) return; document.getElementById("editCredId").value = rec.id; document.getElementById("crBrand").value = rec.brand || ""; document.getElementById("crPlatform").value = rec.platform || ""; document.getElementById("crLink").value = rec.link || ""; document.getElementById("crUserId").value = rec.userId || ""; document.getElementById("crPassword").value = rec.password || ""; document.getElementById("crLocation").value = rec.location || ""; document.getElementById("crNote").value = rec.note || ""; document.getElementById("credFormTitle").textContent = `Editando Acceso: ${rec.brand}`; document.getElementById("btnSaveCredText").textContent = "Actualizar Registro"; document.getElementById("btnCancelCredEdit").classList.remove("hidden"); }
+    function deleteCredentialRecord(id) { if (!confirm("¿Eliminar este registro de acceso?")) return; state.credentialsDb = (state.credentialsDb || []).filter(x => x.id !== id); saveLocalAndCloud(); renderCredentialsTable(); }
     function toggleCredentialReveal(id) { revealedCredIds[id] = !revealedCredIds[id]; renderCredentialsTable(); }
 
     function renderCredentialsTable() {
@@ -2226,91 +2151,36 @@
       const list = (state.credentialsDb || []).filter(r => !q || `${r.brand} ${r.platform} ${r.link} ${r.userId} ${r.location} ${r.note}`.toLowerCase().includes(q));
       badge.textContent = `${list.length} registro(s)`;
       if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No hay registros de accesos cargados aún.</td></tr>`; return; }
-
       tbody.innerHTML = list.map(r => {
         const isShown = !!revealedCredIds[r.id];
         const safeUrl = r.link && !/^https?:\/\//i.test(r.link) ? "https://" + r.link : r.link;
-        return `
-          <tr class="hover:bg-slate-50/80 transition">
-            <td class="p-3 align-top"><span class="inline-block px-2 py-0.5 rounded bg-[#004B93] text-white font-extrabold text-[11px]">${escapeHtml(r.brand)}</span>${r.platform ? `<div class="font-bold text-slate-800 mt-1">${escapeHtml(r.platform)}</div>` : ""}</td>
-            <td class="p-3 align-top max-w-[180px]"><div class="flex items-center gap-1.5"><a href="${escapeHtml(safeUrl)}" target="_blank" class="text-[#004B93] font-bold hover:underline truncate block">${escapeHtml(r.link)}</a><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.link)}', 'Link')" class="text-slate-400 hover:text-[#004B93]"><i class="ph-bold ph-copy"></i></button></div></td>
-            <td class="p-3 align-top font-mono font-bold"><div class="flex items-center gap-1.5"><span>${escapeHtml(r.userId)}</span><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.userId)}', 'ID')" class="text-slate-400 hover:text-[#004B93]"><i class="ph-bold ph-copy"></i></button></div></td>
-            <td class="p-3 align-top font-mono font-bold"><div class="flex items-center gap-1.5"><span>${isShown ? escapeHtml(r.password) : "••••••••"}</span><button type="button" onclick="toggleCredentialReveal('${r.id}')" class="text-slate-500"><i class="ph-bold ${isShown ? 'ph-eye-slash' : 'ph-eye'}"></i></button><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.password)}', 'Credencial')" class="text-slate-400 hover:text-emerald-600"><i class="ph-bold ph-copy"></i></button></div></td>
-            <td class="p-3 align-top"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-bold"><i class="ph-bold ph-laptop text-amber-600"></i> ${escapeHtml(r.location || "-")}</span></td>
-            <td class="p-3 align-top max-w-[260px]"><p class="text-slate-700 whitespace-pre-line leading-snug">${escapeHtml(r.note || "-")}</p></td>
-            <td class="p-3 align-top text-right whitespace-nowrap"><button type="button" onclick="editCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold mr-1">Editar</button><button type="button" onclick="deleteCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-red-50 text-red-700 font-bold">Borrar</button></td>
-          </tr>
-        `;
+        return `<tr class="hover:bg-slate-50/80 transition"><td class="p-3 align-top"><span class="inline-block px-2 py-0.5 rounded bg-[#004B93] text-white font-extrabold text-[11px]">${escapeHtml(r.brand)}</span>${r.platform ? `<div class="font-bold text-slate-800 mt-1">${escapeHtml(r.platform)}</div>` : ""}</td><td class="p-3 align-top max-w-[180px]"><div class="flex items-center gap-1.5"><a href="${escapeHtml(safeUrl)}" target="_blank" class="text-[#004B93] font-bold hover:underline truncate block">${escapeHtml(r.link)}</a><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.link)}', 'Link')" class="text-slate-400 hover:text-[#004B93]"><i class="ph-bold ph-copy"></i></button></div></td><td class="p-3 align-top font-mono font-bold"><div class="flex items-center gap-1.5"><span>${escapeHtml(r.userId)}</span><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.userId)}', 'ID')" class="text-slate-400 hover:text-[#004B93]"><i class="ph-bold ph-copy"></i></button></div></td><td class="p-3 align-top font-mono font-bold"><div class="flex items-center gap-1.5"><span>${isShown ? escapeHtml(r.password) : "••••••••"}</span><button type="button" onclick="toggleCredentialReveal('${r.id}')" class="text-slate-500"><i class="ph-bold ${isShown ? 'ph-eye-slash' : 'ph-eye'}"></i></button><button type="button" onclick="copyTextToClipboard('${escapeHtml(r.password)}', 'Credencial')" class="text-slate-400 hover:text-emerald-600"><i class="ph-bold ph-copy"></i></button></div></td><td class="p-3 align-top"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-bold"><i class="ph-bold ph-laptop text-amber-600"></i> ${escapeHtml(r.location || "-")}</span></td><td class="p-3 align-top max-w-[260px]"><p class="text-slate-700 whitespace-pre-line leading-snug">${escapeHtml(r.note || "-")}</p></td><td class="p-3 align-top text-right whitespace-nowrap"><button type="button" onclick="editCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold mr-1">Editar</button><button type="button" onclick="deleteCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-red-50 text-red-700 font-bold">Borrar</button></td></tr>`;
       }).join("");
     }
 
-    function exportCredentialsExcel() {
-      const list = state.credentialsDb || [];
-      if (list.length === 0) { showToast("No hay registros para descargar", "warning"); return; }
-      const rowsHtml = list.map(r => `<tr><td>${escapeHtml(r.brand)}</td><td>${escapeHtml(r.platform)}</td><td>${escapeHtml(r.link)}</td><td>${escapeHtml(r.userId)}</td><td>${escapeHtml(r.password)}</td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.note)}</td><td>${escapeHtml(r.createdBy)}</td><td>${escapeHtml(r.createdAt)}</td></tr>`).join("");
-      const excelDoc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr style="background-color:#004B93;color:#FFF;"><th>Marca</th><th>Plataforma</th><th>Link</th><th>ID</th><th>Credencial</th><th>Ubicación</th><th>Nota</th><th>Registrado por</th><th>Fecha</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
-      const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
-      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Base_Datos_Accesos_${new Date().toISOString().split("T")[0]}.xls`; a.click();
-    }
+    function exportCredentialsExcel() { const list = state.credentialsDb || []; if (list.length === 0) { showToast("No hay registros para descargar", "warning"); return; } const rowsHtml = list.map(r => `<tr><td>${escapeHtml(r.brand)}</td><td>${escapeHtml(r.platform)}</td><td>${escapeHtml(r.link)}</td><td>${escapeHtml(r.userId)}</td><td>${escapeHtml(r.password)}</td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.note)}</td><td>${escapeHtml(r.createdBy)}</td><td>${escapeHtml(r.createdAt)}</td></tr>`).join(""); const excelDoc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr style="background-color:#004B93;color:#FFF;"><th>Marca</th><th>Plataforma</th><th>Link</th><th>ID</th><th>Credencial</th><th>Ubicación</th><th>Nota</th><th>Registrado por</th><th>Fecha</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`; const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `Base_Datos_Accesos_${new Date().toISOString().split("T")[0]}.xls`; a.click(); }
 
     // =========================================================================
     // PLAN DE ENTRENAMIENTO POR MARCA + EXCEL CALENDARIO
     // =========================================================================
-    function openTrainingPlanModal() {
-      const brandOpts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join("");
-      document.getElementById("tpBrandInput").innerHTML = brandOpts;
-      document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas las Marcas</option>` + brandOpts;
-      if (!document.getElementById("tpDateInput").value) document.getElementById("tpDateInput").value = new Date().toISOString().split("T")[0];
-      renderTrainingPlanModal();
-      document.getElementById("trainingPlanModal").classList.remove("hidden");
-    }
-
-    function addTrainingPlanEntry(e) {
-      e.preventDefault();
-      const brand = document.getElementById("tpBrandInput").value;
-      const date = document.getElementById("tpDateInput").value;
-      const topic = document.getElementById("tpTopicInput").value.trim();
-      const duration = document.getElementById("tpDurationInput").value.trim();
-      if (!brand || !date || !topic) return;
-      state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand, date, topic, duration, createdBy: currentSession ? currentSession.name : "Usuario" });
-      pushActivityNotification({ area: "entrenamiento", targetType: "plan", targetId: "tp", message: `${currentSession.name} agregó al Plan de Entrenamiento (${brand} · ${date}): "${topic}"` });
-      document.getElementById("tpTopicInput").value = "";
-      document.getElementById("tpDurationInput").value = "";
-      saveLocalAndCloud();
-      renderTrainingPlanModal();
-      showToast("Tema guardado en Plan de Entrenamiento", "success");
-    }
-
+    function openTrainingPlanModal() { const brandOpts = AUTOMOTOR_BRANDS.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join(""); document.getElementById("tpBrandInput").innerHTML = brandOpts; document.getElementById("tpFilterBrand").innerHTML = `<option value="ALL">Todas las Marcas</option>` + brandOpts; if (!document.getElementById("tpDateInput").value) document.getElementById("tpDateInput").value = new Date().toISOString().split("T")[0]; renderTrainingPlanModal(); document.getElementById("trainingPlanModal").classList.remove("hidden"); }
+    function addTrainingPlanEntry(e) { e.preventDefault(); const brand = document.getElementById("tpBrandInput").value; const date = document.getElementById("tpDateInput").value; const topic = document.getElementById("tpTopicInput").value.trim(); const duration = document.getElementById("tpDurationInput").value.trim(); if (!brand || !date || !topic) return; state.trainingPlanEntries.push({ id: "tp_" + Date.now(), brand, date, topic, duration, createdBy: currentSession ? currentSession.name : "Usuario" }); pushActivityNotification({ area: "entrenamiento", targetType: "plan", targetId: "tp", message: `${currentSession.name} agregó al Plan de Entrenamiento (${brand} · ${date}): "${topic}"` }); document.getElementById("tpTopicInput").value = ""; document.getElementById("tpDurationInput").value = ""; saveLocalAndCloud(); renderTrainingPlanModal(); showToast("Tema guardado en Plan de Entrenamiento", "success"); }
     function deleteTrainingPlanEntry(entryId) { state.trainingPlanEntries = (state.trainingPlanEntries || []).filter(x => x.id !== entryId); saveLocalAndCloud(); renderTrainingPlanModal(); }
-
-    function getUnifiedTrainingPlanItems(brandFilter, yearStr) {
-      const manualEntries = (state.trainingPlanEntries || []).filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter));
-      const boardCourses = (state.tasks || []).filter(t => (t.mode || "soporte") === "entrenamiento" && t.date && t.date.startsWith(yearStr) && (brandFilter === "ALL" || (t.brand || "Otras Marcas") === brandFilter)).map(t => ({ id: "course_" + t.id, brand: t.brand || "Multimarca", date: t.date, topic: `${t.title} (${t.subcategory})`, duration: t.hours ? `${t.hours} hs` : "" }));
-      return [...manualEntries, ...boardCourses].sort((a, b) => (a.date > b.date ? 1 : -1));
-    }
-
+    function getUnifiedTrainingPlanItems(brandFilter, yearStr) { const manualEntries = (state.trainingPlanEntries || []).filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter)); const boardCourses = (state.tasks || []).filter(t => (t.mode || "soporte") === "entrenamiento" && t.date && t.date.startsWith(yearStr) && (brandFilter === "ALL" || (t.brand || "Otras Marcas") === brandFilter)).map(t => ({ id: "course_" + t.id, brand: t.brand || "Multimarca", date: t.date, topic: `${t.title} (${t.subcategory})`, duration: t.hours ? `${t.hours} hs` : "" })); return [...manualEntries, ...boardCourses].sort((a, b) => (a.date > b.date ? 1 : -1)); }
     function renderTrainingPlanModal() {
-      const brandFilter = document.getElementById("tpFilterBrand").value;
-      const yearStr = document.getElementById("tpFilterYear").value;
-      const monthFilter = document.getElementById("tpFilterMonth").value;
+      const brandFilter = document.getElementById("tpFilterBrand").value, yearStr = document.getElementById("tpFilterYear").value, monthFilter = document.getElementById("tpFilterMonth").value;
       const items = getUnifiedTrainingPlanItems(brandFilter, yearStr);
       const manualList = (state.trainingPlanEntries || []).filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter));
       document.getElementById("tpEntriesList").innerHTML = manualList.length === 0 ? `<p class="text-slate-400 text-center py-3">Sin registros manuales.</p>` : manualList.map(it => `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2"><div><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-extrabold text-[10px]">${escapeHtml(it.brand)}</span> <strong class="ml-1.5">${escapeHtml(it.date)}</strong> — ${escapeHtml(it.topic)}</div><button type="button" onclick="deleteTrainingPlanEntry('${it.id}')" class="text-red-500 p-1"><i class="ph-bold ph-trash"></i></button></div>`).join("");
-
-      const previewBox = document.getElementById("tpCalendarPreviewBox");
-      const monthsToRender = monthFilter === "ALL" ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : [Number(monthFilter)];
-      const yearNum = Number(yearStr);
+      const previewBox = document.getElementById("tpCalendarPreviewBox"), monthsToRender = monthFilter === "ALL" ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : [Number(monthFilter)], yearNum = Number(yearStr);
       previewBox.innerHTML = monthsToRender.map(mIdx => {
         const monthItems = items.filter(it => Number(it.date.split("-")[1]) - 1 === mIdx);
         if (monthFilter === "ALL" && monthItems.length === 0) return "";
-        const firstDay = new Date(yearNum, mIdx, 1).getDay();
-        const offset = firstDay === 0 ? 6 : firstDay - 1;
-        const daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
+        const firstDay = new Date(yearNum, mIdx, 1).getDay(), offset = firstDay === 0 ? 6 : firstDay - 1, daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
         let cellsHtml = "";
         for (let i = 0; i < offset; i++) cellsHtml += `<div class="min-h-[68px] bg-slate-100/60 border border-slate-200"></div>`;
         for (let d = 1; d <= daysInMonth; d++) {
-          const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-          const dayEvents = monthItems.filter(it => it.date === dStr);
+          const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`, dayEvents = monthItems.filter(it => it.date === dStr);
           cellsHtml += `<div class="min-h-[68px] p-1.5 bg-white border border-slate-200 flex flex-col justify-between"><span class="text-[11px] font-extrabold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded w-fit">${d}</span><div class="space-y-1 mt-1">${dayEvents.map(ev => `<div class="text-[10px] leading-tight p-1 rounded bg-amber-50 border border-amber-200 text-slate-900">${brandFilter === "ALL" ? `<strong class="text-[#004B93]">[${escapeHtml(ev.brand)}]</strong> ` : ""}<span class="font-semibold">${escapeHtml(ev.topic)}</span></div>`).join("")}</div></div>`;
         }
         return `<div class="border border-slate-300 rounded-2xl overflow-hidden shadow-sm"><div class="bg-[#004B93] text-white px-4 py-2 font-extrabold text-xs flex justify-between"><span>${MONTH_NAMES_ES[mIdx]} ${yearStr}</span><span>${brandFilter === "ALL" ? "TODAS LAS MARCAS" : brandFilter.toUpperCase()}</span></div><div class="grid grid-cols-7 text-center text-[10px] font-extrabold text-white"><div class="py-1.5 bg-rose-500">LUNES</div><div class="py-1.5 bg-orange-500">MARTES</div><div class="py-1.5 bg-amber-500">MIÉRCOLES</div><div class="py-1.5 bg-lime-600">JUEVES</div><div class="py-1.5 bg-emerald-600">VIERNES</div><div class="py-1.5 bg-teal-600">SÁBADO</div><div class="py-1.5 bg-purple-700">DOMINGO</div></div><div class="grid grid-cols-7">${cellsHtml}</div></div>`;
@@ -2318,29 +2188,21 @@
     }
 
     function exportTrainingPlanCalendarExcel(allBrands = false) {
-      const selectedBrand = allBrands ? "ALL" : document.getElementById("tpFilterBrand").value;
-      const yearStr = document.getElementById("tpFilterYear").value;
-      const yearNum = Number(yearStr);
+      const selectedBrand = allBrands ? "ALL" : document.getElementById("tpFilterBrand").value, yearStr = document.getElementById("tpFilterYear").value, yearNum = Number(yearStr);
       const items = getUnifiedTrainingPlanItems(selectedBrand, yearStr);
       const mainTitle = selectedBrand === "ALL" ? `PLAN DE ENTRENAMIENTO ${yearStr} - TODAS LAS MARCAS` : `PLAN DE ENTRENAMIENTO ${yearStr} - ${selectedBrand.toUpperCase()}`;
-      const dayHeadersColors = ["#F472B6", "#FB923C", "#FBBF24", "#A3E635", "#34D399", "#2DD4BF", "#A855F7"];
-      const dayNames = ["LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"];
-
+      const dayHeadersColors = ["#F472B6", "#FB923C", "#FBBF24", "#A3E635", "#34D399", "#2DD4BF", "#A855F7"], dayNames = ["LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"];
       let tablesHtml = `<table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif; width:100%;"><tr><td colspan="7" style="background-color:#004B93; color:#FFFFFF; font-size:16pt; font-weight:bold; text-align:center; padding:12px;">${escapeHtml(mainTitle)}</td></tr>`;
       for (let mIdx = 0; mIdx < 12; mIdx++) {
         const monthItems = items.filter(it => Number(it.date.split("-")[1]) - 1 === mIdx);
-        const firstDay = new Date(yearNum, mIdx, 1).getDay();
-        const offset = firstDay === 0 ? 6 : firstDay - 1;
-        const daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
+        const firstDay = new Date(yearNum, mIdx, 1).getDay(), offset = firstDay === 0 ? 6 : firstDay - 1, daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
         tablesHtml += `<tr><td colspan="7" style="height:10px; border:none;"></td></tr><tr><td colspan="7" style="background-color:#1E293B; color:#FFFFFF; font-size:12pt; font-weight:bold; padding:8px;">${MONTH_NAMES_ES[mIdx]} ${yearStr}</td></tr><tr>${dayNames.map((dn, idx) => `<td style="background-color:${dayHeadersColors[idx]}; color:#1E293B; font-weight:bold; text-align:center; width:14.28%; border:1px solid #94A3B8;">${dn}</td>`).join("")}</tr>`;
-        let dayCounter = 1;
-        const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
+        let dayCounter = 1; const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
         for (let cell = 0; cell < totalCells; cell++) {
           if (cell % 7 === 0) tablesHtml += `<tr>`;
           if (cell < offset || dayCounter > daysInMonth) { tablesHtml += `<td style="background-color:#F8FAFC; height:75px; border:1px solid #CBD5E1;"></td>`; }
           else {
-            const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(dayCounter).padStart(2, "0")}`;
-            const dayEvents = monthItems.filter(it => it.date === dStr);
+            const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(dayCounter).padStart(2, "0")}`, dayEvents = monthItems.filter(it => it.date === dStr);
             const contentHtml = dayEvents.map(ev => `<div style="margin-top:4px; color:#0F172A; font-size:9.5pt;">${selectedBrand === "ALL" ? `<b>[${escapeHtml(ev.brand)}]</b> ` : ""}${escapeHtml(ev.topic)}</div>`).join("<hr/>");
             tablesHtml += `<td valign="top" style="background-color:${dayEvents.length > 0 ? '#FFFBEB' : '#FFFFFF'}; height:75px; border:1px solid #94A3B8; padding:5px;"><div style="background-color:#E2E8F0; font-weight:bold; padding:2px 5px; margin-bottom:4px;">${dayCounter}</div>${contentHtml || "-"}</td>`;
             dayCounter++;
@@ -2361,38 +2223,23 @@
     function pushActivityNotification({ area, targetType, targetId, targetUserId = "", message }) {
       if (!currentSession) return;
       if (!Array.isArray(state.notifications)) state.notifications = [];
-      state.notifications.unshift({
-        id: "ntf_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        area: area || appMode, targetType: targetType || "case", targetId: targetId || "",
-        targetUserId: targetUserId || "", actorId: currentSession.id, actorName: currentSession.name,
-        message, createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + new Date().toLocaleDateString(),
-        readBy: [currentSession.id]
-      });
+      state.notifications.unshift({ id: "ntf_" + Date.now() + "_" + Math.floor(Math.random() * 1000), area: area || appMode, targetType: targetType || "case", targetId: targetId || "", targetUserId: targetUserId || "", actorId: currentSession.id, actorName: currentSession.name, message, createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + new Date().toLocaleDateString(), readBy: [currentSession.id] });
       if (state.notifications.length > 60) state.notifications = state.notifications.slice(0, 60);
       refreshNotificationsUI();
     }
 
-    function getAreaNotificationsForCurrentUser(areaName = appMode) {
-      if (!currentSession) return [];
-      return (state.notifications || []).filter(n => n.area === areaName && (!n.targetUserId || n.targetUserId === currentSession.id || isCoordinatorOrAdmin() || n.actorId === currentSession.id));
-    }
-
+    function getAreaNotificationsForCurrentUser(areaName = appMode) { if (!currentSession) return []; return (state.notifications || []).filter(n => n.area === areaName && (!n.targetUserId || n.targetUserId === currentSession.id || isCoordinatorOrAdmin() || n.actorId === currentSession.id)); }
     function isNotificationUnreadByMe(notif) { return currentSession && notif && !(Array.isArray(notif.readBy) ? notif.readBy : []).includes(currentSession.id); }
 
     function refreshNotificationsUI() {
-      const btn = document.getElementById("btnNotifBell");
-      const icon = document.getElementById("notifBellIcon");
-      const badge = document.getElementById("notifUnreadBadge");
-      const tickerBar = document.getElementById("liveNotifTickerBar");
-      const titleEl = document.getElementById("notifDropdownTitle");
+      const btn = document.getElementById("btnNotifBell"), icon = document.getElementById("notifBellIcon"), badge = document.getElementById("notifUnreadBadge"), tickerBar = document.getElementById("liveNotifTickerBar"), titleEl = document.getElementById("notifDropdownTitle");
       if (!btn || !currentSession) return;
       if (titleEl) titleEl.textContent = appMode === "soporte" ? "Notificaciones · Soporte Técnico" : "Notificaciones · Entrenamiento";
       const unreadList = getAreaNotificationsForCurrentUser(appMode).filter(isNotificationUnreadByMe);
       if (unreadList.length > 0) {
         btn.className = "touch-target px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 border border-red-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md transition";
         icon.className = "ph-bold ph-bell-ringing text-base text-white animate-bounce";
-        badge.textContent = unreadList.length;
-        badge.classList.remove("hidden");
+        badge.textContent = unreadList.length; badge.classList.remove("hidden");
         activeTickerNotif = unreadList[0];
         document.getElementById("liveNotifTickerText").textContent = activeTickerNotif.message;
         document.getElementById("liveNotifTickerTime").textContent = activeTickerNotif.createdAt;
@@ -2400,9 +2247,7 @@
       } else {
         btn.className = "touch-target px-3.5 py-2 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition";
         icon.className = "ph-bold ph-bell text-base text-slate-600";
-        badge.classList.add("hidden");
-        activeTickerNotif = null;
-        tickerBar.classList.add("hidden");
+        badge.classList.add("hidden"); activeTickerNotif = null; tickerBar.classList.add("hidden");
       }
       if (!document.getElementById("notifDropdown").classList.contains("hidden")) renderNotifDropdownList();
     }
@@ -2411,30 +2256,16 @@
     document.addEventListener("click", (e) => { const wrap = document.getElementById("notifBellWrapper"); const dd = document.getElementById("notifDropdown"); if (dd && !dd.classList.contains("hidden") && wrap && !wrap.contains(e.target)) dd.classList.add("hidden"); });
 
     function renderNotifDropdownList() {
-      const box = document.getElementById("notifDropdownList");
-      const list = getAreaNotificationsForCurrentUser(appMode);
+      const box = document.getElementById("notifDropdownList"), list = getAreaNotificationsForCurrentUser(appMode);
       if (list.length === 0) { box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No hay notificaciones recientes.</div>`; return; }
-      box.innerHTML = list.slice(0, 20).map(n => {
-        const unread = isNotificationUnreadByMe(n);
-        return `<div onclick="openNotificationTarget('${n.id}')" class="px-4 py-3 cursor-pointer transition flex items-start gap-2.5 ${unread ? 'bg-red-50/75 hover:bg-red-100/70' : 'hover:bg-slate-50'}"><div class="flex-1 min-w-0"><p class="text-xs ${unread ? 'font-extrabold text-slate-900' : 'font-medium text-slate-700'} leading-snug">${escapeHtml(n.message)}</p><span class="text-[10px] text-slate-400 font-semibold block mt-0.5">${escapeHtml(n.createdAt)}</span></div>${unread ? `<span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>` : ""}</div>`;
-      }).join("");
+      box.innerHTML = list.slice(0, 20).map(n => { const unread = isNotificationUnreadByMe(n); return `<div onclick="openNotificationTarget('${n.id}')" class="px-4 py-3 cursor-pointer transition flex items-start gap-2.5 ${unread ? 'bg-red-50/75 hover:bg-red-100/70' : 'hover:bg-slate-50'}"><div class="flex-1 min-w-0"><p class="text-xs ${unread ? 'font-extrabold text-slate-900' : 'font-medium text-slate-700'} leading-snug">${escapeHtml(n.message)}</p><span class="text-[10px] text-slate-400 font-semibold block mt-0.5">${escapeHtml(n.createdAt)}</span></div>${unread ? `<span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>` : ""}</div>`; }).join("");
     }
 
     function markSingleNotificationRead(notifId) { if (!currentSession) return; const n = (state.notifications || []).find(x => x.id === notifId); if (!n) return; if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) { n.readBy.push(currentSession.id); saveLocalAndCloud(); refreshNotificationsUI(); } }
     function markAllAreaNotificationsRead() { if (!currentSession) return; getAreaNotificationsForCurrentUser(appMode).forEach(n => { if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) n.readBy.push(currentSession.id); }); saveLocalAndCloud(); refreshNotificationsUI(); document.getElementById("notifDropdown").classList.add("hidden"); }
     function dismissTickerNotification() { if (activeTickerNotif) markSingleNotificationRead(activeTickerNotif.id); }
     function handleTickerClick() { if (activeTickerNotif) openNotificationTarget(activeTickerNotif.id); }
-
-    function openNotificationTarget(notifId) {
-      const n = (state.notifications || []).find(x => x.id === notifId);
-      if (!n) return;
-      markSingleNotificationRead(notifId);
-      document.getElementById("notifDropdown").classList.add("hidden");
-      if (n.area && n.area !== appMode) switchAppMode(n.area);
-      if (n.targetType === "plan") openTrainingPlanModal();
-      else if (n.targetType === "todo") { switchTab("tasks"); setTodoFilter("all"); }
-      else if (n.targetId) { const exists = (state.tasks || []).find(t => t.id === n.targetId || t.caseId === n.targetId); if (exists) { switchTab("board"); openDetailModal(exists.id); } }
-    }
+    function openNotificationTarget(notifId) { const n = (state.notifications || []).find(x => x.id === notifId); if (!n) return; markSingleNotificationRead(notifId); document.getElementById("notifDropdown").classList.add("hidden"); if (n.area && n.area !== appMode) switchAppMode(n.area); if (n.targetType === "plan") openTrainingPlanModal(); else if (n.targetType === "todo") { switchTab("tasks"); setTodoFilter("all"); } else if (n.targetId) { const exists = (state.tasks || []).find(t => t.id === n.targetId || t.caseId === n.targetId); if (exists) { switchTab("board"); openDetailModal(exists.id); } } }
 
     // =========================================================================
     // ESTRUCTURA HTC DE ENTRENAMIENTO
@@ -2931,8 +2762,6 @@
         let colTasks = list.filter(t => t.status === col.id);
         const totalInColumn = colTasks.length;
 
-        // En la columna COMPLETADO, limitar a un máximo de 10 casos más recientes
-        let hasMoreCompleted = false;
         if (col.id === "Completado") {
           colTasks = colTasks.sort((a, b) => {
             const da = a.closedDate || a.date || "";
@@ -2940,7 +2769,6 @@
             return db > da ? 1 : -1;
           });
           if (colTasks.length > 10) {
-            hasMoreCompleted = true;
             colTasks = colTasks.slice(0, 10);
           }
         }
@@ -2950,7 +2778,7 @@
             <div class="flex items-center justify-between px-1 pb-1 border-b border-black/5">
               <h3 class="text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 ${col.headerText}">
                 <i class="ph-bold ${col.icon} text-base"></i> ${col.label}
-                ${col.id === "Completado" ? `<span class="text-[9px] font-semibold opacity-75">(Últimos 10)</span>` : ""}
+                ${col.id === "Completado" ? `<span class="text-[9px] font-semibold opacity-75">(Máx. 10)</span>` : ""}
               </h3>
               <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${col.badgeBg}">${col.id === "Completado" ? `${colTasks.length}/${totalInColumn}` : totalInColumn}</span>
             </div>
@@ -2971,7 +2799,7 @@
                         <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-red-600 text-white">🚨 RECLAMO / REINGRESO #${t.claimCount || 1}</span>
                       </div>
                     ` : ""}
-                    ${isEnt ? `<div class="flex flex-wrap items-center gap-1"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-amber-300">${escapeHtml(t.trainingData.stage)}</span>${t.brand ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-white">${escapeHtml(t.brand)}</span>` : ""}</div>` : `<div class="flex flex-wrap items-center gap-1">${t.brand ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}${t.isVor ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-600 text-white">🚨 VOR</span>` : ""}</div>`}
+                    ${isEnt ? `<div class="flex flex-wrap items-center gap-1"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-amber-300">${escapeHtml(t.trainingData.stage)}</span>${t.brand ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-white">${escapeHtml(t.brand)}</span>` : ""}</div>` : `<div class="flex flex-wrap items-center gap-1">${t.brand ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}${t.isVor ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-600 text-white">🚨 VOR</span>` : ""}${t.hotlineStatus || t.factoryTicketCode ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-900">${escapeHtml(t.factoryTicketCode || t.hotlineStatus)}</span>` : ""}</div>`}
                     <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
                     <div class="text-[11px] font-semibold text-slate-500">${escapeHtml(t.subcategory)}</div>
                     <div class="space-y-1"><div class="flex justify-between text-[10px] font-bold text-slate-500"><span>${escapeHtml(assignee ? assignee.name : "")}</span><span>${isEnt && trMetrics.pct !== null ? `Prep: ${trMetrics.pct}%` : `${t.progress || 0}%`}</span></div><div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full ${col.barColor} rounded-full" style="width:${isEnt && trMetrics.pct !== null ? trMetrics.pct : (t.progress || 0)}%"></div></div></div>
@@ -3035,11 +2863,26 @@
         document.getElementById("tStatus").value = t.status;
         document.getElementById("tDesc").value = t.description || "";
         if (isSoporte) {
+          document.getElementById("tHotlineStatus").value = t.hotlineStatus || "";
+          document.getElementById("tFactoryTicketCode").value = t.factoryTicketCode || "";
           document.getElementById("tBrand").value = AUTOMOTOR_BRANDS.includes(t.brand) ? t.brand : "Otras Marcas";
           document.getElementById("tModel").value = t.vehicleModel || "";
+          document.getElementById("tDtcCodes").value = t.dtcCodes || "";
+          document.getElementById("tOrNumber").value = t.orNumber || "";
           document.getElementById("tVin").value = t.vehicleVin || "";
+          document.getElementById("tKm").value = t.vehicleKm || "";
+          document.getElementById("tIsVor").checked = !!t.isVor;
+          document.getElementById("tPartOrderNumber").value = t.partOrderNumber || "";
+          document.getElementById("tPartDescription").value = t.partDescription || "";
+          document.getElementById("tPartEta").value = t.partEta || "";
+          toggleVorFields();
+          document.getElementById("tChiefName").value = t.chiefName || "";
+          document.getElementById("tMechanicName").value = t.mechanicName || "";
+          document.getElementById("tMechanicWhatsapp").value = t.mechanicWhatsapp || "";
           document.getElementById("tAdvisorName").value = t.advisorName || "";
           document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || "";
+          document.getElementById("tClientName").value = t.clientName || "";
+          document.getElementById("tClientWhatsapp").value = t.clientWhatsapp || "";
         } else {
           ensureTrainingStructure(t);
           document.getElementById("tTrBrand").value = t.brand || "";
@@ -3053,6 +2896,25 @@
         if (currentSession) document.getElementById("tAssignee").value = currentSession.id;
         document.getElementById("tDate").value = presetDate || new Date().toISOString().split("T")[0];
         document.getElementById("tStatus").value = "Pendiente";
+        document.getElementById("tHotlineStatus").value = "";
+        document.getElementById("tFactoryTicketCode").value = "";
+        document.getElementById("tDtcCodes").value = "";
+        document.getElementById("tOrNumber").value = "";
+        document.getElementById("tVin").value = "";
+        document.getElementById("tModel").value = "";
+        document.getElementById("tKm").value = "";
+        document.getElementById("tIsVor").checked = false;
+        document.getElementById("tPartOrderNumber").value = "";
+        document.getElementById("tPartDescription").value = "";
+        document.getElementById("tPartEta").value = "";
+        toggleVorFields();
+        document.getElementById("tChiefName").value = "";
+        document.getElementById("tMechanicName").value = "";
+        document.getElementById("tMechanicWhatsapp").value = "";
+        document.getElementById("tAdvisorName").value = "";
+        document.getElementById("tAdvisorWhatsapp").value = "";
+        document.getElementById("tClientName").value = "";
+        document.getElementById("tClientWhatsapp").value = "";
         document.getElementById("tDesc").value = "";
       }
       document.getElementById("taskModal").classList.remove("hidden");
@@ -3066,6 +2928,9 @@
       const dateVal = document.getElementById("tDate").value;
       const members = getAllAssignableMembers();
 
+      const hotlineStatusVal = isSoporte ? document.getElementById("tHotlineStatus").value : "";
+      const factoryTicketVal = isSoporte ? document.getElementById("tFactoryTicketCode").value.trim().toUpperCase() : "";
+
       if (editId) {
         const t = state.tasks.find(x => x.id === editId);
         if (!t) return;
@@ -3077,16 +2942,26 @@
         if (t.status === "Completado" && !t.closedDate) t.closedDate = new Date().toISOString().split("T")[0];
         t.description = document.getElementById("tDesc").value.trim();
         if (isSoporte) {
+          t.hotlineStatus = hotlineStatusVal;
+          t.factoryTicketCode = factoryTicketVal;
           t.workshop = document.getElementById("tWorkshop").value;
           t.brand = document.getElementById("tBrand").value;
           t.vehicleModel = document.getElementById("tModel").value.trim();
+          t.dtcCodes = document.getElementById("tDtcCodes").value.trim().toUpperCase();
+          t.orNumber = document.getElementById("tOrNumber").value.trim();
           t.vehicleVin = document.getElementById("tVin").value.trim().toUpperCase();
+          t.vehicleKm = document.getElementById("tKm").value.trim();
           t.isVor = document.getElementById("tIsVor").checked;
           t.partOrderNumber = document.getElementById("tPartOrderNumber").value.trim().toUpperCase();
           t.partDescription = document.getElementById("tPartDescription").value.trim();
           t.partEta = document.getElementById("tPartEta").value;
+          t.chiefName = document.getElementById("tChiefName").value.trim();
+          t.mechanicName = document.getElementById("tMechanicName").value.trim();
+          t.mechanicWhatsapp = document.getElementById("tMechanicWhatsapp").value.trim();
           t.advisorName = document.getElementById("tAdvisorName").value.trim();
           t.advisorWhatsapp = document.getElementById("tAdvisorWhatsapp").value.trim();
+          t.clientName = document.getElementById("tClientName").value.trim();
+          t.clientWhatsapp = document.getElementById("tClientWhatsapp").value.trim();
         } else {
           ensureTrainingStructure(t);
           t.brand = document.getElementById("tTrBrand").value;
@@ -3114,6 +2989,8 @@
         id: "t_" + Date.now(), caseId, mode: appMode, title: document.getElementById("tTitle").value.trim(),
         subcategory: subcat, assigneeId, workshop: isSoporte ? document.getElementById("tWorkshop").value : "",
         date: dateVal, status: document.getElementById("tStatus").value, progress: 10,
+        hotlineStatus: hotlineStatusVal,
+        factoryTicketCode: factoryTicketVal,
         brand: isSoporte ? document.getElementById("tBrand").value : document.getElementById("tTrBrand").value,
         vehicleModel: isSoporte ? document.getElementById("tModel").value.trim() : "",
         dtcCodes: isSoporte ? document.getElementById("tDtcCodes").value.trim().toUpperCase() : "",
@@ -3124,14 +3001,19 @@
         partOrderNumber: isSoporte ? document.getElementById("tPartOrderNumber").value.trim().toUpperCase() : "",
         partDescription: isSoporte ? document.getElementById("tPartDescription").value.trim() : "",
         partEta: isSoporte ? document.getElementById("tPartEta").value : "",
+        chiefName: isSoporte ? document.getElementById("tChiefName").value.trim() : "",
+        mechanicName: isSoporte ? document.getElementById("tMechanicName").value.trim() : "",
+        mechanicWhatsapp: isSoporte ? document.getElementById("tMechanicWhatsapp").value.trim() : "",
         advisorName: isSoporte ? document.getElementById("tAdvisorName").value.trim() : "",
         advisorWhatsapp: isSoporte ? document.getElementById("tAdvisorWhatsapp").value.trim() : "",
+        clientName: isSoporte ? document.getElementById("tClientName").value.trim() : "",
+        clientWhatsapp: isSoporte ? document.getElementById("tClientWhatsapp").value.trim() : "",
         hours: !isSoporte ? (Number(document.getElementById("tHours").value) || 4) : 0,
         group: !isSoporte ? document.getElementById("tGroup").value.trim() : "",
         location: !isSoporte ? document.getElementById("tLocation").value.trim() : "",
         description: document.getElementById("tDesc").value.trim(),
         driveFolderId: "", driveFolderUrl: "https://drive.google.com",
-        notes: [{ date: new Date().toLocaleString(), text: `Creado por ${currentSession ? currentSession.name : "Usuario"}.` }],
+        notes: [{ date: new Date().toLocaleString(), text: `Creado por ${currentSession ? currentSession.name : "Usuario"}${factoryTicketVal ? ` · Ticket Fábrica: ${factoryTicketVal}` : ""}.` }],
         clientNotes: [], chatMessages: [], coordinatorMessages: [], media: [],
         clientPortal: { enabled: false, token: String(Math.floor(1000 + Math.random() * 9000)), clientName: "", clientEmail: "", advisorName: "", advisorWhatsapp: "" }
       };
@@ -3171,7 +3053,6 @@
       document.getElementById("dCaseBadge").textContent = t.caseId;
       document.getElementById("dTitle").textContent = t.title;
 
-      // Mostrar botón Reabrir por Reclamo si el caso está en estado Completado
       document.getElementById("btnReopenClaimHeader").classList.toggle("hidden", t.status !== "Completado");
       const reopenedBadge = document.getElementById("dReopenedBadge");
       if (t.isClaimReopened && t.status !== "Completado") {
@@ -3203,8 +3084,20 @@
         document.getElementById("dBrandBadge").textContent = t.brand || "";
         document.getElementById("dBrandBadge").classList.toggle("hidden", !t.brand);
         document.getElementById("dVorBadge").classList.toggle("hidden", !t.isVor);
+
+        // Sincronizar y mostrar correctamente Estado Hotline y Ticket de Fábrica
+        const hotlineBadge = document.getElementById("dHotlineBadge");
+        if (t.hotlineStatus || t.factoryTicketCode) {
+          hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`.trim();
+          hotlineBadge.classList.remove("hidden");
+        } else {
+          hotlineBadge.classList.add("hidden");
+        }
+        document.getElementById("dHotlineStatusSelect").value = t.hotlineStatus || "";
+        document.getElementById("dFactoryTicketInput").value = t.factoryTicketCode || "";
+
         document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"}`;
-        document.getElementById("dMetaLine2").textContent = `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · VIN: ${t.vehicleVin || "-"}`;
+        document.getElementById("dMetaLine2").textContent = `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`;
         document.getElementById("dAdvisorLine").textContent = `Asesor / Jefe: ${t.advisorName || "-"} (${t.advisorWhatsapp || "-"})`;
         document.getElementById("dIsVorCheck").checked = !!t.isVor;
         document.getElementById("dPartOrderInput").value = t.partOrderNumber || "";
@@ -3247,6 +3140,37 @@
       document.getElementById("detailModal").classList.remove("hidden");
     }
 
+    function quickSaveHotlineInfo(showMsg = false) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t) return;
+      const newStatus = document.getElementById("dHotlineStatusSelect").value;
+      const newTicket = document.getElementById("dFactoryTicketInput").value.trim().toUpperCase();
+
+      t.hotlineStatus = newStatus;
+      t.factoryTicketCode = newTicket;
+
+      const hotlineBadge = document.getElementById("dHotlineBadge");
+      if (t.hotlineStatus || t.factoryTicketCode) {
+        hotlineBadge.textContent = `${t.hotlineStatus || "Hotline"} ${t.factoryTicketCode ? `· ${t.factoryTicketCode}` : ""}`.trim();
+        hotlineBadge.classList.remove("hidden");
+      } else {
+        hotlineBadge.classList.add("hidden");
+      }
+
+      if (showMsg && (newTicket || newStatus)) {
+        if (!Array.isArray(t.notes)) t.notes = [];
+        t.notes.push({
+          date: new Date().toLocaleString(),
+          text: `${currentSession ? currentSession.name + ": " : ""}Ticket de Fábrica asociado: ${newTicket || "-"} (${newStatus || "Hotline"}).`
+        });
+        renderInternalNotes(t);
+      }
+
+      saveLocalAndCloud();
+      renderBoard();
+      if (showMsg) showToast("Ticket de Fábrica asociado y guardado", "success");
+    }
+
     function toggleFormalEmailSection() { const panel = document.getElementById("formalEmailPanel"); const willOpen = panel.classList.contains("hidden"); document.getElementById("clientPortalPanel").classList.add("hidden"); panel.classList.toggle("hidden"); if (willOpen) { const members = getAllAssignableMembers(); document.getElementById("feUsersChecklist").innerHTML = members.map(u => `<label class="flex items-center gap-2 text-xs p-1"><input type="checkbox" value="${escapeHtml(u.email)}" class="fe-user-chk w-4 h-4" checked /><span>${escapeHtml(u.name)}</span></label>`).join(""); regenerateFormalEmailBody(); } }
     function regenerateFormalEmailBody() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; document.getElementById("feSubject").value = `[${(t.mode || "soporte") === "soporte" ? "Soporte Técnico" : "Entrenamiento"}] ${t.caseId} - ${t.title}`; document.getElementById("feBody").value = `Seguimiento de ${t.caseId} - ${t.title}\nEstado: ${t.status}\n\n` + (t.notes || []).map(n => `[${n.date}] ${n.text}`).join("\n"); }
     function copyFormalEmailText() { navigator.clipboard.writeText(`Asunto: ${document.getElementById("feSubject").value}\n\n${document.getElementById("feBody").value}`); showToast("Copiado", "success"); }
@@ -3271,7 +3195,51 @@
     function renderCaseChatMessages(t) { const msgs = currentChatChannel === "coordinadores" ? (t.coordinatorMessages || []) : (t.chatMessages || []); document.getElementById("dChatMessagesList").innerHTML = msgs.length === 0 ? `<p class="text-xs text-slate-400 text-center py-2">Sin mensajes aún.</p>` : msgs.map(m => `<div class="p-2.5 rounded-xl bg-slate-100 text-xs"><strong>${escapeHtml(m.senderName)}</strong> (${escapeHtml(m.date)}): ${escapeHtml(m.text)}</div>`).join(""); }
     function sendCaseChatMessage(e) { e.preventDefault(); const t = state.tasks.find(x => x.id === currentDetailId); const inp = document.getElementById("newChatMsgInput"); if (!t || !inp.value.trim()) return; const text = inp.value.trim(); const entry = { senderId: currentSession.id, senderName: currentSession.name, date: new Date().toLocaleString(), text }; if (currentChatChannel === "coordinadores") t.coordinatorMessages.push(entry); else { t.chatMessages.push(entry); pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `💬 ${currentSession.name} comentó en ${t.caseId}: "${text.substring(0, 60)}"` }); } inp.value = ""; saveLocalAndCloud(); renderCaseChatMessages(t); }
     function addInternalNote(e) { e.preventDefault(); const t = state.tasks.find(x => x.id === currentDetailId); const inp = document.getElementById("newInternalNoteText"); if (!t || !inp.value.trim()) return; const text = inp.value.trim(); t.notes.push({ date: new Date().toLocaleString(), text: `${currentSession.name}: ${text}` }); pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} registró avance en ${t.caseId}: "${text.substring(0, 65)}"` }); inp.value = ""; saveLocalAndCloud(); renderInternalNotes(t); }
-    function renderInternalNotes(t) { document.getElementById("dInternalNotesList").innerHTML = (t.notes || []).slice().reverse().map(n => `<div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs"><span class="text-[10px] text-slate-400 font-bold">${escapeHtml(n.date)}</span><p class="text-slate-800">${escapeHtml(n.text)}</p></div>`).join(""); }
+
+    function renderInternalNotes(t) {
+      const box = document.getElementById("dInternalNotesList");
+      const iNotes = Array.isArray(t.notes) ? t.notes : [];
+      if (iNotes.length === 0) {
+        box.innerHTML = `<p class="text-xs text-slate-400">Sin registros internos aún.</p>`;
+        return;
+      }
+      box.innerHTML = iNotes.slice().reverse().map((n, revIdx) => {
+        const realIdx = iNotes.length - 1 - revIdx;
+        return `
+          <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs space-y-1">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[10px] text-slate-400 font-bold">${escapeHtml(n.date)}</span>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="editInternalNote(${realIdx})" class="text-blue-700 font-bold hover:underline">Editar</button>
+                <button type="button" onclick="deleteInternalNote(${realIdx})" class="text-red-600 font-bold hover:underline">Borrar</button>
+              </div>
+            </div>
+            <p class="text-slate-800 whitespace-pre-line">${escapeHtml(n.text)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function editInternalNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !Array.isArray(t.notes) || !t.notes[idx]) return;
+      const updated = prompt("Editar nota del registro cronológico:", t.notes[idx].text);
+      if (updated === null || !updated.trim()) return;
+      t.notes[idx].text = updated.trim();
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Nota actualizada", "success");
+    }
+
+    function deleteInternalNote(idx) {
+      const t = state.tasks.find(x => x.id === currentDetailId);
+      if (!t || !Array.isArray(t.notes) || !t.notes[idx]) return;
+      if (!confirm("¿Eliminar esta nota del registro cronológico?")) return;
+      t.notes.splice(idx, 1);
+      saveLocalAndCloud();
+      renderInternalNotes(t);
+      showToast("Nota eliminada", "info");
+    }
     function renderDetailMedia(t) { const box = document.getElementById("dMediaGallery"); const media = t.media || []; box.innerHTML = media.length === 0 ? `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos.</p>` : media.map(m => `<div class="bg-white rounded-xl p-2 border border-slate-200 text-xs space-y-1"><a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="font-bold text-blue-600 truncate block">${escapeHtml(m.name)}</a><span class="text-[10px] ${m.syncedToDrive ? 'text-emerald-600 font-bold' : 'text-amber-600'}">${m.syncedToDrive ? '✓ Drive' : 'Local'}</span></div>`).join(""); }
 
     async function uploadSingleMediaItemToDrive(taskObj, mediaItem) { if (!mediaItem || !mediaItem.url || !mediaItem.url.startsWith("data:")) return false; const mimeMatch = mediaItem.url.match(/^data:([^;]+);base64,/); const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "uploadFile", folderId: taskObj.driveFolderId || "", folderName: `${taskObj.caseId} | ${taskObj.title}`, fileName: mediaItem.name, mimeType: mimeMatch ? mimeMatch[1] : "application/octet-stream", base64Data: mediaItem.url }) }); const d = await res.json(); if (d && d.status === "ok") { taskObj.driveFolderId = d.folderId || taskObj.driveFolderId; taskObj.driveFolderUrl = d.folderUrl || taskObj.driveFolderUrl; mediaItem.driveFileId = d.fileId; mediaItem.viewUrl = d.fileUrl; mediaItem.url = d.previewUrl || d.fileUrl; mediaItem.syncedToDrive = true; return true; } return false; }

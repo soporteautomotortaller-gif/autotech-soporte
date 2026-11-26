@@ -247,13 +247,37 @@
             </div>
           </div>
 
-          <div class="flex items-center bg-slate-200/75 p-1 rounded-xl w-full sm:w-auto">
-            <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition">
-              <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
-            </button>
-            <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
-              <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
-            </button>
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <div class="flex items-center bg-slate-200/75 p-1 rounded-xl flex-1 sm:flex-none">
+              <button onclick="switchAppMode('soporte')" id="btnModeSoporte" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 bg-white text-[#004B93] shadow-sm transition">
+                <i class="ph-bold ph-wrench"></i> Modo Soporte Técnico
+              </button>
+              <button onclick="switchAppMode('entrenamiento')" id="btnModeEntrenamiento" class="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
+                <i class="ph-bold ph-graduation-cap"></i> Modo Entrenamiento
+              </button>
+            </div>
+
+            <!-- BOTÓN DE NOTIFICACIONES ARRIBA A LA DERECHA -->
+            <div class="relative shrink-0" id="notifBellWrapper">
+              <button type="button" id="btnNotifBell" onclick="toggleNotifDropdown(event)" class="touch-target px-3.5 py-2 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition" title="Ver actividad reciente y tareas asignadas en esta área">
+                <i id="notifBellIcon" class="ph-bold ph-bell text-base text-slate-600"></i>
+                <span class="hidden sm:inline" id="notifBellLabel">Novedades</span>
+                <span id="notifUnreadBadge" class="hidden px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">0</span>
+              </button>
+
+              <div id="notifDropdown" class="hidden fixed sm:absolute inset-x-3 sm:inset-x-auto sm:right-0 top-20 sm:top-auto sm:mt-2 sm:w-[440px] max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
+                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <span class="text-xs font-extrabold uppercase text-slate-800 block truncate" id="notifDropdownTitle">Notificaciones · Soporte Técnico</span>
+                    <span class="text-[10px] text-slate-500 block truncate">Haz clic en cualquier aviso para ir directo al registro</span>
+                  </div>
+                  <button type="button" onclick="markAllAreaNotificationsRead()" class="text-[11px] font-bold text-[#004B93] hover:underline shrink-0">
+                    Marcar todo leído
+                  </button>
+                </div>
+                <div id="notifDropdownList" class="max-h-96 overflow-y-auto divide-y divide-slate-100"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -277,27 +301,11 @@
 
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
 
-            <!-- BOTÓN DE NOTIFICACIONES INTELIGENTE -->
-            <div class="relative" id="notifBellWrapper">
-              <button type="button" id="btnNotifBell" onclick="toggleNotifDropdown(event)" class="touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition" title="Ver actividad reciente y tareas asignadas en esta área">
-                <i id="notifBellIcon" class="ph-bold ph-bell text-base text-slate-600"></i>
-                <span class="hidden md:inline" id="notifBellLabel">Novedades</span>
-                <span id="notifUnreadBadge" class="hidden px-1.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-black">0</span>
-              </button>
-
-              <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-[420px] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
-                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-2">
-                  <div>
-                    <span class="text-xs font-extrabold uppercase text-slate-800 block" id="notifDropdownTitle">Notificaciones · Soporte Técnico</span>
-                    <span class="text-[10px] text-slate-500">Haz clic en cualquier aviso para ir directo al registro</span>
-                  </div>
-                  <button type="button" onclick="markAllAreaNotificationsRead()" class="text-[11px] font-bold text-[#004B93] hover:underline shrink-0">
-                    Marcar todo leído
-                  </button>
-                </div>
-                <div id="notifDropdownList" class="max-h-96 overflow-y-auto divide-y divide-slate-100"></div>
-              </div>
-            </div>
+            <!-- BOTÓN BASE DE DATOS DE ACCESOS Y CREDENCIALES -->
+            <button type="button" onclick="openCredentialsModal()" class="touch-target px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition" title="Base de datos de accesos, links, IDs, credenciales, equipos y notas">
+              <i class="ph-bold ph-key text-amber-400 text-base"></i>
+              <span>Accesos / Claves</span>
+            </button>
 
             <!-- BOTÓN HISTORIAL CLÍNICO POR VIN (SOLO SOPORTE) -->
             <button type="button" id="btnVinHistory" onclick="openVinHistoryModal()" class="touch-target px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 text-xs font-extrabold text-indigo-900 flex items-center gap-1.5 transition">
@@ -318,7 +326,7 @@
             </div>
 
             <!-- BOTÓN PLAN DE ENTRENAMIENTO (SOLO MODO ENTRENAMIENTO) -->
-            <button type="button" id="btnTrainingPlan" onclick="openTrainingPlanModal()" class="hidden touch-target px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition" title="Gestionar Plan de Entrenamiento por Marca y Exportar Excel Calendario">
+            <button type="button" id="btnTrainingPlan" onclick="openTrainingPlanModal()" class="hidden touch-target px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-sm transition">
               <i class="ph-bold ph-calendar-check text-base"></i>
               <span>Plan de Entrenamiento</span>
             </button>
@@ -337,7 +345,7 @@
                 <i class="ph-bold ph-caret-down text-xs"></i>
               </button>
 
-              <div id="platformsDropdown" class="hidden absolute right-0 sm:left-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
+              <div id="platformsDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-24px)] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
                 <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                   <div class="flex items-center gap-1.5">
                     <i class="ph-bold ph-star text-amber-500 text-base"></i>
@@ -569,8 +577,104 @@
   </div>
 
   <!-- ======================================================================= -->
-  <!-- MODAL PLAN DE ENTRENAMIENTO POR MARCA + EXPORTACIÓN EXCEL CALENDARIO    -->
+  <!-- MODAL BASE DE DATOS DE ACCESOS, LINKS, IDs, CREDENCIALES Y UBICACIÓN    -->
   <!-- ======================================================================= -->
+  <div id="credentialsModal" class="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-900 text-white">
+        <div class="flex items-center gap-2.5">
+          <i class="ph-bold ph-key text-2xl text-amber-400"></i>
+          <div>
+            <h3 class="text-base font-extrabold">Base de Datos de Accesos, Credenciales y Equipos</h3>
+            <p class="text-xs text-slate-300">Registra manualmente marca, plataforma, link, ID, credencial, ubicación (Notebook/PC) y nota de uso. Se respalda en Drive y se exporta a Excel.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="exportCredentialsExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm">
+            <i class="ph-bold ph-microsoft-excel-logo text-base"></i> Descargar Excel
+          </button>
+          <button onclick="closeModal('credentialsModal')" class="p-1.5 rounded-lg hover:bg-slate-700 text-slate-300"><i class="ph-bold ph-x"></i></button>
+        </div>
+      </div>
+
+      <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
+        <!-- Formulario Manual de Registro / Edición -->
+        <form onsubmit="saveCredentialRecord(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+          <input type="hidden" id="editCredId" />
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold uppercase text-[#004B93]" id="credFormTitle">Nuevo Registro de Acceso</span>
+            <button type="button" id="btnCancelCredEdit" onclick="resetCredentialForm()" class="hidden text-xs font-bold text-red-600 hover:underline">Cancelar Edición</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Marca (Escribir) *</label>
+              <input type="text" id="crBrand" required placeholder="Ej: Hyundai, Isuzu, Geely..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Plataforma</label>
+              <input type="text" id="crPlatform" placeholder="Ej: Portal CCC / GDS" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Link / URL *</label>
+              <input type="text" id="crLink" required placeholder="https://..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">ID / Usuario *</label>
+              <input type="text" id="crUserId" required placeholder="Usuario de acceso" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Credencial / Clave *</label>
+              <input type="text" id="crPassword" required placeholder="Contraseña / PIN" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Ubicación / Equipo *</label>
+              <input type="text" id="crLocation" required placeholder="Ej: Notebook Soporte 1 / PC Bahía" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+            </div>
+          </div>
+
+          <div class="flex flex-wrap sm:flex-nowrap items-end gap-2.5">
+            <div class="flex-1 min-w-[240px]">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Nota / Comentario (Para qué sirve esta plataforma o detalle del equipo) *</label>
+              <input type="text" id="crNote" required placeholder="Ej: Sirve para descarga de manuales, boletines y garantías. Instalado en Notebook Dell de Esteban." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white" />
+            </div>
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white font-extrabold flex items-center gap-1.5 shadow-sm shrink-0">
+              <i class="ph-bold ph-floppy-disk text-base"></i> <span id="btnSaveCredText">Guardar en Base de Datos y Drive</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Buscador de la Base de Datos -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="relative flex-1 min-w-[240px]">
+            <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="credSearchInput" oninput="renderCredentialsTable()" placeholder="Buscar por marca, ID, ubicación (notebook/PC), plataforma o nota..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 bg-white text-xs" />
+          </div>
+          <span id="credCountBadge" class="text-xs font-bold text-slate-500">0 registros</span>
+        </div>
+
+        <!-- Tabla de Base de Datos -->
+        <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 text-slate-800 font-extrabold uppercase text-[11px]">
+                <th class="p-3 border-b">Marca / Plataforma</th>
+                <th class="p-3 border-b">Link</th>
+                <th class="p-3 border-b">ID / Usuario</th>
+                <th class="p-3 border-b">Credencial</th>
+                <th class="p-3 border-b">Ubicación (PC/Notebook)</th>
+                <th class="p-3 border-b">Nota / Para qué sirve</th>
+                <th class="p-3 border-b text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="credentialsTableBody" class="divide-y divide-slate-100 bg-white"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PLAN DE ENTRENAMIENTO POR MARCA + EXPORTACIÓN EXCEL CALENDARIO -->
   <div id="trainingPlanModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-emerald-200 flex flex-wrap items-center justify-between gap-2 bg-emerald-50">
@@ -585,8 +689,6 @@
       </div>
 
       <div class="p-5 space-y-5 max-h-[84vh] overflow-y-auto text-xs">
-
-        <!-- Formulario para Agregar Actividad al Plan -->
         <form onsubmit="addTrainingPlanEntry(event)" class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200 space-y-3">
           <div class="font-extrabold uppercase text-amber-950 flex items-center gap-1.5">
             <i class="ph-bold ph-plus-circle text-amber-600 text-base"></i> Agregar Tema al Plan de Entrenamiento
@@ -617,7 +719,6 @@
           </div>
         </form>
 
-        <!-- Barra de Filtros y Descarga de Excel Calendario -->
         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-2">
             <div>
@@ -664,15 +765,12 @@
           </div>
         </div>
 
-        <!-- Vista Previa Calendario Mensual en Pantalla -->
         <div id="tpCalendarPreviewBox" class="space-y-4"></div>
 
-        <!-- Lista Editable de Registros del Plan -->
         <div class="space-y-2">
           <h4 class="font-extrabold uppercase text-slate-700">Registros Guardados en el Plan</h4>
           <div id="tpEntriesList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
         </div>
-
       </div>
     </div>
   </div>
@@ -917,9 +1015,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO                                -->
-  <!-- ======================================================================= -->
+  <!-- MODAL 2: DETALLE DE CASO O ENTRENAMIENTO -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-auto">
       <div class="px-5 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50">
@@ -1833,6 +1929,7 @@
     let state = {
       tasks: [],
       todos: [],
+      credentialsDb: [],
       trainingPlanEntries: [],
       notifications: [],
       htcBank: DEFAULT_HTC_BANK,
@@ -1864,6 +1961,7 @@
     let draftSubtasks = [];
     let insertBankIntoCurrentSession = false;
     let activeTickerNotif = null;
+    let revealedCredIds = {};
 
     function escapeHtml(str) {
       if (!str) return "";
@@ -1884,6 +1982,241 @@
       let phone = (raw || "").replace(/\D/g, "");
       if (phone.startsWith("0")) phone = "595" + phone.substring(1);
       return phone;
+    }
+
+    // =========================================================================
+    // BASE DE DATOS DE ACCESOS, CREDENCIALES, UBICACIÓN (PC/NOTEBOOK) Y NOTAS
+    // =========================================================================
+    function openCredentialsModal() {
+      resetCredentialForm();
+      renderCredentialsTable();
+      document.getElementById("credentialsModal").classList.remove("hidden");
+    }
+
+    function resetCredentialForm() {
+      document.getElementById("editCredId").value = "";
+      document.getElementById("crBrand").value = "";
+      document.getElementById("crPlatform").value = "";
+      document.getElementById("crLink").value = "";
+      document.getElementById("crUserId").value = "";
+      document.getElementById("crPassword").value = "";
+      document.getElementById("crLocation").value = "";
+      document.getElementById("crNote").value = "";
+      document.getElementById("credFormTitle").textContent = "Nuevo Registro de Acceso";
+      document.getElementById("btnSaveCredText").textContent = "Guardar en Base de Datos y Drive";
+      document.getElementById("btnCancelCredEdit").classList.add("hidden");
+    }
+
+    function saveCredentialRecord(e) {
+      e.preventDefault();
+      const editId = document.getElementById("editCredId").value;
+      const brand = document.getElementById("crBrand").value.trim();
+      const platform = document.getElementById("crPlatform").value.trim();
+      const link = document.getElementById("crLink").value.trim();
+      const userId = document.getElementById("crUserId").value.trim();
+      const password = document.getElementById("crPassword").value.trim();
+      const location = document.getElementById("crLocation").value.trim();
+      const note = document.getElementById("crNote").value.trim();
+
+      if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
+
+      if (editId) {
+        const rec = state.credentialsDb.find(x => x.id === editId);
+        if (rec) {
+          rec.brand = brand;
+          rec.platform = platform;
+          rec.link = link;
+          rec.userId = userId;
+          rec.password = password;
+          rec.location = location;
+          rec.note = note;
+          rec.updatedAt = new Date().toLocaleString();
+          rec.updatedBy = currentSession ? currentSession.name : "Usuario";
+        }
+        showToast("Registro de acceso actualizado y respaldado en Drive", "success");
+      } else {
+        state.credentialsDb.unshift({
+          id: "cred_" + Date.now(),
+          brand,
+          platform,
+          link,
+          userId,
+          password,
+          location,
+          note,
+          createdAt: new Date().toLocaleString(),
+          createdBy: currentSession ? currentSession.name : "Usuario"
+        });
+        showToast("Acceso guardado en Base de Datos y Google Drive", "success");
+      }
+
+      resetCredentialForm();
+      saveLocalAndCloud();
+      renderCredentialsTable();
+    }
+
+    function editCredentialRecord(id) {
+      const rec = (state.credentialsDb || []).find(x => x.id === id);
+      if (!rec) return;
+      document.getElementById("editCredId").value = rec.id;
+      document.getElementById("crBrand").value = rec.brand || "";
+      document.getElementById("crPlatform").value = rec.platform || "";
+      document.getElementById("crLink").value = rec.link || "";
+      document.getElementById("crUserId").value = rec.userId || "";
+      document.getElementById("crPassword").value = rec.password || "";
+      document.getElementById("crLocation").value = rec.location || "";
+      document.getElementById("crNote").value = rec.note || "";
+      document.getElementById("credFormTitle").textContent = `Editando Acceso: ${rec.brand} ${rec.platform ? "- " + rec.platform : ""}`;
+      document.getElementById("btnSaveCredText").textContent = "Actualizar Registro";
+      document.getElementById("btnCancelCredEdit").classList.remove("hidden");
+      document.getElementById("crBrand").focus();
+    }
+
+    function deleteCredentialRecord(id) {
+      if (!confirm("¿Eliminar este registro de acceso de la base de datos?")) return;
+      state.credentialsDb = (state.credentialsDb || []).filter(x => x.id !== id);
+      saveLocalAndCloud();
+      renderCredentialsTable();
+      showToast("Registro eliminado", "info");
+    }
+
+    function toggleCredentialReveal(id) {
+      revealedCredIds[id] = !revealedCredIds[id];
+      renderCredentialsTable();
+    }
+
+    function renderCredentialsTable() {
+      const tbody = document.getElementById("credentialsTableBody");
+      const badge = document.getElementById("credCountBadge");
+      const q = (document.getElementById("credSearchInput").value || "").toLowerCase();
+
+      const list = (state.credentialsDb || []).filter(r => {
+        if (!q) return true;
+        const hay = `${r.brand || ""} ${r.platform || ""} ${r.link || ""} ${r.userId || ""} ${r.location || ""} ${r.note || ""}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+      badge.textContent = `${list.length} registro(s)`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">No hay registros de accesos cargados aún. Completa el formulario superior para agregar el primero.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(r => {
+        const isShown = !!revealedCredIds[r.id];
+        const safeUrl = r.link && !/^https?:\/\//i.test(r.link) ? "https://" + r.link : r.link;
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="p-3 align-top">
+              <span class="inline-block px-2 py-0.5 rounded bg-[#004B93] text-white font-extrabold text-[11px]">${escapeHtml(r.brand)}</span>
+              ${r.platform ? `<div class="font-bold text-slate-800 mt-1">${escapeHtml(r.platform)}</div>` : ""}
+            </td>
+            <td class="p-3 align-top max-w-[180px]">
+              <div class="flex items-center gap-1.5">
+                <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="text-[#004B93] font-bold hover:underline truncate block" title="${escapeHtml(r.link)}">${escapeHtml(r.link)}</a>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.link)}', 'Link')" class="text-slate-400 hover:text-[#004B93] shrink-0" title="Copiar Link"><i class="ph-bold ph-copy"></i></button>
+              </div>
+            </td>
+            <td class="p-3 align-top">
+              <div class="flex items-center gap-1.5 font-mono font-bold text-slate-900">
+                <span>${escapeHtml(r.userId)}</span>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.userId)}', 'ID / Usuario')" class="text-slate-400 hover:text-[#004B93]" title="Copiar ID"><i class="ph-bold ph-copy"></i></button>
+              </div>
+            </td>
+            <td class="p-3 align-top">
+              <div class="flex items-center gap-1.5 font-mono font-bold text-slate-900">
+                <span>${isShown ? escapeHtml(r.password) : "••••••••"}</span>
+                <button type="button" onclick="toggleCredentialReveal('${r.id}')" class="text-slate-500 hover:text-slate-900" title="${isShown ? 'Ocultar' : 'Ver'}">
+                  <i class="ph-bold ${isShown ? 'ph-eye-slash' : 'ph-eye'}"></i>
+                </button>
+                <button type="button" onclick="copyTextToClipboard('${escapeHtml(r.password)}', 'Credencial')" class="text-slate-400 hover:text-emerald-600" title="Copiar Credencial"><i class="ph-bold ph-copy"></i></button>
+              </div>
+            </td>
+            <td class="p-3 align-top">
+              <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-950 font-bold">
+                <i class="ph-bold ph-laptop text-amber-600"></i> ${escapeHtml(r.location || "-")}
+              </span>
+            </td>
+            <td class="p-3 align-top max-w-[260px]">
+              <p class="text-slate-700 whitespace-pre-line leading-snug">${escapeHtml(r.note || "-")}</p>
+            </td>
+            <td class="p-3 align-top text-right whitespace-nowrap">
+              <button type="button" onclick="editCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold mr-1">Editar</button>
+              <button type="button" onclick="deleteCredentialRecord('${r.id}')" class="px-2 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold">Borrar</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function exportCredentialsExcel() {
+      const list = state.credentialsDb || [];
+      if (list.length === 0) {
+        showToast("No hay registros en la base de datos para descargar", "warning");
+        return;
+      }
+
+      const rowsHtml = list.map(r => `
+        <tr>
+          <td>${escapeHtml(r.brand || "")}</td>
+          <td>${escapeHtml(r.platform || "")}</td>
+          <td>${escapeHtml(r.link || "")}</td>
+          <td>${escapeHtml(r.userId || "")}</td>
+          <td>${escapeHtml(r.password || "")}</td>
+          <td>${escapeHtml(r.location || "")}</td>
+          <td>${escapeHtml(r.note || "")}</td>
+          <td>${escapeHtml(r.createdBy || "")}</td>
+          <td>${escapeHtml(r.createdAt || "")}</td>
+        </tr>
+      `).join("");
+
+      const excelDoc = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:x="urn:schemas-microsoft-com:office:excel"
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="UTF-8">
+          <!--[if gte mso 9]>
+          <xml>
+            <x:ExcelWorkbook>
+              <x:ExcelWorksheets>
+                <x:ExcelWorksheet>
+                  <x:Name>Base_Datos_Accesos</x:Name>
+                  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                </x:ExcelWorksheet>
+              </x:ExcelWorksheets>
+            </x:ExcelWorkbook>
+          </xml>
+          <![endif]-->
+        </head>
+        <body>
+          <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; font-family:Calibri, Arial, sans-serif;">
+            <thead>
+              <tr style="background-color:#004B93; color:#FFFFFF; font-weight:bold;">
+                <th>Marca</th>
+                <th>Plataforma</th>
+                <th>Link / URL</th>
+                <th>ID / Usuario</th>
+                <th>Credencial / Clave</th>
+                <th>Ubicación (Notebook / PC)</th>
+                <th>Nota / Para qué sirve</th>
+                <th>Registrado por</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(["\uFEFF" + excelDoc], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `Base_Datos_Accesos_Automotor_${new Date().toISOString().split("T")[0]}.xls`;
+      a.click();
+      showToast("Excel de Base de Datos de Accesos descargado", "success");
     }
 
     // =========================================================================
@@ -1942,7 +2275,6 @@
       showToast("Registro eliminado del plan", "info");
     }
 
-    // Combina las entradas dedicadas del Plan de Entrenamiento con los cursos programados de esa marca
     function getUnifiedTrainingPlanItems(brandFilter, yearStr) {
       const manualEntries = (state.trainingPlanEntries || []).filter(item => {
         if (!item.date || !item.date.startsWith(yearStr)) return false;
@@ -1971,7 +2303,6 @@
       const monthFilter = document.getElementById("tpFilterMonth").value;
       const items = getUnifiedTrainingPlanItems(brandFilter, yearStr);
 
-      // Renderizar lista de registros manuales editables/eliminables
       const manualList = (state.trainingPlanEntries || [])
         .filter(item => item.date && item.date.startsWith(yearStr) && (brandFilter === "ALL" || item.brand === brandFilter))
         .sort((a, b) => (a.date > b.date ? 1 : -1));
@@ -1991,7 +2322,6 @@
           </div>
         `).join("");
 
-      // Vista previa visual en formato calendario (Lunes a Domingo)
       const previewBox = document.getElementById("tpCalendarPreviewBox");
       const monthsToRender = monthFilter === "ALL" ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : [Number(monthFilter)];
       const yearNum = Number(yearStr);
@@ -2005,9 +2335,7 @@
         const daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
 
         let cellsHtml = "";
-        for (let i = 0; i < offset; i++) {
-          cellsHtml += `<div class="min-h-[68px] bg-slate-100/60 border border-slate-200"></div>`;
-        }
+        for (let i = 0; i < offset; i++) cellsHtml += `<div class="min-h-[68px] bg-slate-100/60 border border-slate-200"></div>`;
         for (let d = 1; d <= daysInMonth; d++) {
           const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
           const dayEvents = monthItems.filter(it => it.date === dStr);
@@ -2048,7 +2376,6 @@
       }).join("") || `<p class="text-center text-slate-400 py-4">No hay actividades cargadas en el año ${yearStr} para mostrar en el calendario.</p>`;
     }
 
-    // Exporta Excel descargable usando SOLO LA HOJA 1 en formato Calendario Mensual (Lunes a Domingo)
     function exportTrainingPlanCalendarExcel(allBrands = false) {
       const selectedBrand = allBrands ? "ALL" : document.getElementById("tpFilterBrand").value;
       const yearStr = document.getElementById("tpFilterYear").value;
@@ -2073,7 +2400,6 @@
 
       for (let mIdx = 0; mIdx < 12; mIdx++) {
         const monthItems = items.filter(it => Number(it.date.split("-")[1]) - 1 === mIdx);
-        // Si es exportación anual, incluimos todos los meses que tengan actividades o todos los 12 meses del año
         const firstDay = new Date(yearNum, mIdx, 1).getDay();
         const offset = firstDay === 0 ? 6 : firstDay - 1;
         const daysInMonth = new Date(yearNum, mIdx + 1, 0).getDate();
@@ -2099,13 +2425,11 @@
 
         for (let cell = 0; cell < totalCells; cell++) {
           if (cell % 7 === 0) tablesHtml += `<tr>`;
-
           if (cell < offset || dayCounter > daysInMonth) {
             tablesHtml += `<td style="background-color:#F8FAFC; height:75px; border:1px solid #CBD5E1;"></td>`;
           } else {
             const dStr = `${yearStr}-${String(mIdx + 1).padStart(2, "0")}-${String(dayCounter).padStart(2, "0")}`;
             const dayEvents = monthItems.filter(it => it.date === dStr);
-
             const contentHtml = dayEvents.map(ev => {
               const prefix = selectedBrand === "ALL" ? `<b>[${escapeHtml(ev.brand)}]</b> ` : "";
               const dur = ev.duration ? `<br/><span style="color:#64748B; font-size:8.5pt;">${escapeHtml(ev.duration)}</span>` : "";
@@ -2122,14 +2446,12 @@
             `;
             dayCounter++;
           }
-
           if (cell % 7 === 6) tablesHtml += `</tr>`;
         }
       }
 
       tablesHtml += `</table>`;
 
-      // Estructura XML de Excel con una ÚNICA hoja llamada "Plan_Entrenamiento"
       const singleSheetExcel = `
         <html xmlns:o="urn:schemas-microsoft-com:office:office"
               xmlns:x="urn:schemas-microsoft-com:office:excel"
@@ -2142,9 +2464,7 @@
               <x:ExcelWorksheets>
                 <x:ExcelWorksheet>
                   <x:Name>Plan_Entrenamiento</x:Name>
-                  <x:WorksheetOptions>
-                    <x:DisplayGridlines/>
-                  </x:WorksheetOptions>
+                  <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
                 </x:ExcelWorksheet>
               </x:ExcelWorksheets>
             </x:ExcelWorkbook>
@@ -2165,7 +2485,7 @@
     }
 
     // =========================================================================
-    // SISTEMA DE NOTIFICACIONES INTELIGENTE POR ÁREA (SOPORTE / ENTRENAMIENTO)
+    // SISTEMA DE NOTIFICACIONES INTELIGENTE POR ÁREA
     // =========================================================================
     function pushActivityNotification({ area, targetType, targetId, targetUserId = "", message }) {
       if (!currentSession) return;
@@ -2193,9 +2513,7 @@
       if (!currentSession) return [];
       return (state.notifications || []).filter(n => {
         if (n.area !== areaName) return false;
-        if (n.targetUserId) {
-          return n.targetUserId === currentSession.id || isCoordinatorOrAdmin() || n.actorId === currentSession.id;
-        }
+        if (n.targetUserId) return n.targetUserId === currentSession.id || isCoordinatorOrAdmin() || n.actorId === currentSession.id;
         return true;
       });
     }
@@ -2216,15 +2534,13 @@
       if (!btn || !currentSession) return;
 
       const areaName = appMode;
-      if (titleEl) {
-        titleEl.textContent = areaName === "soporte" ? "Notificaciones · Soporte Técnico" : "Notificaciones · Entrenamiento";
-      }
+      if (titleEl) titleEl.textContent = areaName === "soporte" ? "Notificaciones · Soporte Técnico" : "Notificaciones · Entrenamiento";
 
       const areaNotifs = getAreaNotificationsForCurrentUser(areaName);
       const unreadList = areaNotifs.filter(isNotificationUnreadByMe);
 
       if (unreadList.length > 0) {
-        btn.className = "touch-target px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 border border-red-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md transition";
+        btn.className = "touch-target px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 border border-red-700 text-xs font-extrabold text-white flex items-center gap-1.5 shadow-md transition";
         icon.className = "ph-bold ph-bell-ringing text-base text-white animate-bounce";
         badge.textContent = unreadList.length;
         badge.classList.remove("hidden");
@@ -2234,76 +2550,31 @@
         document.getElementById("liveNotifTickerTime").textContent = activeTickerNotif.createdAt;
         tickerBar.classList.remove("hidden");
       } else {
-        btn.className = "touch-target px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition";
+        btn.className = "touch-target px-3.5 py-2 rounded-xl bg-white/90 hover:bg-white border border-slate-300 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition";
         icon.className = "ph-bold ph-bell text-base text-slate-600";
         badge.classList.add("hidden");
         activeTickerNotif = null;
         tickerBar.classList.add("hidden");
       }
 
-      if (!document.getElementById("notifDropdown").classList.contains("hidden")) {
-        renderNotifDropdownList();
-      }
+      if (!document.getElementById("notifDropdown").classList.contains("hidden")) renderNotifDropdownList();
     }
 
-    function toggleNotifDropdown(e) {
-      e.stopPropagation();
-      const dd = document.getElementById("notifDropdown");
-      if (dd.classList.contains("hidden")) renderNotifDropdownList();
-      dd.classList.toggle("hidden");
-    }
-
-    document.addEventListener("click", (e) => {
-      const wrap = document.getElementById("notifBellWrapper");
-      const dd = document.getElementById("notifDropdown");
-      if (dd && !dd.classList.contains("hidden") && wrap && !wrap.contains(e.target)) dd.classList.add("hidden");
-    });
+    function toggleNotifDropdown(e) { e.stopPropagation(); const dd = document.getElementById("notifDropdown"); if (dd.classList.contains("hidden")) renderNotifDropdownList(); dd.classList.toggle("hidden"); }
+    document.addEventListener("click", (e) => { const wrap = document.getElementById("notifBellWrapper"); const dd = document.getElementById("notifDropdown"); if (dd && !dd.classList.contains("hidden") && wrap && !wrap.contains(e.target)) dd.classList.add("hidden"); });
 
     function renderNotifDropdownList() {
       const box = document.getElementById("notifDropdownList");
       const list = getAreaNotificationsForCurrentUser(appMode);
-      if (list.length === 0) {
-        box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No hay notificaciones recientes en esta área.</div>`;
-        return;
-      }
+      if (list.length === 0) { box.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No hay notificaciones recientes en esta área.</div>`; return; }
       box.innerHTML = list.slice(0, 20).map(n => {
         const unread = isNotificationUnreadByMe(n);
-        return `
-          <div onclick="openNotificationTarget('${n.id}')" class="px-4 py-3 cursor-pointer transition flex items-start gap-2.5 ${unread ? 'bg-red-50/75 hover:bg-red-100/70' : 'hover:bg-slate-50'}">
-            <div class="flex-1 min-w-0">
-              <p class="text-xs ${unread ? 'font-extrabold text-slate-900' : 'font-medium text-slate-700'} leading-snug">${escapeHtml(n.message)}</p>
-              <span class="text-[10px] text-slate-400 font-semibold block mt-0.5">${escapeHtml(n.createdAt)}</span>
-            </div>
-            ${unread ? `<span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>` : ""}
-          </div>
-        `;
+        return `<div onclick="openNotificationTarget('${n.id}')" class="px-4 py-3 cursor-pointer transition flex items-start gap-2.5 ${unread ? 'bg-red-50/75 hover:bg-red-100/70' : 'hover:bg-slate-50'}"><div class="flex-1 min-w-0"><p class="text-xs ${unread ? 'font-extrabold text-slate-900' : 'font-medium text-slate-700'} leading-snug">${escapeHtml(n.message)}</p><span class="text-[10px] text-slate-400 font-semibold block mt-0.5">${escapeHtml(n.createdAt)}</span></div>${unread ? `<span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>` : ""}</div>`;
       }).join("");
     }
 
-    function markSingleNotificationRead(notifId) {
-      if (!currentSession) return;
-      const n = (state.notifications || []).find(x => x.id === notifId);
-      if (!n) return;
-      if (!Array.isArray(n.readBy)) n.readBy = [];
-      if (!n.readBy.includes(currentSession.id)) {
-        n.readBy.push(currentSession.id);
-        saveLocalAndCloud();
-        refreshNotificationsUI();
-      }
-    }
-
-    function markAllAreaNotificationsRead() {
-      if (!currentSession) return;
-      const list = getAreaNotificationsForCurrentUser(appMode);
-      let changed = false;
-      list.forEach(n => {
-        if (!Array.isArray(n.readBy)) n.readBy = [];
-        if (!n.readBy.includes(currentSession.id)) { n.readBy.push(currentSession.id); changed = true; }
-      });
-      if (changed) { saveLocalAndCloud(); refreshNotificationsUI(); }
-      document.getElementById("notifDropdown").classList.add("hidden");
-    }
-
+    function markSingleNotificationRead(notifId) { if (!currentSession) return; const n = (state.notifications || []).find(x => x.id === notifId); if (!n) return; if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) { n.readBy.push(currentSession.id); saveLocalAndCloud(); refreshNotificationsUI(); } }
+    function markAllAreaNotificationsRead() { if (!currentSession) return; const list = getAreaNotificationsForCurrentUser(appMode); let changed = false; list.forEach(n => { if (!Array.isArray(n.readBy)) n.readBy = []; if (!n.readBy.includes(currentSession.id)) { n.readBy.push(currentSession.id); changed = true; } }); if (changed) { saveLocalAndCloud(); refreshNotificationsUI(); } document.getElementById("notifDropdown").classList.add("hidden"); }
     function dismissTickerNotification() { if (activeTickerNotif) markSingleNotificationRead(activeTickerNotif.id); }
     function handleTickerClick() { if (activeTickerNotif) openNotificationTarget(activeTickerNotif.id); }
 
@@ -2313,28 +2584,16 @@
       markSingleNotificationRead(notifId);
       document.getElementById("notifDropdown").classList.add("hidden");
       if (n.area && n.area !== appMode) switchAppMode(n.area);
-
-      if (n.targetType === "plan") {
-        openTrainingPlanModal();
-      } else if (n.targetType === "todo") {
-        switchTab("tasks");
-        setTodoFilter("all");
-      } else if (n.targetId) {
-        const exists = (state.tasks || []).find(t => t.id === n.targetId || t.caseId === n.targetId);
-        if (exists) { switchTab("board"); openDetailModal(exists.id); }
-      }
+      if (n.targetType === "plan") openTrainingPlanModal();
+      else if (n.targetType === "todo") { switchTab("tasks"); setTodoFilter("all"); }
+      else if (n.targetId) { const exists = (state.tasks || []).find(t => t.id === n.targetId || t.caseId === n.targetId); if (exists) { switchTab("board"); openDetailModal(exists.id); } }
     }
 
     // =========================================================================
     // ESTRUCTURA HTC DE ENTRENAMIENTO
     // =========================================================================
     function buildDefaultDeliverablesForModality(modality, sessionDateStr) {
-      const calcDue = (daysBefore) => {
-        if (!sessionDateStr) return "";
-        const d = new Date(sessionDateStr + "T00:00:00");
-        d.setDate(d.getDate() - daysBefore);
-        return d.toISOString().split("T")[0];
-      };
+      const calcDue = (daysBefore) => { if (!sessionDateStr) return ""; const d = new Date(sessionDateStr + "T00:00:00"); d.setDate(d.getDate() - daysBefore); return d.toISOString().split("T")[0]; };
       return [
         { id: "del_1", name: "Ficha de Necesidad y Objetivos Observables HTC", required: true, dueDate: calcDue(14), status: "Pendiente", version: "v1.0", reviewerComment: "", naReason: "" },
         { id: "del_2", name: "Plan de Sesión y Guía del Instructor", required: true, dueDate: calcDue(10), status: "Pendiente", version: "v1.0", reviewerComment: "", naReason: "" },
@@ -2346,39 +2605,15 @@
     }
 
     function buildDefaultResourcesForModality(modality) {
-      if (modality === "Taller Práctico en Bahía") {
-        return [
-          { name: "Bahía de taller reservada y despejada", confirmed: false },
-          { name: "Vehículo / Maqueta de práctica operativo", confirmed: false },
-          { name: "Escáner oficial y herramientas especiales (SST)", confirmed: false },
-          { name: "EPP y medidas de seguridad verificadas", confirmed: false }
-        ];
-      }
-      if (modality === "Curso E-Learning / Plataforma") {
-        return [
-          { name: "Enlace y matriculación en plataforma activos", confirmed: false },
-          { name: "Guía de seguimiento y plazos comunicados", confirmed: false }
-        ];
-      }
-      return [
-        { name: "Aula reservada, proyector y visibilidad verificados", confirmed: false },
-        { name: "Hojas de trabajo y evaluaciones impresas/digitales", confirmed: false },
-        { name: "Componentes / Maquetas de apoyo en aula", confirmed: false }
-      ];
+      if (modality === "Taller Práctico en Bahía") return [{ name: "Bahía de taller reservada y despejada", confirmed: false }, { name: "Vehículo / Maqueta de práctica operativo", confirmed: false }, { name: "Escáner oficial y herramientas especiales (SST)", confirmed: false }, { name: "EPP y medidas de seguridad verificadas", confirmed: false }];
+      if (modality === "Curso E-Learning / Plataforma") return [{ name: "Enlace y matriculación en plataforma activos", confirmed: false }, { name: "Guía de seguimiento y plazos comunicados", confirmed: false }];
+      return [{ name: "Aula reservada, proyector y visibilidad verificados", confirmed: false }, { name: "Hojas de trabajo y evaluaciones impresas/digitales", confirmed: false }, { name: "Componentes / Maquetas de apoyo en aula", confirmed: false }];
     }
 
     function ensureTrainingStructure(t) {
       if ((t.mode || "soporte") !== "entrenamiento") return;
       if (!t.trainingData) {
-        t.trainingData = {
-          stage: t.status === "Completado" ? "Cerrado" : (t.stage || "Asignado"),
-          version: "v1.0", sourceCourseId: "", reviewerId: "admin_master", prepHours: 6, targetCount: 12,
-          materialDeadline: "", blocked: false, blockReason: "", need: "", expectedPerformance: "",
-          prerequisites: "", technicalReferences: "", objectives: [], sessionBlocks: [],
-          deliverables: buildDefaultDeliverablesForModality(t.subcategory, t.date),
-          resources: buildDefaultResourcesForModality(t.subcategory),
-          observation: { criteria: {}, strengths: "", improvements: "", selfEval: "" }, participants: []
-        };
+        t.trainingData = { stage: t.status === "Completado" ? "Cerrado" : (t.stage || "Asignado"), version: "v1.0", sourceCourseId: "", reviewerId: "admin_master", prepHours: 6, targetCount: 12, materialDeadline: "", blocked: false, blockReason: "", need: "", expectedPerformance: "", prerequisites: "", technicalReferences: "", objectives: [], sessionBlocks: [], deliverables: buildDefaultDeliverablesForModality(t.subcategory, t.date), resources: buildDefaultResourcesForModality(t.subcategory), observation: { criteria: {}, strengths: "", improvements: "", selfEval: "" }, participants: [] };
       }
       const td = t.trainingData;
       if (!Array.isArray(td.objectives)) td.objectives = [];
@@ -2413,41 +2648,24 @@
       if (!Array.isArray(state.pendingUsers)) state.pendingUsers = [];
       if (!Array.isArray(state.hotlineRequests)) state.hotlineRequests = [];
       if (!Array.isArray(state.todos)) state.todos = [];
+      if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
       if (!Array.isArray(state.trainingPlanEntries)) state.trainingPlanEntries = [];
       if (!Array.isArray(state.notifications)) state.notifications = [];
       if (!Array.isArray(state.htcBank) || state.htcBank.length === 0) state.htcBank = [...DEFAULT_HTC_BANK];
       if (!Array.isArray(state.platforms) || state.platforms.length === 0) state.platforms = [...DEFAULT_PLATFORMS];
 
       state.users = state.users.filter(u => u && u.email && u.id !== "u1" && u.id !== "u2" && u.id !== "u3");
-
       (state.tasks || []).forEach(t => {
         if (t.status === "En Revisión" || t.status === "En Revision") t.status = "En Prueba";
         if (!Array.isArray(t.chatMessages)) t.chatMessages = [];
         if (!Array.isArray(t.coordinatorMessages)) t.coordinatorMessages = [];
         if ((t.mode || "soporte") === "entrenamiento") ensureTrainingStructure(t);
       });
-
-      (state.todos || []).forEach(td => {
-        if (!Array.isArray(td.subtasks)) td.subtasks = [];
-        if (!td.area) td.area = "soporte";
-      });
+      (state.todos || []).forEach(td => { if (!Array.isArray(td.subtasks)) td.subtasks = []; if (!td.area) td.area = "soporte"; });
     }
 
-    function toggleDarkMode() {
-      const isDark = document.body.classList.toggle("dark-theme");
-      localStorage.setItem("autotech_dark_mode", isDark ? "1" : "0");
-      document.getElementById("darkModeBtn").innerHTML = isDark ? `<i class="ph-bold ph-sun text-amber-400"></i>` : `<i class="ph-bold ph-moon"></i>`;
-    }
-
-    function showToast(msg, type = "info") {
-      const box = document.getElementById("toastBox");
-      const el = document.createElement("div");
-      const colors = { success: "bg-emerald-600 text-white", warning: "bg-amber-600 text-white", info: "bg-slate-900 text-white" };
-      el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 ${colors[type] || colors.info}`;
-      el.innerHTML = `<i class="ph-bold ph-info"></i> <span>${escapeHtml(msg)}</span>`;
-      box.appendChild(el);
-      setTimeout(() => el.remove(), 4500);
-    }
+    function toggleDarkMode() { const isDark = document.body.classList.toggle("dark-theme"); localStorage.setItem("autotech_dark_mode", isDark ? "1" : "0"); document.getElementById("darkModeBtn").innerHTML = isDark ? `<i class="ph-bold ph-sun text-amber-400"></i>` : `<i class="ph-bold ph-moon"></i>`; }
+    function showToast(msg, type = "info") { const box = document.getElementById("toastBox"); const el = document.createElement("div"); const colors = { success: "bg-emerald-600 text-white", warning: "bg-amber-600 text-white", info: "bg-slate-900 text-white" }; el.className = `px-4 py-3 rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 ${colors[type] || colors.info}`; el.innerHTML = `<i class="ph-bold ph-info"></i> <span>${escapeHtml(msg)}</span>`; box.appendChild(el); setTimeout(() => el.remove(), 4500); }
 
     async function syncFirebaseRealtime() {
       try {
@@ -2458,10 +2676,7 @@
           fetch(`${FIREBASE_DB_URL}/adminConfig.json`),
           fetch(`${FIREBASE_DB_URL}/appState.json`)
         ]);
-
-        const [objHr, objPend, objUsers, objAdmin, objApp] = await Promise.all([
-          resHr.json(), resPend.json(), resUsers.json(), resAdmin.json(), resApp.json()
-        ]);
+        const [objHr, objPend, objUsers, objAdmin, objApp] = await Promise.all([resHr.json(), resPend.json(), resUsers.json(), resAdmin.json(), resApp.json()]);
 
         state.hotlineRequests = (objHr && typeof objHr === "object") ? Object.values(objHr).sort((a, b) => (b.id > a.id ? 1 : -1)) : [];
         state.pendingUsers = (objPend && typeof objPend === "object") ? Object.values(objPend) : [];
@@ -2471,6 +2686,7 @@
         if (objApp && typeof objApp === "object") {
           if (Array.isArray(objApp.tasks) && objApp.tasks.length > 0 && state.tasks.length === 0) state.tasks = objApp.tasks;
           if (Array.isArray(objApp.todos)) state.todos = objApp.todos;
+          if (Array.isArray(objApp.credentialsDb)) state.credentialsDb = objApp.credentialsDb;
           if (Array.isArray(objApp.trainingPlanEntries)) state.trainingPlanEntries = objApp.trainingPlanEntries;
           if (Array.isArray(objApp.notifications)) state.notifications = objApp.notifications;
           if (Array.isArray(objApp.htcBank) && objApp.htcBank.length > 0) state.htcBank = objApp.htcBank;
@@ -2488,82 +2704,27 @@
         if (!document.getElementById("hotlineRequestsModal").classList.contains("hidden")) renderHotlineRequestsList();
         if (!document.getElementById("usersModal").classList.contains("hidden")) renderUsersModalLists();
         if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
+        if (!document.getElementById("credentialsModal").classList.contains("hidden")) renderCredentialsTable();
         if (activeTab === "tasks") renderTodos();
       } catch (e) {}
     }
 
     setInterval(() => { if (currentSession) syncFirebaseRealtime(); }, 8000);
 
-    function updateHotlineBadge() {
-      const badge = document.getElementById("hotlineBadgeCount");
-      const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length;
-      if (pendingCount > 0) { badge.textContent = pendingCount; badge.classList.remove("hidden"); }
-      else badge.classList.add("hidden");
-    }
-
-    function updateMyTasksBadge() {
-      const badge = document.getElementById("myTasksBadge");
-      if (!badge || !currentSession) return;
-      const myPending = (state.todos || []).filter(td => !td.completed && td.assigneeId === currentSession.id).length;
-      if (myPending > 0) { badge.textContent = myPending; badge.classList.remove("hidden"); }
-      else badge.classList.add("hidden");
-    }
+    function updateHotlineBadge() { const badge = document.getElementById("hotlineBadgeCount"); const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length; if (pendingCount > 0) { badge.textContent = pendingCount; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
+    function updateMyTasksBadge() { const badge = document.getElementById("myTasksBadge"); if (!badge || !currentSession) return; const myPending = (state.todos || []).filter(td => !td.completed && td.assigneeId === currentSession.id).length; if (myPending > 0) { badge.textContent = myPending; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
 
     function openHtcBankModal(fromSession = false) { insertBankIntoCurrentSession = !!fromSession; renderHtcBankList(); document.getElementById("htcBankModal").classList.remove("hidden"); }
-    function renderHtcBankList() {
-      document.getElementById("htcBankList").innerHTML = (state.htcBank || []).map((item, idx) => `
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-900">${escapeHtml(item.phase)}</span><span class="text-[10px] font-bold text-slate-500">${item.minutes} min</span><strong class="text-xs text-slate-900">${escapeHtml(item.title)}</strong></div>
-            <p class="text-xs text-slate-600">${escapeHtml(item.desc)}</p>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            ${insertBankIntoCurrentSession ? `<button type="button" onclick="insertHtcBankItemToSession(${idx})" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white font-bold">Usar en Plan</button>` : ""}
-            <button type="button" onclick="deleteHtcBankItem(${idx})" class="text-red-500 hover:text-red-700 p-1"><i class="ph-bold ph-trash"></i></button>
-          </div>
-        </div>
-      `).join("");
-    }
+    function renderHtcBankList() { document.getElementById("htcBankList").innerHTML = (state.htcBank || []).map((item, idx) => `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start justify-between gap-3"><div class="space-y-1"><div class="flex items-center gap-2"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-900">${escapeHtml(item.phase)}</span><span class="text-[10px] font-bold text-slate-500">${item.minutes} min</span><strong class="text-xs text-slate-900">${escapeHtml(item.title)}</strong></div><p class="text-xs text-slate-600">${escapeHtml(item.desc)}</p></div><div class="flex items-center gap-1.5 shrink-0">${insertBankIntoCurrentSession ? `<button type="button" onclick="insertHtcBankItemToSession(${idx})" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white font-bold">Usar en Plan</button>` : ""}<button type="button" onclick="deleteHtcBankItem(${idx})" class="text-red-500 hover:text-red-700 p-1"><i class="ph-bold ph-trash"></i></button></div></div>`).join(""); }
     function addCustomHtcBankItem(e) { e.preventDefault(); state.htcBank.unshift({ id: "hb_" + Date.now(), title: document.getElementById("hbTitle").value.trim(), phase: document.getElementById("hbPhase").value, minutes: Number(document.getElementById("hbMinutes").value) || 20, desc: document.getElementById("hbDesc").value.trim() }); document.getElementById("hbTitle").value = ""; document.getElementById("hbDesc").value = ""; saveLocalAndCloud(); renderHtcBankList(); showToast("Actividad guardada en Banco HTC", "success"); }
     function deleteHtcBankItem(idx) { state.htcBank.splice(idx, 1); saveLocalAndCloud(); renderHtcBankList(); }
     function insertHtcBankItemToSession(idx) { const item = state.htcBank[idx]; const t = state.tasks.find(x => x.id === currentDetailId); if (!item || !t) return; ensureTrainingStructure(t); t.trainingData.sessionBlocks.push({ phase: `${item.phase}: ${item.title}`, minutes: item.minutes, activities: item.desc, questionsEval: "Preguntas de razonamiento y verificación práctica", materialRef: "Diapositiva / Guía HTC" }); saveLocalAndCloud(); closeModal("htcBankModal"); renderTrainingDesignTab(t); }
 
-    function switchTrainingSubTab(sub) {
-      currentTrainingSubTab = sub;
-      const map = { general: "detailSectionGeneral", design: "detailSectionDesign", deliverables: "detailSectionDeliverables", execution: "detailSectionExecution" };
-      Object.entries(map).forEach(([k, secId]) => {
-        document.getElementById(secId).classList.toggle("hidden", k !== sub);
-        const btn = document.getElementById("trSubTab-" + k);
-        if (btn) btn.className = k === sub ? "px-3.5 py-2 rounded-t-xl bg-white text-amber-900 border-t border-x border-amber-200 font-extrabold" : "px-3.5 py-2 rounded-t-xl text-slate-600 hover:bg-white/60";
-      });
-    }
-
-    function changeTrainingStage(newStage) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      ensureTrainingStructure(t);
-      const metrics = calculateTrainingPrepMetrics(t);
-      if ((newStage === "Listo para impartir" || newStage === "Impartido") && !metrics.isReadyToTeach) {
-        if (!confirm(`⚠️ Aún hay condiciones pendientes:\n- ${metrics.missingReasons.join("\n- ")}\n\n¿Deseas avanzar igualmente?`)) {
-          document.getElementById("dTrainingStageSelect").value = t.trainingData.stage;
-          return;
-        }
-      }
-      t.trainingData.stage = newStage;
-      t.status = TRAINING_STAGE_TO_KANBAN[newStage] || t.status;
-      if (newStage === "Cerrado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; }
-      t.notes.push({ date: new Date().toLocaleString(), text: `${currentSession ? currentSession.name + ": " : ""}Etapa actualizada a "${newStage}".` });
-      pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, message: `${currentSession.name} movió ${t.caseId} (${t.title}) a etapa "${newStage}"` });
-      saveLocalAndCloud();
-      openDetailModal(t.id);
-      renderBoard();
-      renderDashboard();
-    }
-
+    function switchTrainingSubTab(sub) { currentTrainingSubTab = sub; const map = { general: "detailSectionGeneral", design: "detailSectionDesign", deliverables: "detailSectionDeliverables", execution: "detailSectionExecution" }; Object.entries(map).forEach(([k, secId]) => { document.getElementById(secId).classList.toggle("hidden", k !== sub); const btn = document.getElementById("trSubTab-" + k); if (btn) btn.className = k === sub ? "px-3.5 py-2 rounded-t-xl bg-white text-amber-900 border-t border-x border-amber-200 font-extrabold" : "px-3.5 py-2 rounded-t-xl text-slate-600 hover:bg-white/60"; }); }
+    function changeTrainingStage(newStage) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); const metrics = calculateTrainingPrepMetrics(t); if ((newStage === "Listo para impartir" || newStage === "Impartido") && !metrics.isReadyToTeach) { if (!confirm(`⚠️ Aún hay condiciones pendientes:\n- ${metrics.missingReasons.join("\n- ")}\n\n¿Deseas avanzar igualmente?`)) { document.getElementById("dTrainingStageSelect").value = t.trainingData.stage; return; } } t.trainingData.stage = newStage; t.status = TRAINING_STAGE_TO_KANBAN[newStage] || t.status; if (newStage === "Cerrado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } t.notes.push({ date: new Date().toLocaleString(), text: `${currentSession ? currentSession.name + ": " : ""}Etapa actualizada a "${newStage}".` }); pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, message: `${currentSession.name} movió ${t.caseId} (${t.title}) a etapa "${newStage}"` }); saveLocalAndCloud(); openDetailModal(t.id); renderBoard(); renderDashboard(); }
     function toggleTrainingBlocker() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); const reason = prompt("Describe el bloqueo actual:", t.trainingData.blockReason || ""); if (reason === null) return; t.trainingData.blocked = true; t.trainingData.blockReason = reason.trim() || "Bloqueo reportado"; saveLocalAndCloud(); openDetailModal(t.id); renderBoard(); }
     function clearTrainingBlocker() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); t.trainingData.blocked = false; t.trainingData.blockReason = ""; saveLocalAndCloud(); openDetailModal(t.id); renderBoard(); }
     function rescheduleTrainingSession() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; const newDate = prompt(`Nueva fecha del dictado (AAAA-MM-DD):`, t.date); if (!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate.trim())) return; t.date = newDate.trim(); saveLocalAndCloud(); openDetailModal(t.id); renderAll(); }
-
     function renderTrainingResources(t) { ensureTrainingStructure(t); document.getElementById("trResourcesList").innerHTML = (t.trainingData.resources || []).map((r, i) => `<label class="flex items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-slate-200 cursor-pointer"><div class="flex items-center gap-2"><input type="checkbox" ${r.confirmed ? "checked" : ""} onchange="toggleTrainingResource(${i}, this.checked)" class="w-4 h-4 accent-amber-600" /><span class="${r.confirmed ? 'line-through text-slate-400' : 'font-semibold text-slate-800'}">${escapeHtml(r.name)}</span></div><button type="button" onclick="removeTrainingResource(${i})" class="text-slate-400 hover:text-red-600"><i class="ph-bold ph-x"></i></button></label>`).join(""); }
     function toggleTrainingResource(idx, val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.resources[idx].confirmed = val; saveLocalAndCloud(); updateTrainingTopIndicators(t); } }
     function addTrainingResource() { const name = prompt("Nombre del recurso:"); if (!name) return; const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.resources.push({ name: name.trim(), confirmed: false }); saveLocalAndCloud(); renderTrainingResources(t); updateTrainingTopIndicators(t); } }
@@ -2576,26 +2737,11 @@
       document.getElementById("htcPerformance").value = td.expectedPerformance || "";
       document.getElementById("htcPrerequisites").value = td.prerequisites || "";
       document.getElementById("htcReferences").value = td.technicalReferences || "";
-
       const objBox = document.getElementById("htcObjectivesList");
-      objBox.innerHTML = td.objectives.length === 0 ? `<p class="text-slate-400">Sin objetivos observables cargados aún.</p>` : td.objectives.map((o, idx) => `
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-          <div class="flex items-center justify-between"><span class="font-extrabold text-[#004B93]">Objetivo #${idx + 1}</span><button type="button" onclick="removeHtcObjective(${idx})" class="text-red-500 font-bold"><i class="ph-bold ph-trash"></i></button></div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input type="text" value="${escapeHtml(o.action || "")}" onchange="updateHtcObjective(${idx}, 'action', this.value)" placeholder="Acción..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" />
-            <input type="text" value="${escapeHtml(o.condition || "")}" onchange="updateHtcObjective(${idx}, 'condition', this.value)" placeholder="Condición..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" />
-            <input type="text" value="${escapeHtml(o.criterion || "")}" onchange="updateHtcObjective(${idx}, 'criterion', this.value)" placeholder="Criterio..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" />
-            <input type="text" value="${escapeHtml(o.evalMethod || "")}" onchange="updateHtcObjective(${idx}, 'evalMethod', this.value)" placeholder="Evaluación vinculada..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" />
-          </div>
-        </div>
-      `).join("");
-
+      objBox.innerHTML = td.objectives.length === 0 ? `<p class="text-slate-400">Sin objetivos observables cargados aún.</p>` : td.objectives.map((o, idx) => `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2"><div class="flex items-center justify-between"><span class="font-extrabold text-[#004B93]">Objetivo #${idx + 1}</span><button type="button" onclick="removeHtcObjective(${idx})" class="text-red-500 font-bold"><i class="ph-bold ph-trash"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input type="text" value="${escapeHtml(o.action || "")}" onchange="updateHtcObjective(${idx}, 'action', this.value)" placeholder="Acción..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" /><input type="text" value="${escapeHtml(o.condition || "")}" onchange="updateHtcObjective(${idx}, 'condition', this.value)" placeholder="Condición..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" /><input type="text" value="${escapeHtml(o.criterion || "")}" onchange="updateHtcObjective(${idx}, 'criterion', this.value)" placeholder="Criterio..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" /><input type="text" value="${escapeHtml(o.evalMethod || "")}" onchange="updateHtcObjective(${idx}, 'evalMethod', this.value)" placeholder="Evaluación vinculada..." class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white" /></div></div>`).join("");
       const tbody = document.getElementById("sessionBlocksTbody");
       let totalMin = 0;
-      tbody.innerHTML = td.sessionBlocks.length === 0 ? `<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin bloques en el plan de sesión.</td></tr>` : td.sessionBlocks.map((b, idx) => {
-        totalMin += Number(b.minutes) || 0;
-        return `<tr><td class="p-1.5"><input type="text" value="${escapeHtml(b.phase || "")}" onchange="updateSessionBlock(${idx}, 'phase', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white font-semibold" /></td><td class="p-1.5"><input type="number" min="1" value="${Number(b.minutes) || 10}" onchange="updateSessionBlock(${idx}, 'minutes', this.value)" class="w-16 px-2 py-1 rounded border border-slate-300 bg-white text-center" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(b.activities || "")}" onchange="updateSessionBlock(${idx}, 'activities', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(b.questionsEval || "")}" onchange="updateSessionBlock(${idx}, 'questionsEval', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(b.materialRef || "")}" onchange="updateSessionBlock(${idx}, 'materialRef', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5 text-center"><button type="button" onclick="removeSessionBlock(${idx})" class="text-red-500"><i class="ph-bold ph-trash"></i></button></td></tr>`;
-      }).join("");
+      tbody.innerHTML = td.sessionBlocks.length === 0 ? `<tr><td colspan="6" class="p-4 text-center text-slate-400">Sin bloques en el plan de sesión.</td></tr>` : td.sessionBlocks.map((b, idx) => { totalMin += Number(b.minutes) || 0; return `<tr><td class="p-1.5"><input type="text" value="${escapeHtml(b.phase || "")}" onchange="updateSessionBlock(${idx}, 'phase', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white font-semibold" /></td><td class="p-1.5"><input type="number" min="1" value="${Number(b.minutes) || 10}" onchange="updateSessionBlock(${idx}, 'minutes', this.value)" class="w-16 px-2 py-1 rounded border border-slate-300 bg-white text-center" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(b.activities || "")}" onchange="updateSessionBlock(${idx}, 'activities', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(b.questionsEval || "")}" onchange="updateSessionBlock(${idx}, 'questionsEval', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(b.materialRef || "")}" onchange="updateSessionBlock(${idx}, 'materialRef', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5 text-center"><button type="button" onclick="removeSessionBlock(${idx})" class="text-red-500"><i class="ph-bold ph-trash"></i></button></td></tr>`; }).join("");
       document.getElementById("sessionTimeSummary").textContent = `Tiempo planificado: ${totalMin} min · Disponible: ${(Number(t.hours) || 0) * 60} min`;
     }
 
@@ -2607,122 +2753,25 @@
     function updateSessionBlock(idx, field, val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.sessionBlocks[idx][field] = field === "minutes" ? Number(val) : val; saveLocalAndCloud(); renderTrainingDesignTab(t); } }
     function removeSessionBlock(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.sessionBlocks.splice(idx, 1); saveLocalAndCloud(); renderTrainingDesignTab(t); } }
 
-    function renderTrainingDeliverablesTab(t) {
-      ensureTrainingStructure(t);
-      const box = document.getElementById("trDeliverablesList");
-      const canReview = isCoordinatorOrAdmin() || (currentSession && t.trainingData.reviewerId === currentSession.id);
-      box.innerHTML = (t.trainingData.deliverables || []).map((d, idx) => `
-        <div class="p-3.5 rounded-2xl border-2 ${d.status === 'Aprobada' ? 'bg-emerald-50 border-emerald-300' : d.status === 'Requiere corrección' ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'} space-y-2">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div><span class="font-bold text-slate-900">${escapeHtml(d.name)}</span> <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200">${escapeHtml(d.version || "v1.0")}</span></div>
-            <select onchange="updateDeliverableStatus(${idx}, this.value)" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white font-bold text-xs">
-              <option value="Pendiente" ${d.status === "Pendiente" ? "selected" : ""}>⚪ Pendiente</option>
-              <option value="En curso" ${d.status === "En curso" ? "selected" : ""}>🔵 En curso</option>
-              <option value="Entregada para revisión" ${d.status === "Entregada para revisión" ? "selected" : ""}>🟣 Entregada para revisión</option>
-              ${canReview ? `<option value="Requiere corrección" ${d.status === "Requiere corrección" ? "selected" : ""}>🔴 Requiere corrección</option>` : ""}
-              ${canReview ? `<option value="Aprobada" ${d.status === "Aprobada" ? "selected" : ""}>🟢 Aprobada</option>` : ""}
-              <option value="No aplica" ${d.status === "No aplica" ? "selected" : ""}>➖ No aplica</option>
-            </select>
-          </div>
-          ${d.reviewerComment ? `<div class="text-xs bg-white/90 p-2 rounded-xl border border-slate-200"><strong>Observación:</strong> ${escapeHtml(d.reviewerComment)}</div>` : ""}
-        </div>
-      `).join("");
-    }
-
-    function updateDeliverableStatus(idx, newStatus) {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      ensureTrainingStructure(t);
-      const item = t.trainingData.deliverables[idx];
-      if (!item) return;
-      if (newStatus === "Requiere corrección") {
-        const obs = prompt("Indica qué debe corregir el instructor:");
-        if (!obs) { renderTrainingDeliverablesTab(t); return; }
-        item.reviewerComment = obs.trim();
-        item.version = "v" + ((parseFloat((item.version || "v1.0").replace("v", "")) || 1.0) + 0.1).toFixed(1);
-        pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, targetUserId: t.assigneeId, message: `🔴 ${currentSession.name} solicitó corrección en "${item.name}" de ${t.caseId}` });
-      } else if (newStatus === "Aprobada") {
-        item.reviewerComment = `Aprobado por ${currentSession ? currentSession.name : "Revisor"}`;
-        pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, targetUserId: t.assigneeId, message: `🟢 ${currentSession.name} aprobó "${item.name}" en ${t.caseId}` });
-      } else if (newStatus === "Entregada para revisión") {
-        pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, targetUserId: t.trainingData.reviewerId, message: `🟣 ${currentSession.name} entregó "${item.name}" para revisión en ${t.caseId}` });
-      }
-      item.status = newStatus;
-      const metrics = calculateTrainingPrepMetrics(t);
-      if (metrics.pct !== null && t.status !== "Completado") t.progress = metrics.pct;
-      saveLocalAndCloud();
-      renderTrainingDeliverablesTab(t);
-      updateTrainingTopIndicators(t);
-      renderAll();
-    }
-
+    function renderTrainingDeliverablesTab(t) { ensureTrainingStructure(t); const box = document.getElementById("trDeliverablesList"); const canReview = isCoordinatorOrAdmin() || (currentSession && t.trainingData.reviewerId === currentSession.id); box.innerHTML = (t.trainingData.deliverables || []).map((d, idx) => `<div class="p-3.5 rounded-2xl border-2 ${d.status === 'Aprobada' ? 'bg-emerald-50 border-emerald-300' : d.status === 'Requiere corrección' ? 'bg-red-50 border-red-300' : 'bg-white border-slate-200'} space-y-2"><div class="flex flex-wrap items-center justify-between gap-2"><div><span class="font-bold text-slate-900">${escapeHtml(d.name)}</span> <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200">${escapeHtml(d.version || "v1.0")}</span></div><select onchange="updateDeliverableStatus(${idx}, this.value)" class="px-2.5 py-1 rounded-lg border border-slate-300 bg-white font-bold text-xs"><option value="Pendiente" ${d.status === "Pendiente" ? "selected" : ""}>⚪ Pendiente</option><option value="En curso" ${d.status === "En curso" ? "selected" : ""}>🔵 En curso</option><option value="Entregada para revisión" ${d.status === "Entregada para revisión" ? "selected" : ""}>🟣 Entregada para revisión</option>${canReview ? `<option value="Requiere corrección" ${d.status === "Requiere corrección" ? "selected" : ""}>🔴 Requiere corrección</option>` : ""}${canReview ? `<option value="Aprobada" ${d.status === "Aprobada" ? "selected" : ""}>🟢 Aprobada</option>` : ""}<option value="No aplica" ${d.status === "No aplica" ? "selected" : ""}>➖ No aplica</option></select></div>${d.reviewerComment ? `<div class="text-xs bg-white/90 p-2 rounded-xl border border-slate-200"><strong>Observación:</strong> ${escapeHtml(d.reviewerComment)}</div>` : ""}</div>`).join(""); }
+    function updateDeliverableStatus(idx, newStatus) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; ensureTrainingStructure(t); const item = t.trainingData.deliverables[idx]; if (!item) return; if (newStatus === "Requiere corrección") { const obs = prompt("Indica qué debe corregir el instructor:"); if (!obs) { renderTrainingDeliverablesTab(t); return; } item.reviewerComment = obs.trim(); item.version = "v" + ((parseFloat((item.version || "v1.0").replace("v", "")) || 1.0) + 0.1).toFixed(1); pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, targetUserId: t.assigneeId, message: `🔴 ${currentSession.name} solicitó corrección en "${item.name}" de ${t.caseId}` }); } else if (newStatus === "Aprobada") { item.reviewerComment = `Aprobado por ${currentSession ? currentSession.name : "Revisor"}`; pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, targetUserId: t.assigneeId, message: `🟢 ${currentSession.name} aprobó "${item.name}" en ${t.caseId}` }); } else if (newStatus === "Entregada para revisión") { pushActivityNotification({ area: "entrenamiento", targetType: "case", targetId: t.id, targetUserId: t.trainingData.reviewerId, message: `🟣 ${currentSession.name} entregó "${item.name}" para revisión en ${t.caseId}` }); } item.status = newStatus; const metrics = calculateTrainingPrepMetrics(t); if (metrics.pct !== null && t.status !== "Completado") t.progress = metrics.pct; saveLocalAndCloud(); renderTrainingDeliverablesTab(t); updateTrainingTopIndicators(t); renderAll(); }
     function addTrainingDeliverable() { const name = prompt("Nombre del entregable:"); if (!name) return; const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.deliverables.push({ id: "del_" + Date.now(), name: name.trim(), required: true, dueDate: t.date, status: "Pendiente", version: "v1.0", reviewerComment: "", naReason: "" }); saveLocalAndCloud(); renderTrainingDeliverablesTab(t); updateTrainingTopIndicators(t); } }
 
-    function renderTrainingExecutionTab(t) {
-      ensureTrainingStructure(t);
-      const obs = t.trainingData.observation || { criteria: {}, strengths: "", improvements: "", selfEval: "" };
-      document.getElementById("instructorCriteriaGrid").innerHTML = INSTRUCTOR_CRITERIA.map(crit => {
-        const val = obs.criteria[crit] || "No observado";
-        return `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2"><span class="font-bold text-slate-800">${escapeHtml(crit)}</span><select onchange="updateObsCriterion('${escapeHtml(crit)}', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 bg-white font-bold text-[11px]"><option value="No observado" ${val === "No observado" ? "selected" : ""}>No observado</option><option value="Logrado" ${val === "Logrado" ? "selected" : ""}>🟢 Logrado</option><option value="En desarrollo" ${val === "En desarrollo" ? "selected" : ""}>🟡 En desarrollo</option><option value="Requiere mejora" ${val === "Requiere mejora" ? "selected" : ""}>🔴 Requiere mejora</option></select></div>`;
-      }).join("");
-      document.getElementById("obsStrengths").value = obs.strengths || "";
-      document.getElementById("obsImprovements").value = obs.improvements || "";
-      document.getElementById("obsSelfEval").value = obs.selfEval || "";
-      const pList = t.trainingData.participants || [];
-      document.getElementById("participantsSummaryLine").textContent = `Inscritos: ${pList.length} · Aprobados: ${pList.filter(p => p.result === "Aprobado").length}/${pList.length}`;
-      document.getElementById("trParticipantsTbody").innerHTML = pList.length === 0 ? `<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin participantes registrados.</td></tr>` : pList.map((p, idx) => `<tr><td class="p-1.5"><input type="text" value="${escapeHtml(p.name || "")}" onchange="updateParticipantField(${idx}, 'name', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white font-semibold" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(p.workshop || "")}" onchange="updateParticipantField(${idx}, 'workshop', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5 text-center"><input type="checkbox" ${p.attended ? "checked" : ""} onchange="updateParticipantField(${idx}, 'attended', this.checked)" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(p.diagScore || "")}" onchange="updateParticipantField(${idx}, 'diagScore', this.value)" class="w-16 px-2 py-1 rounded border border-slate-300 bg-white text-center" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(p.finalScore || "")}" onchange="updateParticipantField(${idx}, 'finalScore', this.value)" class="w-16 px-2 py-1 rounded border border-slate-300 bg-white text-center" /></td><td class="p-1.5"><select onchange="updateParticipantField(${idx}, 'result', this.value)" class="px-2 py-1 rounded border border-slate-300 bg-white font-bold"><option value="Pendiente" ${p.result === "Pendiente" ? "selected" : ""}>Pendiente</option><option value="Aprobado" ${p.result === "Aprobado" ? "selected" : ""}>🟢 Aprobado</option><option value="No aprobado" ${p.result === "No aprobado" ? "selected" : ""}>🔴 No aprobado</option><option value="Recuperación" ${p.result === "Recuperación" ? "selected" : ""}>🟡 Recuperación</option></select></td><td class="p-1.5 text-center"><button type="button" onclick="removeTrainingParticipant(${idx})" class="text-red-500"><i class="ph-bold ph-trash"></i></button></td></tr>`).join("");
-    }
-
+    function renderTrainingExecutionTab(t) { ensureTrainingStructure(t); const obs = t.trainingData.observation || { criteria: {}, strengths: "", improvements: "", selfEval: "" }; document.getElementById("instructorCriteriaGrid").innerHTML = INSTRUCTOR_CRITERIA.map(crit => { const val = obs.criteria[crit] || "No observado"; return `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2"><span class="font-bold text-slate-800">${escapeHtml(crit)}</span><select onchange="updateObsCriterion('${escapeHtml(crit)}', this.value)" class="px-2 py-1 rounded-lg border border-slate-300 bg-white font-bold text-[11px]"><option value="No observado" ${val === "No observado" ? "selected" : ""}>No observado</option><option value="Logrado" ${val === "Logrado" ? "selected" : ""}>🟢 Logrado</option><option value="En desarrollo" ${val === "En desarrollo" ? "selected" : ""}>🟡 En desarrollo</option><option value="Requiere mejora" ${val === "Requiere mejora" ? "selected" : ""}>🔴 Requiere mejora</option></select></div>`; }).join(""); document.getElementById("obsStrengths").value = obs.strengths || ""; document.getElementById("obsImprovements").value = obs.improvements || ""; document.getElementById("obsSelfEval").value = obs.selfEval || ""; const pList = t.trainingData.participants || []; document.getElementById("participantsSummaryLine").textContent = `Inscritos: ${pList.length} · Aprobados: ${pList.filter(p => p.result === "Aprobado").length}/${pList.length}`; document.getElementById("trParticipantsTbody").innerHTML = pList.length === 0 ? `<tr><td colspan="7" class="p-4 text-center text-slate-400">Sin participantes registrados.</td></tr>` : pList.map((p, idx) => `<tr><td class="p-1.5"><input type="text" value="${escapeHtml(p.name || "")}" onchange="updateParticipantField(${idx}, 'name', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white font-semibold" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(p.workshop || "")}" onchange="updateParticipantField(${idx}, 'workshop', this.value)" class="w-full px-2 py-1 rounded border border-slate-300 bg-white" /></td><td class="p-1.5 text-center"><input type="checkbox" ${p.attended ? "checked" : ""} onchange="updateParticipantField(${idx}, 'attended', this.checked)" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(p.diagScore || "")}" onchange="updateParticipantField(${idx}, 'diagScore', this.value)" class="w-16 px-2 py-1 rounded border border-slate-300 bg-white text-center" /></td><td class="p-1.5"><input type="text" value="${escapeHtml(p.finalScore || "")}" onchange="updateParticipantField(${idx}, 'finalScore', this.value)" class="w-16 px-2 py-1 rounded border border-slate-300 bg-white text-center" /></td><td class="p-1.5"><select onchange="updateParticipantField(${idx}, 'result', this.value)" class="px-2 py-1 rounded border border-slate-300 bg-white font-bold"><option value="Pendiente" ${p.result === "Pendiente" ? "selected" : ""}>Pendiente</option><option value="Aprobado" ${p.result === "Aprobado" ? "selected" : ""}>🟢 Aprobado</option><option value="No aprobado" ${p.result === "No aprobado" ? "selected" : ""}>🔴 No aprobado</option><option value="Recuperación" ${p.result === "Recuperación" ? "selected" : ""}>🟡 Recuperación</option></select></td><td class="p-1.5 text-center"><button type="button" onclick="removeTrainingParticipant(${idx})" class="text-red-500"><i class="ph-bold ph-trash"></i></button></td></tr>`).join(""); }
     function updateObsCriterion(crit, val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.observation.criteria[crit] = val; saveLocalAndCloud(); } }
     function saveInstructorObservation() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.trainingData.observation.strengths = document.getElementById("obsStrengths").value.trim(); t.trainingData.observation.improvements = document.getElementById("obsImprovements").value.trim(); t.trainingData.observation.selfEval = document.getElementById("obsSelfEval").value.trim(); saveLocalAndCloud(); showToast("Observación guardada", "success"); }
-    function convertObservationToTask() {
-      const t = state.tasks.find(x => x.id === currentDetailId);
-      if (!t) return;
-      const imp = document.getElementById("obsImprovements").value.trim();
-      if (!imp) return;
-      saveInstructorObservation();
-      const newTodo = { id: "td_" + Date.now(), area: "entrenamiento", title: `Mejora Docente (${t.caseId}): ${imp.substring(0, 70)}`, assigneeId: t.assigneeId, createdBy: currentSession.name, createdAt: new Date().toLocaleString(), dueDate: "", priority: "Alta", linkedCaseId: t.caseId, workshop: "", notes: imp, subtasks: [], completed: false };
-      state.todos.unshift(newTodo);
-      pushActivityNotification({ area: "entrenamiento", targetType: "todo", targetId: newTodo.id, targetUserId: t.assigneeId, message: `${currentSession.name} asignó tarea de mejora en ${t.caseId}` });
-      saveLocalAndCloud();
-      updateMyTasksBadge();
-      showToast("Tarea de mejora asignada", "success");
-    }
-
+    function convertObservationToTask() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; const imp = document.getElementById("obsImprovements").value.trim(); if (!imp) return; saveInstructorObservation(); const newTodo = { id: "td_" + Date.now(), area: "entrenamiento", title: `Mejora Docente (${t.caseId}): ${imp.substring(0, 70)}`, assigneeId: t.assigneeId, createdBy: currentSession.name, createdAt: new Date().toLocaleString(), dueDate: "", priority: "Alta", linkedCaseId: t.caseId, workshop: "", notes: imp, subtasks: [], completed: false }; state.todos.unshift(newTodo); pushActivityNotification({ area: "entrenamiento", targetType: "todo", targetId: newTodo.id, targetUserId: t.assigneeId, message: `${currentSession.name} asignó tarea de mejora en ${t.caseId}` }); saveLocalAndCloud(); updateMyTasksBadge(); showToast("Tarea de mejora asignada", "success"); }
     function addTrainingParticipant() { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.participants.push({ name: "", workshop: "", attended: true, diagScore: "", finalScore: "", result: "Pendiente" }); saveLocalAndCloud(); renderTrainingExecutionTab(t); } }
     function updateParticipantField(idx, field, val) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.participants[idx][field] = val; saveLocalAndCloud(); renderTrainingExecutionTab(t); } }
     function removeTrainingParticipant(idx) { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.trainingData.participants.splice(idx, 1); saveLocalAndCloud(); renderTrainingExecutionTab(t); } }
-
-    function updateTrainingTopIndicators(t) {
-      ensureTrainingStructure(t);
-      const metrics = calculateTrainingPrepMetrics(t);
-      document.getElementById("trPrepMetricText").textContent = metrics.pct !== null ? `${metrics.pct}% (${metrics.approvedCount}/${metrics.reqTotal} obligatorios)` : "Sin definir";
-      const readyEl = document.getElementById("trReadyStatusText");
-      if (metrics.isReadyToTeach) { readyEl.textContent = "✅ Listo para impartir"; readyEl.className = "text-xs font-extrabold text-emerald-700"; }
-      else { readyEl.textContent = `⚠️ ${metrics.missingReasons[0] || "Pendiente"}`; readyEl.className = "text-xs font-bold text-red-700"; }
-      document.getElementById("trVersionText").textContent = `${t.trainingData.version || "v1.0"} (${t.trainingData.stage})`;
-    }
-
+    function updateTrainingTopIndicators(t) { ensureTrainingStructure(t); const metrics = calculateTrainingPrepMetrics(t); document.getElementById("trPrepMetricText").textContent = metrics.pct !== null ? `${metrics.pct}% (${metrics.approvedCount}/${metrics.reqTotal} obligatorios)` : "Sin definir"; const readyEl = document.getElementById("trReadyStatusText"); if (metrics.isReadyToTeach) { readyEl.textContent = "✅ Listo para impartir"; readyEl.className = "text-xs font-extrabold text-emerald-700"; } else { readyEl.textContent = `⚠️ ${metrics.missingReasons[0] || "Pendiente"}`; readyEl.className = "text-xs font-bold text-red-700"; } document.getElementById("trVersionText").textContent = `${t.trainingData.version || "v1.0"} (${t.trainingData.stage})`; }
     function applyReusedCourseTemplate() { const sourceId = document.getElementById("tReuseCourseSelect").value; const src = state.tasks.find(x => x.id === sourceId); if (src) { document.getElementById("tTitle").value = src.title; document.getElementById("tSubcategory").value = src.subcategory; document.getElementById("tHours").value = src.hours || 4; document.getElementById("tGroup").value = src.group || ""; document.getElementById("tLocation").value = src.location || ""; document.getElementById("tDesc").value = src.description || ""; } }
 
     // =========================================================================
     // HISTORIAL VIN, VOR, TAREAS, HOTLINE, PLATAFORMAS Y SESIÓN
     // =========================================================================
     function openVinHistoryModal(presetVin = "") { document.getElementById("vinSearchInput").value = (presetVin || "").toUpperCase(); renderVinHistoryResults(); document.getElementById("vinHistoryModal").classList.remove("hidden"); }
-    function renderVinHistoryResults() {
-      const box = document.getElementById("vinHistoryResults");
-      const query = (document.getElementById("vinSearchInput").value || "").trim().toUpperCase();
-      const supportTasks = (state.tasks || []).filter(t => (t.mode || "soporte") === "soporte" && t.vehicleVin);
-      if (!query) {
-        const vinGroups = {};
-        supportTasks.forEach(t => { const v = t.vehicleVin.trim().toUpperCase(); if (v.length >= 5) { if (!vinGroups[v]) vinGroups[v] = []; vinGroups[v].push(t); } });
-        const repeatedVins = Object.entries(vinGroups).filter(([, arr]) => arr.length >= 2);
-        box.innerHTML = repeatedVins.length === 0 ? `<p class="text-xs text-slate-500 text-center py-6">No se detectaron unidades con reingresos repetidos.</p>` : repeatedVins.map(([vin, cases]) => `<div class="p-4 rounded-2xl bg-white border-2 border-amber-300 flex items-center justify-between"><div><span class="font-mono font-extrabold">${escapeHtml(vin)}</span> · ${escapeHtml(cases[0].brand || "")}</div><button type="button" onclick="document.getElementById('vinSearchInput').value='${escapeHtml(vin)}'; renderVinHistoryResults();" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold">Ver ${cases.length} Ingresos</button></div>`).join("");
-        return;
-      }
-      const matches = supportTasks.filter(t => t.vehicleVin.toUpperCase().includes(query));
-      box.innerHTML = matches.length === 0 ? `<p class="text-xs text-slate-500 text-center py-6">Sin resultados.</p>` : matches.map((t, idx) => `<div class="p-4 rounded-2xl bg-white border border-slate-200 space-y-1 text-xs"><div class="flex justify-between"><strong>${escapeHtml(t.caseId)} (${escapeHtml(t.date)})</strong><button type="button" onclick="closeModal('vinHistoryModal'); openDetailModal('${t.id}')" class="text-indigo-700 font-bold">Abrir</button></div><div>${escapeHtml(t.title)} · Taller: ${escapeHtml(t.workshop || "-")}</div></div>`).join("");
-    }
+    function renderVinHistoryResults() { const box = document.getElementById("vinHistoryResults"); const query = (document.getElementById("vinSearchInput").value || "").trim().toUpperCase(); const supportTasks = (state.tasks || []).filter(t => (t.mode || "soporte") === "soporte" && t.vehicleVin); if (!query) { const vinGroups = {}; supportTasks.forEach(t => { const v = t.vehicleVin.trim().toUpperCase(); if (v.length >= 5) { if (!vinGroups[v]) vinGroups[v] = []; vinGroups[v].push(t); } }); const repeatedVins = Object.entries(vinGroups).filter(([, arr]) => arr.length >= 2); box.innerHTML = repeatedVins.length === 0 ? `<p class="text-xs text-slate-500 text-center py-6">No se detectaron unidades con reingresos repetidos.</p>` : repeatedVins.map(([vin, cases]) => `<div class="p-4 rounded-2xl bg-white border-2 border-amber-300 flex items-center justify-between"><div><span class="font-mono font-extrabold">${escapeHtml(vin)}</span> · ${escapeHtml(cases[0].brand || "")}</div><button type="button" onclick="document.getElementById('vinSearchInput').value='${escapeHtml(vin)}'; renderVinHistoryResults();" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold">Ver ${cases.length} Ingresos</button></div>`).join(""); return; } const matches = supportTasks.filter(t => t.vehicleVin.toUpperCase().includes(query)); box.innerHTML = matches.length === 0 ? `<p class="text-xs text-slate-500 text-center py-6">Sin resultados.</p>` : matches.map((t, idx) => `<div class="p-4 rounded-2xl bg-white border border-slate-200 space-y-1 text-xs"><div class="flex justify-between"><strong>${escapeHtml(t.caseId)} (${escapeHtml(t.date)})</strong><button type="button" onclick="closeModal('vinHistoryModal'); openDetailModal('${t.id}')" class="text-indigo-700 font-bold">Abrir</button></div><div>${escapeHtml(t.title)} · Taller: ${escapeHtml(t.workshop || "-")}</div></div>`).join(""); }
     function checkDuplicateVinAlert() { const alertBox = document.getElementById("duplicateVinAlert"); if (!alertBox || appMode !== "soporte") return; const vinVal = (document.getElementById("tVin").value || "").trim().toUpperCase(); const editId = document.getElementById("editTaskId").value; const prevCases = (state.tasks || []).filter(t => (t.mode || "soporte") === "soporte" && t.id !== editId && t.vehicleVin && t.vehicleVin.toUpperCase() === vinVal && vinVal.length >= 6); alertBox.classList.toggle("hidden", prevCases.length === 0); if (prevCases.length > 0) alertBox.innerHTML = `<div class="font-extrabold text-red-800">🚨 REPETIBILIDAD: Este VIN ya tiene ${prevCases.length} caso(s) previo(s).</div>`; }
     function toggleVorFields() { document.getElementById("vorDetailsBox").classList.toggle("hidden", !document.getElementById("tIsVor").checked); }
     function quickSaveVorInfo(showMsg = false) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.isVor = document.getElementById("dIsVorCheck").checked; t.partOrderNumber = document.getElementById("dPartOrderInput").value.trim().toUpperCase(); t.partDescription = document.getElementById("dPartDescInput").value.trim(); t.partEta = document.getElementById("dPartEtaInput").value; const vorBadge = document.getElementById("dVorBadge"); if (t.isVor) { vorBadge.textContent = `🚨 VOR ${t.partOrderNumber ? `· ${t.partOrderNumber}` : ""}`; vorBadge.classList.remove("hidden"); } else vorBadge.classList.add("hidden"); saveLocalAndCloud(); renderBoard(); if (showMsg) showToast("Control VOR guardado", "success"); }
@@ -2830,6 +2879,7 @@
         body: JSON.stringify({
           tasks: cleanedTasks,
           todos: state.todos || [],
+          credentialsDb: state.credentialsDb || [],
           trainingPlanEntries: state.trainingPlanEntries || [],
           notifications: state.notifications || [],
           htcBank: state.htcBank || [],
@@ -2851,12 +2901,13 @@
         const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "loadState" }) });
         const data = await res.json();
         if (data.status === "ok" && data.state) {
-          const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbPlan = state.trainingPlanEntries, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
+          const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbCreds = state.credentialsDb, fbPlan = state.trainingPlanEntries, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
           state = { ...state, ...data.state };
           if (fbReq.length > 0) state.hotlineRequests = fbReq;
           if (fbPend.length > 0) state.pendingUsers = fbPend;
           if (fbUsers.length > 0) state.users = fbUsers;
           if (fbTodos.length > 0) state.todos = fbTodos;
+          if (fbCreds.length > 0) state.credentialsDb = fbCreds;
           if (fbPlan.length > 0) state.trainingPlanEntries = fbPlan;
           if (fbNotifs.length > 0) state.notifications = fbNotifs;
           if (fbAdmin) state.adminConfig = fbAdmin;

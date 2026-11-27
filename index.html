@@ -1204,6 +1204,8 @@
             <div class="sm:col-span-2">
               <label class="block text-[11px] font-bold text-teal-900 mb-1">WhatsApp Mecánico</label>
               <input type="text" id="tMechanicWhatsapp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <label for="tMechanicEmail" class="block mt-2 text-[11px] font-bold text-slate-700">Correo del mecánico</label>
+              <input type="email" id="tMechanicEmail" maxlength="254" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
               <div class="mt-1 flex flex-wrap gap-x-4">
                 <button type="button" onclick="openContacts('mechanic')" class="min-h-10 text-xs font-semibold text-accent">Elegir contacto</button>
                 <button type="button" onclick="saveCaseContact('mechanic')" class="min-h-10 text-xs font-semibold text-accent">+ Guardar contacto</button>
@@ -1219,6 +1221,8 @@
             <div>
               <label class="block text-[11px] font-bold text-emerald-900 mb-1">WhatsApp Asesor / Jefe *</label>
               <input type="text" id="tAdvisorWhatsapp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <label for="tAdvisorEmail" class="block mt-2 text-[11px] font-bold text-slate-700">Correo del asesor o jefe</label>
+              <input type="email" id="tAdvisorEmail" maxlength="254" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
               <div class="mt-1 flex flex-wrap gap-x-4">
                 <button type="button" onclick="openContacts('advisor')" class="min-h-10 text-xs font-semibold text-accent">Elegir contacto</button>
                 <button type="button" onclick="saveCaseContact('advisor')" class="min-h-10 text-xs font-semibold text-accent">+ Guardar contacto</button>
@@ -1231,6 +1235,8 @@
             <div>
               <label class="block text-[11px] font-bold text-sky-900 mb-1">WhatsApp del Cliente</label>
               <input type="text" id="tClientWhatsapp" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
+              <label for="tClientEmail" class="block mt-2 text-[11px] font-bold text-slate-700">Correo del cliente</label>
+              <input type="email" id="tClientEmail" maxlength="254" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs bg-white" />
               <div class="mt-1 flex flex-wrap gap-x-4">
                 <button type="button" onclick="openContacts('client')" class="min-h-10 text-xs font-semibold text-accent">Elegir contacto</button>
                 <button type="button" onclick="saveCaseContact('client')" class="min-h-10 text-xs font-semibold text-accent">+ Guardar contacto</button>
@@ -1368,6 +1374,7 @@
               <div id="dDtcLine" class="text-indigo-800 font-mono font-bold hidden"></div>
               <div id="dAdvisorLine" class="text-emerald-800 font-bold"></div>
               <div id="dClientLine" class="text-sky-800 font-bold hidden"></div>
+              <div id="dContactEmails" class="text-slate-700 break-words hidden whitespace-pre-line"></div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button id="btnNotifyAdvisorHeader" onclick="notifyAdvisorWhatsapp()" class="px-3 py-2 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold flex items-center gap-1.5 shadow-sm transition">
@@ -2109,7 +2116,7 @@
       <form method="dialog"><button class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar</button></form>
     </div>
     <div class="grid sm:grid-cols-2 gap-2 mb-3">
-      <input autofocus type="search" id="contactsSearch" oninput="renderContacts()" aria-label="Buscar por nombre o teléfono" placeholder="Buscar por nombre o teléfono" class="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+      <input autofocus type="search" id="contactsSearch" oninput="renderContacts()" aria-label="Buscar por nombre, teléfono o correo" placeholder="Buscar por nombre, teléfono o correo" class="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
       <select id="contactsFilter" onchange="renderContacts()" aria-label="Filtrar por perfil" class="rounded-lg border border-slate-300 px-3 py-2 text-sm"></select>
     </div>
     <form id="contactForm" onsubmit="saveDirectoryContact(event)" class="grid sm:grid-cols-2 gap-2 mb-4 rounded-xl border border-slate-300 p-3">
@@ -2117,6 +2124,7 @@
       <label class="text-sm">Perfil<select id="contactRole" required class="block w-full rounded-lg border border-slate-300 px-3 py-2"></select></label>
       <label class="text-sm">Nombre<input id="contactName" required maxlength="120" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
       <label class="text-sm">WhatsApp<input id="contactPhone" type="tel" required maxlength="40" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <label class="text-sm">Correo electrónico (opcional)<input id="contactEmail" type="email" maxlength="254" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
       <div class="flex flex-wrap items-end gap-2">
         <button class="touch-target btn-accent px-3 rounded-lg text-sm font-semibold">Guardar contacto</button>
         <button type="button" id="cancelContactEdit" onclick="editDirectoryContact()" class="hidden touch-target px-3 rounded-lg border border-slate-300 text-sm">Cancelar edición</button>
@@ -3492,6 +3500,9 @@
       document.getElementById("reuseCourseBox").classList.toggle("hidden", isSoporte || !!editId);
       document.getElementById("tAdvisorName").required = isSoporte;
       document.getElementById("tAdvisorWhatsapp").required = isSoporte;
+      ["tAdvisorEmail", "tMechanicEmail", "tClientEmail"].forEach(id => {
+        document.getElementById(id).disabled = !isSoporte;
+      });
 
       if (!isSoporte && !editId) {
         const approvedCourses = (state.tasks || []).filter(t => (t.mode || "soporte") === "entrenamiento");
@@ -3525,10 +3536,13 @@
           document.getElementById("tChiefName").value = t.chiefName || "";
           document.getElementById("tMechanicName").value = t.mechanicName || "";
           document.getElementById("tMechanicWhatsapp").value = t.mechanicWhatsapp || "";
+          document.getElementById("tMechanicEmail").value = t.mechanicEmail || "";
           document.getElementById("tAdvisorName").value = t.advisorName || "";
           document.getElementById("tAdvisorWhatsapp").value = t.advisorWhatsapp || "";
+          document.getElementById("tAdvisorEmail").value = t.advisorEmail || "";
           document.getElementById("tClientName").value = t.clientName || "";
           document.getElementById("tClientWhatsapp").value = t.clientWhatsapp || "";
+          document.getElementById("tClientEmail").value = t.clientEmail || "";
         } else {
           ensureTrainingStructure(t);
           document.getElementById("tTrBrand").value = t.brand || "";
@@ -3557,10 +3571,13 @@
         document.getElementById("tChiefName").value = "";
         document.getElementById("tMechanicName").value = "";
         document.getElementById("tMechanicWhatsapp").value = "";
+        document.getElementById("tMechanicEmail").value = "";
         document.getElementById("tAdvisorName").value = "";
         document.getElementById("tAdvisorWhatsapp").value = "";
+        document.getElementById("tAdvisorEmail").value = "";
         document.getElementById("tClientName").value = "";
         document.getElementById("tClientWhatsapp").value = "";
+        document.getElementById("tClientEmail").value = "";
         document.getElementById("tDesc").value = "";
       }
       document.getElementById("taskModal").classList.remove("hidden");
@@ -3604,10 +3621,13 @@
           t.chiefName = document.getElementById("tChiefName").value.trim();
           t.mechanicName = document.getElementById("tMechanicName").value.trim();
           t.mechanicWhatsapp = document.getElementById("tMechanicWhatsapp").value.trim();
+          t.mechanicEmail = document.getElementById("tMechanicEmail").value.trim();
           t.advisorName = document.getElementById("tAdvisorName").value.trim();
           t.advisorWhatsapp = document.getElementById("tAdvisorWhatsapp").value.trim();
+          t.advisorEmail = document.getElementById("tAdvisorEmail").value.trim();
           t.clientName = document.getElementById("tClientName").value.trim();
           t.clientWhatsapp = document.getElementById("tClientWhatsapp").value.trim();
+          t.clientEmail = document.getElementById("tClientEmail").value.trim();
         } else {
           ensureTrainingStructure(t);
           t.brand = document.getElementById("tTrBrand").value;
@@ -3651,10 +3671,13 @@
         chiefName: isSoporte ? document.getElementById("tChiefName").value.trim() : "",
         mechanicName: isSoporte ? document.getElementById("tMechanicName").value.trim() : "",
         mechanicWhatsapp: isSoporte ? document.getElementById("tMechanicWhatsapp").value.trim() : "",
+        mechanicEmail: isSoporte ? document.getElementById("tMechanicEmail").value.trim() : "",
         advisorName: isSoporte ? document.getElementById("tAdvisorName").value.trim() : "",
         advisorWhatsapp: isSoporte ? document.getElementById("tAdvisorWhatsapp").value.trim() : "",
+        advisorEmail: isSoporte ? document.getElementById("tAdvisorEmail").value.trim() : "",
         clientName: isSoporte ? document.getElementById("tClientName").value.trim() : "",
         clientWhatsapp: isSoporte ? document.getElementById("tClientWhatsapp").value.trim() : "",
+        clientEmail: isSoporte ? document.getElementById("tClientEmail").value.trim() : "",
         hours: !isSoporte ? (Number(document.getElementById("tHours").value) || 4) : 0,
         group: !isSoporte ? document.getElementById("tGroup").value.trim() : "",
         location: !isSoporte ? document.getElementById("tLocation").value.trim() : "",
@@ -3745,6 +3768,11 @@
 
         document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Encargado: ${assignee ? assignee.name : "-"}`;
         document.getElementById("dMetaLine2").textContent = `Taller: ${t.workshop || "-"} · Unidad: ${t.brand || "-"} ${t.vehicleModel || ""} · OR: ${t.orNumber || "-"} · VIN: ${t.vehicleVin || "-"}`;
+        const contactEmails = document.getElementById("dContactEmails");
+        const emails = [["Asesor / Jefe", t.advisorEmail], ["Mecánico", t.mechanicEmail], ["Cliente", t.clientEmail]]
+          .filter(([, email]) => email);
+        contactEmails.textContent = emails.map(([label, email]) => label + ": " + email).join("\n");
+        contactEmails.classList.toggle("hidden", !emails.length);
         document.getElementById("dAdvisorLine").textContent = `Asesor / Jefe: ${t.advisorName || "-"} (${t.advisorWhatsapp || "-"})`;
         document.getElementById("dIsVorCheck").checked = !!t.isVor;
         document.getElementById("dPartOrderInput").value = t.partOrderNumber || "";
@@ -3764,6 +3792,7 @@
         document.getElementById("dTrainingStageSelect").value = td.stage;
         document.getElementById("dMetaLine1").textContent = `${t.subcategory} · Instructor: ${assignee ? assignee.name : "-"} · Revisor: ${reviewer ? reviewer.name : "-"}`;
         document.getElementById("dMetaLine2").textContent = `Fecha Dictado: ${t.date} · Duración: ${t.hours || 0} hs · Sede: ${t.location || "-"}`;
+        document.getElementById("dContactEmails").classList.add("hidden");
         document.getElementById("dAdvisorLine").textContent = `Grupo Destinatario: ${t.group || "Red Técnica"}`;
         const blBanner = document.getElementById("trBlockerBanner");
         if (td.blocked) { blBanner.classList.remove("hidden"); document.getElementById("trBlockerReasonText").textContent = `🚨 BLOQUEADO: ${td.blockReason}`; }
@@ -3939,7 +3968,14 @@
       const phone = contact.phone.trim();
       if (!role || !name) return "Completa el perfil y el nombre.";
       if (!/^[+\d\s().-]+$/.test(phone) || !/^\d{7,15}$/.test(normalizeContactPhone(phone))) return "Introduce un número de WhatsApp válido.";
-      const record = { id: contact.id || crypto.randomUUID(), role, name, phone };
+      const email = (contact.email || "").trim();
+      if (email) {
+        const emailInput = document.createElement("input");
+        emailInput.type = "email";
+        emailInput.value = email;
+        if (!emailInput.validity.valid || email.length > 254) return "Introduce un correo electrónico válido.";
+      }
+      const record = { id: contact.id || crypto.randomUUID(), role, name, phone, email };
       const duplicate = findDuplicateContact(record);
       if (duplicate) return "Ya existe un contacto con ese nombre o teléfono en este perfil: " + duplicate.name + ".";
       if (contact.id) {
@@ -3976,6 +4012,7 @@
       document.getElementById("contactRole").value = contact?.role || "advisor";
       document.getElementById("contactName").value = contact?.name || "";
       document.getElementById("contactPhone").value = contact?.phone || "";
+      document.getElementById("contactEmail").value = contact?.email || "";
       document.getElementById("contactFormTitle").textContent = contact ? "Editar contacto" : "Nuevo contacto";
       document.getElementById("cancelContactEdit").classList.toggle("hidden", !contact);
       if (contact) document.getElementById("contactName").focus();
@@ -3987,7 +4024,8 @@
         id: editingContactId,
         role: document.getElementById("contactRole").value,
         name: document.getElementById("contactName").value,
-        phone: document.getElementById("contactPhone").value
+        phone: document.getElementById("contactPhone").value,
+        email: document.getElementById("contactEmail").value
       });
       if (!error) editDirectoryContact();
       renderContacts(error || "Contacto guardado.");
@@ -3998,7 +4036,8 @@
       const error = storeContact({
         role,
         name: document.getElementById("t" + field + "Name").value,
-        phone: document.getElementById("t" + field + "Whatsapp").value
+        phone: document.getElementById("t" + field + "Whatsapp").value,
+        email: document.getElementById("t" + field + "Email").value
       });
       showToast(error || "Contacto guardado en el directorio", error ? "warning" : "success");
     }
@@ -4010,7 +4049,7 @@
       const normalizedPhone = normalizeContactPhone(digits);
       const role = contactPickerRole || document.getElementById("contactsFilter").value;
       const contacts = state.contacts.filter(item => (!role || item.role === role) &&
-        (normalizeContactName(item.name).includes(query) || (digits &&
+        (normalizeContactName(item.name).includes(query) || normalizeContactName(item.email || "").includes(query) || (digits &&
           (item.phone.replace(/\D/g, "").includes(digits) || (normalizedPhone && normalizeContactPhone(item.phone).includes(normalizedPhone))))))
         .sort((a, b) => a.name.localeCompare(b.name, "es-PY"));
       document.getElementById("contactsStatus").textContent = message || (contacts.length ? "" : "No hay contactos que coincidan.");
@@ -4025,7 +4064,7 @@
         name.textContent = contact.name;
         const detailsLine = document.createElement("p");
         detailsLine.className = "text-xs text-slate-600";
-        detailsLine.textContent = CONTACT_ROLES[contact.role].label + " · " + contact.phone;
+        detailsLine.textContent = [CONTACT_ROLES[contact.role].label, contact.phone, contact.email].filter(Boolean).join(" · ");
         details.append(name, detailsLine);
         row.append(details);
         const actions = document.createElement("div");
@@ -4043,6 +4082,7 @@
             const field = CONTACT_ROLES[contactPickerRole].field;
             document.getElementById("t" + field + "Name").value = contact.name;
             document.getElementById("t" + field + "Whatsapp").value = normalizeContactPhone(contact.phone);
+            document.getElementById("t" + field + "Email").value = contact.email || "";
             document.getElementById("contactsModal").close();
           });
         } else {

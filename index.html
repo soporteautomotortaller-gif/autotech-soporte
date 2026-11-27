@@ -2131,6 +2131,33 @@
     </div>
   </div>
 
+  <dialog id="visionPhotoViewer" aria-labelledby="visionPhotoTitle" onclose="cleanupVisionPhotoViewer()" class="m-auto w-[calc(100%-1.5rem)] max-w-6xl max-h-[95dvh] rounded-2xl p-4 sm:p-5 text-slate-900">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <h2 id="visionPhotoTitle" class="min-w-0 break-all text-sm font-bold">Foto original</h2>
+      <form method="dialog"><button autofocus class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar visor</button></form>
+    </div>
+    <div class="flex flex-wrap gap-2 items-center mb-3" aria-label="Controles de la imagen">
+      <button type="button" onclick="stepVisionPhotoZoom(-1)" aria-label="Reducir zoom" id="visionZoomOut" class="touch-target rounded-full border border-slate-300 px-3 font-semibold">−</button>
+      <label class="flex items-center gap-2 text-sm font-semibold">
+        <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i> Zoom
+        <select id="visionPhotoZoom" onchange="renderVisionPhotoZoom()" class="rounded-lg border border-slate-300 px-2 py-2">
+          <option value="1">100 %</option><option value="1.5">150 %</option><option value="2">200 %</option>
+          <option value="3">300 %</option><option value="4">400 %</option><option value="5">500 %</option>
+        </select>
+      </label>
+      <button type="button" onclick="stepVisionPhotoZoom(1)" aria-label="Ampliar zoom" id="visionZoomIn" class="touch-target rounded-full border border-slate-300 px-3 font-semibold">+</button>
+      <button type="button" onclick="rotateVisionPhoto()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Girar 90°</button>
+      <button type="button" onclick="resetVisionPhotoZoom()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Ajustar a ventana</button>
+    </div>
+    <p class="text-xs mb-2">100 % ajusta la foto a la ventana. Al ampliar, puedes arrastrarla o desplazarte para ver los detalles.</p>
+    <div id="visionPhotoViewport" tabindex="0" aria-label="Foto ampliable" class="overflow-auto overscroll-contain relative w-full h-[min(64dvh,680px)] rounded-xl bg-slate-950 cursor-grab active:cursor-grabbing">
+      <div id="visionPhotoStage" class="relative mx-auto my-0 overflow-hidden">
+        <img id="visionPhotoOriginal" alt="" draggable="false" class="absolute left-1/2 top-1/2 max-w-none select-none" />
+      </div>
+    </div>
+    <p id="visionPhotoError" role="status" class="text-xs mt-2"></p>
+  </dialog>
+
   <dialog id="imageVisionModal" onclose="closeImageVision()" aria-labelledby="imageVisionTitle" class="m-auto w-[calc(100%-2rem)] max-w-5xl max-h-[92vh] rounded-2xl p-5 text-slate-900">
     <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
       <h2 id="imageVisionTitle" class="font-bold text-lg">Procesar imágenes</h2>
@@ -4485,9 +4512,96 @@
     }
 
     function closeImageVision() {
+      if (visionElement("visionPhotoViewer").open) visionElement("visionPhotoViewer").close();
       visionElement("imageVisionFiles").value = "";
       visionElement("imageVisionFiles").disabled = false;
       prepareVisionPhotos();
+    }
+
+    let visionPhotoRotation = 0;
+    let visionPhotoResize;
+
+    function openVisionPhotoViewer(source, title) {
+      const dialog = visionElement("visionPhotoViewer");
+      const image = visionElement("visionPhotoOriginal");
+      const viewport = visionElement("visionPhotoViewport");
+      visionPhotoRotation = 0;
+      visionElement("visionPhotoZoom").selectedIndex = 0;
+      visionElement("visionPhotoTitle").textContent = title;
+      visionElement("visionPhotoError").textContent = "";
+      image.alt = title;
+      image.onload = () => renderVisionPhotoZoom(false);
+      image.onerror = () => { visionElement("visionPhotoError").textContent = "No se pudo abrir la foto original."; };
+      image.src = source;
+      dialog.showModal();
+      if (typeof ResizeObserver === "function") {
+        visionPhotoResize = new ResizeObserver(() => renderVisionPhotoZoom());
+        visionPhotoResize.observe(viewport);
+      }
+      let drag;
+      viewport.onpointerdown = event => {
+        if (event.pointerType !== "mouse" || event.button !== 0 || event.target !== image) return;
+        drag = { x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+        viewport.setPointerCapture(event.pointerId);
+        event.preventDefault();
+      };
+      viewport.onpointermove = event => {
+        if (drag) viewport.scrollTo(drag.left + drag.x - event.clientX, drag.top + drag.y - event.clientY);
+      };
+      viewport.onlostpointercapture = () => { drag = null; };
+      renderVisionPhotoZoom(false);
+    }
+
+    function renderVisionPhotoZoom(preserveCenter = true) {
+      const dialog = visionElement("visionPhotoViewer");
+      if (!dialog.open) return;
+      const image = visionElement("visionPhotoOriginal");
+      const viewport = visionElement("visionPhotoViewport");
+      const stage = visionElement("visionPhotoStage");
+      const zoom = visionElement("visionPhotoZoom");
+      visionElement("visionZoomOut").disabled = zoom.selectedIndex === 0;
+      visionElement("visionZoomIn").disabled = zoom.selectedIndex === zoom.options.length - 1;
+      if (!image.naturalWidth || !viewport.clientWidth) return;
+      const oldX = stage.offsetWidth > viewport.clientWidth ? (viewport.scrollLeft + viewport.clientWidth / 2) / stage.offsetWidth : .5;
+      const oldY = stage.offsetHeight > viewport.clientHeight ? (viewport.scrollTop + viewport.clientHeight / 2) / stage.offsetHeight : .5;
+      const turned = visionPhotoRotation % 180 !== 0;
+      const width = turned ? image.naturalHeight : image.naturalWidth;
+      const height = turned ? image.naturalWidth : image.naturalHeight;
+      const fit = Math.min(viewport.clientWidth / width, viewport.clientHeight / height, 1);
+      const scale = fit * Number(zoom.value);
+      stage.style.width = Math.ceil(width * scale) + "px";
+      stage.style.height = Math.ceil(height * scale) + "px";
+      stage.style.marginTop = Math.max(0, (viewport.clientHeight - stage.offsetHeight) / 2) + "px";
+      image.style.width = image.naturalWidth * scale + "px";
+      image.style.height = image.naturalHeight * scale + "px";
+      image.style.transform = `translate(-50%, -50%) rotate(${visionPhotoRotation}deg)`;
+      viewport.scrollTo(stage.offsetWidth * (preserveCenter ? oldX : .5) - viewport.clientWidth / 2,
+        stage.offsetHeight * (preserveCenter ? oldY : .5) - viewport.clientHeight / 2);
+    }
+
+    function stepVisionPhotoZoom(direction) {
+      const zoom = visionElement("visionPhotoZoom");
+      zoom.selectedIndex = Math.max(0, Math.min(zoom.options.length - 1, zoom.selectedIndex + direction));
+      renderVisionPhotoZoom();
+    }
+
+    function rotateVisionPhoto() {
+      visionPhotoRotation = (visionPhotoRotation + 90) % 360;
+      renderVisionPhotoZoom(false);
+    }
+
+    function resetVisionPhotoZoom() {
+      visionElement("visionPhotoZoom").selectedIndex = 0;
+      renderVisionPhotoZoom(false);
+    }
+
+    function cleanupVisionPhotoViewer() {
+      visionPhotoResize?.disconnect();
+      const image = visionElement("visionPhotoOriginal");
+      image.onload = image.onerror = null;
+      image.removeAttribute("src");
+      const stage = visionElement("visionPhotoStage");
+      stage.removeAttribute("style");
     }
 
     function prepareVisionPhotos() {
@@ -4512,7 +4626,16 @@
         const name = document.createElement("figcaption");
         name.textContent = `Foto ${index + 1} · ${file.name}`;
         name.className = "text-xs break-all";
-        figure.append(image, name);
+        const open = document.createElement("button");
+        open.type = "button";
+        open.className = "relative block w-full rounded-lg cursor-zoom-in";
+        open.setAttribute("aria-label", `Ampliar foto ${index + 1}`);
+        const indicator = document.createElement("span");
+        indicator.className = "absolute right-1 top-1 rounded-lg bg-white/90 px-2 py-1 text-xs font-bold text-slate-800 shadow";
+        indicator.textContent = "Ampliar";
+        open.addEventListener("click", () => openVisionPhotoViewer(image.src, name.textContent));
+        open.append(image, indicator);
+        figure.append(open, name);
         photos.append(figure);
       });
     }

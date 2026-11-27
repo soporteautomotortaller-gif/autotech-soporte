@@ -515,6 +515,9 @@
               <span>Accesos y claves</span>
             </button>
 
+            <button type="button" id="btnFailureReports" onclick="openFailureReports()" class="touch-target px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-300 text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+              <i class="ph-bold ph-repeat" aria-hidden="true"></i> Fallas repetitivas
+            </button>
             <button type="button" id="btnVinHistory" onclick="openVinHistoryModal()" class="touch-target px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 text-xs font-extrabold text-indigo-900 flex items-center gap-1.5 transition">
               <i class="ph-bold ph-car-profile text-indigo-600 text-base"></i>
               <span>Historial VIN</span>
@@ -1340,6 +1343,7 @@
           <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-envelope-simple"></i> Formalizar Correo
           </button>
+          <button type="button" id="btnFailureFromCase" onclick="openFailureReports(true)" class="px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-300 text-indigo-900 text-xs font-bold">Reportar falla</button>
           <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-user-focus"></i> Portal Cliente
           </button>
@@ -2098,6 +2102,30 @@
     </div>
   </div>
 
+  <dialog id="failureReportsModal" aria-labelledby="failureReportsTitle" class="m-auto w-[calc(100%-2rem)] max-w-5xl max-h-[88vh] rounded-2xl p-5 text-slate-900">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <h2 id="failureReportsTitle" class="text-lg font-bold">Reporte de fallas repetitivas</h2>
+      <form method="dialog"><button autofocus class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar</button></form>
+    </div>
+    <form id="failureReportForm" onsubmit="submitFailureReport(event)" class="grid sm:grid-cols-2 gap-3 mb-5 border border-slate-300 rounded-xl p-4">
+      <h3 class="sm:col-span-2 text-sm font-bold">Nuevo reporte <span id="failureLinkedCase" class="font-normal"></span></h3>
+      <label class="text-sm">VIN<input name="vin" required minlength="17" maxlength="17" pattern="[A-HJ-NPR-Za-hj-npr-z0-9]{17}" class="uppercase block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <label class="text-sm">Marca<input name="brand" required maxlength="100" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <label class="text-sm">Modelo<input name="model" required maxlength="100" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <label class="text-sm">Falla<input name="failure" required maxlength="4000" class="block w-full rounded-lg border border-slate-300 px-3 py-2" /></label>
+      <label class="text-sm">Motivo de la falla<textarea name="cause" required maxlength="4000" rows="2" class="block w-full rounded-lg border border-slate-300 px-3 py-2"></textarea></label>
+      <label class="text-sm">Solución<textarea name="solution" required maxlength="6000" rows="2" class="block w-full rounded-lg border border-slate-300 px-3 py-2"></textarea></label>
+      <label class="text-sm sm:col-span-2">Proceso de diagnóstico<textarea name="diagnosis" required maxlength="6000" rows="3" class="block w-full rounded-lg border border-slate-300 px-3 py-2"></textarea></label>
+      <div class="sm:col-span-2"><button class="touch-target btn-accent px-4 rounded-full text-sm font-semibold">Guardar reporte</button></div>
+    </form>
+    <div class="flex flex-wrap gap-2 items-center mb-3">
+      <input id="failureSearch" type="search" oninput="renderFailureReports()" aria-label="Buscar reportes" placeholder="Buscar VIN, marca, modelo o falla" class="flex-1 min-w-0 rounded-lg border border-slate-300 p-2 text-sm" />
+      <button type="button" onclick="downloadFailureReports()" class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Descargar Excel</button>
+    </div>
+    <p id="failureStatus" role="status" class="text-sm text-slate-600 mb-2"></p>
+    <ul id="failureList" class="space-y-2"></ul>
+  </dialog>
+
   <dialog id="deleteTodoDialog" aria-labelledby="deleteTodoTitle" class="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white text-slate-900 p-5 shadow-xl backdrop:bg-slate-900/50">
     <h2 id="deleteTodoTitle" class="font-bold mb-2">Mover tarea a la Papelera</h2>
     <p id="deleteTodoLabel" class="text-sm mb-3"></p>
@@ -2263,6 +2291,7 @@
       todos: [],
       trash: [],
       trashRevision: 0,
+      failureReports: [],
       contacts: [],
       contactsRevision: 0,
       credentialsDb: [],
@@ -2651,6 +2680,7 @@
       if (!Array.isArray(state.todos)) state.todos = [];
       if (!Array.isArray(state.trash)) state.trash = [];
       if (!Array.isArray(state.contacts)) state.contacts = [];
+      if (!Array.isArray(state.failureReports)) state.failureReports = [];
       if (!Array.isArray(state.credentialsDb)) state.credentialsDb = [];
       if (!Array.isArray(state.trainingPlanEntries)) state.trainingPlanEntries = [];
       if (!Array.isArray(state.notifications)) state.notifications = [];
@@ -2682,6 +2712,7 @@
         let trashChanged = false;
         let contactsChanged = false;
         if (objApp && typeof objApp === "object") {
+          state.failureReports = mergeFailureReports(state.failureReports, objApp.failureReports);
           const contactsRevision = Number(objApp.contactsRevision) || 0;
           if (contactsRevision > state.contactsRevision) {
             state.contacts = Array.isArray(objApp.contacts) ? objApp.contacts : [];
@@ -2730,6 +2761,7 @@
           }
         }
         if (contactsChanged && document.getElementById("contactsModal").open) renderContacts();
+        if (document.getElementById("failureReportsModal").open) renderFailureReports();
         if (activeTab === "tasks") renderTodos();
         if (activeTab === "completed") renderCompletedTab();
         return objApp;
@@ -3135,7 +3167,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -3175,6 +3207,7 @@
         trash: state.trash,
         trashRevision: state.trashRevision,
         contacts: state.contacts,
+        failureReports: state.failureReports,
         contactsRevision: state.contactsRevision,
         credentialsDb: state.credentialsDb || [],
         trainingPlanEntries: state.trainingPlanEntries || [],
@@ -3210,7 +3243,8 @@
           const driveRevision = Number(data.state.trashRevision) || 0;
           const fbReq = state.hotlineRequests, fbPend = state.pendingUsers, fbUsers = state.users, fbTodos = state.todos, fbCreds = state.credentialsDb, fbNotifs = state.notifications, fbAdmin = state.adminConfig;
           const localContacts = { contacts: state.contacts, contactsRevision: state.contactsRevision };
-          state = { ...state, ...data.state };
+          const failureReports = mergeFailureReports(state.failureReports, data.state.failureReports);
+          state = { ...state, ...data.state, failureReports };
           if ((Number(data.state.contactsRevision) || 0) <= localContacts.contactsRevision) Object.assign(state, localContacts);
           if (fbReq.length > 0) state.hotlineRequests = fbReq;
           if (fbPend.length > 0) state.pendingUsers = fbPend;
@@ -3232,6 +3266,7 @@
             if (document.getElementById("trashModal").open) renderTrash();
             if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
             if (document.getElementById("contactsModal").open) renderContacts();
+            if (document.getElementById("failureReportsModal").open) renderFailureReports();
           }
           if (manual) showToast("Sincronizado", "success");
         }
@@ -3259,6 +3294,7 @@
 
       document.getElementById("btnWorkshops").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnVinHistory").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnFailureReports").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnHotlineGroup").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnTrainingPlan").classList.toggle("hidden", isSoporte);
       document.getElementById("btnHtcBank").classList.toggle("hidden", isSoporte);
@@ -3735,6 +3771,7 @@
       document.getElementById("trainingDetailTabsBar").classList.toggle("hidden", isSoporte);
       document.getElementById("dTrainingControlPanel").classList.toggle("hidden", isSoporte);
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
+      document.getElementById("btnFailureFromCase").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyAdvisorHeader").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyMechanicHeader").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyClientHeader").classList.toggle("hidden", !isSoporte);
@@ -4106,6 +4143,159 @@
         row.append(actions);
         list.append(row);
       });
+    }
+
+    let failureCaseId = "";
+    let failureExcelLibrary;
+    const failureBackups = new Set();
+
+    function mergeFailureReports(...lists) {
+      const records = new Map();
+      lists.forEach(list => {
+        if (!Array.isArray(list)) return;
+        list.forEach(report => {
+          if (!report?.id) return;
+          const existing = records.get(report.id);
+          if (!existing || report.backedUp) records.set(report.id, report);
+        });
+      });
+      return [...records.values()];
+    }
+
+    function openFailureReports(fromCase = false) {
+      if (!currentSession) return;
+      const task = fromCase ? state.tasks.find(item => item.id === currentDetailId && item.mode !== "entrenamiento") : null;
+      const form = document.getElementById("failureReportForm");
+      form.reset();
+      failureCaseId = task?.caseId || "";
+      document.getElementById("failureLinkedCase").textContent = failureCaseId ? " · " + failureCaseId : "";
+      if (task) {
+        form.elements.vin.value = task.vehicleVin || "";
+        form.elements.brand.value = task.brand || "";
+        form.elements.model.value = task.vehicleModel || "";
+      }
+      document.getElementById("failureSearch").value = "";
+      document.getElementById("failureStatus").textContent = "";
+      renderFailureReports();
+      document.getElementById("failureReportsModal").showModal();
+    }
+
+    function submitFailureReport(event) {
+      event.preventDefault();
+      if (!currentSession) return;
+      const form = event.currentTarget;
+      const fields = Object.fromEntries([...new FormData(form)].map(([key, value]) => [key, value.trim()]));
+      fields.vin = fields.vin.toUpperCase();
+      const status = document.getElementById("failureStatus");
+      if (Object.values(fields).some(value => !value) || !/^[A-HJ-NPR-Z0-9]{17}$/.test(fields.vin)) {
+        status.textContent = "Completa todos los campos y verifica que el VIN tenga 17 caracteres válidos.";
+        return;
+      }
+      const report = { ...fields, id: "FR-" + crypto.randomUUID(), caseId: failureCaseId,
+        createdAt: new Date().toISOString(), author: currentSession.name, backedUp: false };
+      state.failureReports.push(report);
+      saveLocalAndCloud();
+      form.reset();
+      if (failureCaseId) {
+        form.elements.vin.value = report.vin;
+        form.elements.brand.value = report.brand;
+        form.elements.model.value = report.model;
+      }
+      status.textContent = "Reporte guardado. Verificando respaldo en Drive…";
+      void backupFailureReport(report);
+    }
+
+    async function backupFailureReport(report) {
+      if (!currentSession || failureBackups.has(report.id)) return;
+      failureBackups.add(report.id);
+      renderFailureReports();
+      const status = document.getElementById("failureStatus");
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "backupFailureReport", report }),
+          signal: AbortSignal.timeout(30000)
+        });
+        const result = await response.json();
+        if (!response.ok || result.status !== "ok" || result.reportId !== report.id) throw new Error("Sin confirmación");
+        state.failureReports = mergeFailureReports(state.failureReports, [{ ...report, backedUp: true }]);
+        saveLocalAndCloud();
+        status.textContent = "Respaldo confirmado en Google Drive.";
+      } catch (error) {
+        status.textContent = "El respaldo sigue pendiente. Puedes reintentarlo desde el reporte.";
+      } finally {
+        failureBackups.delete(report.id);
+        renderFailureReports();
+      }
+    }
+
+    function filteredFailureReports() {
+      const query = normalizeContactName(document.getElementById("failureSearch").value);
+      return state.failureReports.filter(report => [report.vin, report.brand, report.model, report.failure, report.caseId]
+        .some(value => normalizeContactName(value || "").includes(query))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    }
+
+    function renderFailureReports() {
+      const list = document.getElementById("failureList");
+      const byVin = new Map();
+      const byFailure = new Map();
+      const signature = report => normalizeContactName([report.brand, report.model, report.failure].join(" · "));
+      state.failureReports.forEach(report => {
+        byVin.set(report.vin, (byVin.get(report.vin) || 0) + 1);
+        const key = signature(report);
+        if (!byFailure.has(key)) byFailure.set(key, new Set());
+        byFailure.get(key).add(report.vin);
+      });
+      const reports = filteredFailureReports();
+      list.innerHTML = reports.length ? reports.map(report => {
+        const vinCount = byVin.get(report.vin);
+        const matchingVehicles = byFailure.get(signature(report)).size;
+        const pending = failureBackups.has(report.id);
+        return `<li class="rounded-xl border border-slate-300 p-3 text-sm">
+          <details><summary class="cursor-pointer font-bold">${escapeHtml(report.failure)} · ${escapeHtml(report.brand)} ${escapeHtml(report.model)}</summary>
+            <p class="mt-2 whitespace-pre-wrap"><strong>Motivo:</strong> ${escapeHtml(report.cause)}</p>
+            <p class="whitespace-pre-wrap"><strong>Diagnóstico:</strong> ${escapeHtml(report.diagnosis)}</p>
+            <p class="whitespace-pre-wrap"><strong>Solución:</strong> ${escapeHtml(report.solution)}</p>
+          </details>
+          <p class="text-xs text-slate-600 mt-1">${escapeHtml(report.vin)}${report.caseId ? " · " + escapeHtml(report.caseId) : ""} · ${vinCount} ${vinCount === 1 ? "registro" : "registros"} del VIN · ${matchingVehicles} ${matchingVehicles === 1 ? "vehículo con esta falla" : "vehículos con esta falla"}</p>
+          <p class="text-xs mt-1">${report.backedUp ? "Respaldado en Drive" : pending ? "Respaldando…" : "Respaldo pendiente"}</p>
+          ${!report.backedUp && !pending ? `<button type="button" class="text-xs font-bold text-accent underline mt-1" data-backup-id="${escapeHtml(report.id)}">Reintentar respaldo</button>` : ""}
+        </li>`;
+      }).join("") : '<li class="text-sm text-slate-600">Sin reportes que coincidan.</li>';
+      list.querySelectorAll("[data-backup-id]").forEach(button => {
+        button.addEventListener("click", () => {
+          const report = state.failureReports.find(item => item.id === button.dataset.backupId);
+          if (report) void backupFailureReport(report);
+        });
+      });
+    }
+
+    async function downloadFailureReports() {
+      if (!currentSession) return;
+      const status = document.getElementById("failureStatus");
+      if (!state.failureReports.length) {
+        status.textContent = "Todavía no hay reportes para descargar.";
+        return;
+      }
+      try {
+        if (!failureExcelLibrary) {
+          failureExcelLibrary = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+            script.onload = () => window.XLSX ? resolve(window.XLSX) : reject(new Error("Excel no disponible"));
+            script.onerror = reject;
+            document.head.append(script);
+          }).catch(error => { failureExcelLibrary = undefined; throw error; });
+        }
+        const xlsx = await failureExcelLibrary;
+        const rows = [["ID", "Fecha", "Registrado por", "Caso", "VIN", "Marca", "Modelo", "Falla", "Motivo de la falla", "Proceso de diagnóstico", "Solución", "Respaldo"]];
+        state.failureReports.forEach(r => rows.push([r.id, r.createdAt, r.author, r.caseId, r.vin, r.brand, r.model, r.failure, r.cause, r.diagnosis, r.solution, r.backedUp ? "Confirmado" : "Pendiente"]));
+        const workbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(workbook, xlsx.utils.aoa_to_sheet(rows), "Reportes");
+        xlsx.writeFile(workbook, "Fallas_repetitivas.xlsx");
+      } catch (error) {
+        status.textContent = "No se pudo descargar el Excel. Verifica la conexión e inténtalo otra vez.";
+      }
     }
 
     function markTrashChanged(collection) {

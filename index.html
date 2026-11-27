@@ -2103,6 +2103,18 @@
     </div>
   </div>
 
+  <dialog id="caseMediaPreview" aria-labelledby="caseMediaTitle" class="m-auto w-[calc(100%-2rem)] max-w-5xl max-h-[92vh] rounded-2xl p-5 text-slate-900">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <h2 id="caseMediaTitle" class="min-w-0 break-all text-sm font-bold"></h2>
+      <div class="flex gap-2 items-center">
+        <a id="caseMediaExternal" class="hidden text-sm font-semibold text-blue-700 underline" target="_blank" rel="noopener noreferrer">Abrir archivo</a>
+        <form method="dialog"><button autofocus class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar</button></form>
+      </div>
+    </div>
+    <div id="caseMediaContent"></div>
+    <p id="caseMediaFeedback" role="status" class="mt-2 text-xs text-slate-600"></p>
+  </dialog>
+
   <dialog id="failureReportsModal" aria-labelledby="failureReportsTitle" class="m-auto w-[calc(100%-2rem)] max-w-5xl max-h-[88vh] rounded-2xl p-5 text-slate-900">
     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
       <h2 id="failureReportsTitle" class="text-lg font-bold">Reporte de fallas repetitivas</h2>
@@ -3193,7 +3205,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -3992,11 +4004,160 @@
       renderInternalNotes(t);
       showToast("Nota eliminada", "info");
     }
-    function renderDetailMedia(t) { const box = document.getElementById("dMediaGallery"); const media = t.media || []; box.innerHTML = media.length === 0 ? `<p class="col-span-full text-xs text-slate-400">Sin archivos subidos.</p>` : media.map(m => `<div class="bg-white rounded-xl p-2 border border-slate-200 text-xs space-y-1"><a href="${escapeHtml(m.viewUrl || m.url)}" target="_blank" class="font-bold text-blue-600 truncate block">${escapeHtml(m.name)}</a><span class="text-[10px] ${m.syncedToDrive ? 'text-emerald-600 font-bold' : 'text-amber-600'}">${m.syncedToDrive ? '✓ Drive' : 'Local'}</span></div>`).join(""); }
+    function caseMediaKind(media) {
+      const type = String(media.mimeType || media.type || "").toLowerCase();
+      const name = String(media.name || "").toLowerCase();
+      const data = String(media.url || media.viewUrl || "");
+      if (type === "video" || type.startsWith("video/") || /^data:video\//i.test(data) ||
+          /\.(mp4|m4v|mov|webm|ogv|avi|mkv|3gp|mpeg|mpg|wmv)$/.test(name)) return "video";
+      if (type === "image" || type.startsWith("image/") || /^data:image\//i.test(data) ||
+          /\.(jpe?g|png|gif|webp|avif|bmp|heic|heif|svg|tiff?)$/.test(name)) return "image";
+      return "";
+    }
+
+    function caseMediaHttpUrl(value) {
+      try {
+        const url = new URL(value);
+        return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    function caseMediaSources(media) {
+      const urls = [media.url, media.viewUrl];
+      const external = [media.viewUrl, media.url].map(caseMediaHttpUrl).find(Boolean) || "";
+      let driveId = /^[\w-]+$/.test(media.driveFileId || "") ? media.driveFileId : "";
+      for (const value of urls) {
+        if (driveId) break;
+        const httpUrl = caseMediaHttpUrl(value);
+        if (!httpUrl) continue;
+        const url = new URL(httpUrl);
+        if (url.hostname !== "drive.google.com") continue;
+        const id = url.pathname.match(/\/file\/d\/([\w-]+)/)?.[1] || url.searchParams.get("id");
+        if (id && /^[\w-]+$/.test(id)) driveId = id;
+      }
+      const local = urls.find(value => /^data:(?:image|video)\/[a-z0-9.+-]+;base64,/i.test(value || ""));
+      const localFile = urls.find(value => /^data:[a-z0-9.+-]+\/[a-z0-9.+-]+;base64,/i.test(value || ""));
+      return {
+        localFile,
+        direct: local || (!driveId ? external : ""),
+        thumbnail: driveId ? `https://drive.google.com/thumbnail?id=${driveId}&sz=w480` : local || external,
+        preview: driveId ? `https://drive.google.com/file/d/${driveId}/preview` : "",
+        external
+      };
+    }
+
+    function openCaseMediaPreview(media) {
+      const kind = caseMediaKind(media);
+      if (!kind) return;
+      const dialog = document.getElementById("caseMediaPreview");
+      const content = document.getElementById("caseMediaContent");
+      dialog.onclose = () => content.replaceChildren();
+      const feedback = document.getElementById("caseMediaFeedback");
+      const link = document.getElementById("caseMediaExternal");
+      const sources = caseMediaSources(media);
+      function showDrivePreview() {
+        const frame = document.createElement("iframe");
+        frame.title = "Vista previa de " + media.name;
+        frame.className = "w-full h-[65vh] rounded-xl border-0 bg-slate-950";
+        frame.allow = "fullscreen";
+        frame.allowFullscreen = true;
+        frame.src = sources.preview;
+        content.replaceChildren(frame);
+        feedback.textContent = "Si Drive solicita acceso o el archivo no se reproduce, usa Abrir archivo.";
+      }
+      function showUnavailable() {
+        content.replaceChildren();
+        feedback.textContent = "El navegador no pudo mostrar este archivo. Revisa el formato o los permisos de Drive.";
+      }
+      document.getElementById("caseMediaTitle").textContent = media.name || "Vista previa";
+      link.classList.toggle("hidden", !sources.external);
+      if (sources.external) link.href = sources.external;
+      else link.removeAttribute("href");
+      content.replaceChildren();
+      feedback.textContent = "";
+      if (kind === "video" && sources.preview && !sources.direct) {
+        showDrivePreview();
+      } else {
+        const source = sources.direct || sources.thumbnail.replace(/&sz=w480$/, "&sz=w1600");
+        if (source) {
+          const element = document.createElement(kind === "video" ? "video" : "img");
+          element.className = "block mx-auto max-h-[68vh] max-w-full rounded-xl object-contain";
+          if (kind === "video") {
+            element.controls = true;
+            element.playsInline = true;
+            element.preload = "metadata";
+          } else element.alt = media.name || "Imagen del caso";
+          element.addEventListener("error", () => {
+            if (element.parentElement !== content) return;
+            if (sources.preview) showDrivePreview();
+            else showUnavailable();
+          }, { once: true });
+          content.append(element);
+          element.src = source;
+        } else showUnavailable();
+      }
+      dialog.showModal();
+    }
+
+    function renderDetailMedia(task) {
+      const gallery = document.getElementById("dMediaGallery");
+      const files = Array.isArray(task.media) ? task.media.filter(Boolean) : [];
+      gallery.replaceChildren();
+      if (!files.length) {
+        gallery.innerHTML = '<p class="col-span-full text-xs text-slate-400">Sin archivos subidos.</p>';
+        return;
+      }
+      files.forEach(media => {
+        const card = document.createElement("div");
+        card.className = "min-w-0 bg-white rounded-xl p-2 border border-slate-200 text-xs space-y-1";
+        const kind = caseMediaKind(media);
+        const sources = caseMediaSources(media);
+        if (kind) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "relative grid place-items-center w-full aspect-video rounded-lg bg-slate-100 text-blue-700 overflow-hidden";
+          button.setAttribute("aria-label", "Ver " + (media.name || "evidencia"));
+          const placeholder = document.createElement("span");
+          placeholder.className = "p-2 font-semibold";
+          placeholder.textContent = kind === "video" ? "▶ Reproducir video" : "Ver imagen";
+          button.append(placeholder);
+          if (kind === "image" && sources.thumbnail) {
+            const img = document.createElement("img");
+            img.alt = "";
+            img.loading = "lazy";
+            img.className = "absolute inset-0 opacity-0 w-full h-full object-cover";
+            img.addEventListener("load", () => { img.classList.remove("opacity-0"); placeholder.classList.add("hidden"); });
+            img.src = sources.thumbnail;
+            button.append(img);
+          }
+          button.addEventListener("click", () => openCaseMediaPreview(media));
+          card.append(button);
+        }
+        const label = document.createElement(sources.external || (!kind && sources.localFile) ? "a" : "span");
+        label.className = "font-bold text-blue-700 truncate block";
+        label.textContent = media.name || "Archivo";
+        label.title = label.textContent;
+        if (sources.external) {
+          label.href = sources.external;
+          label.target = "_blank";
+          label.rel = "noopener noreferrer";
+        } else if (!kind && sources.localFile) {
+          label.href = sources.localFile;
+          label.download = media.name || "Archivo";
+        }
+        const status = document.createElement("span");
+        status.className = "text-[10px] " + (media.syncedToDrive ? "text-emerald-600 font-bold" : "text-amber-600");
+        status.textContent = media.syncedToDrive ? "✓ Drive" : "Local";
+        card.append(label, status);
+        gallery.append(card);
+      });
+    }
 
     async function uploadSingleMediaItemToDrive(taskObj, mediaItem) { if (!mediaItem || !mediaItem.url || !mediaItem.url.startsWith("data:")) return false; const mimeMatch = mediaItem.url.match(/^data:([^;]+);base64,/); const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "uploadFile", folderId: taskObj.driveFolderId || "", folderName: `${taskObj.caseId} | ${taskObj.title}`, fileName: mediaItem.name, mimeType: mimeMatch ? mimeMatch[1] : "application/octet-stream", base64Data: mediaItem.url }) }); const d = await res.json(); if (d && d.status === "ok") { taskObj.driveFolderId = d.folderId || taskObj.driveFolderId; taskObj.driveFolderUrl = d.folderUrl || taskObj.driveFolderUrl; mediaItem.driveFileId = d.fileId; mediaItem.viewUrl = d.fileUrl; mediaItem.url = d.previewUrl || d.fileUrl; mediaItem.syncedToDrive = true; return true; } return false; }
     async function syncAllCaseMediaToDrive() { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; for (const m of (t.media || [])) { if (m.url && m.url.startsWith("data:")) await uploadSingleMediaItemToDrive(t, m); } saveLocalAndCloud(); renderDetailMedia(t); showToast("Respaldado en Drive", "success"); }
-    function uploadMediaToDrive(e) { const file = e.target.files[0]; const t = state.tasks.find(x => x.id === currentDetailId); if (!file || !t) return; const reader = new FileReader(); reader.onload = async () => { const item = { name: file.name, type: file.type.startsWith("image/") ? "image" : "file", url: reader.result, viewUrl: reader.result, syncedToDrive: false }; t.media.push(item); renderDetailMedia(t); await uploadSingleMediaItemToDrive(t, item); pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} subió archivo "${file.name}" en ${t.caseId}` }); saveLocalAndCloud(); renderDetailMedia(t); }; reader.readAsDataURL(file); }
+    function uploadMediaToDrive(e) { const file = e.target.files[0]; const t = state.tasks.find(x => x.id === currentDetailId); if (!file || !t) return; const reader = new FileReader(); reader.onload = async () => { const item = { name: file.name, type: file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "file", mimeType: file.type, url: reader.result, viewUrl: reader.result, syncedToDrive: false }; t.media.push(item); renderDetailMedia(t); await uploadSingleMediaItemToDrive(t, item); pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} subió archivo "${file.name}" en ${t.caseId}` }); saveLocalAndCloud(); renderDetailMedia(t); }; reader.readAsDataURL(file); }
 
     function updateTaskStatusQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t || t.status === val) return; t.status = val; if (val === "Completado") { t.progress = 100; if (!t.closedDate) t.closedDate = new Date().toISOString().split("T")[0]; } pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} cambió ${t.caseId} (${t.title}) a estado "${val}"` }); saveLocalAndCloud(); openDetailModal(t.id); renderAll(); }
     function updateTaskProgressQuick(val) { const t = state.tasks.find(x => x.id === currentDetailId); if (!t) return; t.progress = Number(val); document.getElementById("dProgressVal").textContent = val + "%"; pushActivityNotification({ area: t.mode || "soporte", targetType: "case", targetId: t.id, message: `${currentSession.name} actualizó el avance de ${t.caseId} (${t.title}) al ${val}%` }); saveLocalAndCloud(); renderAll(); }

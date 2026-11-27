@@ -2150,10 +2150,16 @@
       <button type="button" onclick="resetVisionPhotoZoom()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Ajustar a ventana</button>
     </div>
     <p class="text-xs mb-2">100 % ajusta la foto a la ventana. Al ampliar, puedes arrastrarla o desplazarte para ver los detalles.</p>
-    <div id="visionPhotoViewport" tabindex="0" aria-label="Foto ampliable" class="overflow-auto overscroll-contain relative w-full h-[min(64dvh,680px)] rounded-xl bg-slate-950 cursor-grab active:cursor-grabbing">
-      <div id="visionPhotoStage" class="relative mx-auto my-0 overflow-hidden">
-        <img id="visionPhotoOriginal" alt="" draggable="false" class="absolute left-1/2 top-1/2 max-w-none select-none" />
+    <div class="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(15rem,19rem)]">
+      <div id="visionPhotoViewport" tabindex="0" aria-label="Foto ampliable" class="overflow-auto overscroll-contain relative w-full h-[min(64dvh,680px)] rounded-xl bg-slate-950 cursor-grab active:cursor-grabbing">
+        <div id="visionPhotoStage" class="relative mx-auto my-0 overflow-hidden">
+          <img id="visionPhotoOriginal" alt="" draggable="false" class="absolute left-1/2 top-1/2 max-w-none select-none" />
+        </div>
       </div>
+      <aside class="min-w-0 max-h-[30dvh] overflow-auto overscroll-contain rounded-xl border border-slate-300 bg-white/80 p-3 lg:max-h-[min(64dvh,680px)]" aria-labelledby="visionPhotoReadingsTitle">
+        <h3 id="visionPhotoReadingsTitle" class="mb-2 text-sm font-bold">Datos extraídos de esta foto</h3>
+        <div id="visionPhotoReadings" aria-live="polite"></div>
+      </aside>
     </div>
     <p id="visionPhotoError" role="status" class="text-xs mt-2"></p>
   </dialog>
@@ -4519,9 +4525,13 @@
     }
 
     let visionPhotoRotation = 0;
+    let visionPhotoNumber = 0;
+    let visionReadingsByPhoto = null;
     let visionPhotoResize;
 
-    function openVisionPhotoViewer(source, title) {
+    function openVisionPhotoViewer(source, title, photoNumber) {
+      visionPhotoNumber = photoNumber;
+      renderVisionPhotoReadings();
       const dialog = visionElement("visionPhotoViewer");
       const image = visionElement("visionPhotoOriginal");
       const viewport = visionElement("visionPhotoViewport");
@@ -4596,6 +4606,8 @@
     }
 
     function cleanupVisionPhotoViewer() {
+      visionPhotoNumber = 0;
+      visionElement("visionPhotoReadings").replaceChildren();
       visionPhotoResize?.disconnect();
       const image = visionElement("visionPhotoOriginal");
       image.onload = image.onerror = null;
@@ -4606,6 +4618,7 @@
 
     function prepareVisionPhotos() {
       visionGeneration++;
+      visionReadingsByPhoto = null;
       const photos = visionElement("imageVisionPhotos");
       [...photos.querySelectorAll("img")].forEach(img => URL.revokeObjectURL(img.src));
       photos.replaceChildren();
@@ -4633,7 +4646,7 @@
         const indicator = document.createElement("span");
         indicator.className = "absolute right-1 top-1 rounded-lg bg-white/90 px-2 py-1 text-xs font-bold text-slate-800 shadow";
         indicator.textContent = "Ampliar";
-        open.addEventListener("click", () => openVisionPhotoViewer(image.src, name.textContent));
+        open.addEventListener("click", () => openVisionPhotoViewer(image.src, name.textContent, index + 1));
         open.append(image, indicator);
         figure.append(open, name);
         photos.append(figure);
@@ -4726,7 +4739,43 @@
       return value.toUpperCase().replace(/[\s*]/g, "");
     }
 
+    function renderVisionPhotoReadings() {
+      const panel = visionElement("visionPhotoReadings");
+      panel.replaceChildren();
+      const readings = visionReadingsByPhoto?.filter(reading => reading.photo === visionPhotoNumber) || [];
+      if (!readings.length) {
+        const message = document.createElement("p");
+        message.className = "text-sm text-slate-600";
+        message.textContent = visionReadingsByPhoto ? "Gemini no encontró datos legibles para esta foto." : "Analiza las fotos para ver las lecturas aquí.";
+        panel.append(message);
+        return;
+      }
+      const list = document.createElement("dl");
+      list.className = "divide-y divide-slate-200";
+      readings.forEach(reading => {
+        const row = document.createElement("div");
+        row.className = "py-2 first:pt-0 text-sm";
+        const label = document.createElement("dt");
+        label.className = "font-semibold";
+        label.textContent = visionFields[reading.field]?.[0] || reading.field;
+        const value = document.createElement("dd");
+        value.className = "whitespace-pre-wrap break-words";
+        value.textContent = reading.value;
+        row.append(label, value);
+        if (reading.uncertain) {
+          const flag = document.createElement("dd");
+          flag.className = "mt-0.5 text-xs font-semibold text-amber-700";
+          flag.textContent = "Lectura dudosa";
+          row.append(flag);
+        }
+        list.append(row);
+      });
+      panel.append(list);
+    }
+
     function showVisionReadings(readings) {
+      visionReadingsByPhoto = readings;
+      if (visionElement("visionPhotoViewer").open) renderVisionPhotoReadings();
       const container = visionElement("imageVisionResults");
       container.replaceChildren();
       for (const [field, [label, supportId]] of Object.entries(visionFields)) {

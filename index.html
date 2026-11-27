@@ -298,7 +298,32 @@
   }
   .glass-content.glass-view-transition { animation: glass-view 400ms var(--glass-ease) both; }
   @keyframes glass-view { from { opacity: .45; transform: translateY(10px); } }
+  .auth-logo-motion { position: relative; }
+  #authScreen[data-loading] .auth-logo-motion {
+    animation: automotor-logo-pulse 1.6s ease-in-out infinite;
+  }
+  #authScreen[data-loading] .auth-logo-motion::after {
+    content: "";
+    position: absolute;
+    inset: -15% auto;
+    width: 45%;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(178, 224, 255, .7), transparent);
+    animation: automotor-logo-shine 1.9s ease-in-out infinite;
+  }
+  @keyframes automotor-logo-pulse {
+    0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 3px 10px rgba(0,75,147,.18); }
+    50% { transform: translateY(-3px) scale(1.04); box-shadow: 0 5px 25px rgba(36,138,224,.44); }
+  }
+  @keyframes automotor-logo-shine {
+    0% { transform: translateX(-180%) skewX(-18deg); opacity: 0; }
+    28%, 65% { opacity: 1; }
+    100% { transform: translateX(180%) skewX(-18deg); opacity: 0; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    #authScreen[data-loading] .auth-logo-motion { animation: none !important; box-shadow: 0 0 16px rgba(36,138,224,.35); }
+    #authScreen[data-loading] .auth-logo-motion::after { content: none; }
     *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     .glass-dock-icon { transform: none !important; }
   }
@@ -315,7 +340,7 @@
   <div id="authScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="win-mica rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 border border-slate-200/90 shadow-2xl">
       <div class="text-center space-y-2">
-        <div class="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto shadow-md p-1.5 overflow-hidden">
+        <div class="auth-logo-motion w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mx-auto shadow-md p-1.5 overflow-hidden">
           <img src="logo-am.png" alt="Logo Automotor" class="w-full h-full object-contain" />
         </div>
         <div class="flex items-baseline justify-center gap-1 pt-1">
@@ -3195,7 +3220,9 @@
       const form = event.currentTarget;
       const status = document.getElementById(statusId);
       const submit = form.querySelector('button[type="submit"]');
+      const authScreen = document.getElementById("authScreen");
       loginInProgress = true;
+      authScreen.setAttribute("data-loading", "");
       submit.disabled = true;
       status.textContent = "Verificando acceso…";
       try {
@@ -3213,6 +3240,7 @@
       } catch (error) {
         status.textContent = "No se pudo completar el ingreso. Revisa la conexión e inténtalo nuevamente.";
       } finally {
+        authScreen.removeAttribute("data-loading");
         submit.disabled = false;
         loginInProgress = false;
       }

@@ -350,6 +350,7 @@
         <button type="submit" id="btnLoginUserSubmit" class="w-full py-3 rounded-xl bg-[#004B93] hover:bg-[#003870] text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
           <i class="ph-bold ph-sign-in text-base"></i> Ingresar al Portal
         </button>
+        <p id="loginUserStatus" role="status" class="text-sm text-slate-700 empty:hidden"></p>
       </form>
 
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="hidden space-y-4">
@@ -368,6 +369,7 @@
         <button type="submit" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
           <i class="ph-bold ph-key text-base"></i> Ingresar como Administrador
         </button>
+        <p id="loginAdminStatus" role="status" class="text-sm text-slate-700 empty:hidden"></p>
       </form>
 
       <div id="formRegisterBox" class="hidden space-y-4">
@@ -2327,6 +2329,8 @@
     };
 
     let currentSession = null;
+    let initialCloudLoad = Promise.resolve();
+    let loginInProgress = false;
     let saveGeneration = 0;
     let firebaseSave = Promise.resolve();
     let driveSave = Promise.resolve();
@@ -2711,10 +2715,11 @@
       const generation = saveGeneration;
       try {
         await firebaseSave;
+        const signal = AbortSignal.timeout(10000);
         const [resHr, resPend, resUsers, resAdmin, resApp] = await Promise.all([
-          fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`), fetch(`${FIREBASE_DB_URL}/pendingUsers.json`),
-          fetch(`${FIREBASE_DB_URL}/approvedUsers.json`), fetch(`${FIREBASE_DB_URL}/adminConfig.json`),
-          fetch(`${FIREBASE_DB_URL}/appState.json`)
+          fetch(`${FIREBASE_DB_URL}/hotlineRequests.json`, { signal }), fetch(`${FIREBASE_DB_URL}/pendingUsers.json`, { signal }),
+          fetch(`${FIREBASE_DB_URL}/approvedUsers.json`, { signal }), fetch(`${FIREBASE_DB_URL}/adminConfig.json`, { signal }),
+          fetch(`${FIREBASE_DB_URL}/appState.json`, { signal })
         ]);
         const [objHr, objPend, objUsers, objAdmin, objApp] = await Promise.all([resHr.json(), resPend.json(), resUsers.json(), resAdmin.json(), resApp.json()]);
         if (generation !== saveGeneration) return;
@@ -3178,8 +3183,69 @@
     function deletePlatformBookmark(id) { state.platforms = state.platforms.filter(x => x.id !== id); saveLocalAndCloud(); renderPlatformsManageList(); renderPlatformsQuickList(); }
 
     function switchAuthTab(tab) { document.getElementById("formLoginUser").classList.toggle("hidden", tab !== "user"); document.getElementById("formLoginAdmin").classList.toggle("hidden", tab !== "admin"); document.getElementById("formRegisterBox").classList.toggle("hidden", tab !== "register"); const tabs = { user: "authTabUser", admin: "authTabAdmin", register: "authTabRegister" }; Object.entries(tabs).forEach(([k, btnId]) => { document.getElementById(btnId).className = k === tab ? "py-2 rounded-lg bg-white text-[#004B93] shadow-sm transition" : "py-2 rounded-lg text-slate-600 transition"; }); }
-    async function handleUserLogin(e) { e.preventDefault(); const email = document.getElementById("loginUserEmail").value.trim().toLowerCase(); const pass = document.getElementById("loginUserPass").value; await syncFirebaseRealtime(); if ((state.pendingUsers || []).find(u => u.email.toLowerCase() === email)) { showToast("Tu cuenta está pendiente de aprobación.", "warning"); return; } const found = (state.users || []).find(u => u.email.toLowerCase() === email && u.password === pass); if (!found) { showToast("Credenciales incorrectas.", "warning"); return; } startAuthenticatedSession({ id: found.id, name: found.name, email: found.email, role: found.role || "Encargado" }); }
-    async function handleAdminLogin(e) { e.preventDefault(); const idInput = document.getElementById("loginAdminId").value.trim(); const passInput = document.getElementById("loginAdminPass").value; await syncFirebaseRealtime(); if (idInput === state.adminConfig.id && passInput === state.adminConfig.pass) startAuthenticatedSession({ id: "admin_master", name: state.adminConfig.name, email: state.adminConfig.email, role: "Administrador" }); else showToast("ID o contraseña de Administrador incorrectos.", "warning"); }
+    async function readLoginNode(node, signal) {
+      const response = await fetch(`${FIREBASE_DB_URL}/${node}.json`, { signal, cache: "no-store" });
+      if (!response.ok) throw new Error("No se pudo verificar la cuenta");
+      return response.json();
+    }
+
+    async function withLoginFeedback(event, statusId, checkAccount) {
+      event.preventDefault();
+      if (loginInProgress || currentSession) return;
+      const form = event.currentTarget;
+      const status = document.getElementById(statusId);
+      const submit = form.querySelector('button[type="submit"]');
+      loginInProgress = true;
+      submit.disabled = true;
+      status.textContent = "Verificando acceso…";
+      try {
+        const result = await checkAccount(AbortSignal.timeout(8000));
+        if (result.error) {
+          status.textContent = result.error;
+          return;
+        }
+        status.textContent = "Acceso verificado. Cargando la información del portal…";
+        await initialCloudLoad;
+        if (result.admin) state.adminConfig = result.admin;
+        if (result.users) state.users = result.users;
+        startAuthenticatedSession(result.session);
+        status.textContent = "";
+      } catch (error) {
+        status.textContent = "No se pudo completar el ingreso. Revisa la conexión e inténtalo nuevamente.";
+      } finally {
+        submit.disabled = false;
+        loginInProgress = false;
+      }
+    }
+
+    function handleUserLogin(event) {
+      const email = document.getElementById("loginUserEmail").value.trim().toLowerCase();
+      const password = document.getElementById("loginUserPass").value;
+      return withLoginFeedback(event, "loginUserStatus", async signal => {
+        const [pendingNode, usersNode] = await Promise.all([
+          readLoginNode("pendingUsers", signal), readLoginNode("approvedUsers", signal)
+        ]);
+        const pending = Object.values(pendingNode || {}).filter(Boolean);
+        if (pending.some(user => user.email?.toLowerCase() === email)) {
+          return { error: "Tu cuenta está pendiente de aprobación." };
+        }
+        const users = Object.values(usersNode || {}).filter(user => user?.email && !["u1", "u2", "u3"].includes(user.id));
+        const found = users.find(user => user.email.toLowerCase() === email && user.password === password);
+        if (!found) return { error: "Correo o contraseña incorrectos." };
+        return { users, session: { id: found.id, name: found.name, email: found.email, role: found.role || "Encargado" } };
+      });
+    }
+
+    function handleAdminLogin(event) {
+      const id = document.getElementById("loginAdminId").value.trim();
+      const password = document.getElementById("loginAdminPass").value;
+      return withLoginFeedback(event, "loginAdminStatus", async signal => {
+        const remote = await readLoginNode("adminConfig", signal);
+        const admin = remote?.id ? { ...state.adminConfig, ...remote } : state.adminConfig;
+        if (id !== admin.id || password !== admin.pass) return { error: "ID o contraseña de Administrador incorrectos." };
+        return { admin, session: { id: "admin_master", name: admin.name, email: admin.email, role: "Administrador" } };
+      });
+    }
     async function sendRegistrationCode(e) { e.preventDefault(); const name = document.getElementById("regName").value.trim(); const email = document.getElementById("regEmail").value.trim().toLowerCase(); const pass = document.getElementById("regPass").value; const pinCode = String(Math.floor(100000 + Math.random() * 900000)); pendingRegTemp = { name, email, pass, pinCode }; try { await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "sendEmail", to: email, subject: `[Soporte Técnico Automotor] Código PIN: ${pinCode}`, body: `Tu código de verificación es: ${pinCode}` }) }); document.getElementById("regConfirmEmailLabel").textContent = email; document.getElementById("regStep1Form").classList.add("hidden"); document.getElementById("regStep2Form").classList.remove("hidden"); } catch (err) { showToast("Error al enviar PIN", "warning"); } }
     function resetRegSteps() { pendingRegTemp = null; document.getElementById("regStep2Form").classList.add("hidden"); document.getElementById("regStep1Form").classList.remove("hidden"); }
     async function completeRegistration(e) { e.preventDefault(); if (!pendingRegTemp || document.getElementById("regPinInput").value.trim() !== pendingRegTemp.pinCode) { showToast("PIN incorrecto", "warning"); return; } const newUserReq = { id: "u_" + Date.now(), name: pendingRegTemp.name, email: pendingRegTemp.email, password: pendingRegTemp.pass, role: "Encargado", requestedAt: new Date().toLocaleString() }; state.pendingUsers.push(newUserReq); await fetch(`${FIREBASE_DB_URL}/pendingUsers/${newUserReq.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newUserReq) }).catch(() => {}); resetRegSteps(); switchAuthTab("user"); showToast("Solicitud enviada al Administrador", "success"); }
@@ -3215,7 +3281,9 @@
       const saved = localStorage.getItem("autotech_state_v5");
       if (saved) { try { state = { ...state, ...JSON.parse(saved) }; } catch (e) {} }
       normalizeStateData();
-      await syncFromCloud(false);
+      initialCloudLoad = syncFromCloud(false);
+      await initialCloudLoad;
+      if (currentSession || loginInProgress) return;
       const savedSess = sessionStorage.getItem("autotech_session_v6");
       if (savedSess) { try { const sess = JSON.parse(savedSess); if (sess.role === "Administrador" || state.users.some(u => u.id === sess.id)) startAuthenticatedSession(sess); } catch (e) {} }
     });
@@ -3271,7 +3339,9 @@
         const generation = saveGeneration;
         const firebaseState = await syncFirebaseRealtime();
         await driveSave;
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "loadState" }) });
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST", body: JSON.stringify({ action: "loadState" }), signal: AbortSignal.timeout(10000)
+        });
         const data = await res.json();
         if (generation === saveGeneration && data.status === "ok" && data.state) {
           const localTrash = {

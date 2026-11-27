@@ -1343,7 +1343,8 @@
           <button onclick="toggleFormalEmailSection()" class="px-3 py-1.5 rounded-lg bg-[#004B93] hover:bg-[#003870] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-envelope-simple"></i> Formalizar Correo
           </button>
-          <button type="button" id="btnFailureFromCase" onclick="openFailureReports(true)" class="px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-300 text-indigo-900 text-xs font-bold">Reportar falla</button>
+          <button type="button" id="btnFailureFromCase" onclick="openFailureReports(true)" class="px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-300 text-indigo-900 text-xs font-bold">Registrar falla repetitiva</button>
+          <span id="dFailureRegistered" class="hidden text-xs font-semibold text-indigo-800">Registrado como falla repetitiva</span>
           <button id="btnOpenPortalPanel" onclick="togglePortalSection()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="ph-bold ph-user-focus"></i> Portal Cliente
           </button>
@@ -2711,8 +2712,11 @@
         if (objAdmin && typeof objAdmin === "object" && objAdmin.id) state.adminConfig = { ...state.adminConfig, ...objAdmin };
         let trashChanged = false;
         let contactsChanged = false;
+        let failureReportsChanged = false;
         if (objApp && typeof objApp === "object") {
+          const previousReportCount = state.failureReports.length;
           state.failureReports = mergeFailureReports(state.failureReports, objApp.failureReports);
+          failureReportsChanged = state.failureReports.length !== previousReportCount;
           const contactsRevision = Number(objApp.contactsRevision) || 0;
           if (contactsRevision > state.contactsRevision) {
             state.contacts = Array.isArray(objApp.contacts) ? objApp.contacts : [];
@@ -2762,6 +2766,10 @@
         }
         if (contactsChanged && document.getElementById("contactsModal").open) renderContacts();
         if (document.getElementById("failureReportsModal").open) renderFailureReports();
+        if (currentSession && failureReportsChanged) {
+          renderBoard();
+          updateDetailFailureStatus();
+        }
         if (activeTab === "tasks") renderTodos();
         if (activeTab === "completed") renderCompletedTab();
         return objApp;
@@ -3126,8 +3134,26 @@
     }
 
     function openHotlineRequestsModal() { syncFirebaseRealtime(); renderHotlineRequestsList(); document.getElementById("hotlineRequestsModal").classList.remove("hidden"); }
-    function renderHotlineRequestsList() { const box = document.getElementById("hotlineRequestsList"); const list = state.hotlineRequests || []; box.innerHTML = list.length === 0 ? `<p class="text-xs text-slate-400 text-center py-6">No hay solicitudes pendientes.</p>` : list.map((r, idx) => `<div class="rounded-2xl p-4 border-2 ${r.status === 'Pendiente' ? 'bg-red-50/40 border-red-300' : 'bg-slate-50 border-slate-200'} space-y-2 text-xs"><div class="flex flex-wrap items-center justify-between gap-2"><strong>${escapeHtml(r.requestCode)} — ${escapeHtml(r.workshop)} (${escapeHtml(r.brand)} ${escapeHtml(r.model)})</strong><button type="button" onclick="createSupportFromHotline(${idx})" class="px-3 py-1.5 rounded-xl bg-[#004B93] text-white font-bold">Abrir Nueva Acción de Soporte</button></div><div>VIN: <strong class="font-mono">${escapeHtml(r.vin)}</strong> · Falla: ${escapeHtml(r.faultDescription)}</div></div>`).join(""); }
-    function createSupportFromHotline(idx) { const req = state.hotlineRequests[idx]; if (!req) return; closeModal("hotlineRequestsModal"); if (appMode !== "soporte") switchAppMode("soporte"); openTaskModal(); document.getElementById("sourceHotlineReqId").value = req.id; document.getElementById("tTitle").value = `Consulta Fábrica / Hotline - ${req.brand} ${req.model} (${req.vin})`; document.getElementById("tSubcategory").value = "Consulta Técnica Fábrica (DISS/TAC)"; document.getElementById("tHotlineStatus").value = "Hotline Solicitado"; document.getElementById("tStatus").value = "Urgente"; if (req.workshop) document.getElementById("tWorkshop").value = req.workshop; if (AUTOMOTOR_BRANDS.includes(req.brand)) document.getElementById("tBrand").value = req.brand; document.getElementById("tModel").value = req.model || ""; document.getElementById("tVin").value = req.vin || ""; document.getElementById("tAdvisorName").value = req.chiefName || ""; document.getElementById("tAdvisorWhatsapp").value = req.chiefPhone || ""; }
+    function renderHotlineRequestsList() {
+      const box = document.getElementById("hotlineRequestsList");
+      const list = state.hotlineRequests || [];
+      box.innerHTML = list.length ? list.map((req, index) => {
+        const linkedCase = state.tasks.find(task => task.sourceHotlineId === req.id);
+        const reported = hasFailureReport(linkedCase?.caseId, req.id);
+        return `<div class="rounded-2xl p-4 border-2 ${req.status === "Pendiente" ? "bg-red-50/40 border-red-300" : "bg-slate-50 border-slate-200"} space-y-2 text-xs">
+          <strong>${escapeHtml(req.requestCode)} — ${escapeHtml(req.workshop)} (${escapeHtml(req.brand)} ${escapeHtml(req.model)})</strong>
+          <div>VIN: <strong class="font-mono">${escapeHtml(req.vin)}</strong> · Falla: ${escapeHtml(req.faultDescription)}</div>
+          ${linkedCase ? `<p class="font-semibold">Registrado como caso ${escapeHtml(linkedCase.caseId)}</p>` : ""}
+          ${reported ? '<p class="font-semibold text-indigo-800">Registrado como falla repetitiva</p>' : ""}
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="createSupportFromHotline(${index})" class="px-3 py-1.5 rounded-xl bg-[#004B93] text-white font-bold">${linkedCase ? "Abrir caso registrado" : "Registrar como caso de soporte"}</button>
+            <button type="button" onclick="openHotlineFailureReport(${index})" class="px-3 py-1.5 rounded-xl border border-indigo-300 bg-indigo-50 text-indigo-900 font-bold">${reported ? "Ver falla repetitiva" : "Registrar falla repetitiva"}</button>
+          </div>
+        </div>`;
+      }).join("") : '<p class="text-xs text-slate-400 text-center py-6">No hay solicitudes pendientes.</p>';
+    }
+
+    function createSupportFromHotline(idx) { const req = state.hotlineRequests[idx]; if (!req) return; closeModal("hotlineRequestsModal"); if (appMode !== "soporte") switchAppMode("soporte"); const linkedCase = state.tasks.find(task => task.sourceHotlineId === req.id); if (linkedCase) { openDetailModal(linkedCase.id); return; } openTaskModal(); document.getElementById("sourceHotlineReqId").value = req.id; document.getElementById("tTitle").value = `Consulta Fábrica / Hotline - ${req.brand} ${req.model} (${req.vin})`; document.getElementById("tSubcategory").value = "Consulta Técnica Fábrica (DISS/TAC)"; document.getElementById("tHotlineStatus").value = "Hotline Solicitado"; document.getElementById("tStatus").value = "Urgente"; if (req.workshop) document.getElementById("tWorkshop").value = req.workshop; if (AUTOMOTOR_BRANDS.includes(req.brand)) document.getElementById("tBrand").value = req.brand; document.getElementById("tModel").value = req.model || ""; document.getElementById("tVin").value = req.vin || ""; document.getElementById("tAdvisorName").value = req.chiefName || ""; document.getElementById("tAdvisorWhatsapp").value = req.chiefPhone || ""; }
 
     function togglePlatformsDropdown(e) { e.stopPropagation(); const menu = document.getElementById("platformsDropdown"); if (menu.classList.contains("hidden")) renderPlatformsQuickList(); menu.classList.toggle("hidden"); }
     document.addEventListener("click", (e) => { const menu = document.getElementById("platformsDropdown"); if (menu && !menu.classList.contains("hidden") && !menu.contains(e.target)) menu.classList.add("hidden"); });
@@ -3267,6 +3293,7 @@
             if (!document.getElementById("trainingPlanModal").classList.contains("hidden")) renderTrainingPlanModal();
             if (document.getElementById("contactsModal").open) renderContacts();
             if (document.getElementById("failureReportsModal").open) renderFailureReports();
+            updateDetailFailureStatus();
           }
           if (manual) showToast("Sincronizado", "success");
         }
@@ -3492,6 +3519,7 @@
                     ${isEnt ? `<div class="flex flex-wrap items-center gap-1"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-amber-300">${escapeHtml(t.trainingData.stage)}</span>${t.brand ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-white">${escapeHtml(t.brand)}</span>` : ""}</div>` : `<div class="flex flex-wrap items-center gap-1">${t.brand ? `<span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#004B93] text-white">${escapeHtml(t.brand)}</span>` : ""}${t.isVor ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-rose-600 text-white">🚨 VOR</span>` : ""}${t.hotlineStatus || t.factoryTicketCode ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-900">${escapeHtml(t.factoryTicketCode || t.hotlineStatus)}</span>` : ""}</div>`}
                     <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">${escapeHtml(t.title)}</h4>
                     <div class="text-[11px] font-semibold text-slate-500">${escapeHtml(t.subcategory)}</div>
+                    ${!isEnt && hasFailureReport(t.caseId, t.sourceHotlineId) ? '<div class="text-[10px] font-bold text-indigo-800">Registrado como falla repetitiva</div>' : ""}
                     <div class="space-y-1"><div class="flex justify-between text-[10px] font-bold text-slate-500"><span>${escapeHtml(assignee ? assignee.name : "")}</span><span>${isEnt && trMetrics.pct !== null ? `Prep: ${trMetrics.pct}%` : `${t.progress || 0}%`}</span></div><div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full ${col.barColor} rounded-full" style="width:${isEnt && trMetrics.pct !== null ? trMetrics.pct : (t.progress || 0)}%"></div></div></div>
                   </div>
                 `;
@@ -3699,6 +3727,7 @@
         dtcCodes: isSoporte ? document.getElementById("tDtcCodes").value.trim().toUpperCase() : "",
         orNumber: isSoporte ? document.getElementById("tOrNumber").value.trim() : "",
         vehicleVin: isSoporte ? document.getElementById("tVin").value.trim().toUpperCase() : "",
+        sourceHotlineId: isSoporte ? document.getElementById("sourceHotlineReqId").value : "",
         vehicleKm: isSoporte ? document.getElementById("tKm").value.trim() : "",
         isVor: isSoporte ? document.getElementById("tIsVor").checked : false,
         partOrderNumber: isSoporte ? document.getElementById("tPartOrderNumber").value.trim().toUpperCase() : "",
@@ -3772,6 +3801,7 @@
       document.getElementById("dTrainingControlPanel").classList.toggle("hidden", isSoporte);
       document.getElementById("btnOpenPortalPanel").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnFailureFromCase").classList.toggle("hidden", !isSoporte);
+      updateDetailFailureStatus(t);
       document.getElementById("btnNotifyAdvisorHeader").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyMechanicHeader").classList.toggle("hidden", !isSoporte);
       document.getElementById("btnNotifyClientHeader").classList.toggle("hidden", !isSoporte);
@@ -4146,6 +4176,23 @@
     }
 
     let failureCaseId = "";
+    let failureHotlineId = "";
+
+    function hasFailureReport(caseId, hotlineId) {
+      return state.failureReports.some(report => (caseId && report.caseId === caseId) ||
+        (hotlineId && report.sourceHotlineId === hotlineId));
+    }
+
+    function updateDetailFailureStatus(task = state.tasks.find(item => item.id === currentDetailId)) {
+      document.getElementById("dFailureRegistered").classList.toggle("hidden",
+        !task || task.mode === "entrenamiento" || !hasFailureReport(task.caseId, task.sourceHotlineId));
+    }
+
+    function openHotlineFailureReport(index) {
+      const request = state.hotlineRequests[index];
+      if (!request) return;
+      openFailureReports(false, request);
+    }
     let failureExcelLibrary;
     const failureBackups = new Set();
 
@@ -4162,19 +4209,22 @@
       return [...records.values()];
     }
 
-    function openFailureReports(fromCase = false) {
+    function openFailureReports(fromCase = false, request = null) {
       if (!currentSession) return;
-      const task = fromCase ? state.tasks.find(item => item.id === currentDetailId && item.mode !== "entrenamiento") : null;
+      const task = request ? state.tasks.find(item => item.sourceHotlineId === request.id) :
+        fromCase ? state.tasks.find(item => item.id === currentDetailId && item.mode !== "entrenamiento") : null;
       const form = document.getElementById("failureReportForm");
       form.reset();
-      failureCaseId = task?.caseId || "";
+      failureCaseId = task?.caseId || request?.requestCode || "";
+      failureHotlineId = request?.id || task?.sourceHotlineId || "";
       document.getElementById("failureLinkedCase").textContent = failureCaseId ? " · " + failureCaseId : "";
-      if (task) {
-        form.elements.vin.value = task.vehicleVin || "";
-        form.elements.brand.value = task.brand || "";
-        form.elements.model.value = task.vehicleModel || "";
-      }
-      document.getElementById("failureSearch").value = "";
+      form.elements.vin.value = task?.vehicleVin || request?.vin || "";
+      form.elements.brand.value = task?.brand || request?.brand || "";
+      form.elements.model.value = task?.vehicleModel || request?.model || "";
+      form.elements.failure.value = request?.faultDescription || "";
+      const linkedReport = state.failureReports.find(report => (failureCaseId && report.caseId === failureCaseId) ||
+        (failureHotlineId && report.sourceHotlineId === failureHotlineId));
+      document.getElementById("failureSearch").value = linkedReport?.caseId || "";
       document.getElementById("failureStatus").textContent = "";
       renderFailureReports();
       document.getElementById("failureReportsModal").showModal();
@@ -4191,9 +4241,12 @@
         status.textContent = "Completa todos los campos y verifica que el VIN tenga 17 caracteres válidos.";
         return;
       }
-      const report = { ...fields, id: "FR-" + crypto.randomUUID(), caseId: failureCaseId,
+      const report = { ...fields, id: "FR-" + crypto.randomUUID(), caseId: failureCaseId, sourceHotlineId: failureHotlineId,
         createdAt: new Date().toISOString(), author: currentSession.name, backedUp: false };
       state.failureReports.push(report);
+      updateDetailFailureStatus();
+      renderBoard();
+      if (!document.getElementById("hotlineRequestsModal").classList.contains("hidden")) renderHotlineRequestsList();
       saveLocalAndCloud();
       form.reset();
       if (failureCaseId) {

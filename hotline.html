@@ -26,6 +26,12 @@
       letter-spacing: -0.03em;
       color: #004B93;
     }
+    dialog:modal { position: fixed; inset: 0; }
+    dialog::backdrop { background: rgba(15, 23, 42, .48); backdrop-filter: blur(5px); }
+    [hidden]:not([hidden="until-found"]) { display: none !important; }
+    .touch-target { min-height: 40px; }
+    .btn-accent { background: #004b93; color: white; }
+    .btn-accent:hover { background: #003b76; }
   </style>
 </head>
 <body class="text-slate-800 antialiased pb-12">
@@ -144,6 +150,10 @@
 
       <div class="space-y-3 pt-2 border-t border-slate-200">
         <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#004B93]">2. Identificación del Vehículo</h3>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="openImageVision()" class="touch-target btn-accent rounded-full px-4 text-sm font-bold"><i class="ph-bold ph-image" aria-hidden="true"></i> Procesar imágenes</button>
+          <p id="hotlineVisionApplied" role="status" class="text-sm text-slate-700"></p>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Marca *</label>
@@ -153,6 +163,7 @@
               <option value="Hyundai Maquinarias">Hyundai Maquinarias</option>
               <option value="Isuzu">Isuzu</option>
               <option value="Geely">Geely</option>
+              <option value="KGM">KGM</option>
               <option value="SsangYong / KGM">SsangYong / KGM</option>
               <option value="Maserati">Maserati</option>
               <option value="Lynk & Co">Lynk & Co</option>
@@ -351,9 +362,467 @@
     function resetAnotherRequest() {
       document.getElementById("hotlineForm").reset();
       toggleOtherBrand();
+      document.getElementById("hotlineVisionApplied").textContent = "";
       document.getElementById("successBox").classList.add("hidden");
       document.getElementById("hotlineForm").classList.remove("hidden");
     }
   </script>
+  <dialog id="visionPhotoViewer" aria-labelledby="visionPhotoTitle" onclose="cleanupVisionPhotoViewer()" class="m-auto w-[calc(100%-1.5rem)] max-w-6xl max-h-[95dvh] rounded-2xl p-4 sm:p-5 text-slate-900">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <h2 id="visionPhotoTitle" class="min-w-0 break-all text-sm font-bold">Foto original</h2>
+      <form method="dialog"><button autofocus class="touch-target px-3 rounded-lg border border-slate-300 text-sm font-semibold">Cerrar visor</button></form>
+    </div>
+    <div class="flex flex-wrap gap-2 items-center mb-3" aria-label="Controles de la imagen">
+      <button type="button" onclick="stepVisionPhotoZoom(-1)" aria-label="Reducir zoom" id="visionZoomOut" class="touch-target rounded-full border border-slate-300 px-3 font-semibold">−</button>
+      <label class="flex items-center gap-2 text-sm font-semibold">
+        <i class="ph-bold ph-magnifying-glass" aria-hidden="true"></i> Zoom
+        <select id="visionPhotoZoom" onchange="renderVisionPhotoZoom()" class="rounded-lg border border-slate-300 px-2 py-2">
+          <option value="1">100 %</option><option value="1.5">150 %</option><option value="2">200 %</option>
+          <option value="3">300 %</option><option value="4">400 %</option><option value="5">500 %</option>
+        </select>
+      </label>
+      <button type="button" onclick="stepVisionPhotoZoom(1)" aria-label="Ampliar zoom" id="visionZoomIn" class="touch-target rounded-full border border-slate-300 px-3 font-semibold">+</button>
+      <button type="button" onclick="rotateVisionPhoto()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Girar 90°</button>
+      <button type="button" onclick="resetVisionPhotoZoom()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Ajustar a ventana</button>
+      <label class="inline-flex min-h-10 items-center gap-2 text-sm">
+        <input type="checkbox" id="visionWheelZoom" checked /> Zoom con la rueda
+      </label>
+    </div>
+    <p class="text-xs mb-2">100 % ajusta la foto a la ventana. Al ampliar, puedes arrastrarla o desplazarte para ver los detalles.</p>
+    <div class="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(15rem,19rem)]">
+      <div id="visionPhotoViewport" tabindex="0" aria-label="Foto ampliable" class="overflow-auto overscroll-contain relative w-full h-[min(64dvh,680px)] rounded-xl bg-slate-950 cursor-grab active:cursor-grabbing">
+        <div id="visionPhotoStage" class="relative mx-auto my-0 overflow-hidden">
+          <img id="visionPhotoOriginal" alt="" draggable="false" class="absolute left-1/2 top-1/2 max-w-none select-none" />
+        </div>
+      </div>
+      <aside class="min-w-0 max-h-[30dvh] overflow-auto overscroll-contain rounded-xl border border-slate-300 bg-white/80 p-3 lg:max-h-[min(64dvh,680px)]" aria-labelledby="visionPhotoReadingsTitle">
+        <h3 id="visionPhotoReadingsTitle" class="mb-2 text-sm font-bold">Datos extraídos de esta foto</h3>
+        <div id="visionPhotoReadings" aria-live="polite"></div>
+      </aside>
+    </div>
+    <p id="visionPhotoError" role="status" class="text-xs mt-2"></p>
+  </dialog>
+
+  <dialog id="imageVisionModal" onclose="closeImageVision()" aria-labelledby="imageVisionTitle" class="m-auto w-[calc(100%-2rem)] max-w-5xl max-h-[92vh] rounded-2xl p-5 text-slate-900">
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+      <h2 id="imageVisionTitle" class="font-bold text-lg">Procesar imágenes</h2>
+      <form method="dialog"><button class="touch-target rounded-lg border px-3 text-sm">Cerrar</button></form>
+    </div>
+    <p class="text-sm mb-3">Selecciona hasta cuatro fotos. Al pulsar Analizar, se enviarán a Gemini.</p>
+    <p class="text-sm mb-3">Para la prueba en el nivel gratuito, usa fotos sin datos personales ni confidenciales. Google puede usar el contenido enviado para mejorar sus servicios.</p>
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <input id="imageVisionFiles" type="file" multiple accept="image/jpeg,image/png,image/webp" aria-label="Elegir fotos" onchange="prepareVisionPhotos()" />
+      <button type="button" id="imageVisionRun" onclick="runImageVision()" class="touch-target btn-accent rounded-full px-4 text-sm font-bold">Analizar fotos</button>
+    </div>
+    <button type="button" id="hotlineUseAttachments" onclick="useHotlineAttachments()" class="mb-3 rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold">Usar fotos ya adjuntas</button>
+    <div id="imageVisionGoogle" class="mb-3"></div>
+    <p id="imageVisionStatus" role="status" class="text-sm text-slate-700 mb-3"></p>
+    <div class="grid lg:grid-cols-2 gap-4">
+      <div id="imageVisionPhotos" class="grid grid-cols-2 gap-2 content-start"></div>
+      <div>
+        <div id="imageVisionResults" class="space-y-3"></div>
+        <div id="imageVisionActions" hidden class="mt-3 flex flex-wrap items-center gap-3">
+          <label class="inline-flex min-h-10 items-center gap-2 text-sm font-semibold">
+            <input type="checkbox" id="imageVisionSelectAll" onchange="selectAllVisionFields(this.checked)" /> Seleccionar todos
+          </label>
+          <button type="button" id="imageVisionApply" onclick="applyImageVision()" class="touch-target btn-accent rounded-full px-4 text-sm font-bold">Aplicar campos seleccionados</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyLRN54nymuTe32fX-RMGRAlqj1QnQulYroAdG8KT-pPNlY6Hi9lPrNVYL1CBblF1ugPA/exec";
+    const visionFields = {
+      vin: ["VIN", "hVin"], ot: ["N.º de OT", "hOrNumber"], brand: ["Marca", "hBrand"], model: ["Modelo", "hModel"],
+      km: ["Kilometraje", "hKm"], failure: ["Falla reportada", "hFault"], cause: ["Motivo de la falla", ""],
+      diagnosis: ["Proceso de diagnóstico", ""], solution: ["Solución", ""]
+    };
+    let hotlineVisionFiles = [];
+    let visionToken = "";
+    let visionGoogleLibrary;
+    let visionClientId = "";
+    let visionGeneration = 0;
+    const visionElement = id => document.getElementById(id);
+
+    function openImageVision() {
+      visionGeneration++;
+      hotlineVisionFiles = [];
+      visionElement("imageVisionFiles").value = "";
+      prepareVisionPhotos();
+      visionElement("imageVisionStatus").textContent = "";
+      visionElement("imageVisionRun").disabled = visionElement("hotlineUseAttachments").disabled = false;
+      visionElement("imageVisionModal").showModal();
+    }
+
+    function closeImageVision() {
+      if (visionElement("visionPhotoViewer").open) visionElement("visionPhotoViewer").close();
+      visionElement("imageVisionFiles").value = "";
+      visionElement("imageVisionFiles").disabled = false;
+      hotlineVisionFiles = [];
+      prepareVisionPhotos();
+    }
+
+    let visionPhotoRotation = 0;
+    let visionPhotoNumber = 0;
+    let visionReadingsByPhoto = null;
+    let visionPhotoResize;
+
+    function openVisionPhotoViewer(source, title, photoNumber) {
+      visionPhotoNumber = photoNumber;
+      renderVisionPhotoReadings();
+      const dialog = visionElement("visionPhotoViewer");
+      const image = visionElement("visionPhotoOriginal");
+      const viewport = visionElement("visionPhotoViewport");
+      visionPhotoRotation = 0;
+      visionElement("visionPhotoZoom").selectedIndex = 0;
+      visionElement("visionPhotoTitle").textContent = title;
+      visionElement("visionPhotoError").textContent = "";
+      image.alt = title;
+      image.onload = () => renderVisionPhotoZoom(false);
+      image.onerror = () => { visionElement("visionPhotoError").textContent = "No se pudo abrir la foto original."; };
+      image.src = source;
+      dialog.showModal();
+      if (typeof ResizeObserver === "function") {
+        visionPhotoResize = new ResizeObserver(() => renderVisionPhotoZoom());
+        visionPhotoResize.observe(viewport);
+      }
+      let drag;
+      viewport.onpointerdown = event => {
+        if (event.pointerType !== "mouse" || event.button !== 0 || event.target !== image) return;
+        drag = { x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+        viewport.setPointerCapture(event.pointerId);
+        event.preventDefault();
+      };
+      viewport.onpointermove = event => {
+        if (drag) viewport.scrollTo(drag.left + drag.x - event.clientX, drag.top + drag.y - event.clientY);
+      };
+      viewport.onlostpointercapture = () => { drag = null; };
+      viewport.addEventListener("wheel", handleVisionPhotoWheel, { passive: false });
+      renderVisionPhotoZoom(false);
+    }
+
+    function renderVisionPhotoZoom(preserveCenter = true) {
+      const dialog = visionElement("visionPhotoViewer");
+      if (!dialog.open) return;
+      const image = visionElement("visionPhotoOriginal");
+      const viewport = visionElement("visionPhotoViewport");
+      const stage = visionElement("visionPhotoStage");
+      const zoom = visionElement("visionPhotoZoom");
+      visionElement("visionZoomOut").disabled = zoom.selectedIndex === 0;
+      visionElement("visionZoomIn").disabled = zoom.selectedIndex === zoom.options.length - 1;
+      if (!image.naturalWidth || !viewport.clientWidth) return;
+      const oldX = stage.offsetWidth > viewport.clientWidth ? (viewport.scrollLeft + viewport.clientWidth / 2) / stage.offsetWidth : .5;
+      const oldY = stage.offsetHeight > viewport.clientHeight ? (viewport.scrollTop + viewport.clientHeight / 2) / stage.offsetHeight : .5;
+      const turned = visionPhotoRotation % 180 !== 0;
+      const width = turned ? image.naturalHeight : image.naturalWidth;
+      const height = turned ? image.naturalWidth : image.naturalHeight;
+      const fit = Math.min(viewport.clientWidth / width, viewport.clientHeight / height, 1);
+      const scale = fit * Number(zoom.value);
+      stage.style.width = Math.ceil(width * scale) + "px";
+      stage.style.height = Math.ceil(height * scale) + "px";
+      stage.style.marginTop = Math.max(0, (viewport.clientHeight - stage.offsetHeight) / 2) + "px";
+      image.style.width = image.naturalWidth * scale + "px";
+      image.style.height = image.naturalHeight * scale + "px";
+      image.style.transform = `translate(-50%, -50%) rotate(${visionPhotoRotation}deg)`;
+      viewport.scrollTo(stage.offsetWidth * (preserveCenter ? oldX : .5) - viewport.clientWidth / 2,
+        stage.offsetHeight * (preserveCenter ? oldY : .5) - viewport.clientHeight / 2);
+    }
+
+    let lastVisionWheelZoom = -Infinity;
+
+    function handleVisionPhotoWheel(event) {
+      if (!visionElement("visionWheelZoom").checked || !event.deltaY || event.ctrlKey || event.metaKey) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now - lastVisionWheelZoom < 100) return;
+      lastVisionWheelZoom = now;
+      stepVisionPhotoZoom(event.deltaY < 0 ? 1 : -1);
+    }
+
+    function stepVisionPhotoZoom(direction) {
+      const zoom = visionElement("visionPhotoZoom");
+      zoom.selectedIndex = Math.max(0, Math.min(zoom.options.length - 1, zoom.selectedIndex + direction));
+      renderVisionPhotoZoom();
+    }
+
+    function rotateVisionPhoto() {
+      visionPhotoRotation = (visionPhotoRotation + 90) % 360;
+      renderVisionPhotoZoom(false);
+    }
+
+    function resetVisionPhotoZoom() {
+      visionElement("visionPhotoZoom").selectedIndex = 0;
+      renderVisionPhotoZoom(false);
+    }
+
+    function cleanupVisionPhotoViewer() {
+      visionPhotoNumber = 0;
+      visionElement("visionPhotoReadings").replaceChildren();
+      visionPhotoResize?.disconnect();
+      visionElement("visionPhotoViewport").removeEventListener("wheel", handleVisionPhotoWheel);
+      lastVisionWheelZoom = -Infinity;
+      const image = visionElement("visionPhotoOriginal");
+      image.onload = image.onerror = null;
+      image.removeAttribute("src");
+      const stage = visionElement("visionPhotoStage");
+      stage.removeAttribute("style");
+    }
+
+    function useHotlineAttachments() {
+      const attached = [...visionElement("hDashFile").files, ...visionElement("hEvidenceFiles").files];
+      const input = visionElement("imageVisionFiles");
+      if (input.disabled) return;
+      if (!attached.length || attached.length > 4) {
+        visionElement("imageVisionStatus").textContent = attached.length ? "Hay más de cuatro fotos adjuntas. Elige hasta cuatro para analizarlas." : "Primero adjunta fotos a la solicitud o selecciónalas aquí.";
+        return;
+      }
+      input.value = "";
+      prepareVisionPhotos(attached);
+    }
+
+    function prepareVisionPhotos(attached = null) {
+      visionGeneration++;
+      visionReadingsByPhoto = null;
+      const photos = visionElement("imageVisionPhotos");
+      [...photos.querySelectorAll("img")].forEach(img => URL.revokeObjectURL(img.src));
+      photos.replaceChildren();
+      visionElement("imageVisionResults").replaceChildren();
+      visionElement("imageVisionActions").hidden = true;
+      updateVisionSelectAll();
+      const files = attached || [...visionElement("imageVisionFiles").files];
+      hotlineVisionFiles = files;
+      if (files.length > 4) {
+        visionElement("imageVisionStatus").textContent = "Selecciona hasta cuatro fotos.";
+        return;
+      }
+      visionElement("imageVisionStatus").textContent = "";
+      files.forEach((file, index) => {
+        const figure = document.createElement("figure");
+        const image = document.createElement("img");
+        image.src = URL.createObjectURL(file);
+        image.alt = `Foto ${index + 1}`;
+        image.className = "w-full max-h-[38vh] object-contain rounded-lg";
+        const name = document.createElement("figcaption");
+        name.textContent = `Foto ${index + 1} · ${file.name}`;
+        name.className = "text-xs break-all";
+        const open = document.createElement("button");
+        open.type = "button";
+        open.className = "relative block w-full rounded-lg cursor-zoom-in";
+        open.setAttribute("aria-label", `Ampliar foto ${index + 1}`);
+        const indicator = document.createElement("span");
+        indicator.className = "absolute right-1 top-1 rounded-lg bg-white/90 px-2 py-1 text-xs font-bold text-slate-800 shadow";
+        indicator.textContent = "Ampliar";
+        open.addEventListener("click", () => openVisionPhotoViewer(image.src, name.textContent, index + 1));
+        open.append(image, indicator);
+        figure.append(open, name);
+        photos.append(figure);
+      });
+    }
+
+    async function callImageVision(payload) {
+      const response = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload), signal: AbortSignal.timeout(85000) });
+      if (!response.ok) throw new Error("No se pudo conectar con el servicio de visión.");
+      const result = await response.json();
+      if (result.status !== "ok") throw new Error(result.message || "El servicio de visión aún no está disponible.");
+      return result;
+    }
+
+    async function initializeImageVisionGoogle() {
+      if (!visionClientId) visionClientId = (await callImageVision({ action: "imageVisionConfig" })).clientId;
+      if (!visionGoogleLibrary) {
+        visionGoogleLibrary = new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "https://accounts.google.com/gsi/client";
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("No se pudo cargar el acceso de Google."));
+          document.head.append(script);
+        }).catch(error => { visionGoogleLibrary = undefined; throw error; });
+      }
+      await visionGoogleLibrary;
+      const slot = visionElement("imageVisionGoogle");
+      if (!slot.childElementCount) {
+        google.accounts.id.initialize({ client_id: visionClientId, callback: response => {
+          if (!visionElement("imageVisionModal").open) return;
+          visionToken = response.credential;
+          slot.replaceChildren();
+          visionElement("imageVisionStatus").textContent = "Cuenta verificada para continuar. Pulsa Analizar fotos.";
+        } });
+        google.accounts.id.renderButton(slot, { theme: "outline", text: "signin_with", locale: "es" });
+      }
+    }
+
+    async function compressVisionPhoto(file) {
+      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 15000000) {
+        throw new Error("Usa fotos JPG, PNG o WebP de hasta 15 MB cada una.");
+      }
+      const bitmap = await createImageBitmap(file);
+      try {
+        const canvas = document.createElement("canvas");
+        const scale = Math.min(1, 1700 / Math.max(bitmap.width, bitmap.height));
+        canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+        canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+        const context = canvas.getContext("2d");
+        context.fillStyle = "#fff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        const data = canvas.toDataURL("image/jpeg", .8);
+        if (data.length > 1850000) throw new Error("La imagen es demasiado pesada. Recórtala e inténtalo otra vez.");
+        return data;
+      } finally { bitmap.close(); }
+    }
+
+    async function runImageVision() {
+      const files = hotlineVisionFiles;
+      const status = visionElement("imageVisionStatus");
+      const run = visionElement("imageVisionRun");
+      const input = visionElement("imageVisionFiles");
+      if (!files.length || files.length > 4) { status.textContent = "Selecciona entre una y cuatro fotos."; return; }
+      const generation = ++visionGeneration;
+      const reuse = visionElement("hotlineUseAttachments");
+      run.disabled = input.disabled = reuse.disabled = true;
+      try {
+        if (!visionToken) {
+          status.textContent = "Preparando acceso de Google…";
+          await initializeImageVisionGoogle();
+          if (generation === visionGeneration) status.textContent = "Inicia sesión con tu cuenta de Google autorizada.";
+          return;
+        }
+        status.textContent = "Leyendo las fotos…";
+        const images = await Promise.all(files.map(compressVisionPhoto));
+        const result = await callImageVision({ action: "analyzeVehicleImages", token: visionToken, images });
+        if (generation !== visionGeneration) return;
+        showVisionReadings(result.readings);
+        status.textContent = result.readings.length ? "Verifica cada sugerencia con su foto y marca los campos que quieres aplicar." : "No se encontraron datos legibles.";
+      } catch (error) {
+        if (generation === visionGeneration) status.textContent = error.message;
+        if (/sesión de Google|cuenta de Google/.test(error.message)) visionToken = "";
+      } finally {
+        if (generation === visionGeneration) run.disabled = input.disabled = reuse.disabled = false;
+      }
+    }
+
+    function normalizeVisionVin(value) {
+      return value.toUpperCase().replace(/[\s*]/g, "");
+    }
+
+    function renderVisionPhotoReadings() {
+      const panel = visionElement("visionPhotoReadings");
+      panel.replaceChildren();
+      const readings = visionReadingsByPhoto?.filter(reading => reading.photo === visionPhotoNumber) || [];
+      if (!readings.length) {
+        const message = document.createElement("p");
+        message.className = "text-sm text-slate-600";
+        message.textContent = visionReadingsByPhoto ? "Gemini no encontró datos legibles para esta foto." : "Analiza las fotos para ver las lecturas aquí.";
+        panel.append(message);
+        return;
+      }
+      const list = document.createElement("dl");
+      list.className = "divide-y divide-slate-200";
+      readings.forEach(reading => {
+        const row = document.createElement("div");
+        row.className = "py-2 first:pt-0 text-sm";
+        const label = document.createElement("dt");
+        label.className = "font-semibold";
+        label.textContent = visionFields[reading.field]?.[0] || reading.field;
+        const value = document.createElement("dd");
+        value.className = "whitespace-pre-wrap break-words";
+        value.textContent = reading.value;
+        row.append(label, value);
+        if (reading.uncertain) {
+          const flag = document.createElement("dd");
+          flag.className = "mt-0.5 text-xs font-semibold text-amber-700";
+          flag.textContent = "Lectura dudosa";
+          row.append(flag);
+        }
+        list.append(row);
+      });
+      panel.append(list);
+    }
+
+    function visionFieldCheckboxes() {
+      return [...visionElement("imageVisionResults").querySelectorAll('[data-vision-field] input[type="checkbox"]')];
+    }
+
+    function selectAllVisionFields(checked) {
+      visionFieldCheckboxes().forEach(input => { input.checked = checked; });
+      updateVisionSelectAll();
+    }
+
+    function updateVisionSelectAll() {
+      const inputs = visionFieldCheckboxes();
+      const selected = inputs.filter(input => input.checked).length;
+      const all = visionElement("imageVisionSelectAll");
+      all.checked = inputs.length > 0 && selected === inputs.length;
+      all.indeterminate = selected > 0 && selected < inputs.length;
+    }
+
+    function showVisionReadings(readings) {
+      visionReadingsByPhoto = readings;
+      if (visionElement("visionPhotoViewer").open) renderVisionPhotoReadings();
+      const container = visionElement("imageVisionResults");
+      container.replaceChildren();
+      for (const [field, [label, supportId]] of Object.entries(visionFields)) {
+        if (!supportId) continue;
+        const matches = readings.filter(reading => reading.field === field);
+        if (!matches.length) continue;
+        const values = [...new Set(matches.map(r => field === "vin" ? normalizeVisionVin(r.value) : r.value.trim()))];
+        const row = document.createElement("div");
+        row.dataset.visionField = field;
+        const title = document.createElement("label");
+        title.className = "flex gap-2 items-center text-sm font-semibold";
+        const use = document.createElement("input");
+        use.type = "checkbox";
+        use.addEventListener("change", updateVisionSelectAll);
+        title.append(use, document.createTextNode(label));
+        const value = document.createElement("input");
+        value.value = values.length === 1 ? values[0] : "";
+        value.className = "mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm";
+        value.setAttribute("aria-label", label);
+        const details = document.createElement("p");
+        details.className = "mt-1 text-xs";
+        const verify = field === "vin" && values.length === 1 && /^[A-HJ-NPR-Z0-9]{17}$/.test(values[0]) &&
+          new Set(matches.map(r => r.photo)).size > 1 && !matches.some(r => r.uncertain);
+        details.textContent = (verify ? "VIN coincidente. " : values.length > 1 ? "Lecturas distintas. " : matches.some(r => r.uncertain) ? "Lectura dudosa. " : "") +
+          matches.map(r => `Foto ${r.photo}: ${r.value}`).join(" · ");
+        row.append(title, value, details);
+        container.append(row);
+      }
+      visionElement("imageVisionActions").hidden = !container.childElementCount;
+      updateVisionSelectAll();
+    }
+
+    function applyImageVision() {
+      const status = visionElement("imageVisionStatus");
+      const rows = [...visionElement("imageVisionResults").children].filter(row => row.querySelector('[type="checkbox"]').checked);
+      if (!rows.length) { status.textContent = "Marca al menos un campo."; return; }
+      const edits = rows.map(row => ({ field: row.dataset.visionField, value: row.querySelector('input:not([type="checkbox"])').value.trim() }));
+      if (edits.some(edit => !edit.value || (edit.field === "vin" && !/^[A-HJ-NPR-Z0-9]{17}$/.test(normalizeVisionVin(edit.value))))) {
+        status.textContent = "Completa los campos marcados. El VIN debe tener 17 caracteres válidos.";
+        return;
+      }
+      edits.forEach(({ field, value }) => {
+        if (field === "vin") value = normalizeVisionVin(value);
+        if (field === "ot") value = value.replace(/^(\d{1,3})(?:[,.]\d{3})+$/, match => match.replace(/[,.]/g, ""));
+        if (field === "brand") {
+          const brands = visionElement("hBrand");
+          const option = [...brands.options].find(item => item.value.toLowerCase() === value.toLowerCase());
+          if (option) brands.value = option.value;
+          else {
+            const custom = [...brands.options].find(item => /otras|personaliz/i.test(item.value));
+            if (!custom) return;
+            brands.value = custom.value;
+            visionElement("hOtherBrandText").value = value;
+          }
+          toggleOtherBrand();
+        } else visionElement(visionFields[field][1]).value = value;
+      });
+      visionElement("hotlineVisionApplied").textContent = "Campos aplicados. Revisa la solicitud y envíala cuando esté lista.";
+      visionElement("imageVisionModal").close();
+    }
+
+  </script>
 </body>
 </html>
+
+Mostrando hotline.html.

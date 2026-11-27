@@ -2148,6 +2148,9 @@
       <button type="button" onclick="stepVisionPhotoZoom(1)" aria-label="Ampliar zoom" id="visionZoomIn" class="touch-target rounded-full border border-slate-300 px-3 font-semibold">+</button>
       <button type="button" onclick="rotateVisionPhoto()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Girar 90°</button>
       <button type="button" onclick="resetVisionPhotoZoom()" class="touch-target rounded-lg border border-slate-300 px-3 text-sm font-semibold">Ajustar a ventana</button>
+      <label class="inline-flex min-h-10 items-center gap-2 text-sm">
+        <input type="checkbox" id="visionWheelZoom" checked /> Zoom con la rueda
+      </label>
     </div>
     <p class="text-xs mb-2">100 % ajusta la foto a la ventana. Al ampliar, puedes arrastrarla o desplazarte para ver los detalles.</p>
     <div class="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(15rem,19rem)]">
@@ -2181,7 +2184,12 @@
       <div id="imageVisionPhotos" class="grid grid-cols-2 gap-2 content-start"></div>
       <div>
         <div id="imageVisionResults" class="space-y-3"></div>
-        <button type="button" id="imageVisionApply" onclick="applyImageVision()" hidden class="mt-3 touch-target btn-accent rounded-full px-4 text-sm font-bold">Aplicar campos seleccionados</button>
+        <div id="imageVisionActions" hidden class="mt-3 flex flex-wrap items-center gap-3">
+          <label class="inline-flex min-h-10 items-center gap-2 text-sm font-semibold">
+            <input type="checkbox" id="imageVisionSelectAll" onchange="selectAllVisionFields(this.checked)" /> Seleccionar todos
+          </label>
+          <button type="button" id="imageVisionApply" onclick="applyImageVision()" class="touch-target btn-accent rounded-full px-4 text-sm font-bold">Aplicar campos seleccionados</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -4559,6 +4567,7 @@
         if (drag) viewport.scrollTo(drag.left + drag.x - event.clientX, drag.top + drag.y - event.clientY);
       };
       viewport.onlostpointercapture = () => { drag = null; };
+      viewport.addEventListener("wheel", handleVisionPhotoWheel, { passive: false });
       renderVisionPhotoZoom(false);
     }
 
@@ -4589,6 +4598,17 @@
         stage.offsetHeight * (preserveCenter ? oldY : .5) - viewport.clientHeight / 2);
     }
 
+    let lastVisionWheelZoom = -Infinity;
+
+    function handleVisionPhotoWheel(event) {
+      if (!visionElement("visionWheelZoom").checked || !event.deltaY || event.ctrlKey || event.metaKey) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now - lastVisionWheelZoom < 100) return;
+      lastVisionWheelZoom = now;
+      stepVisionPhotoZoom(event.deltaY < 0 ? 1 : -1);
+    }
+
     function stepVisionPhotoZoom(direction) {
       const zoom = visionElement("visionPhotoZoom");
       zoom.selectedIndex = Math.max(0, Math.min(zoom.options.length - 1, zoom.selectedIndex + direction));
@@ -4609,6 +4629,8 @@
       visionPhotoNumber = 0;
       visionElement("visionPhotoReadings").replaceChildren();
       visionPhotoResize?.disconnect();
+      visionElement("visionPhotoViewport").removeEventListener("wheel", handleVisionPhotoWheel);
+      lastVisionWheelZoom = -Infinity;
       const image = visionElement("visionPhotoOriginal");
       image.onload = image.onerror = null;
       image.removeAttribute("src");
@@ -4623,7 +4645,8 @@
       [...photos.querySelectorAll("img")].forEach(img => URL.revokeObjectURL(img.src));
       photos.replaceChildren();
       visionElement("imageVisionResults").replaceChildren();
-      visionElement("imageVisionApply").hidden = true;
+      visionElement("imageVisionActions").hidden = true;
+      updateVisionSelectAll();
       const files = [...visionElement("imageVisionFiles").files];
       if (files.length > 4) {
         visionElement("imageVisionStatus").textContent = "Selecciona hasta cuatro fotos.";
@@ -4773,6 +4796,23 @@
       panel.append(list);
     }
 
+    function visionFieldCheckboxes() {
+      return [...visionElement("imageVisionResults").querySelectorAll('[data-vision-field] input[type="checkbox"]')];
+    }
+
+    function selectAllVisionFields(checked) {
+      visionFieldCheckboxes().forEach(input => { input.checked = checked; });
+      updateVisionSelectAll();
+    }
+
+    function updateVisionSelectAll() {
+      const inputs = visionFieldCheckboxes();
+      const selected = inputs.filter(input => input.checked).length;
+      const all = visionElement("imageVisionSelectAll");
+      all.checked = inputs.length > 0 && selected === inputs.length;
+      all.indeterminate = selected > 0 && selected < inputs.length;
+    }
+
     function showVisionReadings(readings) {
       visionReadingsByPhoto = readings;
       if (visionElement("visionPhotoViewer").open) renderVisionPhotoReadings();
@@ -4789,6 +4829,7 @@
         title.className = "flex gap-2 items-center text-sm font-semibold";
         const use = document.createElement("input");
         use.type = "checkbox";
+        use.addEventListener("change", updateVisionSelectAll);
         title.append(use, document.createTextNode(label));
         const value = document.createElement("input");
         value.value = values.length === 1 ? values[0] : "";
@@ -4803,7 +4844,8 @@
         row.append(title, value, details);
         container.append(row);
       }
-      visionElement("imageVisionApply").hidden = !container.childElementCount;
+      visionElement("imageVisionActions").hidden = !container.childElementCount;
+      updateVisionSelectAll();
     }
 
     function applyImageVision() {

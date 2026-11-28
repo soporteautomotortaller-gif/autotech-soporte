@@ -70,6 +70,8 @@
         <span class="block text-[11px] font-bold uppercase text-slate-400">Código de Solicitud Generado</span>
         <span id="generatedCodeText" class="text-xl font-extrabold text-[#004B93] font-mono">SOL-2026-0000</span>
       </div>
+      <p id="hotlineEvidenceBackupStatus" role="status" class="text-sm text-slate-700"></p>
+      <button id="hotlineEvidenceBackupRetry" type="button" onclick="retryHotlineEvidenceBackup()" class="hidden text-sm font-semibold text-blue-700 underline">Reintentar respaldo de fotos</button>
       <p id="hotlineReceiptStatus" role="status" class="text-sm text-slate-700"></p>
       <button id="hotlineReceiptRetry" type="button" onclick="retryHotlineReceipt()" class="hidden text-sm font-semibold text-blue-700 underline">Reintentar notificaciones por correo</button>
       <div class="pt-2">
@@ -315,6 +317,35 @@
       if (hotlineReceiptRequest) void sendHotlineReceipt(hotlineReceiptRequest);
     }
 
+    async function backupHotlineEvidence(request) {
+      const status = document.getElementById("hotlineEvidenceBackupStatus");
+      const retry = document.getElementById("hotlineEvidenceBackupRetry");
+      if (hotlineReceiptRequest === request) {
+        status.textContent = "Respaldando las fotos en Drive…";
+        retry.classList.add("hidden");
+      }
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST", body: JSON.stringify({ action: "backupHotlineEvidence", requestId: request.id }),
+          signal: AbortSignal.timeout(90000)
+        });
+        const result = await response.json();
+        if (!response.ok || !["ok", "retry", "error"].includes(result.status)) throw new Error("Sin confirmación");
+        if (hotlineReceiptRequest !== request) return;
+        status.textContent = result.status === "ok" ? "Fotos respaldadas en Drive." :
+          result.message || "Algunas fotos siguen pendientes de respaldo.";
+        retry.classList.toggle("hidden", result.status === "ok");
+      } catch (error) {
+        if (hotlineReceiptRequest !== request) return;
+        status.textContent = "La solicitud está guardada. El respaldo de las fotos sigue pendiente.";
+        retry.classList.remove("hidden");
+      }
+    }
+
+    function retryHotlineEvidenceBackup() {
+      if (hotlineReceiptRequest) void backupHotlineEvidence(hotlineReceiptRequest);
+    }
+
     async function submitRequest(e) {
       e.preventDefault();
       const btn = document.getElementById("btnSubmitHotline");
@@ -371,6 +402,7 @@
           requesterEmail: document.getElementById("hRequesterEmail").value.trim(),
           folderUrl: "",
           evidence: evidence,
+          evidenceBackupVersion: 1,
           linkedCaseId: ""
         };
 
@@ -390,7 +422,9 @@
         document.getElementById("successBox").classList.remove("hidden");
         window.scrollTo({ top: 0, behavior: "smooth" });
         hotlineReceiptRequest = { id: reqId, email: newReq.requesterEmail };
-        void sendHotlineReceipt(hotlineReceiptRequest);
+        const submittedRequest = hotlineReceiptRequest;
+        document.getElementById("hotlineEvidenceBackupStatus").textContent = "Respaldo de fotos pendiente.";
+        void sendHotlineReceipt(submittedRequest).finally(() => backupHotlineEvidence(submittedRequest));
       } catch (err) {
         alert("No se pudo enviar la solicitud: " + err.message);
       } finally {
@@ -401,6 +435,8 @@
 
     function resetAnotherRequest() {
       hotlineReceiptRequest = null;
+      document.getElementById("hotlineEvidenceBackupStatus").textContent = "";
+      document.getElementById("hotlineEvidenceBackupRetry").classList.add("hidden");
       document.getElementById("hotlineReceiptStatus").textContent = "";
       document.getElementById("hotlineReceiptRetry").classList.add("hidden");
       document.getElementById("hotlineForm").reset();

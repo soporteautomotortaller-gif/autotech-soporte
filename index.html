@@ -184,7 +184,17 @@
     border-bottom: 1px solid rgba(88,108,159,.16); color: var(--glass-muted);
   }
   .glass-window-bar { border-radius: 20px 20px 0 0; background: rgba(126,145,205,.10); }
-  #glassWindowTitle { font-size: 12px; font-weight: 650; }
+  #glassWindowTitle { font-size: 12px; font-weight: 650; white-space: nowrap; }
+  .calendar-ticker:not([hidden]) { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; color: var(--glass-muted); font-size: 12px; }
+  .calendar-ticker-track { flex: 1; min-width: 0; overflow: hidden; }
+  .calendar-ticker-message { display: block; width: max-content; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; font-weight: 650; }
+  .calendar-ticker-message.moving { max-width: none; animation: calendar-news 18s linear both; }
+  .calendar-ticker-track:hover .moving { animation-play-state: paused; }
+  .calendar-ticker-message:focus-visible { animation: none; max-width: 100%; }
+  .calendar-ticker button:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+  .calendar-ticker-control { min-width: 24px; min-height: 24px; border-radius: 8px; background: rgba(126,145,205,.14); }
+  @keyframes calendar-news { from { transform: translateX(var(--ticker-distance)); } to { transform: translateX(-100%); } }
+  @media (prefers-reduced-motion: reduce) { .calendar-ticker-message.moving { animation: none !important; max-width: 100%; } }
   .glass-lights { display: flex; align-items: center; gap: 3px; flex: none; }
   .glass-light { display: grid; place-items: center; width: 20px; height: 25px; background: none; color: #1d2230; }
   .glass-light::before {
@@ -468,6 +478,11 @@
       <div class="glass-window-bar">
         <div class="glass-lights" data-glass-controls="glassWorkspace"></div>
         <span id="glassWindowTitle">Tablero</span>
+        <div id="calendarTicker" class="calendar-ticker" aria-label="Recordatorios del calendario" hidden>
+          <div id="calendarTickerTrack" class="calendar-ticker-track"><button id="calendarTickerMessage" class="calendar-ticker-message" type="button" onclick="openCalendarTickerEvent()" onanimationend="advanceCalendarTicker()"></button></div>
+          <button id="calendarTickerPause" type="button" class="calendar-ticker-control" aria-label="Pausar desplazamiento" aria-pressed="false" onclick="toggleCalendarTicker()"><i class="ph-bold ph-pause" aria-hidden="true"></i></button>
+          <button id="calendarTickerNext" type="button" class="calendar-ticker-control" aria-label="Siguiente recordatorio" onclick="advanceCalendarTicker()"><i class="ph-bold ph-caret-right" aria-hidden="true"></i></button>
+        </div>
       </div>
       <header class="glass-toolbar">
       <div class="max-w-[1600px] mx-auto px-3 sm:px-6 py-3 space-y-2.5">
@@ -868,7 +883,10 @@
             <h2 id="calMonthTitle" class="text-base sm:text-lg font-bold text-slate-900 min-w-[170px] text-center capitalize"></h2>
             <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200"><i class="ph-bold ph-caret-right"></i></button>
           </div>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="openCalendarEvent()" class="btn-accent px-3.5 py-2 rounded-xl text-white text-xs font-bold"><i class="ph-bold ph-plus" aria-hidden="true"></i> Nuevo aviso</button>
           <button onclick="goToday()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700">Hoy</button>
+          </div>
         </div>
 
         <div id="calendarConflictBanner" class="hidden bg-red-50 border-2 border-red-300 text-red-900 px-4 py-3 rounded-2xl text-xs font-bold"></div>
@@ -878,6 +896,11 @@
             <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
           </div>
           <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-2"></div>
+        </div>
+        <div class="win-mica rounded-2xl p-4 sm:p-5">
+          <h3 id="calendarAgendaHeading" class="text-sm font-bold">Avisos del equipo</h3>
+          <p id="calendarLoadStatus" role="status" class="text-xs mt-1"></p>
+          <div id="calendarAgenda" class="space-y-2 mt-2"></div>
         </div>
       </section>
         </main>
@@ -2137,6 +2160,32 @@
     </div>
   </div>
 
+  <dialog id="calendarEventDialog" aria-labelledby="calendarEventHeading" class="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[88dvh] rounded-2xl p-5 text-slate-900">
+    <div class="flex items-center justify-between gap-3 mb-3">
+      <h2 id="calendarEventHeading" class="text-lg font-bold">Nuevo aviso</h2>
+      <button type="button" class="rounded-xl border px-3 py-2" onclick="document.getElementById('calendarEventDialog').close()">Cerrar</button>
+    </div>
+    <div id="calendarEventDetail" class="hidden space-y-2">
+      <h3 id="calendarDetailTitle" class="font-bold break-words"></h3>
+      <p id="calendarDetailWhen" class="text-sm"></p>
+      <p id="calendarDetailNotes" class="text-sm whitespace-pre-wrap break-words"></p>
+      <p id="calendarDetailAuthor" class="text-xs"></p>
+      <button id="calendarEventEdit" type="button" class="rounded-xl border px-3 py-2 text-sm font-bold" onclick="editCalendarEvent()">Editar aviso</button>
+    </div>
+    <form id="calendarEventForm" onsubmit="saveCalendarEvent(event)" class="space-y-3">
+      <label class="block text-sm">Título breve<input name="title" required maxlength="80" class="w-full border rounded-xl p-2"></label>
+      <label class="block text-sm">Tipo<select name="kind" class="w-full border rounded-xl p-2"><option>Aviso</option><option>Visita</option><option>Vacaciones</option><option>Otro</option></select></label>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <label class="block text-sm">Fecha de inicio<input name="start" type="date" required class="w-full border rounded-xl p-2"></label>
+        <label class="block text-sm">Fecha final opcional<input name="end" type="date" class="w-full border rounded-xl p-2"></label>
+      </div>
+      <label class="block text-sm">Hora opcional (Paraguay)<input name="time" type="time" class="w-full border rounded-xl p-2"></label>
+      <label class="block text-sm">Datos importantes<textarea name="notes" maxlength="600" rows="3" class="w-full border rounded-xl p-2"></textarea></label>
+      <p id="calendarEventStatus" role="status" class="text-sm"></p>
+      <button id="calendarEventSave" type="submit" class="btn-accent rounded-xl px-4 py-2 text-sm font-bold text-white">Guardar aviso</button>
+    </form>
+  </dialog>
+
   <dialog id="hotlineMailModal" aria-labelledby="hotlineMailTitle" class="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[88dvh] rounded-2xl p-5 text-slate-900">
     <div class="flex items-center justify-between gap-2 mb-4">
       <h2 id="hotlineMailTitle" class="font-bold text-lg">Avisos de Hotline por correo</h2>
@@ -2956,7 +3005,7 @@
       } catch (e) {}
     }
 
-    setInterval(() => { if (currentSession) syncFirebaseRealtime(); }, 8000);
+    setInterval(() => { if (currentSession) { syncFirebaseRealtime(); syncTeamCalendar(); } }, 8000);
 
     function updateHotlineBadge() { const badge = document.getElementById("hotlineBadgeCount"); const pendingCount = (state.hotlineRequests || []).filter(r => r.status === "Pendiente").length; if (pendingCount > 0) { badge.textContent = pendingCount; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
     function updateMyTasksBadge() { const badge = document.getElementById("myTasksBadge"); if (!badge || !currentSession) return; const myPending = (state.todos || []).filter(td => !td.completed && isTodoAssignedTo(td, currentSession.id)).length; if (myPending > 0) { badge.textContent = myPending; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -3461,7 +3510,7 @@
     async function completeRegistration(e) { e.preventDefault(); if (!pendingRegTemp || document.getElementById("regPinInput").value.trim() !== pendingRegTemp.pinCode) { showToast("PIN incorrecto", "warning"); return; } const newUserReq = { id: "u_" + Date.now(), name: pendingRegTemp.name, email: pendingRegTemp.email, password: pendingRegTemp.pass, role: "Encargado", requestedAt: new Date().toLocaleString() }; state.pendingUsers.push(newUserReq); await fetch(`${FIREBASE_DB_URL}/pendingUsers/${newUserReq.id}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newUserReq) }).catch(() => {}); resetRegSteps(); switchAuthTab("user"); showToast("Solicitud enviada al Administrador", "success"); }
 
     function startAuthenticatedSession(sessionObj) {
-      currentSession = sessionObj;
+      currentSession = sessionObj; syncTeamCalendar();
       sessionStorage.setItem("autotech_session_v6", JSON.stringify(sessionObj));
       document.getElementById("authScreen").classList.add("hidden");
       document.getElementById("mainAppContainer").classList.remove("hidden");
@@ -3483,7 +3532,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("hotlineEvidenceModal").close(); document.getElementById("hotlineMailModal").close(); document.getElementById("brandSettingsModal").close(); visionToken = ""; document.getElementById("imageVisionModal").close(); document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("calendarEventDialog").close(); document.getElementById("hotlineEvidenceModal").close(); document.getElementById("hotlineMailModal").close(); document.getElementById("brandSettingsModal").close(); visionToken = ""; document.getElementById("imageVisionModal").close(); document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -3853,8 +3902,209 @@
       }).join("");
     }
 
-    function changeMonth(delta) { calDate.setMonth(calDate.getMonth() + delta); renderCalendar(); }
+    function changeMonth(delta) { calDate = new Date(calDate.getFullYear(), calDate.getMonth() + delta, 1); renderCalendar(); }
     function goToday() { calDate = new Date(); renderCalendar(); }
+
+    let teamCalendarEvents = [];
+    let calendarReadNumber = 0;
+    let activeCalendarEvent = "";
+    let newCalendarEventId = "";
+    let calendarTickerItems = [];
+    let calendarTickerIndex = 0;
+    let calendarTickerKey = "";
+    let calendarTickerPaused = false;
+
+    function calendarToday() {
+      return new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Asuncion" }).format(new Date());
+    }
+
+    function calendarDateLabel(date) {
+      return new Intl.DateTimeFormat("es-PY", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(date));
+    }
+
+    function calendarWhen(item) {
+      const date = calendarDateLabel(item.start);
+      const hour = item.time ? ` · ${item.time} h` : " · Todo el día";
+      return item.start === item.end ? date + hour : `${date}${hour} hasta ${calendarDateLabel(item.end)}`;
+    }
+
+    async function syncTeamCalendar() {
+      if (!currentSession) return;
+      const readNumber = ++calendarReadNumber;
+      try {
+        const response = await fetch(`${FIREBASE_DB_URL}/teamCalendar.json`, { cache: "no-store", signal: AbortSignal.timeout(10000) });
+        if (!response.ok) throw new Error("Error al cargar avisos");
+        const data = await response.json();
+        if (readNumber !== calendarReadNumber || !currentSession) return;
+        const events = Object.entries(data || {}).filter(([id, item]) =>
+          /^cal_[a-f0-9-]+$/.test(id) && item && typeof item.title === "string" &&
+          [item.start, item.end].every(date => typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isFinite(Date.parse(date)))
+        ).map(([id, item]) => ({ ...item, id })).sort((a, b) =>
+          a.start.localeCompare(b.start) || String(a.time || "").localeCompare(String(b.time || "")) || a.id.localeCompare(b.id)
+        );
+        document.getElementById("calendarLoadStatus").textContent = "";
+        if (JSON.stringify(events) === JSON.stringify(teamCalendarEvents)) return;
+        teamCalendarEvents = events;
+        renderCalendar();
+      } catch {
+        if (readNumber === calendarReadNumber && currentSession) {
+          document.getElementById("calendarLoadStatus").textContent = "No se pudieron actualizar los avisos. Se volverá a intentar.";
+        }
+      }
+    }
+
+    function renderCalendarAgenda(start, end, heading) {
+      const box = document.getElementById("calendarAgenda");
+      document.getElementById("calendarAgendaHeading").textContent = heading;
+      const events = teamCalendarEvents.filter(item => item.start <= end && item.end >= start);
+      box.innerHTML = events.map(item => `<button type="button" onclick="openCalendarEvent('', '${item.id}')" class="block w-full rounded-xl border px-3 py-2 text-left text-sm break-words">
+        <strong>${escapeHtml(item.title)}</strong><span class="block text-xs">${escapeHtml(item.kind)} · ${calendarWhen(item)} · ${escapeHtml(item.author)}</span>
+      </button>`).join("") || '<p class="text-xs">No hay avisos para estas fechas.</p>';
+    }
+
+    function showCalendarDay(date) {
+      renderCalendarAgenda(date, date, `Avisos del ${calendarDateLabel(date)}`);
+      document.getElementById("calendarAgenda").scrollIntoView({ block: "nearest" });
+    }
+
+    function canEditCalendarEvent(item) {
+      return currentSession && (isCurrentAdmin() || item.authorId === currentSession.id);
+    }
+
+    function openCalendarEvent(date = calendarToday(), id = "") {
+      if (!currentSession) return;
+      const item = teamCalendarEvents.find(entry => entry.id === id);
+      if (id && !item) return;
+      activeCalendarEvent = id;
+      newCalendarEventId = "";
+      document.getElementById("calendarEventHeading").textContent = item ? "Aviso del equipo" : "Nuevo aviso";
+      document.getElementById("calendarEventDetail").classList.toggle("hidden", !item);
+      document.getElementById("calendarEventForm").classList.toggle("hidden", Boolean(item));
+      if (item) {
+        document.getElementById("calendarDetailTitle").textContent = item.title;
+        document.getElementById("calendarDetailWhen").textContent = `${item.kind} · ${calendarWhen(item)}`;
+        document.getElementById("calendarDetailNotes").textContent = item.notes || "";
+        document.getElementById("calendarDetailAuthor").textContent = `Registrado por ${item.author}`;
+        document.getElementById("calendarEventEdit").classList.toggle("hidden", !canEditCalendarEvent(item));
+      } else {
+        fillCalendarEventForm({ start: date });
+      }
+      const dialog = document.getElementById("calendarEventDialog");
+      if (!dialog.open) dialog.showModal();
+    }
+
+    function fillCalendarEventForm(item) {
+      const form = document.getElementById("calendarEventForm");
+      form.reset();
+      for (const field of ["title", "kind", "start", "end", "time", "notes"]) {
+        if (item[field]) form.elements[field].value = item[field];
+      }
+      document.getElementById("calendarEventStatus").textContent = "";
+    }
+
+    function editCalendarEvent() {
+      const item = teamCalendarEvents.find(entry => entry.id === activeCalendarEvent);
+      if (!item || !canEditCalendarEvent(item)) return;
+      fillCalendarEventForm(item);
+      document.getElementById("calendarEventHeading").textContent = "Editar aviso";
+      document.getElementById("calendarEventDetail").classList.add("hidden");
+      document.getElementById("calendarEventForm").classList.remove("hidden");
+      document.getElementById("calendarEventForm").elements.title.focus();
+    }
+
+    async function saveCalendarEvent(event) {
+      event.preventDefault();
+      const button = document.getElementById("calendarEventSave");
+      if (!currentSession || button.disabled) return;
+      const previous = teamCalendarEvents.find(item => item.id === activeCalendarEvent);
+      if (activeCalendarEvent && (!previous || !canEditCalendarEvent(previous))) return;
+      const status = document.getElementById("calendarEventStatus");
+      const form = new FormData(event.currentTarget);
+      const title = form.get("title").trim();
+      const start = form.get("start");
+      const end = form.get("end") || start;
+      if (!title || end < start) {
+        status.textContent = !title ? "Escribe un título." : "La fecha final debe ser igual o posterior a la inicial.";
+        return;
+      }
+      const id = activeCalendarEvent || (newCalendarEventId ||= "cal_" + crypto.randomUUID());
+      const record = {
+        title, kind: form.get("kind"), start, end, time: form.get("time"), notes: form.get("notes").trim(),
+        authorId: previous?.authorId || currentSession.id, author: previous?.author || currentSession.name
+      };
+      button.disabled = true;
+      status.textContent = "Guardando aviso…";
+      try {
+        const response = await fetch(`${FIREBASE_DB_URL}/teamCalendar/${id}.json`, {
+          method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(record),
+          signal: AbortSignal.timeout(10000)
+        });
+        if (!response.ok) throw new Error("Guardado sin confirmar");
+        document.getElementById("calendarEventDialog").close();
+        showToast("Aviso guardado y compartido", "success");
+        await syncTeamCalendar();
+      } catch {
+        status.textContent = "No se pudo confirmar el guardado. Revisa el calendario antes de volver a intentarlo.";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function renderCalendarTicker() {
+      const today = calendarToday();
+      const date = Date.parse(today);
+      const items = teamCalendarEvents.flatMap(item => {
+        const remaining = (Date.parse(item.start) - date) / 86400000;
+        if (remaining > 3 || item.end < today) return [];
+        const label = remaining > 1 ? `Faltan ${remaining} días` : remaining === 1 ? "Mañana" : remaining === 0 ? "Hoy" : "En curso";
+        const notes = String(item.notes || "").replace(/\s+/g, " ").trim();
+        const excerpt = notes.length > 90 ? notes.slice(0, 89) + "…" : notes;
+        return [{ id: item.id, text: `${label} · ${item.title} · ${calendarWhen(item)}${excerpt ? " · " + excerpt : ""}` }];
+      });
+      const key = JSON.stringify(items);
+      if (key === calendarTickerKey) return;
+      calendarTickerKey = key;
+      calendarTickerItems = items;
+      calendarTickerIndex = 0;
+      displayCalendarTicker();
+    }
+
+    function displayCalendarTicker() {
+      const item = calendarTickerItems[calendarTickerIndex];
+      const ticker = document.getElementById("calendarTicker");
+      ticker.hidden = !item;
+      if (!item) return;
+      const message = document.getElementById("calendarTickerMessage");
+      const pause = document.getElementById("calendarTickerPause");
+      pause.hidden = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById("calendarTickerNext").hidden = calendarTickerItems.length < 2;
+      message.textContent = item.text;
+      message.title = item.text;
+      message.classList.remove("moving");
+      const trackWidth = document.getElementById("calendarTickerTrack").clientWidth;
+      message.style.setProperty("--ticker-distance", `${trackWidth}px`);
+      if (!calendarTickerPaused) message.classList.add("moving");
+    }
+
+    function advanceCalendarTicker() {
+      if (!calendarTickerItems.length) return;
+      calendarTickerIndex = (calendarTickerIndex + 1) % calendarTickerItems.length;
+      displayCalendarTicker();
+    }
+
+    function toggleCalendarTicker() {
+      calendarTickerPaused = !calendarTickerPaused;
+      const pause = document.getElementById("calendarTickerPause");
+      pause.setAttribute("aria-label", calendarTickerPaused ? "Reanudar desplazamiento" : "Pausar desplazamiento");
+      pause.setAttribute("aria-pressed", String(calendarTickerPaused));
+      pause.firstElementChild.className = calendarTickerPaused ? "ph-bold ph-play" : "ph-bold ph-pause";
+      displayCalendarTicker();
+    }
+
+    function openCalendarTickerEvent() {
+      const item = calendarTickerItems[calendarTickerIndex];
+      if (item) openCalendarEvent("", item.id);
+    }
 
     function renderCalendar() {
       const year = calDate.getFullYear(), month = calDate.getMonth();
@@ -3863,17 +4113,21 @@
       const offset = firstDay === 0 ? 6 : firstDay - 1;
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const list = getFilteredModeTasks();
-      const todayStr = new Date().toISOString().split("T")[0];
+      const todayStr = calendarToday();
 
       let html = "";
       for (let i = 0; i < offset; i++) html += `<div class="min-h-[64px] sm:min-h-[96px] rounded-xl bg-slate-100/40"></div>`;
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
         const dayTasks = list.filter(t => t.date === dateStr);
+        const count = teamCalendarEvents.filter(item => item.start <= dateStr && item.end >= dateStr).length;
         const isToday = dateStr === todayStr;
-        html += `<div onclick="openTaskModal('${dateStr}')" class="min-h-[64px] sm:min-h-[96px] p-1.5 sm:p-2 rounded-xl bg-white/80 hover:bg-white border ${isToday ? 'border-2 border-blue-600' : 'border-slate-200/70'} cursor-pointer transition flex flex-col justify-between"><span class="text-xs font-bold ${isToday ? 'text-blue-600' : 'text-slate-700'}">${d}</span><div class="space-y-1 mt-1">${dayTasks.slice(0, 2).map(t => `<div onclick="event.stopPropagation(); openDetailModal('${t.id}')" class="text-[10px] font-bold px-1.5 py-0.5 rounded truncate text-white ${t.status === 'Urgente' ? 'bg-red-600' : t.status === 'Completado' ? 'bg-emerald-600' : 'btn-accent'}">${escapeHtml(t.caseId)}: ${escapeHtml(t.title)}</div>`).join("")}</div></div>`;
+        html += `<div onclick="openTaskModal('${dateStr}')" class="min-h-[64px] sm:min-h-[96px] p-1.5 sm:p-2 rounded-xl bg-white/80 hover:bg-white border ${isToday ? 'border-2 border-blue-600' : 'border-slate-200/70'} cursor-pointer transition flex flex-col justify-between"><span class="text-xs font-bold ${isToday ? 'text-blue-600' : 'text-slate-700'}">${d}</span><div class="space-y-1 mt-1">${count ? `<button type="button" class="w-full truncate rounded bg-indigo-100 px-1 text-left text-[10px] font-bold text-indigo-900" onclick="event.stopPropagation(); showCalendarDay('${dateStr}')" aria-label="Ver avisos del día ${d}">${count} <span class="hidden sm:inline">${count === 1 ? 'aviso' : 'avisos'}</span></button>` : ""}${dayTasks.slice(0, 2).map(t => `<div onclick="event.stopPropagation(); openDetailModal('${t.id}')" class="text-[10px] font-bold px-1.5 py-0.5 rounded truncate text-white ${t.status === 'Urgente' ? 'bg-red-600' : t.status === 'Completado' ? 'bg-emerald-600' : 'btn-accent'}">${escapeHtml(t.caseId)}: ${escapeHtml(t.title)}</div>`).join("")}</div></div>`;
       }
       document.getElementById("calendarGrid").innerHTML = html;
+      renderCalendarAgenda(`${year}-${String(month + 1).padStart(2, "0")}-01`,
+        `${year}-${String(month + 1).padStart(2, "0")}-${daysInMonth}`, "Avisos del equipo");
+      renderCalendarTicker();
     }
 
     function renderBoard() {
@@ -5641,6 +5895,7 @@
     updateClock();
     updateNetwork();
     setInterval(updateClock, 1000 * 15);
+    setInterval(() => { if (currentSession) renderCalendarTicker(); }, 60_000);
     window.addEventListener("online", updateNetwork);
     window.addEventListener("offline", updateNetwork);
   })();

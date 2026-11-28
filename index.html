@@ -2208,6 +2208,23 @@
       <button class="touch-target btn-accent rounded-full px-4 text-sm font-bold">Guardar preferencia</button>
       <p id="hotlineMailStatus" role="status" class="text-sm text-slate-700"></p>
     </form>
+    <section class="mt-5 border-t border-slate-300 pt-4" aria-labelledby="hotlineExternalTitle">
+      <h3 id="hotlineExternalTitle" class="font-bold">Destinatarios externos</h3>
+      <p class="text-sm mb-3">Reciben por correo los datos completos de las solicitudes de las marcas asignadas.</p>
+      <form id="hotlineExternalForm" onsubmit="saveHotlineExternal(event)" class="grid gap-3 sm:grid-cols-2">
+        <label class="text-sm">Nombre<input name="firstName" required maxlength="80" class="block w-full rounded-lg border border-slate-300 p-2"></label>
+        <label class="text-sm">Apellido<input name="lastName" required maxlength="80" class="block w-full rounded-lg border border-slate-300 p-2"></label>
+        <label class="text-sm sm:col-span-2">Correo electrónico<input name="email" type="email" required maxlength="254" class="block w-full rounded-lg border border-slate-300 p-2"></label>
+        <fieldset class="sm:col-span-2 rounded-xl border border-slate-300 p-3">
+          <legend class="text-sm font-semibold">Marcas asignadas</legend>
+          <div id="hotlineExternalBrands" class="grid sm:grid-cols-2 gap-2 max-h-32 overflow-auto"></div>
+        </fieldset>
+        <button id="hotlineExternalSave" class="touch-target btn-accent rounded-full px-4 text-sm font-bold">Agregar destinatario</button>
+        <button id="hotlineExternalCancel" type="button" hidden onclick="editHotlineExternal()" class="rounded-lg border px-3 py-2 text-sm">Cancelar edición</button>
+      </form>
+      <p id="hotlineExternalStatus" role="status" class="text-sm mt-2"></p>
+      <ul id="hotlineExternalList" class="space-y-2 mt-2"></ul>
+    </section>
   </dialog>
 
   <dialog id="brandSettingsModal" aria-labelledby="brandSettingsTitle" class="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[85dvh] rounded-2xl p-5 text-slate-900">
@@ -3751,6 +3768,8 @@
       });
       document.getElementById("hotlineMailStatus").textContent = "";
       loadHotlineMailUser();
+      editHotlineExternal();
+      renderHotlineExternal();
       document.getElementById("hotlineMailModal").showModal();
     }
 
@@ -3759,9 +3778,13 @@
       const rule = state.hotlineMailSettings?.[userId];
       const mode = document.getElementById("hotlineMailMode");
       mode.value = rule?.mode || "all";
-      const container = document.getElementById("hotlineMailBrands");
+      renderHotlineBrandChoices(document.getElementById("hotlineMailBrands"), Array.isArray(rule?.brands) ? rule.brands : []);
+      document.getElementById("hotlineMailStatus").textContent = "";
+      toggleHotlineMailBrands();
+    }
+
+    function renderHotlineBrandChoices(container, selected) {
       container.replaceChildren();
-      const selected = Array.isArray(rule?.brands) ? rule.brands : [];
       const choices = [...new Set([...getConfiguredBrands().filter(brand => brand !== "Otras Marcas"), ...selected])];
       choices.forEach(brand => {
         const label = document.createElement("label");
@@ -3773,8 +3796,90 @@
         label.append(checkbox, document.createTextNode(brand));
         container.append(label);
       });
-      document.getElementById("hotlineMailStatus").textContent = "";
-      toggleHotlineMailBrands();
+    }
+
+    let editingHotlineExternal = "";
+
+    function hotlineExternalRecipients() {
+      return state.hotlineMailSettings?._externalRecipients || {};
+    }
+
+    function renderHotlineExternal() {
+      const list = document.getElementById("hotlineExternalList");
+      list.replaceChildren();
+      const recipients = Object.entries(hotlineExternalRecipients());
+      if (!recipients.length) {
+        const empty = document.createElement("li");
+        empty.className = "text-sm";
+        empty.textContent = "Todavía no hay destinatarios externos.";
+        list.append(empty);
+      }
+      recipients.forEach(([id, person]) => {
+        const row = document.createElement("li");
+        row.className = "rounded-xl border border-slate-300 p-3 space-y-2";
+        const details = document.createElement("div");
+        details.className = "text-sm break-words";
+        details.textContent = `${person.firstName} ${person.lastName} · ${person.email} · ${(person.brands || []).join(", ")}`;
+        row.append(details);
+        for (const [label, handler] of [["Editar", editHotlineExternal], ["Quitar", removeHotlineExternal]]) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "mr-2 rounded-lg border px-3 py-1 text-sm";
+          button.textContent = label;
+          button.onclick = () => handler(id);
+          row.append(button);
+        }
+        list.append(row);
+      });
+    }
+
+    function editHotlineExternal(id = "") {
+      if (!isCurrentAdmin()) return;
+      const person = hotlineExternalRecipients()[id];
+      editingHotlineExternal = person ? id : "";
+      const form = document.getElementById("hotlineExternalForm");
+      form.reset();
+      for (const field of ["firstName", "lastName", "email"]) form.elements[field].value = person?.[field] || "";
+      renderHotlineBrandChoices(document.getElementById("hotlineExternalBrands"), person?.brands || []);
+      document.getElementById("hotlineExternalSave").textContent = person ? "Guardar cambios" : "Agregar destinatario";
+      document.getElementById("hotlineExternalCancel").hidden = !person;
+      document.getElementById("hotlineExternalStatus").textContent = "";
+      if (person) form.elements.firstName.focus();
+    }
+
+    function updateHotlineExternal(recipients, message) {
+      state.hotlineMailSettings = { ...state.hotlineMailSettings, _externalRecipients: recipients };
+      persistHotlineMailSettings();
+      editHotlineExternal();
+      renderHotlineExternal();
+      document.getElementById("hotlineExternalStatus").textContent = message;
+    }
+
+    function saveHotlineExternal(event) {
+      event.preventDefault();
+      if (!isCurrentAdmin()) return;
+      const fields = new FormData(event.currentTarget);
+      const firstName = fields.get("firstName").trim(), lastName = fields.get("lastName").trim();
+      const email = fields.get("email").trim().toLowerCase();
+      const brands = [...document.querySelectorAll("#hotlineExternalBrands input:checked")].map(input => input.value);
+      const status = document.getElementById("hotlineExternalStatus");
+      const recipients = hotlineExternalRecipients();
+      if (!firstName || !lastName) { status.textContent = "Escribe el nombre y el apellido."; return; }
+      if (!/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(email)) { status.textContent = "Escribe un correo electrónico válido."; return; }
+      if (!brands.length) { status.textContent = "Selecciona al menos una marca."; return; }
+      if (Object.entries(recipients).some(([id, person]) => id !== editingHotlineExternal && person.email === email)) {
+        status.textContent = "Ya existe un destinatario externo con ese correo."; return;
+      }
+      const id = editingHotlineExternal || "ext_" + crypto.randomUUID();
+      updateHotlineExternal({ ...recipients, [id]: { firstName, lastName, email, brands } }, "Destinatario guardado.");
+    }
+
+    function removeHotlineExternal(id) {
+      if (!isCurrentAdmin()) return;
+      const recipients = { ...hotlineExternalRecipients() };
+      if (!recipients[id] || !confirm(`¿Quitar a ${recipients[id].email} de los avisos de Hotline?`)) return;
+      delete recipients[id];
+      updateHotlineExternal(recipients, "Destinatario quitado.");
     }
 
     function toggleHotlineMailBrands() {
@@ -3791,9 +3896,13 @@
       if (!userId) return;
       if (mode === "brands" && !brands.length) { status.textContent = "Selecciona al menos una marca."; return; }
       state.hotlineMailSettings = { ...state.hotlineMailSettings, [userId]: { mode, brands: mode === "brands" ? brands : [] } };
+      persistHotlineMailSettings();
+      status.textContent = "Preferencia guardada para este usuario.";
+    }
+
+    function persistHotlineMailSettings() {
       state.hotlineMailRevision = Math.max(Date.now(), (state.hotlineMailRevision || 0) + 1);
       saveLocalAndCloud();
-      status.textContent = "Preferencia guardada para este usuario.";
     }
 
     function openBrandSettings() {

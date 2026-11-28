@@ -2238,6 +2238,15 @@
     </div>
   </dialog>
 
+  <dialog id="hotlineEvidenceModal" aria-labelledby="hotlineEvidenceTitle" class="m-auto w-[calc(100%-2rem)] max-w-4xl max-h-[90vh] rounded-2xl p-5 text-slate-900">
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <h2 id="hotlineEvidenceTitle" class="font-bold text-lg">Evidencias de Hotline</h2>
+      <form method="dialog"><button class="touch-target px-3 rounded-lg border text-sm font-semibold">Cerrar</button></form>
+    </div>
+    <p id="hotlineEvidenceStatus" class="mb-3 text-sm" role="status"></p>
+    <div id="hotlineEvidenceGallery" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
+  </dialog>
+
   <dialog id="caseMediaPreview" aria-labelledby="caseMediaTitle" class="m-auto w-[calc(100%-2rem)] max-w-5xl max-h-[92vh] rounded-2xl p-5 text-slate-900">
     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
       <h2 id="caseMediaTitle" class="min-w-0 break-all text-sm font-bold"></h2>
@@ -3309,6 +3318,8 @@
       const box = document.getElementById("hotlineRequestsList");
       const list = state.hotlineRequests || [];
       box.innerHTML = list.length ? list.map((req, index) => {
+        const evidence = Array.isArray(req.evidence) ? req.evidence.filter(Boolean) : [];
+        const pendingEvidence = req.evidenceBackupVersion === 1 && evidence.some(item => !item.syncedToDrive || !item.driveFileId);
         const linkedCase = state.tasks.find(task => task.sourceHotlineId === req.id);
         const reported = hasFailureReport(linkedCase?.caseId, req.id);
         return `<div class="rounded-2xl p-4 border-2 ${req.status === "Pendiente" ? "bg-red-50/40 border-red-300" : "bg-slate-50 border-slate-200"} space-y-2 text-xs">
@@ -3316,12 +3327,54 @@
           <div>VIN: <strong class="font-mono">${escapeHtml(req.vin)}</strong> · Falla: ${escapeHtml(req.faultDescription)}</div>
           ${linkedCase ? `<p class="font-semibold">Registrado como caso ${escapeHtml(linkedCase.caseId)}</p>` : ""}
           ${reported ? '<p class="font-semibold text-indigo-800">Registrado como falla repetitiva</p>' : ""}
+          ${pendingEvidence ? '<p class="text-amber-800 font-semibold">Evidencias pendientes de respaldo</p>' :
+             req.evidenceBackupVersion === 1 && evidence.length ? '<p class="text-emerald-700 font-semibold">Evidencias respaldadas en Drive</p>' : ""}
           <div class="flex flex-wrap gap-2">
+            ${evidence.length ? `<button type="button" onclick="openHotlineEvidence(${index})" class="px-3 py-1.5 rounded-xl border border-slate-300 font-bold">Ver evidencias (${evidence.length})</button>` : ""}
+            ${pendingEvidence ? `<button type="button" onclick="retryHotlineBackup(${index}, this)" class="px-3 py-1.5 rounded-xl border border-amber-300 font-bold">Reintentar respaldo</button>` : ""}
             <button type="button" onclick="createSupportFromHotline(${index})" class="px-3 py-1.5 rounded-xl bg-[#004B93] text-white font-bold">${linkedCase ? "Abrir caso registrado" : "Registrar como caso de soporte"}</button>
             <button type="button" onclick="openHotlineFailureReport(${index})" class="px-3 py-1.5 rounded-xl border border-indigo-300 bg-indigo-50 text-indigo-900 font-bold">${reported ? "Ver falla repetitiva" : "Registrar falla repetitiva"}</button>
           </div>
         </div>`;
       }).join("") : '<p class="text-xs text-slate-400 text-center py-6">No hay solicitudes pendientes.</p>';
+    }
+
+    function hotlineEvidenceFiles(request) {
+      return Array.isArray(request?.evidence) ? request.evidence.filter(Boolean).map(item => ({
+        ...item, type: "image", name: item.name || item.label || "Evidencia de Hotline"
+      })) : [];
+    }
+
+    function openHotlineEvidence(index) {
+      const request = state.hotlineRequests[index];
+      if (!currentSession || !request) return;
+      const files = hotlineEvidenceFiles(request);
+      document.getElementById("hotlineEvidenceTitle").textContent = "Evidencias de " + request.requestCode;
+      document.getElementById("hotlineEvidenceStatus").textContent = request.evidenceBackupVersion === 1 ?
+        files.some(item => !item.syncedToDrive) ? "Evidencias pendientes de respaldo" : "Evidencias respaldadas en Drive" : "";
+      renderMediaGallery(document.getElementById("hotlineEvidenceGallery"), files);
+      document.getElementById("hotlineEvidenceModal").showModal();
+    }
+
+    async function retryHotlineBackup(index, button) {
+      const request = state.hotlineRequests[index];
+      if (!currentSession || request?.evidenceBackupVersion !== 1 || button.disabled) return;
+      button.disabled = true;
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST", body: JSON.stringify({ action: "backupHotlineEvidence", requestId: request.id }),
+          signal: AbortSignal.timeout(90000)
+        });
+        const result = await response.json();
+        if (!response.ok || !["ok", "retry", "error"].includes(result.status)) throw new Error("Sin confirmación");
+        await syncFirebaseRealtime();
+        showToast(result.status === "ok" ? "Evidencias respaldadas en Drive" :
+          result.message || "Algunas evidencias siguen pendientes", result.status === "ok" ? "success" : "warning");
+      } catch (error) {
+        showToast("El respaldo de las fotos sigue pendiente", "warning");
+      } finally {
+        button.disabled = false;
+      }
     }
 
     function createSupportFromHotline(idx) { const req = state.hotlineRequests[idx]; if (!req) return; closeModal("hotlineRequestsModal"); if (appMode !== "soporte") switchAppMode("soporte"); const linkedCase = state.tasks.find(task => task.sourceHotlineId === req.id); if (linkedCase) { openDetailModal(linkedCase.id); return; } openTaskModal(); document.getElementById("sourceHotlineReqId").value = req.id; document.getElementById("tTitle").value = `Consulta Fábrica / Hotline - ${req.brand} ${req.model} (${req.vin})`; document.getElementById("tSubcategory").value = "Consulta Técnica Fábrica (DISS/TAC)"; document.getElementById("tHotlineStatus").value = "Hotline Solicitado"; document.getElementById("tStatus").value = "Urgente"; if (req.workshop) document.getElementById("tWorkshop").value = req.workshop; if (getConfiguredBrands().includes(req.brand)) document.getElementById("tBrand").value = req.brand; document.getElementById("tModel").value = req.model || ""; document.getElementById("tVin").value = req.vin || ""; document.getElementById("tAdvisorName").value = req.chiefName || ""; document.getElementById("tAdvisorWhatsapp").value = req.chiefPhone || ""; }
@@ -3430,7 +3483,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("hotlineMailModal").close(); document.getElementById("brandSettingsModal").close(); visionToken = ""; document.getElementById("imageVisionModal").close(); document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("hotlineEvidenceModal").close(); document.getElementById("hotlineMailModal").close(); document.getElementById("brandSettingsModal").close(); visionToken = ""; document.getElementById("imageVisionModal").close(); document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -4462,8 +4515,14 @@
     }
 
     function renderDetailMedia(task) {
-      const gallery = document.getElementById("dMediaGallery");
-      const files = Array.isArray(task.media) ? task.media.filter(Boolean) : [];
+      const own = Array.isArray(task.media) ? task.media.filter(Boolean) : [];
+      const source = task.sourceHotlineId && state.hotlineRequests.find(request => request.id === task.sourceHotlineId);
+      const fromHotline = hotlineEvidenceFiles(source).filter(item =>
+        !item.driveFileId || !own.some(media => media.driveFileId === item.driveFileId));
+      renderMediaGallery(document.getElementById("dMediaGallery"), [...own, ...fromHotline]);
+    }
+
+    function renderMediaGallery(gallery, files) {
       gallery.replaceChildren();
       if (!files.length) {
         gallery.innerHTML = '<p class="col-span-full text-xs text-slate-400">Sin archivos subidos.</p>';

@@ -607,6 +607,9 @@
               <i class="ph-bold ph-buildings text-accent"></i> <span class="hidden lg:inline">Talleres (33)</span>
             </button>
 
+            <button type="button" id="btnHotlineMailSettings" onclick="openHotlineMailSettings()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-envelope-simple" aria-hidden="true"></i> Avisos de Hotline
+            </button>
             <button type="button" id="btnBrandSettings" onclick="openBrandSettings()" class="hidden touch-target px-3 py-1.5 rounded-xl bg-white/90 border border-slate-300 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
               <i class="ph-bold ph-gear" aria-hidden="true"></i> Configurar marcas
             </button>
@@ -2134,6 +2137,30 @@
     </div>
   </div>
 
+  <dialog id="hotlineMailModal" aria-labelledby="hotlineMailTitle" class="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[88dvh] rounded-2xl p-5 text-slate-900">
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <h2 id="hotlineMailTitle" class="font-bold text-lg">Avisos de Hotline por correo</h2>
+      <form method="dialog"><button class="touch-target rounded-lg border border-slate-300 px-3 text-sm">Cerrar</button></form>
+    </div>
+    <p class="mb-3 text-sm">Los usuarios aprobados reciben avisos de todas las marcas por defecto. Puedes guardar una preferencia para cada usuario.</p>
+    <form onsubmit="saveHotlineMailSettings(event)" class="space-y-3">
+      <label for="hotlineMailUser" class="block text-sm font-semibold">Usuario</label>
+      <select id="hotlineMailUser" onchange="loadHotlineMailUser()" class="w-full rounded-lg border border-slate-300 p-2 text-sm"></select>
+      <label for="hotlineMailMode" class="block text-sm font-semibold">Recibir avisos de</label>
+      <select id="hotlineMailMode" onchange="toggleHotlineMailBrands()" class="w-full rounded-lg border border-slate-300 p-2 text-sm">
+        <option value="all">Todas las marcas</option>
+        <option value="brands">Solo las marcas seleccionadas</option>
+        <option value="off">No recibir avisos</option>
+      </select>
+      <fieldset id="hotlineMailBrandGroup" hidden class="rounded-xl border border-slate-300 p-3">
+        <legend class="font-semibold text-sm">Marcas</legend>
+        <div id="hotlineMailBrands" class="grid sm:grid-cols-2 gap-2 max-h-48 overflow-auto"></div>
+      </fieldset>
+      <button class="touch-target btn-accent rounded-full px-4 text-sm font-bold">Guardar preferencia</button>
+      <p id="hotlineMailStatus" role="status" class="text-sm text-slate-700"></p>
+    </form>
+  </dialog>
+
   <dialog id="brandSettingsModal" aria-labelledby="brandSettingsTitle" class="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[85dvh] rounded-2xl p-5 text-slate-900">
     <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
       <h2 id="brandSettingsTitle" class="font-bold text-lg">Configurar marcas</h2>
@@ -2412,6 +2439,8 @@
     ];
 
     let state = {
+      hotlineMailSettings: {},
+      hotlineMailRevision: 0,
       extraBrands: [],
       tasks: [],
       todos: [],
@@ -2844,6 +2873,11 @@
         let failureReportsChanged = false;
         let brandsChanged = false;
         if (objApp && typeof objApp === "object") {
+          const mailRevision = Number(objApp.hotlineMailRevision) || 0;
+          if (mailRevision > (state.hotlineMailRevision || 0)) {
+            state.hotlineMailSettings = objApp.hotlineMailSettings || {};
+            state.hotlineMailRevision = mailRevision;
+          }
           const brands = mergeExtraBrands(state.extraBrands, objApp.extraBrands);
           brandsChanged = brands.length !== state.extraBrands.length;
           state.extraBrands = brands;
@@ -3384,6 +3418,7 @@
       document.getElementById("btnAdminUsers").classList.toggle("hidden", !isAdmin);
       document.getElementById("btnPortalConfig").classList.toggle("hidden", !isAdmin);
       document.getElementById("btnBrandSettings").classList.toggle("hidden", !isAdmin);
+      document.getElementById("btnHotlineMailSettings").classList.toggle("hidden", !isAdmin);
       updatePendingBadge();
       updateMyTasksBadge();
       updateCompletedTabBadge();
@@ -3395,7 +3430,7 @@
       refreshNotificationsUI();
     }
 
-    function logoutSession() { document.getElementById("brandSettingsModal").close(); visionToken = ""; document.getElementById("imageVisionModal").close(); document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
+    function logoutSession() { document.getElementById("hotlineMailModal").close(); document.getElementById("brandSettingsModal").close(); visionToken = ""; document.getElementById("imageVisionModal").close(); document.getElementById("caseMediaPreview").close(); document.getElementById("failureReportsModal").close(); document.getElementById("deleteTodoDialog").close(); document.getElementById("contactsModal").close(); document.getElementById("trashModal").close(); currentSession = null; sessionStorage.removeItem("autotech_session_v6"); document.getElementById("mainAppContainer").classList.add("hidden"); document.getElementById("authScreen").classList.remove("hidden"); }
     function isCurrentAdmin() { return currentSession && currentSession.role === "Administrador"; }
     function isCoordinatorOrAdmin() { return currentSession && (currentSession.role === "Administrador" || currentSession.role === "Coordinador"); }
     function updatePendingBadge() { const badge = document.getElementById("pendingUsersBadge"); const count = (state.pendingUsers || []).length; if (count > 0 && isCurrentAdmin()) { badge.textContent = count; badge.classList.remove("hidden"); } else badge.classList.add("hidden"); }
@@ -3437,6 +3472,8 @@
         trash: state.trash,
         trashRevision: state.trashRevision,
         contacts: state.contacts,
+        hotlineMailSettings: state.hotlineMailSettings,
+        hotlineMailRevision: state.hotlineMailRevision,
         extraBrands: state.extraBrands,
         failureReports: state.failureReports,
         contactsRevision: state.contactsRevision,
@@ -3478,7 +3515,10 @@
           const localContacts = { contacts: state.contacts, contactsRevision: state.contactsRevision };
           const failureReports = mergeFailureReports(state.failureReports, data.state.failureReports);
           const extraBrands = mergeExtraBrands(state.extraBrands, data.state.extraBrands);
-          state = { ...state, ...data.state, failureReports, extraBrands };
+          const mailSettings = (Number(data.state.hotlineMailRevision) || 0) > (state.hotlineMailRevision || 0) ? data.state : state;
+          state = { ...state, ...data.state, failureReports, extraBrands,
+            hotlineMailSettings: mailSettings.hotlineMailSettings || {}, hotlineMailRevision: mailSettings.hotlineMailRevision || 0
+          };
           if ((Number(data.state.contactsRevision) || 0) <= localContacts.contactsRevision) Object.assign(state, localContacts);
           if (fbReq.length > 0) state.hotlineRequests = fbReq;
           if (fbPend.length > 0) state.pendingUsers = fbPend;
@@ -3598,6 +3638,60 @@
         if ([...select.options].some(option => option.value === previous)) select.value = previous;
       });
       document.getElementById("failureBrandOptions").innerHTML = options;
+    }
+
+    function openHotlineMailSettings() {
+      if (!isCurrentAdmin()) return;
+      const users = document.getElementById("hotlineMailUser");
+      users.replaceChildren();
+      getAllAssignableMembers().filter(user => user.email).forEach(user => {
+        users.add(new Option(`${user.name} (${user.email})`, user.id));
+      });
+      document.getElementById("hotlineMailStatus").textContent = "";
+      loadHotlineMailUser();
+      document.getElementById("hotlineMailModal").showModal();
+    }
+
+    function loadHotlineMailUser() {
+      const userId = document.getElementById("hotlineMailUser").value;
+      const rule = state.hotlineMailSettings?.[userId];
+      const mode = document.getElementById("hotlineMailMode");
+      mode.value = rule?.mode || "all";
+      const container = document.getElementById("hotlineMailBrands");
+      container.replaceChildren();
+      const selected = Array.isArray(rule?.brands) ? rule.brands : [];
+      const choices = [...new Set([...getConfiguredBrands().filter(brand => brand !== "Otras Marcas"), ...selected])];
+      choices.forEach(brand => {
+        const label = document.createElement("label");
+        label.className = "flex items-center gap-2 text-sm";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = brand;
+        checkbox.checked = selected.includes(brand);
+        label.append(checkbox, document.createTextNode(brand));
+        container.append(label);
+      });
+      document.getElementById("hotlineMailStatus").textContent = "";
+      toggleHotlineMailBrands();
+    }
+
+    function toggleHotlineMailBrands() {
+      document.getElementById("hotlineMailBrandGroup").hidden = document.getElementById("hotlineMailMode").value !== "brands";
+    }
+
+    function saveHotlineMailSettings(event) {
+      event.preventDefault();
+      if (!isCurrentAdmin()) return;
+      const userId = document.getElementById("hotlineMailUser").value;
+      const mode = document.getElementById("hotlineMailMode").value;
+      const brands = [...document.querySelectorAll("#hotlineMailBrands input:checked")].map(input => input.value);
+      const status = document.getElementById("hotlineMailStatus");
+      if (!userId) return;
+      if (mode === "brands" && !brands.length) { status.textContent = "Selecciona al menos una marca."; return; }
+      state.hotlineMailSettings = { ...state.hotlineMailSettings, [userId]: { mode, brands: mode === "brands" ? brands : [] } };
+      state.hotlineMailRevision = Math.max(Date.now(), (state.hotlineMailRevision || 0) + 1);
+      saveLocalAndCloud();
+      status.textContent = "Preferencia guardada para este usuario.";
     }
 
     function openBrandSettings() {

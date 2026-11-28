@@ -1650,6 +1650,7 @@
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre del Cliente *</label>
                 <input type="text" id="cpClientName" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+                <button type="button" onclick="openContacts('client', 'cp')" class="min-h-9 text-xs font-semibold text-emerald-800">Elegir cliente del directorio</button>
               </div>
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Correo Electrónico del Cliente *</label>
@@ -1662,6 +1663,7 @@
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Asesor Asignado *</label>
                 <input type="text" id="cpAdvisorName" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white" />
+                <button type="button" onclick="openContacts('advisor', 'cp')" class="min-h-9 text-xs font-semibold text-emerald-800">Elegir asesor del directorio</button>
               </div>
               <div class="sm:col-span-2">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">WhatsApp del Asesor *</label>
@@ -4924,9 +4926,9 @@
         document.getElementById("cpEnabled").checked = !!portal.enabled;
         document.getElementById("cpClientName").value = portal.clientName || "";
         document.getElementById("cpClientEmail").value = portal.clientEmail || "";
-        document.getElementById("cpClientWhatsapp").value = portal.clientWhatsapp || t.clientWhatsapp || "";
+        document.getElementById("cpClientWhatsapp").value = portal.clientName ? (portal.clientWhatsapp ?? t.clientWhatsapp ?? "") : (portal.clientWhatsapp || t.clientWhatsapp || "");
         document.getElementById("cpAdvisorName").value = portal.advisorName || t.advisorName || "";
-        document.getElementById("cpAdvisorWhatsapp").value = portal.advisorWhatsapp || t.advisorWhatsapp || "";
+        document.getElementById("cpAdvisorWhatsapp").value = portal.advisorName ? (portal.advisorWhatsapp ?? t.advisorWhatsapp ?? "") : (portal.advisorWhatsapp || t.advisorWhatsapp || "");
         document.getElementById("newClientNoteText").value = "";
         renderClientNotes(t);
         switchTrainingSubTab("general");
@@ -5042,7 +5044,19 @@
     function togglePortalSection() { document.getElementById("clientPortalPanel").classList.toggle("hidden"); }
     function getClientTrackingUrl(t) { return `${state.clientPortalBaseUrl}?caso=${encodeURIComponent(t.caseId)}&token=${encodeURIComponent(t.clientPortal.token)}`; }
     function copyClientPortalLink() { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { navigator.clipboard.writeText(getClientTrackingUrl(t)); showToast("Link copiado", "success"); } }
-    function saveClientPortalConfig() { const t = state.tasks.find(x => x.id === currentDetailId); if (t) { t.clientPortal.enabled = document.getElementById("cpEnabled").checked; t.clientPortal.clientName = document.getElementById("cpClientName").value.trim(); t.clientPortal.clientEmail = document.getElementById("cpClientEmail").value.trim(); saveLocalAndCloud(); showToast("Guardado", "success"); } }
+    function saveClientPortalConfig() {
+      const task = state.tasks.find(item => item.id === currentDetailId);
+      if (!task) return;
+      const fields = ["clientName", "clientEmail", "clientWhatsapp", "advisorName", "advisorWhatsapp"];
+      const portal = task.clientPortal ||= { token: String(Math.floor(1000 + Math.random() * 9000)) };
+      portal.enabled = document.getElementById("cpEnabled").checked;
+      for (const field of fields) {
+        const id = "cp" + field[0].toUpperCase() + field.slice(1);
+        portal[field] = document.getElementById(id).value.trim();
+      }
+      saveLocalAndCloud();
+      showToast("Guardado", "success");
+    }
     function addClientNote(e) { e.preventDefault(); const t = state.tasks.find(x => x.id === currentDetailId); const txt = document.getElementById("newClientNoteText").value.trim(); if (t && txt) { if (!Array.isArray(t.clientNotes)) t.clientNotes = []; t.clientNotes.push({ date: new Date().toLocaleString(), text: txt }); document.getElementById("newClientNoteText").value = ""; saveLocalAndCloud(); renderClientNotes(t); } }
     function renderClientNotes(t) { document.getElementById("dClientNotesList").innerHTML = (t.clientNotes || []).map(n => `<div class="p-2 bg-emerald-50 rounded text-xs"><strong>${escapeHtml(n.date)}</strong>: ${escapeHtml(n.text)}</div>`).join(""); }
 
@@ -5273,6 +5287,7 @@
       client: { label: "Cliente", field: "Client" }
     };
     let contactPickerRole = "";
+    let contactPickerPrefix = "t";
     let editingContactId = "";
 
     function normalizeContactName(name) {
@@ -5325,9 +5340,10 @@
       return "";
     }
 
-    function openContacts(role = "") {
+    function openContacts(role = "", prefix = "t") {
       if (!currentSession) return;
       contactPickerRole = role;
+      contactPickerPrefix = prefix;
       const options = Object.entries(CONTACT_ROLES).map(([value, item]) => new Option(item.label, value));
       const filter = document.getElementById("contactsFilter");
       filter.replaceChildren(new Option("Todos los perfiles", ""), ...options);
@@ -5415,9 +5431,11 @@
         if (contactPickerRole) {
           addAction("Elegir", () => {
             const field = CONTACT_ROLES[contactPickerRole].field;
-            document.getElementById("t" + field + "Name").value = contact.name;
-            document.getElementById("t" + field + "Whatsapp").value = normalizeContactPhone(contact.phone);
-            document.getElementById("t" + field + "Email").value = contact.email || "";
+            const prefix = contactPickerPrefix + field;
+            document.getElementById(prefix + "Name").value = contact.name;
+            document.getElementById(prefix + "Whatsapp").value = normalizeContactPhone(contact.phone);
+            const email = document.getElementById(prefix + "Email");
+            if (email) email.value = contact.email || "";
             document.getElementById("contactsModal").close();
           });
         } else {
